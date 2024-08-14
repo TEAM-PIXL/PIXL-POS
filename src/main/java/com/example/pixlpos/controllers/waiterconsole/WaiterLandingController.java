@@ -14,6 +14,20 @@ public class WaiterLandingController {
     private Button logoutButton;
 
     @FXML
+    private Button menuButton;
+
+    @FXML
+    private Button newOrderButton;
+
+    @FXML
+    private Button ordersButton;
+
+    @FXML
+    public void initialize() {
+        // Initialization logic if needed
+    }
+
+    @FXML
     protected void onLogoutButtonClick() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/login-screen.fxml"));
@@ -26,4 +40,26 @@ public class WaiterLandingController {
         }
     }
 
+    @FXML
+    protected void onMenuButtonClick() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/waiterconsole/menu-screen.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
+            Stage stage = (Stage) menuButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Menu");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    protected void onNewOrderButtonClick() {
+        // Order screen not implemented
+    }
+
+    @FXML
+    protected void onOrdersButtonClick() {
+        // Orders screen not implemented
+    }
 }
