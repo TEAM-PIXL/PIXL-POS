@@ -54,10 +54,10 @@ public class LoginScreenController {
                     loadScene("/fxml/adminconsole/admin-console.fxml", "Admin Console");
                     break;
                 case "Waiter":
-                    loadScene("/fxml/waiter-landing.fxml", "Waiter Page");
+                    loadScene("/fxml/waiterconsole/waiter-landing.fxml", "Waiter Page");
                     break;
                 case "Cook":
-                    loadScene("/fxml/cook-landing.fxml", "Cook Page");
+                    loadScene("/fxml/cookconsole/cook-landing.fxml", "Cook Page");
                     break;
                 default:
                     showErrorDialog("Invalid role");
