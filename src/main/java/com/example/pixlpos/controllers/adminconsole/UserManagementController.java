@@ -83,6 +83,10 @@ public class UserManagementController {
             return;
         }
 
+        if (users.stream().anyMatch(u -> u.getUsername().equals(username)) || users.stream().anyMatch(u -> u.getEmail().equals(email))) {
+            return;
+        }
+
         Users user = new Users(username, password, email, role);
         users.add(user);
 

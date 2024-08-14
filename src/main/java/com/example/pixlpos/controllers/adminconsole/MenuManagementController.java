@@ -2,6 +2,7 @@ package com.example.pixlpos.controllers.adminconsole;
 
 import com.example.pixlpos.POSApplication;
 import com.example.pixlpos.constructs.MenuItem;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -45,30 +46,74 @@ public class MenuManagementController {
     private ListView<String> menuListView;
 
     private ObservableList<MenuItem> menuItems;
+    private MenuItem selectedItem = null;
 
     @FXML
     public void initialize() {
-        // Get the menu items from the singleton method
+        menuItems = FXCollections.observableArrayList();
+        updateMenuListView();
     }
 
     @FXML
     protected void onAddButtonClick() {
-        // Add a new menu item to the list
+        String itemName = itemNameField.getText();
+        String description = descriptionField.getText();
+        double price = Double.parseDouble(priceField.getText());
+
+        if (itemName.isEmpty() || description.isEmpty() || price <= 0) {
+            return;
+        }
+
+        if (menuItems.stream().anyMatch(item -> item.getItemName().equals(itemName))) {
+            return;
+        }
+
+        MenuItem item = new MenuItem(itemName, description, price);
+        menuItems.add(item);
+
+        updateMenuListView();
+        clearFields();
     }
 
     @FXML
     protected void onRemoveButtonClick() {
-        // Remove the selected menu item from the list
+        if (menuListView.getSelectionModel().getSelectedItem() != null) {
+            String selectedItemName = menuListView.getSelectionModel().getSelectedItem();
+            MenuItem selectedItem = menuItems.stream().filter(item -> item.getItemName().equals(selectedItemName)).findFirst().orElse(null);
+            if (selectedItem != null) {
+                menuItems.remove(selectedItem);
+                updateMenuListView();
+                clearFields();
+            }
+        }
     }
 
     @FXML
     protected void onEditButtonClick() {
-        // Edit the selected menu item
+        if (menuListView.getSelectionModel().getSelectedItem() != null) {
+            String selectedItemName = menuListView.getSelectionModel().getSelectedItem();
+            MenuItem selectedItem = menuItems.stream().filter(item -> item.getItemName().equals(selectedItemName)).findFirst().orElse(null);
+            if (selectedItem != null) {
+                itemNameField.setText(selectedItem.getItemName());
+                descriptionField.setText(selectedItem.getDescription());
+                priceField.setText(String.valueOf(selectedItem.getPrice()));
+            }
+        }
     }
 
     @FXML
     protected void onConfirmButtonClick() {
-        // Save the changes to the menu items
+        if (menuListView.getSelectionModel().getSelectedItem() != null) {
+            String selectedItemName = menuListView.getSelectionModel().getSelectedItem();
+            MenuItem selectedItem = menuItems.stream().filter(item -> item.getItemName().equals(selectedItemName)).findFirst().orElse(null);
+            if (selectedItem != null) {
+                selectedItem.setItemName(itemNameField.getText());
+                selectedItem.setDescription(descriptionField.getText());
+                selectedItem.setPrice(Double.parseDouble(priceField.getText()));
+                updateMenuListView();
+                clearFields();
+            }
+        }
     }
 
     @FXML
