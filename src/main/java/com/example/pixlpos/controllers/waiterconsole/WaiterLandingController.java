@@ -68,6 +68,14 @@ public class WaiterLandingController {
 
     @FXML
     protected void onOrdersButtonClick() {
-        // Orders screen not implemented
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/waiterconsole/orders-screen.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
+            Stage stage = (Stage) ordersButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Orders");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
