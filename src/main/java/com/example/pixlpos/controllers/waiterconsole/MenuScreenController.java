@@ -39,7 +39,7 @@ public class MenuScreenController {
     @FXML
     protected void onGoBackButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/waiter-landing.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/waiterconsole/waiter-landing.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) goBackButton.getScene().getWindow();
             stage.setScene(scene);
