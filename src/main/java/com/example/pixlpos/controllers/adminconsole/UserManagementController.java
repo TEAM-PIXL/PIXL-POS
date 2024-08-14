@@ -2,6 +2,7 @@ package com.example.pixlpos.controllers.adminconsole;
 
 import com.example.pixlpos.POSApplication;
 import com.example.pixlpos.constructs.Users;
+import com.example.pixlpos.database.DataStore;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -60,8 +61,22 @@ public class UserManagementController {
 
     @FXML
     public void initialize() {
-        users = FXCollections.observableArrayList();
+        // Get the users from the singleton
+        users = DataStore.getInstance().getUsers();
         updateUserListView();
+        userListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                selectedUser = users.stream().filter(user -> user.getUsername().equals(newSelection)).findFirst().orElse(null);
+                if (selectedUser != null) {
+                    usernameField.setText(selectedUser.getUsername());
+                    passwordField.setText(selectedUser.getPassword());
+                    emailField.setText(selectedUser.getEmail());
+                    waiterCheckBox.setSelected(selectedUser.getRole().equals("Waiter"));
+                    cookCheckBox.setSelected(selectedUser.getRole().equals("Cook"));
+                    adminCheckBox.setSelected(selectedUser.getRole().equals("Admin"));
+                }
+            }
+        });
     }
 
     @FXML

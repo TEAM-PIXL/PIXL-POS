@@ -2,6 +2,7 @@ package com.example.pixlpos.controllers.adminconsole;
 
 import com.example.pixlpos.POSApplication;
 import com.example.pixlpos.constructs.MenuItem;
+import com.example.pixlpos.database.DataStore;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -50,8 +51,19 @@ public class MenuManagementController {
 
     @FXML
     public void initialize() {
-        menuItems = FXCollections.observableArrayList();
+        // Get the menu items from the singleton
+        menuItems = DataStore.getInstance().getMenuItems();
         updateMenuListView();
+        menuListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                selectedItem = menuItems.stream().filter(item -> item.getItemName().equals(newSelection)).findFirst().orElse(null);
+                if (selectedItem != null) {
+                    itemNameField.setText(selectedItem.getItemName());
+                    descriptionField.setText(selectedItem.getDescription());
+                    priceField.setText(String.valueOf(selectedItem.getPrice()));
+                }
+            }
+        });
     }
 
     @FXML
