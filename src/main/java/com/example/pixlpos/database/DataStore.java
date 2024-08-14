@@ -11,10 +11,12 @@ public class DataStore implements IMenuItemStore, IUserStore {
     private static DataStore instance = null;
     private ObservableList<Users> users;
     private ObservableList<MenuItem> menuItems;
+    private ObservableList<MenuItem> orders;
 
     private DataStore() {
         users = FXCollections.observableArrayList();
         menuItems = FXCollections.observableArrayList();
+        orders = FXCollections.observableArrayList();
         // Sample menu items
         menuItems.add(new MenuItem("Chicken Curry", "Delicious beef burger", 15.49));
         menuItems.add(new MenuItem("Pizza", "Cheesy pizza with toppings", 18.99));
