@@ -85,7 +85,6 @@ public class UserManagementController {
         String password = passwordField.getText();
         String email = emailField.getText();
         String role = "";
-
         if (waiterCheckBox.isSelected()) {
             role = "Waiter";
         } else if (cookCheckBox.isSelected()) {
@@ -98,13 +97,8 @@ public class UserManagementController {
             return;
         }
 
-        if (users.stream().anyMatch(u -> u.getUsername().equals(username)) || users.stream().anyMatch(u -> u.getEmail().equals(email))) {
-            return;
-        }
-
-        Users user = new Users(username, password, email, role);
-        users.add(user);
-
+        Users newUser = new Users(username, password, email, role);
+        users.add(newUser);
         clearFields();
         updateUserListView();
     }
@@ -212,6 +206,8 @@ public class UserManagementController {
 
     private void updateUserListView() {
         userListView.getItems().clear();
-        users.forEach(user -> userListView.getItems().add(user.getUsername()));
+        for (Users user : users) {
+            userListView.getItems().add(user.getUsername());
+        }
     }
 }

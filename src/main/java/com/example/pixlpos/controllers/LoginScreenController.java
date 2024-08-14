@@ -1,5 +1,7 @@
 package com.example.pixlpos.controllers;
 
+import com.example.pixlpos.constructs.Users;
+import com.example.pixlpos.database.DataStore;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -39,7 +41,28 @@ public class LoginScreenController {
             loadScene("/fxml/adminconsole/admin-console.fxml", "Admin Console");
             return;
         }
-        else {
+
+        Users user = DataStore.getInstance().getUsers().stream()
+                .filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password))
+                .findFirst()
+                .orElse(null);
+
+        if (user != null) {
+            String role = user.getRole();
+            switch (role) {
+                case "Admin":
+                    loadScene("/fxml/adminconsole/admin-console.fxml", "Admin Console");
+                    break;
+                case "Waiter":
+                    loadScene("/fxml/waiter-landing.fxml", "Waiter Page");
+                    break;
+                case "Cook":
+                    loadScene("/fxml/cook-landing.fxml", "Cook Page");
+                    break;
+                default:
+                    showErrorDialog("Invalid role");
+            }
+        } else {
             showErrorDialog("Invalid username or password");
         }
     }
