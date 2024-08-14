@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Order {
-
     private Map<String, Integer> items;
     private double total;
 
@@ -61,5 +60,4 @@ public class Order {
         int quantity = items.getOrDefault(itemName, 0);
         return itemName + " x" + quantity;
     }
-
 }

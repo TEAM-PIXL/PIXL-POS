@@ -2,6 +2,7 @@ package com.example.pixlpos.database;
 
 import com.example.pixlpos.constructs.MenuItem;
 import com.example.pixlpos.constructs.Users;
+import com.example.pixlpos.constructs.Order;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.List;
@@ -11,14 +12,14 @@ public class DataStore implements IMenuItemStore, IUserStore {
     private static DataStore instance = null;
     private ObservableList<Users> users;
     private ObservableList<MenuItem> menuItems;
-    private ObservableList<MenuItem> orders;
+    private ObservableList<Order> orders; // Corrected type
 
     private DataStore() {
         users = FXCollections.observableArrayList();
         menuItems = FXCollections.observableArrayList();
-        orders = FXCollections.observableArrayList();
+        orders = FXCollections.observableArrayList(); // Corrected type
         // Sample menu items
-        menuItems.add(new MenuItem("Chicken Curry", "Delicious beef burger", 15.49));
+        menuItems.add(new MenuItem("Chicken Curry", "Delicious chicken curry", 15.49));
         menuItems.add(new MenuItem("Pizza", "Cheesy pizza with toppings", 18.99));
     }
 
@@ -97,6 +98,14 @@ public class DataStore implements IMenuItemStore, IUserStore {
 
     public void setMenuItems(List<MenuItem> items) {
         menuItems.setAll(items);
+    }
+
+    public ObservableList<Order> getOrders() {
+        return orders;
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
     }
 
     public void clearData() {
