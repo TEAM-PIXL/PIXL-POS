@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="fxml.waiterconsole.NewOrderScreen"
-            prefHeight="400.0" prefWidth="600.0">
+<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.pixlpos.controllers.waiterconsole.NewOrderScreenController" spacing="20">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
-</AnchorPane>
+    <VBox spacing="20">
+        <ListView fx:id="menuListView" VBox.vgrow="ALWAYS"/>
+        <Button fx:id="goBackButton" text="Go Back" onAction="#onGoBackButtonClick"/>
+    </VBox>
+    <VBox fx:id="rightPane" VBox.vgrow="ALWAYS">
+        <ListView fx:id="orderSummaryListView" VBox.vgrow="ALWAYS"/>
+        <Label fx:id="totalLabel" text="Total: $0.00">
+            <VBox.margin>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </VBox.margin>
+        </Label>
+        <Button fx:id="addOrderButton" text="Add Order" onAction="#onAddOrderButtonClick"/>
+    </VBox>
+</HBox>
