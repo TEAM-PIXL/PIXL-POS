@@ -1,0 +1,31 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+
+<GridPane fx:controller="com.example.pixlpos.controllers.adminconsole.UserManagementController"
+          xmlns:fx="http://javafx.com/fxml" hgap="10" vgap="10">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <ListView fx:id="userListView" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="10"/>
+
+    <TextField fx:id="usernameField" promptText="Username" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <TextField fx:id="passwordField" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    <TextField fx:id="emailField" promptText="Email" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <CheckBox fx:id="waiterCheckBox" text="Waiter" onAction="#onCheckBoxClick" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <CheckBox fx:id="cookCheckBox" text="Cook" onAction="#onCheckBoxClick" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    <CheckBox fx:id="adminCheckBox" text="Administrator" onAction="#onCheckBoxClick" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+    <Button fx:id="addButton" text="Add" onAction="#onAddButtonClick" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+    <Button fx:id="removeButton" text="Remove" onAction="#onRemoveButtonClick" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+    <Button fx:id="editButton" text="Edit" onAction="#onEditButtonClick" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+    <Button fx:id="confirmButton" text="Confirm" onAction="#onConfirmButtonClick" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+
+    <Button fx:id="logoutButton" text="Logout" onAction="#onLogoutButtonClick" GridPane.columnIndex="1" GridPane.rowIndex="10"/>
+    <Button fx:id="goBackButton" text="Go Back" onAction="#onGoBackButtonClick" GridPane.columnIndex="1" GridPane.rowIndex="11"/>
+</GridPane>

@@ -91,4 +91,35 @@ public class UserManagementController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    protected void onGoBackButtonClick() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/admin-console.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
+            Stage stage = (Stage) goBackButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Admin Console");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    protected void onCheckBoxClick() {
+        // Handle the checkbox click
+    }
+
+    private void clearFields() {
+        usernameField.clear();
+        passwordField.clear();
+        emailField.clear();
+        waiterCheckBox.setSelected(false);
+        cookCheckBox.setSelected(false);
+        adminCheckBox.setSelected(false);
+    }
+
+    private void updateUserListView() {
+        // Update the list view with the users
+    }
 }
