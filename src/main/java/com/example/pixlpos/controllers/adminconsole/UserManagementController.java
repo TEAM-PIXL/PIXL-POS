@@ -82,7 +82,7 @@ public class UserManagementController {
     @FXML
     protected void onLogoutButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/login-screen.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             stage.setScene(scene);
@@ -95,7 +95,7 @@ public class UserManagementController {
     @FXML
     protected void onGoBackButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/admin-console.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/adminconsole/admin-console.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) goBackButton.getScene().getWindow();
             stage.setScene(scene);

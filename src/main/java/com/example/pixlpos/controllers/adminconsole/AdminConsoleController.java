@@ -22,7 +22,7 @@ public class AdminConsoleController {
     @FXML
     protected void onManageUsersButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/user-management.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/adminconsole/user-management.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) manageUsersButton.getScene().getWindow();
             stage.setScene(scene);
@@ -35,7 +35,7 @@ public class AdminConsoleController {
     @FXML
     protected void onManageMenuButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/menu-management.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/adminconsole/menu-management.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) manageMenuButton.getScene().getWindow();
             stage.setScene(scene);
@@ -48,7 +48,7 @@ public class AdminConsoleController {
     @FXML
     protected void onLogoutButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/login-screen.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             stage.setScene(scene);

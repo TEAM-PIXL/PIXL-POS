@@ -44,6 +44,8 @@ public class MenuManagementController {
     @FXML
     private ListView<String> menuListView;
 
+    private ObservableList<MenuItem> menuItems;
+
     @FXML
     public void initialize() {
         // Get the menu items from the singleton method
@@ -72,7 +74,7 @@ public class MenuManagementController {
     @FXML
     protected void onLogoutButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/login-screen.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             stage.setScene(scene);
@@ -84,15 +86,28 @@ public class MenuManagementController {
 
     @FXML
     protected void onGoBackButtonClick() {
-        // Return to the admin console landing page
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/adminconsole/admin-console.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
+            Stage stage = (Stage) goBackButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Admin Console");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateMenuListView() {
-        // Update the list view with the menu items
+        menuListView.getItems().clear();
+        for (MenuItem item : menuItems) {
+            menuListView.getItems().add(item.getItemName());
+        }
     }
 
     private void clearFields() {
-        // Clear the text fields
+        itemNameField.clear();
+        descriptionField.clear();
+        priceField.clear();
     }
 
 }
