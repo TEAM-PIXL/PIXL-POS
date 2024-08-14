@@ -2,6 +2,7 @@ package com.example.pixlpos.controllers.adminconsole;
 
 import com.example.pixlpos.POSApplication;
 import com.example.pixlpos.constructs.Users;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -54,29 +55,91 @@ public class UserManagementController {
     @FXML
     private ListView<String> userListView;
 
+    private ObservableList<Users> users;
+    private Users selectedUser = null;
+
     @FXML
     public void initialize() {
-        // Get the users from the singleton
+        users = FXCollections.observableArrayList();
+        updateUserListView();
     }
 
     @FXML
     protected void onAddButtonClick() {
-        // Add the user to the list
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+        String email = emailField.getText();
+        String role = "";
+
+        if (waiterCheckBox.isSelected()) {
+            role = "Waiter";
+        } else if (cookCheckBox.isSelected()) {
+            role = "Cook";
+        } else if (adminCheckBox.isSelected()) {
+            role = "Admin";
+        }
+
+        if (username.isEmpty() || password.isEmpty() || email.isEmpty() || role.isEmpty()) {
+            return;
+        }
+
+        Users user = new Users(username, password, email, role);
+        users.add(user);
+
+        clearFields();
+        updateUserListView();
     }
 
     @FXML
     protected void onRemoveButtonClick() {
-        // Remove the user from the list
+        if (userListView.getSelectionModel().getSelectedItem() != null) {
+            String username = userListView.getSelectionModel().getSelectedItem();
+            Users user = users.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+            if (user != null) {
+                users.remove(user);
+                clearFields();
+                updateUserListView();
+            }
+        }
     }
 
     @FXML
     protected void onEditButtonClick() {
-        // Edit the user in the list
+        if (userListView.getSelectionModel().getSelectedItem() != null) {
+            String username = userListView.getSelectionModel().getSelectedItem();
+            Users user = users.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+            if (user != null) {
+                usernameField.setText(user.getUsername());
+                passwordField.setText(user.getPassword());
+                emailField.setText(user.getEmail());
+                waiterCheckBox.setSelected(user.getRole().equals("Waiter"));
+                cookCheckBox.setSelected(user.getRole().equals("Cook"));
+                adminCheckBox.setSelected(user.getRole().equals("Admin"));
+            }
+        }
+
+        selectedUser = users.stream().filter(u -> u.getUsername().equals(usernameField.getText())).findFirst().orElse(null);
+        updateUserListView();
     }
 
     @FXML
     protected void onConfirmButtonClick() {
-        // Confirm the user in the list
+        if (selectedUser != null) {
+            selectedUser.setUsername(usernameField.getText());
+            selectedUser.setPassword(passwordField.getText());
+            selectedUser.setEmail(emailField.getText());
+            String role = "";
+            if (waiterCheckBox.isSelected()) {
+                role = "Waiter";
+            } else if (cookCheckBox.isSelected()) {
+                role = "Cook";
+            } else if (adminCheckBox.isSelected()) {
+                role = "Admin";
+            }
+            selectedUser.setRole(role);
+            clearFields();
+            updateUserListView();
+        }
     }
 
     @FXML
@@ -107,7 +170,16 @@ public class UserManagementController {
 
     @FXML
     protected void onCheckBoxClick() {
-        // Handle the checkbox click
+        if (waiterCheckBox.isSelected()) {
+            cookCheckBox.setSelected(false);
+            adminCheckBox.setSelected(false);
+        } else if (cookCheckBox.isSelected()) {
+            waiterCheckBox.setSelected(false);
+            adminCheckBox.setSelected(false);
+        } else if (adminCheckBox.isSelected()) {
+            waiterCheckBox.setSelected(false);
+            cookCheckBox.setSelected(false);
+        }
     }
 
     private void clearFields() {
@@ -120,6 +192,7 @@ public class UserManagementController {
     }
 
     private void updateUserListView() {
-        // Update the list view with the users
+        userListView.getItems().clear();
+        users.forEach(user -> userListView.getItems().add(user.getUsername()));
     }
 }
