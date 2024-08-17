@@ -10,6 +10,6 @@
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <Label text="Cook Page - Coming Soon!" />
+    <Button fx:id="docketsButton" text="Orders" onAction="#onDocketsButtonClick"/>
     <Button fx:id="logoutButton" text="Logout" onAction="#onLogoutButtonClick"/>
 </VBox>

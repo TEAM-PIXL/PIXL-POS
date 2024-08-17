@@ -14,9 +14,12 @@ public class CookLandingController {
     private Button logoutButton;
 
     @FXML
+    private Button docketsButton;
+
+    @FXML
     protected void onLogoutButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/login.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/login-screen.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             stage.setScene(scene);
@@ -26,4 +29,16 @@ public class CookLandingController {
         }
     }
 
+    @FXML
+    protected void onDocketsButtonClick() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/cookconsole/dockets.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
+            Stage stage = (Stage) docketsButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Dockets");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
