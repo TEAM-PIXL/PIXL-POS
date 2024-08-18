@@ -64,6 +64,8 @@
         <version>3.1.0</version>
         <executions>
           <execution>
+            <id>windows-executable</id>
+            <phase>package</phase>
             <goals>
               <goal>exec</goal>
             </goals>
@@ -79,6 +81,42 @@
                 <argument>copy</argument>
                 <argument>target\${project.build.finalName}.jar</argument>
                 <argument>target\windows\${project.build.finalName}.exe</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>linux-executable</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>sh</executable>
+              <arguments>
+                <argument>-c</argument>
+                <argument>echo Building Linux Executable</argument>
+                <argument>&amp;&amp;</argument>
+                <argument>mkdir -p target/linux</argument>
+                <argument>&amp;&amp;</argument>
+                <argument>cp target/${project.build.finalName}.jar target/linux/${project.build.finalName}.sh</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>mac-executable</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>sh</executable>
+              <arguments>
+                <argument>-c</argument>
+                <argument>echo Building Mac Executable</argument>
+                <argument>&amp;&amp;</argument>
+                <argument>mkdir -p target/mac</argument>
+                <argument>&amp;&amp;</argument>
+                <argument>cp target/${project.build.finalName}.jar target/mac/${project.build.finalName}.app</argument>
               </arguments>
             </configuration>
           </execution>
