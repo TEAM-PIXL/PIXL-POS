@@ -36,7 +36,6 @@ public class LoginScreenController {
     protected void onLoginButtonClick() {
         String username = usernameField.getText();
         String password = passwordField.getText();
-        // Ensure admin credentials work regardless of what is in DataStore
         if ("admin".equals(username) && "admin".equals(password)) {
             loadScene("/fxml/adminconsole/admin-console.fxml", "Admin Console");
             return;

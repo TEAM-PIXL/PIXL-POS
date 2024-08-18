@@ -24,7 +24,6 @@ public class WaiterLandingController {
 
     @FXML
     public void initialize() {
-        // Initialization logic if needed
     }
 
     @FXML
