@@ -32,7 +32,7 @@ public class CookLandingController {
     @FXML
     protected void onDocketsButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/cookconsole/dockets.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("/fxml/cookconsole/dockets-screen.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), POSApplication.WIDTH, POSApplication.HEIGHT);
             Stage stage = (Stage) docketsButton.getScene().getWindow();
             stage.setScene(scene);
