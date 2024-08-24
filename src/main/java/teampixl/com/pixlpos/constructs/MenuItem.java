@@ -3,60 +3,68 @@ package teampixl.com.pixlpos.constructs;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import teampixl.com.pixlpos.database.MetadataWrapper;
 
-    public class MenuItem implements Item {
+public class MenuItem {
 
-        // Enum for item type
-
-        public enum ItemType {
-            ENTRE,
-            MAIN,
-            DESSERT,
-            DRINKS,
-            EXTRAS;
-        }
-
-        private final Map<String, Object> metadata;
-        private final Map<String, Object> data;
-
-        // Constructor for MenuItem
-        public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description) {
-            this.metadata = new HashMap<>();
-            this.data = new HashMap<>();
-
-            // Populate metadata
-            metadata.put("id", UUID.randomUUID().toString());
-            metadata.put("itemName", itemName);
-            metadata.put("price", Math.round(price * 100.0) / 100.0);
-            metadata.put("itemType", itemType);
-            metadata.put("activeItem", activeItem);
-
-            // Populate data
-            data.put("description", description);
-            data.put("notes", null); // Initially null
-            data.put("amountOrdered", 0); // Default value
-        }
-
-        // Getters for metadata and data
-        public Map<String, Object> getMetadata() {
-            return metadata;
-        }
-
-        public Map<String, Object> getData() {
-            return data;
-        }
-
-        // Setters for metadata and data
-        public void setMetadataValue(String key, Object value) {
-            metadata.put(key, value);
-        }
-
-        public void setDataValue(String key, Object value) {
-            data.put(key, value);
-        }
-
-        @Override
-        public String toString() {
-            return String.format("MenuItem{Metadata: %s, Data: %s}", metadata, data);
-        }
+    public enum ItemType {
+        ENTREE,
+        MAIN,
+        DESSERT,
+        DRINK;
     }
+
+    public enum DietaryRequirement {
+        VEGAN,
+        VEGETARIAN,
+        GLUTEN_FREE,
+        SPICY,
+        ALLERGEN_FREE;
+    }
+
+    private final MetadataWrapper metadata;
+    private final Map<String, Object> data;
+
+    public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description) {
+        Map<String, Object> metadataMap = new HashMap<>();
+
+        // Initialize metadata
+        metadataMap.put("id", UUID.randomUUID().toString());
+        metadataMap.put("itemName", itemName);
+        metadataMap.put("price", Math.round(price * 100.0) / 100.0);
+        metadataMap.put("itemType", itemType);
+        metadataMap.put("activeItem", activeItem);
+        metadataMap.put("dietaryRequirement", null);  // Default to null
+
+        this.metadata = new MetadataWrapper(metadataMap);
+
+        // Initialize data
+        this.data = new HashMap<>();
+        data.put("description", description);
+        data.put("notes", null);  // Default to null
+        data.put("amountOrdered", 0);  // Default value is 0
+    }
+
+    // Getters for Metadata and Data
+    public MetadataWrapper getMetadata() {
+        return metadata;
+    }
+
+    public Map<String, Object> getData() {
+        return data;
+    }
+
+    // Setters for specific fields
+    public void setMetadataValue(String key, Object value) {
+        metadata.metadata().put(key, value);
+    }
+
+    public void setDataValue(String key, Object value) {
+        data.put(key, value);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("MenuItem{Metadata: %s, Data: %s}", metadata, data);
+    }
+}
