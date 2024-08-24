@@ -33,4 +33,5 @@ jobs:
       - name: Revert to Last Successful Commit
         run: |
           git reset --hard ${{ env.last_good_commit }}
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
           git push --force
