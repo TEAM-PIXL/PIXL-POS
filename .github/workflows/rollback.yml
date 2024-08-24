@@ -11,7 +11,7 @@ on:
 jobs:
   rollback:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'failure' }}
 
     steps:
       - name: Checkout code
@@ -27,4 +27,3 @@ jobs:
         run: |
           git reset --hard ${{ env.last_good_commit }}
           git push --force
-
