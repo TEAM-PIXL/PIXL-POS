@@ -57,8 +57,16 @@ class UsersTest {
 
     @Test
     void testToString() {
-        String expected = "Users{Metadata: " + user.getMetadata().toString() +
-                ", Data: {email=john@example.com, password=password123, username=john_doe}}";
-        assertEquals(expected, user.toString());
+        // Build the expected string based on TreeMap's natural ordering of keys
+        String expected = "Users{Metadata: {creationDate=" + user.getMetadata().metadata().get("creationDate") +
+                ", creationTime=" + user.getMetadata().metadata().get("creationTime") +
+                ", id=" + user.getMetadata().metadata().get("id") +
+                ", isActive=false, role=ADMIN, username=john_doe}, Data: {email=john@example.com, password=password123, username=john_doe}}";
+
+        // Generate the actual output from the toString() method
+        String actual = user.toString();
+
+        // Assert that the expected output matches the actual output
+        assertEquals(expected, actual);
     }
 }
