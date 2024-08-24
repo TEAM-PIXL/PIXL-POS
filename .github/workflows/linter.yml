@@ -33,7 +33,7 @@ jobs:
 
       - name: Run Checkstyle and save output
         run: |
-          java -jar /usr/local/bin/checkstyle.jar -c /google_checks.xml src/ > checkstyle-result.txt || true
+          java -jar /usr/local/bin/checkstyle.jar -c /google_checks.xml src/ > checkstyle-result.txt 2>&1 || true
         continue-on-error: true
 
       - name: Parse Checkstyle output for warnings and errors
@@ -43,12 +43,12 @@ jobs:
           warnings=$(grep -o -E "warning|WARN" checkstyle-result.txt | wc -l)
           echo "Warnings: $warnings"
           echo "Errors: $errors"
-          echo "::set-output name=warnings::$warnings"
-          echo "::set-output name=errors::$errors"
+          echo "warnings=$warnings" >> $GITHUB_ENV
+          echo "errors=$errors" >> $GITHUB_ENV
 
       - name: Fail if too many warnings or any errors
         run: |
-          if [ ${{ steps.parse_checkstyle.outputs.errors }} -gt 0 ] || [ ${{ steps.parse_checkstyle.outputs.warnings }} -gt 10 ]; then
+          if [ ${{ env.errors }} -gt 0 ] || [ ${{ env.warnings }} -gt 10 ]; then
             echo "Too many warnings or errors found. Failing the job."
             exit 1
           fi
