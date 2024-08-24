@@ -4,13 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
 public class Order {
 
     // Enum for Order Status
-
     public enum OrderStatus {
         SENT,
         RECEIVED,
@@ -99,15 +99,22 @@ public class Order {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Order{Metadata: ").append(metadata).append(", Data: ");
+        // Use TreeMap to ensure keys are sorted in the output
+        Map<String, Object> sortedMetadata = new TreeMap<>(metadata.metadata()); // Access metadata directly
+        Map<String, Object> sortedData = new TreeMap<>(data);
 
-        Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) data.get("items");
-        sb.append("Items:\n");
-        for (Map.Entry<MetadataWrapper, Integer> entry : items.entrySet()) {
-            sb.append(entry.getKey()).append(" x").append(entry.getValue()).append("\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Order{Metadata: ").append(sortedMetadata).append(", Data: Items:\n");
+
+        // Access the items and sort them
+        Map<MetadataWrapper, Integer> sortedItems = new TreeMap<>((Map<MetadataWrapper, Integer>) sortedData.get("items"));
+
+        for (Map.Entry<MetadataWrapper, Integer> entry : sortedItems.entrySet()) {
+            // Print out the metadata of each MenuItem
+            sb.append(new TreeMap<>(entry.getKey().metadata())).append(" x").append(entry.getValue()).append("\n");
         }
-        sb.append("Total: $").append(String.format("%.2f", data.get("total"))).append("}");
+
+        sb.append("Total: $").append(String.format("%.2f", sortedData.get("total"))).append("}");
 
         return sb.toString();
     }
