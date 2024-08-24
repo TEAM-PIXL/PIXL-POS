@@ -3,10 +3,24 @@ package teampixl.com.pixlpos.database;
 import java.util.Map;
 import java.util.Objects;
 
-public record MetadataWrapper(Map<String, Object> metadata) {
+public record MetadataWrapper(Map<String, Object> metadata) implements Comparable<MetadataWrapper> {
+
     public MetadataWrapper {
-        // Ensure the map is immutable and non-null values
-        metadata = Map.copyOf(Objects.requireNonNull(metadata, "metadata map cannot be null"));
+        // Ensure the map is immutable and unmodifiable
+        metadata = Map.copyOf(metadata);
+    }
+
+    @Override
+    public int compareTo(MetadataWrapper other) {
+        // Compare based on a unique identifier, such as the id field
+        String thisId = (String) this.metadata.get("id");
+        String otherId = (String) other.metadata.get("id");
+
+        if (thisId == null || otherId == null) {
+            throw new IllegalStateException("Metadata id cannot be null");
+        }
+
+        return thisId.compareTo(otherId);
     }
 
     @Override
