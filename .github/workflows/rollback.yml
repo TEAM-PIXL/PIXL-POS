@@ -1,9 +1,6 @@
 name: Rollback on Failure
 
 on:
-  push:
-    branches:
-      - "development"
   workflow_run:
     workflows: ["Java Linter"]
     types:
