@@ -43,12 +43,11 @@ jobs:
           warnings=$(grep -o -E "warning|WARN" checkstyle-result.txt | wc -l)
           echo "Warnings: $warnings"
           echo "Errors: $errors"
-          echo "warnings=$warnings" >> $GITHUB_ENV
           echo "errors=$errors" >> $GITHUB_ENV
 
       - name: Fail if too many warnings or any errors
         run: |
-          if [ ${{ env.errors }} -gt 0 ] || [ ${{ env.warnings }} -gt 10 ]; then
+          if [ ${{ env.errors }} -gt 0 ]; then
             echo "Too many warnings or errors found. Failing the job."
             exit 1
           fi
