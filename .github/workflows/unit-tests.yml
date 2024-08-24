@@ -1,26 +1,26 @@
-name: Unit Tests
+name: Run Unit Tests
 
 on:
   push:
     branches:
-      - 'development'
-      - 'quality'
-      - 'production'
+      - development
+      - quality
+      - production
   pull_request:
     branches:
-      - 'development'
-      - 'quality'
-      - 'production'
+      - development
+      - quality
+      - production
 
 jobs:
-  Test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21 (Amazon Corretto)
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'corretto'
@@ -34,24 +34,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Clean and Build
-        run: mvn clean compile test-compile
+      - name: Build and run tests
+        run: mvn clean test
 
-      - name: Run Unit Tests
-        run: mvn test
-
-      - name: Check Java Version
-        run: java -version
-
-      - name: List Test Source Files
-        run: ls -R src/test/java/
-
-      - name: List Compiled Test Classes
-        run: ls -R target/test-classes/
-
-      - name: Publish Test Results
+      - name: Archive test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: target/surefire-reports/
+          name: junit-results
+          path: target/surefire-reports
