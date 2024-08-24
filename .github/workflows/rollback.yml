@@ -30,6 +30,11 @@ jobs:
           echo "Last good commit: $last_good_commit"
           echo "last_good_commit=$last_good_commit" >> $GITHUB_ENV
 
+      - name: Configure Git User
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Revert to Last Successful Commit (excluding workflow files)
         run: |
           git reset --hard ${{ env.last_good_commit }}
