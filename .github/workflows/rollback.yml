@@ -6,6 +6,8 @@ on:
     types:
       - completed
 
+  workflow_dispatch:
+
 jobs:
   rollback:
     runs-on: ubuntu-latest
@@ -25,3 +27,4 @@ jobs:
         run: |
           git reset --hard ${{ env.last_good_commit }}
           git push --force
+
