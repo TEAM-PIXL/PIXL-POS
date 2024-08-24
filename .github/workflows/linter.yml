@@ -59,9 +59,12 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@users.noreply.github.com"
           git tag -a "pipeline_passed_${{ github.sha }}" -m "Pipeline passed"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin "pipeline_passed_${{ github.sha }}"
 
       - name: Trigger Rollback on Failure
         if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh workflow run rollback.yml --ref ${{ github.ref_name }}
