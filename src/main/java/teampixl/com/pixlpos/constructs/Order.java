@@ -99,15 +99,21 @@ public class Order {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Order{Metadata: ").append(new TreeMap<>(metadata.metadata())).append(", Data: ");
+        // Use TreeMap to ensure keys are sorted in the output
+        Map<String, Object> sortedMetadata = new TreeMap<>(metadata.metadata());
+        Map<String, Object> sortedData = new TreeMap<>(data);
 
-        Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) data.get("items");
-        sb.append("Items:\n");
-        for (Map.Entry<MetadataWrapper, Integer> entry : new TreeMap<>(items).entrySet()) {
+        // Sort the items map as well
+        Map<MetadataWrapper, Integer> sortedItems = new TreeMap<>((Map<MetadataWrapper, Integer>) sortedData.get("items"));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Order{Metadata: ").append(sortedMetadata).append(", Data: Items:\n");
+
+        for (Map.Entry<MetadataWrapper, Integer> entry : sortedItems.entrySet()) {
             sb.append(entry.getKey()).append(" x").append(entry.getValue()).append("\n");
         }
-        sb.append("Total: $").append(String.format("%.2f", data.get("total"))).append("}");
+
+        sb.append("Total: $").append(String.format("%.2f", sortedData.get("total"))).append("}");
 
         return sb.toString();
     }
