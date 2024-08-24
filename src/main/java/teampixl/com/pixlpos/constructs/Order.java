@@ -17,44 +17,49 @@ public class Order {
         NOT_STARTED,
         ON_THE_WAY,
         NEARLY_DONE,
-        COMPLETED;
+        COMPLETED
     }
 
-    private final Map<String, Object> metadata;
+    private MetadataWrapper metadata;  // MetadataWrapper should encapsulate the metadata map
     private final Map<String, Object> data;
 
     public Order(int orderNumber) {
-        this.metadata = new HashMap<>();
-        this.data = new HashMap<>();
+        Map<String, Object> metadataMap = new HashMap<>();
 
         // Initialize metadata
-        metadata.put("orderId", UUID.randomUUID());
-        metadata.put("orderTime", LocalTime.now());
-        metadata.put("orderDate", LocalDate.now());
-        metadata.put("orderNumber", orderNumber > 0 ? orderNumber : 1);
-        metadata.put("orderStatus", OrderStatus.NOT_STARTED);
-        metadata.put("isCompleted", false);
+        metadataMap.put("orderId", UUID.randomUUID());
+        metadataMap.put("orderTime", LocalTime.now());
+        metadataMap.put("orderDate", LocalDate.now());
+        metadataMap.put("orderNumber", orderNumber > 0 ? orderNumber : 1);
+        metadataMap.put("orderStatus", OrderStatus.NOT_STARTED);
+        metadataMap.put("isCompleted", false);
+
+        this.metadata = new MetadataWrapper(metadataMap);  // Correctly wrapping the map in MetadataWrapper
 
         // Initialize data
-        data.put("items", new HashMap<MetadataWrapper, Integer>());
+        this.data = new HashMap<>();
+        data.put("items", new HashMap<MetadataWrapper, Integer>());  // Ensure the items map is correctly initialized
         data.put("total", 0.0);
     }
 
-    // Getters for Metadata and Data
-    public Map<String, Object> getMetadata() {
+    // Getter for Metadata
+    public MetadataWrapper getMetadata() {
         return metadata;
     }
 
+    // Getter for Data
     public Map<String, Object> getData() {
         return data;
     }
 
     // Update order status
-    public void setOrderStatus(OrderStatus orderStatus) {
-        metadata.put("orderStatus", orderStatus);
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
+        modifiableMetadata.put("orderStatus", orderStatus);
         if (orderStatus == OrderStatus.COMPLETED) {
-            metadata.put("isCompleted", true);
+            modifiableMetadata.put("isCompleted", true);
         }
+        this.metadata = new MetadataWrapper(modifiableMetadata);  // Properly wrap the updated map
     }
 
     // Add an item to the order
@@ -63,11 +68,11 @@ public class Order {
             quantity = 1;
         }
 
-        MetadataWrapper metadataWrapper = new MetadataWrapper(menuItem.getMetadata().metadata());
+        MetadataWrapper itemMetadata = menuItem.getMetadata();
         Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) data.get("items");
-        items.put(metadataWrapper, items.getOrDefault(metadataWrapper, 0) + quantity);
+        items.put(itemMetadata, items.getOrDefault(itemMetadata, 0) + quantity);
 
-        double price = (double) menuItem.getMetadata().metadata().get("price");
+        double price = (double) itemMetadata.metadata().get("price");
         double total = (double) data.get("total");
         total += price * quantity;
         data.put("total", Math.max(total, 0));  // Ensure total is non-negative
@@ -75,17 +80,17 @@ public class Order {
 
     // Remove an item from the order
     public void removeItem(MenuItem menuItem, int quantity) {
-        MetadataWrapper metadataWrapper = new MetadataWrapper(menuItem.getMetadata().metadata());
+        MetadataWrapper itemMetadata = menuItem.getMetadata();
         Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) data.get("items");
-        if (items.containsKey(metadataWrapper)) {
-            int currentQuantity = items.get(metadataWrapper);
+        if (items.containsKey(itemMetadata)) {
+            int currentQuantity = items.get(itemMetadata);
             if (currentQuantity > quantity) {
-                items.put(metadataWrapper, currentQuantity - quantity);
+                items.put(itemMetadata, currentQuantity - quantity);
             } else {
-                items.remove(metadataWrapper);
+                items.remove(itemMetadata);
             }
 
-            double price = (double) menuItem.getMetadata().metadata().get("price");
+            double price = (double) itemMetadata.metadata().get("price");
             double total = (double) data.get("total");
             total -= price * quantity;
             data.put("total", Math.max(total, 0));  // Ensure total is non-negative
@@ -107,4 +112,3 @@ public class Order {
         return sb.toString();
     }
 }
-

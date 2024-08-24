@@ -11,7 +11,7 @@ public class MenuItem {
         ENTREE,
         MAIN,
         DESSERT,
-        DRINK;
+        DRINK
     }
 
     public enum DietaryRequirement {
@@ -19,10 +19,9 @@ public class MenuItem {
         VEGETARIAN,
         GLUTEN_FREE,
         SPICY,
-        ALLERGEN_FREE;
+        ALLERGEN_FREE
     }
-
-    private final MetadataWrapper metadata;
+    private MetadataWrapper metadata;
     private final Map<String, Object> data;
 
     public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description) {
@@ -54,11 +53,14 @@ public class MenuItem {
         return data;
     }
 
-    // Setters for specific fields
-    public void setMetadataValue(String key, Object value) {
-        metadata.metadata().put(key, value);
+    // Methods to safely update Metadata
+    public void updateMetadata(String key, Object value) {
+        Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
+        modifiableMetadata.put(key, value);
+        this.metadata = new MetadataWrapper(modifiableMetadata);
     }
 
+    // Setters for specific fields in data
     public void setDataValue(String key, Object value) {
         data.put(key, value);
     }
