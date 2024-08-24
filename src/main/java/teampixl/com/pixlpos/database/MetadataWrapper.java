@@ -10,9 +10,13 @@ public record MetadataWrapper(Map<String, Object> metadata) implements Comparabl
         metadata = Map.copyOf(metadata);
     }
 
+    // Provide a public method to access the metadata
+    public Map<String, Object> getMetadata() {
+        return metadata;
+    }
+
     @Override
     public int compareTo(MetadataWrapper other) {
-        // Compare based on a unique identifier, such as the id field
         String thisId = (String) this.metadata.get("id");
         String otherId = (String) other.metadata.get("id");
 
@@ -41,3 +45,4 @@ public record MetadataWrapper(Map<String, Object> metadata) implements Comparabl
         return metadata.toString();
     }
 }
+
