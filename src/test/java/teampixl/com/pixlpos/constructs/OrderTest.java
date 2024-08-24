@@ -90,19 +90,18 @@ class OrderTest {
 
     @Test
     void testToString() {
-        // Build the expected string based on TreeMap's natural ordering of keys
+        // The expected output should use the same order as the actual TreeMap ordering
         String expected = "Order{Metadata: {isCompleted=false, orderDate=" + order.getMetadata().metadata().get("orderDate") +
                 ", orderId=" + order.getMetadata().metadata().get("orderId") +
                 ", orderNumber=1, orderStatus=NOT_STARTED, orderTime=" + order.getMetadata().metadata().get("orderTime") +
                 "}, Data: Items:\n" +
-                burger.getMetadata() + " x2\nTotal: $11.98}";
+                "{activeItem=true, id=" + burger.getMetadata().metadata().get("id") +
+                ", itemName=Burger, itemType=MAIN, price=5.99} x2\nTotal: $11.98}";
 
+        // Generate the actual output from the toString() method
         String actual = order.toString();
 
-        // Print out the actual string for comparison
-        System.out.println("Expected: " + expected);
-        System.out.println("Actual:   " + actual);
-
+        // Assert that the expected output matches the actual output
         assertEquals(expected, actual);
     }
 }

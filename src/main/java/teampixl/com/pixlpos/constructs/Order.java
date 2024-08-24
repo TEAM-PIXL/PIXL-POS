@@ -100,17 +100,18 @@ public class Order {
     @Override
     public String toString() {
         // Use TreeMap to ensure keys are sorted in the output
-        Map<String, Object> sortedMetadata = new TreeMap<>(metadata.metadata());
+        Map<String, Object> sortedMetadata = new TreeMap<>(metadata.metadata()); // Access metadata directly
         Map<String, Object> sortedData = new TreeMap<>(data);
-
-        // Sort the items map as well
-        Map<MetadataWrapper, Integer> sortedItems = new TreeMap<>((Map<MetadataWrapper, Integer>) sortedData.get("items"));
 
         StringBuilder sb = new StringBuilder();
         sb.append("Order{Metadata: ").append(sortedMetadata).append(", Data: Items:\n");
 
+        // Access the items and sort them
+        Map<MetadataWrapper, Integer> sortedItems = new TreeMap<>((Map<MetadataWrapper, Integer>) sortedData.get("items"));
+
         for (Map.Entry<MetadataWrapper, Integer> entry : sortedItems.entrySet()) {
-            sb.append(entry.getKey()).append(" x").append(entry.getValue()).append("\n");
+            // Print out the metadata of each MenuItem
+            sb.append(new TreeMap<>(entry.getKey().metadata())).append(" x").append(entry.getValue()).append("\n");
         }
 
         sb.append("Total: $").append(String.format("%.2f", sortedData.get("total"))).append("}");
