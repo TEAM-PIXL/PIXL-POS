@@ -14,13 +14,19 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'failure' }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout code with tags
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Find Last Successful Commit
         id: find_commit
         run: |
           last_good_commit=$(git log --tags='pipeline_passed_*' --format=format:"%H" -n 1)
+          if [ -z "$last_good_commit" ]; then
+            echo "No previous successful commit found."
+            exit 1
+          fi
           echo "Last good commit: $last_good_commit"
           echo "last_good_commit=$last_good_commit" >> $GITHUB_ENV
 
