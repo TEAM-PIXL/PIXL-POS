@@ -1,0 +1,2 @@
+module PIXL.POS {
+}
