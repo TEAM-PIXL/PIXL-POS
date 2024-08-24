@@ -52,3 +52,16 @@ jobs:
             echo "Too many warnings or errors found. Failing the job."
             exit 1
           fi
+
+      - name: Tag Successful Commit
+        if: success()
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git tag -a "pipeline_passed_${{ github.sha }}" -m "Pipeline passed"
+          git push origin "pipeline_passed_${{ github.sha }}"
+
+      - name: Trigger Rollback on Failure
+        if: failure()
+        run: |
+          gh workflow run rollback.yml --ref ${{ github.ref_name }}
