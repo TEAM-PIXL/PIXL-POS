@@ -1,40 +1,62 @@
 package teampixl.com.pixlpos.constructs;
 
-public class MenuItem {
-    private String itemName;
-    private String description;
-    private double price;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-    public MenuItem(String itemName, String description, double price) {
-        this.itemName = itemName;
-        this.description = description;
-        setPrice(price);
-    }
+    public class MenuItem implements Item {
 
-    public String getItemName() {
-        return itemName;
-    }
+        // Enum for item type
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        if (price < 0) {
-            price = 0;
+        public enum ItemType {
+            ENTRE,
+            MAIN,
+            DESSERT,
+            DRINKS,
+            EXTRAS;
         }
-        this.price = price;
+
+        private final Map<String, Object> metadata;
+        private final Map<String, Object> data;
+
+        // Constructor for MenuItem
+        public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description) {
+            this.metadata = new HashMap<>();
+            this.data = new HashMap<>();
+
+            // Populate metadata
+            metadata.put("id", UUID.randomUUID().toString());
+            metadata.put("itemName", itemName);
+            metadata.put("price", Math.round(price * 100.0) / 100.0);
+            metadata.put("itemType", itemType);
+            metadata.put("activeItem", activeItem);
+
+            // Populate data
+            data.put("description", description);
+            data.put("notes", null); // Initially null
+            data.put("amountOrdered", 0); // Default value
+        }
+
+        // Getters for metadata and data
+        public Map<String, Object> getMetadata() {
+            return metadata;
+        }
+
+        public Map<String, Object> getData() {
+            return data;
+        }
+
+        // Setters for metadata and data
+        public void setMetadataValue(String key, Object value) {
+            metadata.put(key, value);
+        }
+
+        public void setDataValue(String key, Object value) {
+            data.put(key, value);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("MenuItem{Metadata: %s, Data: %s}", metadata, data);
+        }
     }
-}
