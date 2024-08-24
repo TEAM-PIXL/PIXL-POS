@@ -3,16 +3,37 @@ package teampixl.com.pixlpos.database;
 import java.util.Map;
 import java.util.Objects;
 
-public record MetadataWrapper(Map<String, Object> metadata) implements Comparable<MetadataWrapper> {
+public class MetadataWrapper<T> implements Comparable<MetadataWrapper<T>> {
 
-    public MetadataWrapper {
+    private final Map<String, Object> metadata;
+
+    public MetadataWrapper(Map<String, Object> metadata) {
         // Ensure the map is immutable and unmodifiable
-        metadata = Map.copyOf(metadata);
+        this.metadata = Map.copyOf(metadata);
+    }
+
+    public Object getMetadataField(String key) {
+        return metadata.get(key);
+    }
+
+    public String getStringField(String key) {
+        return (String) metadata.get(key);
+    }
+
+    public Double getDoubleField(String key) {
+        return (Double) metadata.get(key);
+    }
+
+    public Integer getIntField(String key) {
+        return (Integer) metadata.get(key);
+    }
+
+    public T getField(String key, Class<T> clazz) {
+        return clazz.cast(metadata.get(key));
     }
 
     @Override
-    public int compareTo(MetadataWrapper other) {
-        // Compare based on a unique identifier, such as the id field
+    public int compareTo(MetadataWrapper<T> other) {
         String thisId = (String) this.metadata.get("id");
         String otherId = (String) other.metadata.get("id");
 
@@ -27,7 +48,7 @@ public record MetadataWrapper(Map<String, Object> metadata) implements Comparabl
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MetadataWrapper that = (MetadataWrapper) o;
+        MetadataWrapper<?> that = (MetadataWrapper<?>) o;
         return Objects.equals(metadata, that.metadata);
     }
 
