@@ -34,11 +34,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Run Unit Tests
+        run: |
+          mvn test
+
       - name: Check Java Version
         run: java -version
 
+      - name: List Test Source Files
+        run: ls -R src/test/java/
+
       - name: List Compiled Test Classes
         run: ls -R target/test-classes/
+
+      - name: Clean Build
+        run: mvn clean
+
+      - name: Force Recompile
+        run: mvn clean compile test-compile test
 
       - name: Run Unit Tests
         run: |
