@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          mvn test
+          mvn -X test
 
       - name: Publish Test Results
         if: always()
