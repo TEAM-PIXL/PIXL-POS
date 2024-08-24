@@ -34,6 +34,7 @@ jobs:
       - name: Run Checkstyle and save output
         run: |
           java -jar /usr/local/bin/checkstyle.jar -c /google_checks.xml src/ > checkstyle-result.txt
+        continue-on-error: true
 
       - name: Count warnings and errors
         id: checkstyle
