@@ -34,9 +34,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Check Java Version
+        run: java -version
+
+      - name: List Compiled Test Classes
+        run: ls -R target/test-classes/
+
       - name: Run Unit Tests
         run: |
-          mvn -X test
+          mvn test
 
       - name: Publish Test Results
         if: always()
@@ -44,3 +50,7 @@ jobs:
         with:
           name: test-results
           path: target/surefire-reports/
+
+      - name: Manual Test Execution
+        run: |
+          find target/test-classes -name '*Test.class' -exec java org.junit.platform.console.ConsoleLauncher -cp target/classes:target/test-classes -c {} \;
