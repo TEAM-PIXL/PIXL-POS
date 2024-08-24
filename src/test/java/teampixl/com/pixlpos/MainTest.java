@@ -1,7 +1,12 @@
 package teampixl.com.pixlpos;
 
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MainTest {
+
+    @Test
+    public void testMain() {
+        assertEquals(1, 1);
     }
 }
