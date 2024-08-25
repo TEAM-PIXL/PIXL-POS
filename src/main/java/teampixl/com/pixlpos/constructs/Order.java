@@ -7,6 +7,13 @@ import teampixl.com.pixlpos.database.MetadataWrapper;
 
 public class Order {
 
+    /*============================================================================================================================================================
+    Code Description:
+    - Enumerations for OrderStatus
+    - MetadataWrapper object for metadata
+    - Map object for data
+    ============================================================================================================================================================*/
+
     public enum OrderStatus {
         PENDING,
         IN_PROGRESS,
@@ -17,7 +24,26 @@ public class Order {
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
 
-    // Constructor
+    /*============================================================================================================================================================
+    Code Description:
+    - Constructor for Order object.
+
+    Metadata:
+        - order_id: UUID
+        - order_number: orderNumber
+        - user_id: userId
+        - order_status: OrderStatus.PENDING
+        - is_completed: false
+        - created_at: timestamp for creation
+        - updated_at: timestamp for last update
+
+    Data:
+        - menuItems: Map<String, Integer>
+        - total: 0.0
+        - special_requests: null
+        - payment_details: null
+    ============================================================================================================================================================*/
+
     public Order(int orderNumber, String userId) {
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("order_id", UUID.randomUUID().toString());
@@ -37,7 +63,19 @@ public class Order {
         this.data.put("payment_details", null);
     }
 
-    // Method to add MenuItem to the Order
+    /*============================================================================================================================================================
+    Code Description:
+    - Handles internal logic for CRUD operations on Order object.
+
+    Methods:
+        - addMenuItem(MenuItem item, int quantity)
+        - removeMenuItem(MenuItem item, int quantity)
+        - updateTotal(MenuItem item, int quantity)
+        - updateOrderStatus(OrderStatus newStatus)
+        - completeOrder()
+        - updateTimestamp()
+    ============================================================================================================================================================*/
+
     public void addMenuItem(MenuItem item, int quantity) {
         Object menuItemsObj = data.get("menuItems");
 
@@ -59,7 +97,6 @@ public class Order {
         }
     }
 
-    // Method to remove MenuItem from the Order
     public void removeMenuItem(MenuItem item, int quantity) {
         Object menuItemsObj = data.get("menuItems");
 
@@ -84,14 +121,12 @@ public class Order {
         }
     }
 
-    // Method to update the total cost of the Order
     private void updateTotal(MenuItem item, int quantity) {
         double currentTotal = (double) data.get("total");
         double itemPrice = (double) item.getMetadata().metadata().get("price");
         data.put("total", currentTotal + (itemPrice * quantity));
     }
 
-    // Method to update the order status
     public void updateOrderStatus(OrderStatus newStatus) {
         updateMetadata("order_status", newStatus);
         if (newStatus == OrderStatus.COMPLETED) {
@@ -99,17 +134,25 @@ public class Order {
         }
     }
 
-    // Method to complete the order
     public void completeOrder() {
         updateOrderStatus(OrderStatus.COMPLETED);
     }
 
-    // Method to update the timestamp
     private void updateTimestamp() {
         updateMetadata("updated_at", System.currentTimeMillis());
     }
 
-    // Method to update metadata
+    /*============================================================================================================================================================
+    Code Description:
+    - Method to get metadata, data, update metadata and set data value.
+
+    Methods:
+        - getMetadata(): returns metadata
+        - getData(): returns data
+        - updateMetadata(String key, Object value): updates metadata
+        - setDataValue(String key, Object value): sets data value
+    ============================================================================================================================================================*/
+
     public void updateMetadata(String key, Object value) {
         Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
         if (value != null) {
@@ -120,12 +163,10 @@ public class Order {
         this.metadata = new MetadataWrapper(modifiableMetadata);
     }
 
-    // Method to update data value
     public void setDataValue(String key, Object value) {
         data.put(key, value);
     }
 
-    // Getters
     public MetadataWrapper getMetadata() {
         return metadata;
     }

@@ -13,6 +13,7 @@ public class MenuItem {
     - MetadataWrapper object for metadata
     - Map object for data
     ============================================================================================================================================================*/
+
     public enum ItemType {
         ENTREE,
         MAIN,
@@ -52,6 +53,7 @@ public class MenuItem {
         - amountOrdered: 0
         - ingredients: null
     ============================================================================================================================================================*/
+
     public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description, DietaryRequirement dietaryRequirement) {
         if (itemName == null || itemName.isEmpty()) {
             throw new IllegalArgumentException("itemName cannot be null or empty");
@@ -101,6 +103,7 @@ public class MenuItem {
     - setDataValue(String key, Object value): sets data value
     - toString(): returns string representation of MenuItem object
     ============================================================================================================================================================*/
+
     public MetadataWrapper getMetadata() {
         return metadata;
     }
