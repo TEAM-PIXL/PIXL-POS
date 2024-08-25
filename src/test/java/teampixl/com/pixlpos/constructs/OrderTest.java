@@ -2,107 +2,60 @@ package teampixl.com.pixlpos.constructs;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import teampixl.com.pixlpos.database.MetadataWrapper;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
 
     private Order order;
-    private MenuItem burger;
-    private MenuItem fries;
+    private MenuItem pizza;
+    private MenuItem salad;
 
     @BeforeEach
     void setUp() {
-        // Create a new order with orderNumber 1
-        order = new Order(1);
+        pizza = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "Cheesy pizza with toppings", MenuItem.DietaryRequirement.VEGETARIAN);
+        salad = new MenuItem("Salad", 7.99, MenuItem.ItemType.ENTREE, true, "Fresh salad with vinaigrette", MenuItem.DietaryRequirement.VEGAN);
 
-        // Create menu items to add to the order
-        burger = new MenuItem("Burger", 5.99, MenuItem.ItemType.MAIN, true, "A delicious beef burger");
-        fries = new MenuItem("Fries", 2.99, MenuItem.ItemType.ENTREE, true, "Crispy fries");
-
-        // Add 2 burgers to the order
-        order.addItem(burger, 2);
+        order = new Order(1, "user123");
+        order.addMenuItem(pizza, 2);
+        order.addMenuItem(salad, 1);
     }
 
     @Test
-    void testInitialMetadata() {
-        MetadataWrapper metadata = order.getMetadata();
-        assertNotNull(metadata.metadata().get("orderId"));
-        assertNotNull(metadata.metadata().get("orderTime"));
-        assertNotNull(metadata.metadata().get("orderDate"));
-        assertEquals(1, metadata.metadata().get("orderNumber"));
-        assertEquals(Order.OrderStatus.NOT_STARTED, metadata.metadata().get("orderStatus"));
-        assertFalse((Boolean) metadata.metadata().get("isCompleted"));
+    void testOrderCreation() {
+        assertNotNull(order.getMetadata().metadata().get("order_id"));
+        assertEquals(1, order.getMetadata().metadata().get("order_number"));
+        assertEquals("user123", order.getMetadata().metadata().get("user_id"));
+        assertEquals(Order.OrderStatus.PENDING, order.getMetadata().metadata().get("order_status"));
     }
 
     @Test
-    void testAddItem() {
-        // Add 1 order of fries to the order
-        order.addItem(fries, 1);
-
-        Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) order.getData().get("items");
-        assertEquals(2, items.size()); // 2 unique items (burger and fries) should be in the order
-        assertEquals(2, items.get(burger.getMetadata()));
-        assertEquals(1, items.get(fries.getMetadata()));
-
-        // Validate the total price: 2 * 5.99 + 1 * 2.99 = 14.97
-        assertEquals(14.97, order.getData().get("total"));
+    void testAddMenuItemToOrder() {
+        Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
+        assertEquals(2, menuItems.size());
+        assertEquals(2, menuItems.get(pizza.getMetadata().metadata().get("id")));
+        assertEquals(1, menuItems.get(salad.getMetadata().metadata().get("id")));
     }
 
     @Test
-    void testRemoveItem() {
-        // Remove 1 burger from the order
-        order.removeItem(burger, 1);
-
-        Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) order.getData().get("items");
-        assertEquals(1, items.size()); // Only 1 burger should remain
-        assertEquals(1, items.get(burger.getMetadata()));
-
-        // Validate the total price: 1 * 5.99 = 5.99
-        assertEquals(5.99, order.getData().get("total"));
+    void testTotalOrderCost() {
+        double total = (double) order.getData().get("total");
+        assertEquals(29.97, total);
     }
 
     @Test
-    void testRemoveItemComplete() {
-        // Remove 2 burgers from the order (all burgers should be removed)
-        order.removeItem(burger, 2);
-
-        Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) order.getData().get("items");
-        assertFalse(items.containsKey(burger.getMetadata())); // No burgers should remain
-
-        // Validate the total price: 0.0
-        assertEquals(0.0, order.getData().get("total"));
+    void testOrderCompletion() {
+        order.completeOrder();
+        assertEquals(Order.OrderStatus.COMPLETED, order.getMetadata().metadata().get("order_status"));
+        assertTrue((Boolean) order.getMetadata().metadata().get("is_completed"));
     }
 
     @Test
     void testUpdateOrderStatus() {
-        // Update the order status to ON_THE_WAY
-        order.updateOrderStatus(Order.OrderStatus.ON_THE_WAY);
-        assertEquals(Order.OrderStatus.ON_THE_WAY, order.getMetadata().metadata().get("orderStatus"));
-
-        // Update the order status to COMPLETED. The isCompleted metadata should be true
-        order.updateOrderStatus(Order.OrderStatus.COMPLETED);
-        assertTrue((Boolean) order.getMetadata().metadata().get("isCompleted"));
-    }
-
-    @Test
-    void testToString() {
-        // The expected output should use the same order as the actual TreeMap ordering
-        String expected = "Order{Metadata: {isCompleted=false, orderDate=" + order.getMetadata().metadata().get("orderDate") +
-                ", orderId=" + order.getMetadata().metadata().get("orderId") +
-                ", orderNumber=1, orderStatus=NOT_STARTED, orderTime=" + order.getMetadata().metadata().get("orderTime") +
-                "}, Data: Items:\n" +
-                "{activeItem=true, id=" + burger.getMetadata().metadata().get("id") +
-                ", itemName=Burger, itemType=MAIN, price=5.99} x2\nTotal: $11.98}";
-
-        // Generate the actual output from the toString() method
-        String actual = order.toString();
-
-        // Assert that the expected output matches the actual output
-        assertEquals(expected, actual);
+        order.updateOrderStatus(Order.OrderStatus.IN_PROGRESS);
+        assertEquals(Order.OrderStatus.IN_PROGRESS, order.getMetadata().metadata().get("order_status"));
     }
 }
+
 
