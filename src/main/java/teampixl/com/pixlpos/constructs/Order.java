@@ -68,13 +68,10 @@ public class Order {
 
     // Method to update the order status
     public void updateOrderStatus(OrderStatus newStatus) {
-        Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
-        modifiableMetadata.put("order_status", newStatus);
+        updateMetadata("order_status", newStatus);
         if (newStatus == OrderStatus.COMPLETED) {
-            modifiableMetadata.put("is_completed", true);
+            updateMetadata("is_completed", true);
         }
-        this.metadata = new MetadataWrapper(modifiableMetadata);
-        updateTimestamp();
     }
 
     // Method to complete the order
@@ -84,9 +81,23 @@ public class Order {
 
     // Method to update the timestamp
     private void updateTimestamp() {
+        updateMetadata("updated_at", System.currentTimeMillis());
+    }
+
+    // Method to update metadata
+    public void updateMetadata(String key, Object value) {
         Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
-        modifiableMetadata.put("updated_at", System.currentTimeMillis());
+        if (value != null) {
+            modifiableMetadata.put(key, value);
+        } else {
+            modifiableMetadata.remove(key);
+        }
         this.metadata = new MetadataWrapper(modifiableMetadata);
+    }
+
+    // Method to update data value
+    public void setDataValue(String key, Object value) {
+        data.put(key, value);
     }
 
     // Getters
@@ -98,6 +109,7 @@ public class Order {
         return data;
     }
 }
+
 
 
 

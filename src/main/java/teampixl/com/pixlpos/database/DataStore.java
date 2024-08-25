@@ -5,11 +5,9 @@ import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.sql.*;
+import java.util.Map;
 
 public class DataStore {
 
@@ -36,7 +34,7 @@ public class DataStore {
         return instance;
     }
 
-    // MenuItem-related methods
+    // CRUD operations for MenuItems
     public ObservableList<MenuItem> getMenuItems() {
         return menuItems;
     }
@@ -46,9 +44,56 @@ public class DataStore {
         saveMenuItemToDatabase(item);
     }
 
+    public void updateMenuItem(MenuItem item) {
+        updateMenuItemInDatabase(item);
+    }
+
     public void removeMenuItem(MenuItem item) {
         menuItems.remove(item);
         deleteMenuItemFromDatabase(item);
+    }
+
+    // CRUD operations for Orders
+    public ObservableList<Order> getOrders() {
+        return orders;
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+        saveOrderToDatabase(order);
+    }
+
+    public void updateOrder(Order order) {
+        updateOrderInDatabase(order);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
+        deleteOrderFromDatabase(order);
+    }
+
+    // CRUD operations for Users
+    public ObservableList<Users> getUsers() {
+        return users;
+    }
+
+    public void addUser(Users user) {
+        if (usernameExists(user.getMetadata().metadata().get("username").toString())) {
+            throw new IllegalArgumentException("Username already exists.");
+        }
+
+        users.add(user);
+        saveUserToDatabase(user);
+    }
+
+
+    public void updateUser(Users user) {
+        updateUserInDatabase(user);
+    }
+
+    public void removeUser(Users user) {
+        users.remove(user);
+        deleteUserFromDatabase(user);
     }
 
     // Load MenuItems from the SQLite database
@@ -77,7 +122,6 @@ public class DataStore {
         }
     }
 
-    // Save a MenuItem to the SQLite database
     private void saveMenuItemToDatabase(MenuItem item) {
         String sql = "INSERT INTO menu_items(id, item_name, price, item_type, active_item, dietary_requirement, description, notes, amount_ordered) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -102,7 +146,30 @@ public class DataStore {
         }
     }
 
-    // Delete a MenuItem from the SQLite database
+    private void updateMenuItemInDatabase(MenuItem item) {
+        String sql = "UPDATE menu_items SET item_name = ?, price = ?, item_type = ?, active_item = ?, dietary_requirement = ?, description = ?, notes = ?, amount_ordered = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) item.getMetadata().metadata().get("itemName"));
+            pstmt.setDouble(2, (Double) item.getMetadata().metadata().get("price"));
+            pstmt.setString(3, item.getMetadata().metadata().get("itemType").toString());
+            pstmt.setInt(4, (Boolean) item.getMetadata().metadata().get("activeItem") ? 1 : 0);
+            pstmt.setString(5, item.getMetadata().metadata().get("dietaryRequirement") != null ? item.getMetadata().metadata().get("dietaryRequirement").toString() : null);
+            pstmt.setString(6, (String) item.getData().get("description"));
+            pstmt.setString(7, (String) item.getData().get("notes"));
+            pstmt.setInt(8, (Integer) item.getData().get("amountOrdered"));
+            pstmt.setString(9, (String) item.getMetadata().metadata().get("id"));
+
+            pstmt.executeUpdate();
+            System.out.println("MenuItem updated in database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private void deleteMenuItemFromDatabase(MenuItem item) {
         String sql = "DELETE FROM menu_items WHERE id = ?";
 
@@ -118,21 +185,7 @@ public class DataStore {
         }
     }
 
-    // Order-related methods
-    public ObservableList<Order> getOrders() {
-        return orders;
-    }
-
-    public void addOrder(Order order) {
-        orders.add(order);
-        saveOrderToDatabase(order);
-    }
-
-    public void removeOrder(Order order) {
-        orders.remove(order);
-        deleteOrderFromDatabase(order);
-    }
-
+    // Load Orders from the SQLite database
     private void loadOrdersFromDatabase() {
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement();
@@ -147,12 +200,40 @@ public class DataStore {
                 double total = rs.getDouble("total");
 
                 Order order = new Order(orderNumber, userId);
-                order.updateOrderStatus(orderStatus);
-                if (isCompleted) {
-                    order.completeOrder();
-                }
+                order.updateMetadata("order_id", orderId);
+                order.updateMetadata("order_status", orderStatus);
+                order.updateMetadata("is_completed", isCompleted);
                 order.setDataValue("total", total);
+
+                // Load associated menu items for the order
+                loadOrderItems(order);
+
                 orders.add(order);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void loadOrderItems(Order order) {
+        String sql = "SELECT * FROM order_items WHERE order_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) order.getMetadata().metadata().get("order_id"));
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String menuItemId = rs.getString("menu_item_id");
+                int quantity = rs.getInt("quantity");
+
+                // Find the MenuItem by ID
+                menuItems.stream()
+                        .filter(menuItem -> menuItem.getMetadata().metadata().get("id").equals(menuItemId))
+                        .findFirst().ifPresent(item -> order.addMenuItem(item, quantity));
+
             }
 
         } catch (SQLException e) {
@@ -178,6 +259,76 @@ public class DataStore {
             pstmt.executeUpdate();
             System.out.println("Order saved to database.");
 
+            // Save associated menu items
+            saveOrderItemsToDatabase(order);
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void saveOrderItemsToDatabase(Order order) {
+        String sql = "INSERT INTO order_items(order_id, menu_item_id, quantity) VALUES(?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
+
+            for (Map.Entry<String, Integer> entry : menuItems.entrySet()) {
+                pstmt.setString(1, (String) order.getMetadata().metadata().get("order_id"));
+                pstmt.setString(2, entry.getKey());
+                pstmt.setInt(3, entry.getValue());
+                pstmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateOrderInDatabase(Order order) {
+        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, total = ?, updated_at = ? WHERE order_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, order.getMetadata().metadata().get("order_status").toString());
+            pstmt.setInt(2, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
+            pstmt.setDouble(3, (Double) order.getData().get("total"));
+            pstmt.setLong(4, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(5, (String) order.getMetadata().metadata().get("order_id"));
+
+            pstmt.executeUpdate();
+            System.out.println("Order updated in database.");
+
+            // Update associated menu items
+            updateOrderItemsInDatabase(order);
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateOrderItemsInDatabase(Order order) {
+        // First, delete existing order items
+        deleteOrderItemsFromDatabase(order);
+
+        // Then, save the new ones
+        saveOrderItemsToDatabase(order);
+    }
+
+    private void deleteOrderItemsFromDatabase(Order order) {
+        String sql = "DELETE FROM order_items WHERE order_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.executeUpdate();
+
+            System.out.println("Order items deleted from database.");
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -191,28 +342,18 @@ public class DataStore {
 
             pstmt.setString(1, (String) order.getMetadata().metadata().get("order_id"));
             pstmt.executeUpdate();
+
             System.out.println("Order deleted from database.");
+
+            // Also delete the associated menu items
+            deleteOrderItemsFromDatabase(order);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    // Users-related methods
-    public ObservableList<Users> getUsers() {
-        return users;
-    }
-
-    public void addUser(Users user) {
-        users.add(user);
-        saveUserToDatabase(user);
-    }
-
-    public void removeUser(Users user) {
-        users.remove(user);
-        deleteUserFromDatabase(user);
-    }
-
+    // Load Users from the SQLite database
     private void loadUsersFromDatabase() {
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement();
@@ -221,17 +362,37 @@ public class DataStore {
             while (rs.next()) {
                 String id = rs.getString("id");
                 String username = rs.getString("username");
-                Users.UserRole role = Users.UserRole.valueOf(rs.getString("role"));
+                String roleStr = rs.getString("role");
+                Users.UserRole role = Users.UserRole.valueOf(roleStr);
                 String email = rs.getString("email");
+                String password = rs.getString("password");
 
-                Users user = new Users(username, "placeholder", email, role);
-                user.updateMetadata("id", id);  // Set the ID from the database
+                Users user = new Users(username, password, email, role);
+                user.updateMetadata("id", id);
                 users.add(user);
             }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public boolean usernameExists(String username) {
+        String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // If count > 0, the username exists
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 
     private void saveUserToDatabase(Users user) {
@@ -242,7 +403,7 @@ public class DataStore {
 
             pstmt.setString(1, (String) user.getMetadata().metadata().get("id"));
             pstmt.setString(2, (String) user.getMetadata().metadata().get("username"));
-            pstmt.setString(3, (String) user.getData().get("password")); // Placeholder, should be encrypted
+            pstmt.setString(3, (String) user.getData().get("password"));
             pstmt.setString(4, (String) user.getData().get("email"));
             pstmt.setString(5, user.getMetadata().metadata().get("role").toString());
             pstmt.setLong(6, (Long) user.getMetadata().metadata().get("created_at"));
@@ -250,6 +411,27 @@ public class DataStore {
 
             pstmt.executeUpdate();
             System.out.println("User saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateUserInDatabase(Users user) {
+        String sql = "UPDATE users SET username = ?, password = ?, email = ?, role = ?, updated_at = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) user.getMetadata().metadata().get("username"));
+            pstmt.setString(2, (String) user.getData().get("password"));
+            pstmt.setString(3, (String) user.getData().get("email"));
+            pstmt.setString(4, user.getMetadata().metadata().get("role").toString());
+            pstmt.setLong(5, (Long) user.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(6, (String) user.getMetadata().metadata().get("id"));
+
+            pstmt.executeUpdate();
+            System.out.println("User updated in database.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -271,59 +453,56 @@ public class DataStore {
         }
     }
 
-    public void updateOrder(Order order) {
-        // Find the existing order by ID and update it
-        Order existingOrder = orders.stream()
-                .filter(o -> o.getMetadata().metadata().get("order_id").equals(order.getMetadata().metadata().get("order_id")))
-                .findFirst()
-                .orElse(null);
-
-        if (existingOrder != null) {
-            orders.set(orders.indexOf(existingOrder), order);
-            // Update in database
-            saveOrderToDatabase(order);
-        }
-    }
-
-    public void updateMenuItem(MenuItem menuItem) {
-        // Find the existing menu item by ID and update it
-        MenuItem existingItem = menuItems.stream()
-                .filter(item -> item.getMetadata().metadata().get("id").equals(menuItem.getMetadata().metadata().get("id")))
-                .findFirst()
-                .orElse(null);
-
-        if (existingItem != null) {
-            menuItems.set(menuItems.indexOf(existingItem), menuItem);
-            // Update in database
-            saveMenuItemToDatabase(menuItem);
-        }
-    }
-
     public void clearData() {
-        // Clear all data in memory
-        menuItems.clear();
-        users.clear();
-        orders.clear();
-
-        // Optionally, clear the data from the database
-        // clearDatabaseTables();
+        clearMenuItems();
+        clearOrders();
+        clearUsers();
     }
 
-    // Optional method to clear the database tables
-    private void clearDatabaseTables() {
+    private void clearMenuItems() {
+        menuItems.clear();
+        String sql = "DELETE FROM menu_items";
+
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement()) {
 
-            stmt.executeUpdate("DELETE FROM menu_items");
-            stmt.executeUpdate("DELETE FROM users");
-            stmt.executeUpdate("DELETE FROM orders");
-            System.out.println("All data cleared from the database.");
+            stmt.execute(sql);
+            System.out.println("MenuItems table cleared.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
+    private void clearOrders() {
+        orders.clear();
+        String sql = "DELETE FROM orders";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Orders table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void clearUsers() {
+        users.clear();
+        String sql = "DELETE FROM users";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Users table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
 
 
