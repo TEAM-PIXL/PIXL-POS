@@ -11,6 +11,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("ALL")
 class DataStoreTest {
 
     private static DataStore dataStore;

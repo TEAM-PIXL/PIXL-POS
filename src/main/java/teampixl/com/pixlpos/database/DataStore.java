@@ -435,6 +435,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void saveOrderItemsToDatabase(Order order) {
         String sql = "INSERT INTO order_items(order_id, menu_item_id, quantity) VALUES(?, ?, ?)";
 
