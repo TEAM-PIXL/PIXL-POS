@@ -613,6 +613,21 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         clearMenuItems();
         clearOrders();
         clearUsers();
+        clearOrderItems();
+    }
+
+    private void clearOrderItems() {
+        String sql = "DELETE FROM order_items";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("OrderItems table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void clearMenuItems() {
