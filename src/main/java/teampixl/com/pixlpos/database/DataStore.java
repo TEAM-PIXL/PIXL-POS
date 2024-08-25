@@ -6,11 +6,16 @@ import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import java.util.HashMap;
 
 import java.sql.*;
 import java.util.Map;
 
 public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
+    /*====================================================================================================================================================================
+      This class is responsible for managing the data in the application. It acts as a facade for the database operations.
+    ====================================================================================================================================================================*/
+
 
     private static DataStore instance = null;
     private ObservableList<MenuItem> menuItems;
@@ -35,7 +40,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         return instance;
     }
 
-    // CRUD operations for MenuItems
+
+
+    /*====================================================================================================================================================================
+      This section of code handles the implementation of the IMenuItemStore interface. It provides methods for adding, updating, and removing menu items.
+    ====================================================================================================================================================================*/
+
+
+
     public ObservableList<MenuItem> getMenuItems() {
         return menuItems;
     }
@@ -59,7 +71,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         return null;
     }
 
-    // CRUD operations for Orders
+
+
+    /*====================================================================================================================================================================
+     This section of code handles the implementation of the IOrderStore interface. It provides methods for adding, updating, and removing orders.
+    ====================================================================================================================================================================*/
+
+
+
     public ObservableList<Order> getOrders() {
         return orders;
     }
@@ -78,7 +97,31 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         deleteOrderFromDatabase(order);
     }
 
-    // CRUD operations for Users
+    // CRUD operations for singular items.
+
+    public void addOrderItem(Order order, MenuItem item, int quantity) {
+        order.addMenuItem(item, quantity);
+        saveOrderItemToDatabase(order, item, quantity);
+    }
+
+    public void updateOrderItem(Order order, MenuItem item, int newQuantity) {
+        order.addMenuItem(item, newQuantity); // update or add item with new quantity
+        updateOrderItemInDatabase(order, item, newQuantity);
+    }
+
+    public void removeOrderItem(Order order, MenuItem item, int quantity) {
+        order.removeMenuItem(item, quantity);
+        deleteOrderItemFromDatabase(order, item);
+    }
+
+
+
+    /*====================================================================================================================================================================
+      This section of code handles the implementation of the IUserStore interface. It provides methods for adding, updating, and removing users.
+    ====================================================================================================================================================================*/
+
+
+
     public ObservableList<Users> getUsers() {
         return users;
     }
@@ -107,7 +150,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         return null;
     }
 
-    // Load MenuItems from the SQLite database
+
+
+    /*====================================================================================================================================================================
+     This section of code outlines the methods used to interact with the database for MenuItems. It includes methods for loading, saving, updating, and deleting data.
+    ====================================================================================================================================================================*/
+
+
+
     private void loadMenuItemsFromDatabase() {
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement();
@@ -196,7 +246,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
-    // Load Orders from the SQLite database
+
+
+    /*====================================================================================================================================================================
+      This section of code outlines the methods used to interact with the database for Orders. It includes methods for loading, saving, updating, and deleting data.
+    ====================================================================================================================================================================*/
+
+
+
     private void loadOrdersFromDatabase() {
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement();
@@ -217,7 +274,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
                 order.setDataValue("total", total);
 
                 // Load associated menu items for the order
-                loadOrderItems(order);
+                loadOrderItems((String) order.getMetadata().metadata().get("order_id"));
 
                 orders.add(order);
             }
@@ -227,29 +284,33 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
-    private void loadOrderItems(Order order) {
+    private ObservableList<Map<String, Object>> loadOrderItems(String orderId) {
+        ObservableList<Map<String, Object>> orderItemsList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM order_items WHERE order_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setString(1, orderId);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 String menuItemId = rs.getString("menu_item_id");
                 int quantity = rs.getInt("quantity");
 
-                // Find the MenuItem by ID
-                menuItems.stream()
-                        .filter(menuItem -> menuItem.getMetadata().metadata().get("id").equals(menuItemId))
-                        .findFirst().ifPresent(item -> order.addMenuItem(item, quantity));
+                // Construct a map for each order item
+                Map<String, Object> orderItemMap = new HashMap<>();
+                orderItemMap.put("menu_item_id", menuItemId);
+                orderItemMap.put("quantity", quantity);
 
+                orderItemsList.add(orderItemMap);
             }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
+        return orderItemsList;
     }
 
     private void saveOrderToDatabase(Order order) {
@@ -292,6 +353,42 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
                 pstmt.setInt(3, entry.getValue());
                 pstmt.executeUpdate();
             }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void saveOrderItemToDatabase(Order order, MenuItem item, int quantity) {
+        String sql = "INSERT INTO order_items(order_id, menu_item_id, quantity) VALUES(?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setString(2, (String) item.getMetadata().metadata().get("id"));
+            pstmt.setInt(3, quantity);
+
+            pstmt.executeUpdate();
+            System.out.println("Order item saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateOrderItemInDatabase(Order order, MenuItem item, int newQuantity) {
+        String sql = "UPDATE order_items SET quantity = ? WHERE order_id = ? AND menu_item_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, newQuantity);
+            pstmt.setString(2, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setString(3, (String) item.getMetadata().metadata().get("id"));
+
+            pstmt.executeUpdate();
+            System.out.println("Order item updated in database.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -345,6 +442,23 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
+    private void deleteOrderItemFromDatabase(Order order, MenuItem item) {
+        String sql = "DELETE FROM order_items WHERE order_id = ? AND menu_item_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setString(2, (String) item.getMetadata().metadata().get("id"));
+            pstmt.executeUpdate();
+
+            System.out.println("Order item deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private void deleteOrderFromDatabase(Order order) {
         String sql = "DELETE FROM orders WHERE order_id = ?";
 
@@ -364,7 +478,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
-    // Load Users from the SQLite database
+
+    /*====================================================================================================================================================================
+      This section of code outlines the methods used to interact with the database for Users. It includes methods for loading, saving, updating, and deleting data.
+    ====================================================================================================================================================================*/
+
+
+
     private void loadUsersFromDatabase() {
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement();
@@ -463,6 +583,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
             System.out.println(e.getMessage());
         }
     }
+
+
+
+    /*====================================================================================================================================================================
+        This section of code outlines the method used to clear all data from the database.
+    ====================================================================================================================================================================*/
+
+
 
     public void clearData() {
         clearMenuItems();

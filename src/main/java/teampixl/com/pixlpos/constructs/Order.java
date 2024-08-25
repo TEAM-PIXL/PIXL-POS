@@ -59,6 +59,31 @@ public class Order {
         }
     }
 
+    // Method to remove MenuItem from the Order
+    public void removeMenuItem(MenuItem item, int quantity) {
+        Object menuItemsObj = data.get("menuItems");
+
+        if (menuItemsObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Integer> menuItems = (Map<String, Integer>) menuItemsObj;
+            String itemId = (String) item.getMetadata().metadata().get("id");
+
+            if (menuItems.containsKey(itemId)) {
+                int currentQuantity = menuItems.get(itemId);
+                if (currentQuantity - quantity <= 0) {
+                    menuItems.remove(itemId);
+                } else {
+                    menuItems.put(itemId, currentQuantity - quantity);
+                }
+
+                updateTotal(item, -quantity);
+                updateTimestamp();
+            }
+        } else {
+            throw new IllegalStateException("Expected menuItems to be a Map<String, Integer>");
+        }
+    }
+
     // Method to update the total cost of the Order
     private void updateTotal(MenuItem item, int quantity) {
         double currentTotal = (double) data.get("total");
