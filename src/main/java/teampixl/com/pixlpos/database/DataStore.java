@@ -109,9 +109,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         saveOrderItemToDatabase(order, item, quantity);
     }
 
-    public void updateOrderItem(Order order, MenuItem item, int newQuantity) {
-        order.addMenuItem(item, newQuantity); // update or add item with new quantity
-        updateOrderItemInDatabase(order, item, newQuantity);
+    public void updateOrderItem(Order order, MenuItem menuItem, int quantity) {
+        Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
+        String key = (String) menuItem.getMetadata().metadata().get("id");
+        if (menuItems.containsKey(key)) {
+            menuItems.put(key, quantity);
+        }
+        // Save the updated order back to the data store
+        updateOrder(order);
     }
 
     public void removeOrderItem(Order order, MenuItem item, int quantity) {
