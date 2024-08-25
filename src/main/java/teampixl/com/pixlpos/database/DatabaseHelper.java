@@ -11,19 +11,16 @@ public class DatabaseHelper {
     private static final String DB_URL;
 
     static {
-        // Specify the path to the SQLite database file within the resources directory
         DB_URL = "jdbc:sqlite:" + getDatabaseFilePath();
     }
 
     private static String getDatabaseFilePath() {
-        // Get the absolute path to the database file in the resources directory
         File resourceDir = new File("src/main/resources/teampixl/com/pixlpos/database");
         File dbFile = new File(resourceDir, "pixlpos.db");
 
         return dbFile.getAbsolutePath();
     }
 
-    // Connect to SQLite database
     public static Connection connect() {
         Connection conn = null;
         try {

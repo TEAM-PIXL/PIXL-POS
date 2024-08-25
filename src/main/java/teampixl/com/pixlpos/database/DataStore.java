@@ -289,7 +289,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
                 order.updateMetadata("is_completed", isCompleted);
                 order.setDataValue("total", total);
 
-                // Load associated menu items for the order
                 loadOrderItems((String) order.getMetadata().metadata().get("order_id"));
 
                 orders.add(order);
@@ -314,7 +313,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
                 String menuItemId = rs.getString("menu_item_id");
                 int quantity = rs.getInt("quantity");
 
-                // Construct a map for each order item
                 Map<String, Object> orderItemMap = new HashMap<>();
                 orderItemMap.put("menu_item_id", menuItemId);
                 orderItemMap.put("quantity", quantity);
@@ -347,7 +345,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
             pstmt.executeUpdate();
             System.out.println("Order saved to database.");
 
-            // Save associated menu items
             saveOrderItemsToDatabase(order);
 
         } catch (SQLException e) {
@@ -426,7 +423,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
             pstmt.executeUpdate();
             System.out.println("Order updated in database.");
 
-            // Update associated menu items
             updateOrderItemsInDatabase(order);
 
         } catch (SQLException e) {
@@ -435,10 +431,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
     }
 
     private void updateOrderItemsInDatabase(Order order) {
-        // First, delete existing order items
         deleteOrderItemsFromDatabase(order);
-
-        // Then, save the new ones
         saveOrderItemsToDatabase(order);
     }
 
@@ -487,7 +480,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
             System.out.println("Order deleted from database.");
 
-            // Also delete the associated menu items
             deleteOrderItemsFromDatabase(order);
 
         } catch (SQLException e) {

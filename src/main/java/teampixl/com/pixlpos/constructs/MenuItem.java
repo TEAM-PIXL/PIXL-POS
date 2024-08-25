@@ -7,6 +7,12 @@ import teampixl.com.pixlpos.database.MetadataWrapper;
 
 public class MenuItem {
 
+    /*============================================================================================================================================================
+    Code Description:
+    - Enumerations for ItemType and DietaryRequirement
+    - MetadataWrapper object for metadata
+    - Map object for data
+    ============================================================================================================================================================*/
     public enum ItemType {
         ENTREE,
         MAIN,
@@ -26,6 +32,26 @@ public class MenuItem {
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
 
+    /*============================================================================================================================================================
+    Code Description:
+    - Constructor for MenuItem object.
+
+    Metadata:
+        - id: UUID
+        - itemName: itemName
+        - price: price
+        - itemType: itemType
+        - activeItem: activeItem
+        - dietaryRequirement: dietaryRequirement
+        - created_at: timestamp for creation
+        - updated_at: timestamp for last update
+
+    Data:
+        - description: description
+        - notes: null
+        - amountOrdered: 0
+        - ingredients: null
+    ============================================================================================================================================================*/
     public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description, DietaryRequirement dietaryRequirement) {
         if (itemName == null || itemName.isEmpty()) {
             throw new IllegalArgumentException("itemName cannot be null or empty");
@@ -64,6 +90,17 @@ public class MenuItem {
         data.put("ingredients", null);  // Optional field for ingredients
     }
 
+    /*============================================================================================================================================================
+    Code Description:
+    - Method to get metadata, data, update metadata and set data value.
+
+    Methods:
+    - getMetadata(): returns metadata
+    - getData(): returns data
+    - updateMetadata(String key, Object value): updates metadata
+    - setDataValue(String key, Object value): sets data value
+    - toString(): returns string representation of MenuItem object
+    ============================================================================================================================================================*/
     public MetadataWrapper getMetadata() {
         return metadata;
     }
