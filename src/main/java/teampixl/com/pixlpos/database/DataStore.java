@@ -68,6 +68,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
     @Override
     public MenuItem getMenuItem(String itemName) {
+        for (MenuItem item : menuItems) {
+            if (item.getMetadata().metadata().get("itemName").equals(itemName)) {
+                return item;
+            }
+        }
         return null;
     }
 
