@@ -15,6 +15,7 @@ public class Main {
 
         // Initialize DataStore
         DataStore dataStore = DataStore.getInstance();
+        dataStore.clearData();  // Clear all data before adding new data
 
         // Test Users
         Users user1 = new Users("admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
