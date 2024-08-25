@@ -147,8 +147,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
     @Override
     public Users getUser(String username) {
+        for (Users user : users) {
+            if (user.getMetadata().metadata().get("username").equals(username)) {
+                return user;
+            }
+        }
         return null;
     }
+
 
 
 
