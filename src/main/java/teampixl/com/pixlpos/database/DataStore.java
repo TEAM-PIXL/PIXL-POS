@@ -12,8 +12,29 @@ import java.sql.*;
 import java.util.Map;
 
 public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
+
+/*====================================================================================================================================================================================
+
+------------>    THIS IS THE APPLICATION PROGRAMMING INTERFACE (API) FOR THE DATABASE. IT PROVIDES METHODS FOR ADDING, UPDATING, AND REMOVING DATA FROM THE DATABASE.  <------------
+
+====================================================================================================================================================================================*/
+
+
     /*====================================================================================================================================================================
-      This class is responsible for managing the data in the application. It acts as a facade for the database operations.
+    Code Description:
+    This class is responsible for managing the data in the application. It acts as a facade for the database operations.
+
+    Class Variables:
+        - instance: DataStore - A singleton instance of the DataStore class.
+        - menuItems: ObservableList<MenuItem> - A list of all menu items.
+        - orders: ObservableList<Order> - A list of all orders.
+        - users: ObservableList<Users> - A list of all users.
+
+    Constructor:
+        - DataStore() - Initializes the DataStore object and loads data from the database.
+
+    Methods:
+        - getInstance(): DataStore - Returns the singleton instance of the DataStore class.
     ====================================================================================================================================================================*/
 
 
@@ -43,7 +64,18 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
     /*====================================================================================================================================================================
-      This section of code handles the implementation of the IMenuItemStore interface. It provides methods for adding, updating, and removing menu items.
+    Code Description:
+    This section of code handles the implementation of the IMenuItemStore interface. It provides methods for adding, updating, and removing menu items.
+
+    Methods:
+        Methods for lists of menu items:
+            - getMenuItems(): ObservableList<MenuItem> - Returns a list of all menu items.
+            - addMenuItem(MenuItem item): void - Adds a new menu item to the list of menu items.
+            - updateMenuItem(MenuItem item): void - Updates an existing menu item in the list of menu items.
+            - removeMenuItem(MenuItem item): void - Removes an existing menu item from the list of menu items.
+
+        Methods for singular items:
+            - getMenuItem(String itemName): MenuItem - Returns a menu item with the specified name.
     ====================================================================================================================================================================*/
 
 
@@ -79,7 +111,20 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
     /*====================================================================================================================================================================
+     Code Description:
      This section of code handles the implementation of the IOrderStore interface. It provides methods for adding, updating, and removing orders.
+
+     Methods:
+        Methods for lists of orders:
+            - getOrders(): ObservableList<Order> - Returns a list of all orders.
+            - addOrder(Order order): void - Adds a new order to the list of orders.
+            - updateOrder(Order order): void - Updates an existing order in the list of orders.
+            - removeOrder(Order order): void - Removes an existing order from the list of orders.
+
+        Methods for singular items:
+            - addOrderItem(Order order, MenuItem item, int quantity): void - Adds a new item to an existing order.
+            - updateOrderItem(Order order, MenuItem menuItem, int quantity): void - Updates an existing item in an order.
+            - removeOrderItem(Order order, MenuItem item, int quantity): void - Removes an existing item from an order.
     ====================================================================================================================================================================*/
 
 
@@ -127,7 +172,18 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
     /*====================================================================================================================================================================
-      This section of code handles the implementation of the IUserStore interface. It provides methods for adding, updating, and removing users.
+    Code Description:
+    This section of code handles the implementation of the IUserStore interface. It provides methods for adding, updating, and removing users.
+
+    Methods:
+        Methods for lists of users:
+            - getUsers(): ObservableList<Users> - Returns a list of all users.
+            - addUser(Users user): void - Adds a new user to the list of users.
+            - updateUser(Users user): void - Updates an existing user in the list of users.
+            - removeUser(Users user): void - Removes an existing user from the list of users.
+
+        Methods for singular items:
+            - getUser(String username): Users - Returns a user with the specified username.
     ====================================================================================================================================================================*/
 
 
@@ -167,9 +223,23 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
 
+/*====================================================================================================================================================================
+
+---------------------------------------------------------------->    END OF API IMPLEMENTATION    <-------------------------------------------------------------------
+
+====================================================================================================================================================================*/
+
+
 
     /*====================================================================================================================================================================
-     This section of code outlines the methods used to interact with the database for MenuItems. It includes methods for loading, saving, updating, and deleting data.
+    Code Description:
+    This section of code outlines the methods used to interact with the database for MenuItems. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadMenuItemsFromDatabase(): void - Loads menu items from the database.
+        - saveMenuItemToDatabase(MenuItem item): void - Saves a menu item to the database.
+        - updateMenuItemInDatabase(MenuItem item): void - Updates a menu item in the database.
+        - deleteMenuItemFromDatabase(MenuItem item): void - Deletes a menu item from the database.
     ====================================================================================================================================================================*/
 
 
@@ -265,7 +335,26 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
     /*====================================================================================================================================================================
-      This section of code outlines the methods used to interact with the database for Orders. It includes methods for loading, saving, updating, and deleting data.
+    Code Description:
+    This section of code outlines the methods used to interact with the database for Orders. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+            Methods for lists of orders:
+                - loadOrdersFromDatabase(): void - Loads orders from the database.
+                - saveOrderToDatabase(Order order): void - Saves an order to the database.
+                - updateOrderInDatabase(Order order): void - Updates an order in the database.
+                - deleteOrderFromDatabase(Order order): void - Deletes an order from the database.
+
+            Methods for singular items:
+                - saveOrderItemToDatabase(Order order, MenuItem item, int quantity): void - Saves an order item to the database.
+                - updateOrderItemInDatabase(Order order, MenuItem item, int newQuantity): void - Updates an order item in the database.
+                - deleteOrderItemFromDatabase(Order order, MenuItem item, int quantity): void - Deletes an order item from the database.
+
+            Methods for order items:
+                - loadOrderItems(String orderId): ObservableList<Map<String, Object>> - Loads order items from the database.
+                - saveOrderItemsToDatabase(Order order): void - Saves order items to the database.
+                - updateOrderItemsInDatabase(Order order): void - Updates order items in the database.
+                - deleteOrderItemsFromDatabase(Order order): void - Deletes order items from the database.
     ====================================================================================================================================================================*/
 
 
@@ -489,7 +578,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
     /*====================================================================================================================================================================
-      This section of code outlines the methods used to interact with the database for Users. It includes methods for loading, saving, updating, and deleting data.
+    Code Description:
+    This section of code outlines the methods used to interact with the database for Users. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadUsersFromDatabase(): void - Loads users from the database.
+        - saveUserToDatabase(Users user): void - Saves a user to the database.
+        - updateUserInDatabase(Users user): void - Updates a user in the database.
+        - deleteUserFromDatabase(Users user): void - Deletes a user from the database.
     ====================================================================================================================================================================*/
 
 
@@ -596,7 +692,17 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
     /*====================================================================================================================================================================
-        This section of code outlines the method used to clear all data from the database.
+    Code Description:
+    This section of code outlines the method used to clear all data from the database.
+
+    Methods:
+        - clearData(): void - Clears all data from the database.
+
+        Methods for clearing individual tables (INTERNAL):
+            - clearMenuItems(): void - Clears all menu items from the database.
+            - clearOrders(): void - Clears all orders from the database.
+            - clearUsers(): void - Clears all users from the database.
+            - clearOrderItems(): void - Clears all order items from the database.
     ====================================================================================================================================================================*/
 
 
