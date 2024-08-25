@@ -8,6 +8,13 @@ import java.sql.Statement;
 
 public class DatabaseHelper {
 
+    /*============================================================================================================================================================
+    Code Description:
+    - DB_URL: This is the URL to the SQLite database file in globally.
+    - getDatabaseFilePath(): This method returns the path to the SQLite database file.
+    - connect(): This method establishes a connection to the SQLite database.
+    ============================================================================================================================================================*/
+
     private static final String DB_URL;
 
     static {
@@ -32,9 +39,17 @@ public class DatabaseHelper {
         return conn;
     }
 
-    // Initialize the database and create the tables
+    /*============================================================================================================================================================
+    Code Description:
+    - initializeDatabase(): This method initializes the SQLite database and creates the tables if they do not exist.
+
+    Tables:
+    - users: This table stores the user information.
+    - menu_items: This table stores the menu items.
+    - orders: This table stores the order information.
+    ============================================================================================================================================================*/
+
     public static void initializeDatabase() {
-// Create the Users table
         String sqlCreateUsersTable = """
     CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
@@ -47,7 +62,6 @@ public class DatabaseHelper {
     );
 """;
 
-// Create the MenuItems table
         String sqlCreateMenuItemsTable = """
     CREATE TABLE IF NOT EXISTS menu_items (
         id TEXT PRIMARY KEY,
@@ -64,7 +78,6 @@ public class DatabaseHelper {
     );
 """;
 
-// Create the Orders table
         String sqlCreateOrdersTable = """
     CREATE TABLE IF NOT EXISTS orders (
         order_id TEXT PRIMARY KEY,
@@ -79,7 +92,6 @@ public class DatabaseHelper {
     );
 """;
 
-// Create the OrderItems table
         String sqlCreateOrderItemsTable = """
     CREATE TABLE IF NOT EXISTS order_items (
         order_id TEXT NOT NULL,
