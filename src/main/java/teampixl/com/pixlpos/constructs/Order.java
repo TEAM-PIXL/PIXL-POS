@@ -1,121 +1,141 @@
 package teampixl.com.pixlpos.constructs;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
 public class Order {
 
-    // Enum for Order Status
     public enum OrderStatus {
-        SENT,
-        RECEIVED,
-        NOT_STARTED,
-        ON_THE_WAY,
-        NEARLY_DONE,
-        COMPLETED
+        PENDING,
+        IN_PROGRESS,
+        COMPLETED,
+        CANCELED
     }
 
-    private MetadataWrapper metadata;  // MetadataWrapper should encapsulate the metadata map
+    private MetadataWrapper metadata;
     private final Map<String, Object> data;
 
-    public Order(int orderNumber) {
+    // Constructor
+    public Order(int orderNumber, String userId) {
         Map<String, Object> metadataMap = new HashMap<>();
+        metadataMap.put("order_id", UUID.randomUUID().toString());
+        metadataMap.put("order_number", orderNumber);
+        metadataMap.put("user_id", userId);
+        metadataMap.put("order_status", OrderStatus.PENDING);
+        metadataMap.put("is_completed", false);
+        metadataMap.put("created_at", System.currentTimeMillis());
+        metadataMap.put("updated_at", System.currentTimeMillis());
 
-        // Initialize metadata
-        metadataMap.put("orderId", UUID.randomUUID());
-        metadataMap.put("orderTime", LocalTime.now());
-        metadataMap.put("orderDate", LocalDate.now());
-        metadataMap.put("orderNumber", orderNumber > 0 ? orderNumber : 1);
-        metadataMap.put("orderStatus", OrderStatus.NOT_STARTED);
-        metadataMap.put("isCompleted", false);
+        this.metadata = new MetadataWrapper(metadataMap);
 
-        this.metadata = new MetadataWrapper(metadataMap);  // Correctly wrapping the map in MetadataWrapper
-
-        // Initialize data
         this.data = new HashMap<>();
-        data.put("items", new HashMap<MetadataWrapper, Integer>());  // Ensure the items map is correctly initialized
-        data.put("total", 0.0);
+        this.data.put("menuItems", new HashMap<String, Integer>());
+        this.data.put("total", 0.0);
+        this.data.put("special_requests", null);
+        this.data.put("payment_details", null);
     }
 
-    // Getter for Metadata
+    // Method to add MenuItem to the Order
+    public void addMenuItem(MenuItem item, int quantity) {
+        Object menuItemsObj = data.get("menuItems");
+
+        if (menuItemsObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Integer> menuItems = (Map<String, Integer>) menuItemsObj;
+            String itemId = (String) item.getMetadata().metadata().get("id");
+
+            if (menuItems.containsKey(itemId)) {
+                menuItems.put(itemId, menuItems.get(itemId) + quantity);
+            } else {
+                menuItems.put(itemId, quantity);
+            }
+
+            updateTotal(item, quantity);
+            updateTimestamp();
+        } else {
+            throw new IllegalStateException("Expected menuItems to be a Map<String, Integer>");
+        }
+    }
+
+    // Method to remove MenuItem from the Order
+    public void removeMenuItem(MenuItem item, int quantity) {
+        Object menuItemsObj = data.get("menuItems");
+
+        if (menuItemsObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Integer> menuItems = (Map<String, Integer>) menuItemsObj;
+            String itemId = (String) item.getMetadata().metadata().get("id");
+
+            if (menuItems.containsKey(itemId)) {
+                int currentQuantity = menuItems.get(itemId);
+                if (currentQuantity - quantity <= 0) {
+                    menuItems.remove(itemId);
+                } else {
+                    menuItems.put(itemId, currentQuantity - quantity);
+                }
+
+                updateTotal(item, -quantity);
+                updateTimestamp();
+            }
+        } else {
+            throw new IllegalStateException("Expected menuItems to be a Map<String, Integer>");
+        }
+    }
+
+    // Method to update the total cost of the Order
+    private void updateTotal(MenuItem item, int quantity) {
+        double currentTotal = (double) data.get("total");
+        double itemPrice = (double) item.getMetadata().metadata().get("price");
+        data.put("total", currentTotal + (itemPrice * quantity));
+    }
+
+    // Method to update the order status
+    public void updateOrderStatus(OrderStatus newStatus) {
+        updateMetadata("order_status", newStatus);
+        if (newStatus == OrderStatus.COMPLETED) {
+            updateMetadata("is_completed", true);
+        }
+    }
+
+    // Method to complete the order
+    public void completeOrder() {
+        updateOrderStatus(OrderStatus.COMPLETED);
+    }
+
+    // Method to update the timestamp
+    private void updateTimestamp() {
+        updateMetadata("updated_at", System.currentTimeMillis());
+    }
+
+    // Method to update metadata
+    public void updateMetadata(String key, Object value) {
+        Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
+        if (value != null) {
+            modifiableMetadata.put(key, value);
+        } else {
+            modifiableMetadata.remove(key);
+        }
+        this.metadata = new MetadataWrapper(modifiableMetadata);
+    }
+
+    // Method to update data value
+    public void setDataValue(String key, Object value) {
+        data.put(key, value);
+    }
+
+    // Getters
     public MetadataWrapper getMetadata() {
         return metadata;
     }
 
-    // Getter for Data
     public Map<String, Object> getData() {
         return data;
     }
-
-    // Update order status
-    public void updateOrderStatus(OrderStatus orderStatus) {
-        Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
-        modifiableMetadata.put("orderStatus", orderStatus);
-        if (orderStatus == OrderStatus.COMPLETED) {
-            modifiableMetadata.put("isCompleted", true);
-        }
-        this.metadata = new MetadataWrapper(modifiableMetadata);  // Properly wrap the updated map
-    }
-
-    // Add an item to the order
-    public void addItem(MenuItem menuItem, int quantity) {
-        if (quantity < 1) {
-            quantity = 1;
-        }
-
-        MetadataWrapper itemMetadata = menuItem.getMetadata();
-        Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) data.get("items");
-        items.put(itemMetadata, items.getOrDefault(itemMetadata, 0) + quantity);
-
-        double price = (double) itemMetadata.metadata().get("price");
-        double total = (double) data.get("total");
-        total += price * quantity;
-        data.put("total", Math.max(total, 0));  // Ensure total is non-negative
-    }
-
-    // Remove an item from the order
-    public void removeItem(MenuItem menuItem, int quantity) {
-        MetadataWrapper itemMetadata = menuItem.getMetadata();
-        Map<MetadataWrapper, Integer> items = (Map<MetadataWrapper, Integer>) data.get("items");
-        if (items.containsKey(itemMetadata)) {
-            int currentQuantity = items.get(itemMetadata);
-            if (currentQuantity > quantity) {
-                items.put(itemMetadata, currentQuantity - quantity);
-            } else {
-                items.remove(itemMetadata);
-            }
-
-            double price = (double) itemMetadata.metadata().get("price");
-            double total = (double) data.get("total");
-            total -= price * quantity;
-            data.put("total", Math.max(total, 0));  // Ensure total is non-negative
-        }
-    }
-
-    @Override
-    public String toString() {
-        // Use TreeMap to ensure keys are sorted in the output
-        Map<String, Object> sortedMetadata = new TreeMap<>(metadata.metadata()); // Access metadata directly
-        Map<String, Object> sortedData = new TreeMap<>(data);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("Order{Metadata: ").append(sortedMetadata).append(", Data: Items:\n");
-
-        // Access the items and sort them
-        Map<MetadataWrapper, Integer> sortedItems = new TreeMap<>((Map<MetadataWrapper, Integer>) sortedData.get("items"));
-
-        for (Map.Entry<MetadataWrapper, Integer> entry : sortedItems.entrySet()) {
-            // Print out the metadata of each MenuItem
-            sb.append(new TreeMap<>(entry.getKey().metadata())).append(" x").append(entry.getValue()).append("\n");
-        }
-
-        sb.append("Total: $").append(String.format("%.2f", sortedData.get("total"))).append("}");
-
-        return sb.toString();
-    }
 }
+
+
+
+
+
