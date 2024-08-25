@@ -11,6 +11,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("ALL")
 class DataStoreTest {
 
     private static DataStore dataStore;
@@ -54,7 +55,7 @@ class DataStoreTest {
         dataStore.addMenuItem(sampleMenuItem);
         sampleMenuItem.setDataValue("description", "A very juicy burger");
         dataStore.updateMenuItem(sampleMenuItem);
-        MenuItem updatedItem = dataStore.getMenuItems().get(0);
+        MenuItem updatedItem = dataStore.getMenuItems().getFirst();
         assertEquals("A very juicy burger", updatedItem.getData().get("description"));
     }
 
@@ -81,7 +82,7 @@ class DataStoreTest {
     void testUpdateUser() {
         sampleUser.setDataValue("email", "john_new@example.com");
         dataStore.updateUser(sampleUser);
-        Users updatedUser = dataStore.getUsers().get(0);
+        Users updatedUser = dataStore.getUsers().getFirst();
         assertEquals("john_new@example.com", updatedUser.getData().get("email"));
     }
 
@@ -109,7 +110,7 @@ class DataStoreTest {
         dataStore.addOrder(sampleOrder);
         sampleOrder.updateOrderStatus(Order.OrderStatus.IN_PROGRESS);
         dataStore.updateOrder(sampleOrder);
-        Order updatedOrder = dataStore.getOrders().get(0);
+        Order updatedOrder = dataStore.getOrders().getFirst();
         assertEquals(Order.OrderStatus.IN_PROGRESS, updatedOrder.getMetadata().metadata().get("order_status"));
     }
 
@@ -124,7 +125,7 @@ class DataStoreTest {
     void testAddOrderItem() {
         dataStore.addOrder(sampleOrder);
         dataStore.addOrderItem(sampleOrder, sampleMenuItem, 2);
-        Order updatedOrder = dataStore.getOrders().get(0);
+        Order updatedOrder = dataStore.getOrders().getFirst();
         Map<String, Integer> menuItems = (Map<String, Integer>) updatedOrder.getData().get("menuItems");
         assertEquals(2, menuItems.get(sampleMenuItem.getMetadata().metadata().get("id")));
     }
@@ -134,7 +135,7 @@ class DataStoreTest {
         dataStore.addOrder(sampleOrder);
         dataStore.addOrderItem(sampleOrder, sampleMenuItem, 2);
         dataStore.updateOrderItem(sampleOrder, sampleMenuItem, 3);
-        Order updatedOrder = dataStore.getOrders().get(0);
+        Order updatedOrder = dataStore.getOrders().getFirst();
         Map<String, Integer> menuItems = (Map<String, Integer>) updatedOrder.getData().get("menuItems");
         assertEquals(3, menuItems.get(sampleMenuItem.getMetadata().metadata().get("id")));
     }
@@ -144,7 +145,7 @@ class DataStoreTest {
         dataStore.addOrder(sampleOrder);
         dataStore.addOrderItem(sampleOrder, sampleMenuItem, 2);
         dataStore.removeOrderItem(sampleOrder, sampleMenuItem, 2);
-        Order updatedOrder = dataStore.getOrders().get(0);
+        Order updatedOrder = dataStore.getOrders().getFirst();
         Map<String, Integer> menuItems = (Map<String, Integer>) updatedOrder.getData().get("menuItems");
         assertNull(menuItems.get(sampleMenuItem.getMetadata().metadata().get("id")));
     }
