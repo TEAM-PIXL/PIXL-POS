@@ -44,11 +44,17 @@ public class MenuItem {
         metadataMap.put("price", Math.round(price * 100.0) / 100.0);
         metadataMap.put("itemType", itemType);
         metadataMap.put("activeItem", activeItem);
-        metadataMap.put("dietaryRequirement", dietaryRequirement);
+
+        // Only add dietaryRequirement if it's not null
+        if (dietaryRequirement != null) {
+            metadataMap.put("dietaryRequirement", dietaryRequirement);
+        }
+
         metadataMap.put("created_at", System.currentTimeMillis()); // Timestamp for creation
         metadataMap.put("updated_at", System.currentTimeMillis()); // Timestamp for last update
 
-        this.metadata = new MetadataWrapper(metadataMap);
+        // Create immutable map for metadata
+        this.metadata = new MetadataWrapper(Map.copyOf(metadataMap));
 
         // Data
         this.data = new HashMap<>();
@@ -73,7 +79,7 @@ public class MenuItem {
         } else {
             modifiableMetadata.remove(key);
         }
-        this.metadata = new MetadataWrapper(modifiableMetadata);
+        this.metadata = new MetadataWrapper(Map.copyOf(modifiableMetadata));
     }
 
     public void setDataValue(String key, Object value) {
