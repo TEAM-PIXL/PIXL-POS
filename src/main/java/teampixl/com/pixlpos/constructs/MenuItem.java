@@ -19,7 +19,8 @@ public class MenuItem {
         VEGETARIAN,
         GLUTEN_FREE,
         SPICY,
-        ALLERGEN_FREE
+        ALLERGEN_FREE,
+        NONE
     }
 
     private MetadataWrapper metadata;

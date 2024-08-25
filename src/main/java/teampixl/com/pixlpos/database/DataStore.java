@@ -270,6 +270,60 @@ public class DataStore {
             System.out.println(e.getMessage());
         }
     }
+
+    public void updateOrder(Order order) {
+        // Find the existing order by ID and update it
+        Order existingOrder = orders.stream()
+                .filter(o -> o.getMetadata().metadata().get("order_id").equals(order.getMetadata().metadata().get("order_id")))
+                .findFirst()
+                .orElse(null);
+
+        if (existingOrder != null) {
+            orders.set(orders.indexOf(existingOrder), order);
+            // Update in database
+            saveOrderToDatabase(order);
+        }
+    }
+
+    public void updateMenuItem(MenuItem menuItem) {
+        // Find the existing menu item by ID and update it
+        MenuItem existingItem = menuItems.stream()
+                .filter(item -> item.getMetadata().metadata().get("id").equals(menuItem.getMetadata().metadata().get("id")))
+                .findFirst()
+                .orElse(null);
+
+        if (existingItem != null) {
+            menuItems.set(menuItems.indexOf(existingItem), menuItem);
+            // Update in database
+            saveMenuItemToDatabase(menuItem);
+        }
+    }
+
+    public void clearData() {
+        // Clear all data in memory
+        menuItems.clear();
+        users.clear();
+        orders.clear();
+
+        // Optionally, clear the data from the database
+        // clearDatabaseTables();
+    }
+
+    // Optional method to clear the database tables
+    private void clearDatabaseTables() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.executeUpdate("DELETE FROM menu_items");
+            stmt.executeUpdate("DELETE FROM users");
+            stmt.executeUpdate("DELETE FROM orders");
+            System.out.println("All data cleared from the database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 }
 
 
