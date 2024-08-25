@@ -12,7 +12,15 @@ public class DatabaseHelper {
 
     static {
         // Specify the path to the SQLite database file within the resources directory
-        DB_URL = "jdbc:sqlite:C:/Users/parke/OneDrive/Documents/SoftwareEngineering/Semester2-2024/CAB302/PIXL-POS/src/main/resources/teampixl/com/pixlpos/database/pixlpos.db";
+        DB_URL = "jdbc:sqlite:" + getDatabaseFilePath();
+    }
+
+    private static String getDatabaseFilePath() {
+        // Get the absolute path to the database file in the resources directory
+        File resourceDir = new File("src/main/resources/teampixl/com/pixlpos/database");
+        File dbFile = new File(resourceDir, "pixlpos.db");
+
+        return dbFile.getAbsolutePath();
     }
 
     // Connect to SQLite database
@@ -29,27 +37,74 @@ public class DatabaseHelper {
 
     // Initialize the database and create the tables
     public static void initializeDatabase() {
-        String sqlCreateMenuTable = """
-            CREATE TABLE IF NOT EXISTS menu_items (
-                id TEXT PRIMARY KEY,
-                item_name TEXT NOT NULL,
-                price REAL NOT NULL,
-                item_type TEXT NOT NULL,
-                active_item INTEGER NOT NULL,
-                dietary_requirement TEXT,
-                description TEXT NOT NULL,
-                notes TEXT,
-                amount_ordered INTEGER NOT NULL DEFAULT 0
-            );
-            """;
+// Create the Users table
+        String sqlCreateUsersTable = """
+    CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        email TEXT,
+        role TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+""";
+
+// Create the MenuItems table
+        String sqlCreateMenuItemsTable = """
+    CREATE TABLE IF NOT EXISTS menu_items (
+        id TEXT PRIMARY KEY,
+        item_name TEXT NOT NULL,
+        price REAL NOT NULL,
+        item_type TEXT NOT NULL,
+        active_item INTEGER NOT NULL,
+        dietary_requirement TEXT,
+        description TEXT NOT NULL,
+        notes TEXT,
+        amount_ordered INTEGER NOT NULL DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+""";
+
+// Create the Orders table
+        String sqlCreateOrdersTable = """
+    CREATE TABLE IF NOT EXISTS orders (
+        order_id TEXT PRIMARY KEY,
+        order_number INTEGER NOT NULL,
+        user_id TEXT NOT NULL,
+        order_status TEXT NOT NULL,
+        is_completed INTEGER NOT NULL DEFAULT 0,
+        total REAL NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+""";
+
+// Create the OrderItems table
+        String sqlCreateOrderItemsTable = """
+    CREATE TABLE IF NOT EXISTS order_items (
+        order_id TEXT NOT NULL,
+        menu_item_id TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        PRIMARY KEY (order_id, menu_item_id),
+        FOREIGN KEY (order_id) REFERENCES orders(order_id),
+        FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
+    );
+""";
+
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
-            // Create the menu_items table
-            stmt.execute(sqlCreateMenuTable);
-            System.out.println("MenuItem table created or already exists.");
+            stmt.execute(sqlCreateUsersTable);
+            stmt.execute(sqlCreateMenuItemsTable);
+            stmt.execute(sqlCreateOrdersTable);
+            stmt.execute(sqlCreateOrderItemsTable);
+            System.out.println("Database initialized and tables created.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 }
+
 

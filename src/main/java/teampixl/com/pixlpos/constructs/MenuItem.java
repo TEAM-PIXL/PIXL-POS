@@ -3,7 +3,6 @@ package teampixl.com.pixlpos.constructs;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.TreeMap;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
 public class MenuItem {
@@ -20,13 +19,13 @@ public class MenuItem {
         VEGETARIAN,
         GLUTEN_FREE,
         SPICY,
-        ALLERGEN_FREE
+        ALLERGEN_FREE,
+        NONE
     }
 
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
 
-    // Constructor with DietaryRequirement
     public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description, DietaryRequirement dietaryRequirement) {
         if (itemName == null || itemName.isEmpty()) {
             throw new IllegalArgumentException("itemName cannot be null or empty");
@@ -38,6 +37,7 @@ public class MenuItem {
             throw new IllegalArgumentException("description cannot be null or empty");
         }
 
+        // Metadata
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("id", UUID.randomUUID().toString());
         metadataMap.put("itemName", itemName);
@@ -50,23 +50,20 @@ public class MenuItem {
             metadataMap.put("dietaryRequirement", dietaryRequirement);
         }
 
-        // Debugging: Log the map contents before wrapping
-        System.out.println("Metadata map before wrapping: " + metadataMap);
+        metadataMap.put("created_at", System.currentTimeMillis()); // Timestamp for creation
+        metadataMap.put("updated_at", System.currentTimeMillis()); // Timestamp for last update
 
-        this.metadata = new MetadataWrapper(metadataMap);
+        // Create immutable map for metadata
+        this.metadata = new MetadataWrapper(Map.copyOf(metadataMap));
 
+        // Data
         this.data = new HashMap<>();
         data.put("description", description);
         data.put("notes", null);  // Default to null
         data.put("amountOrdered", 0);  // Default value is 0
+        data.put("ingredients", null);  // Optional field for ingredients
     }
 
-    // Overloaded constructor without DietaryRequirement
-    public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description) {
-        this(itemName, price, itemType, activeItem, description, null);
-    }
-
-    // Getters for Metadata and Data
     public MetadataWrapper getMetadata() {
         return metadata;
     }
@@ -75,31 +72,26 @@ public class MenuItem {
         return data;
     }
 
-    // Methods to safely update Metadata
     public void updateMetadata(String key, Object value) {
         Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
         if (value != null) {
             modifiableMetadata.put(key, value);
         } else {
-            modifiableMetadata.remove(key); // Or keep the key with null value depending on your design
+            modifiableMetadata.remove(key);
         }
-        this.metadata = new MetadataWrapper(modifiableMetadata);
+        this.metadata = new MetadataWrapper(Map.copyOf(modifiableMetadata));
     }
 
-    // Setters for specific fields in data
     public void setDataValue(String key, Object value) {
         data.put(key, value);
     }
 
     @Override
     public String toString() {
-        // Use TreeMap to ensure keys are sorted in the output
-        Map<String, Object> sortedMetadata = new TreeMap<>(metadata.metadata());
-        Map<String, Object> sortedData = new TreeMap<>(data);
-
-        return String.format("MenuItem{Metadata: %s, Data: %s}", sortedMetadata, sortedData);
+        return String.format("MenuItem{Metadata: %s, Data: %s}", new HashMap<>(metadata.metadata()), new HashMap<>(data));
     }
 }
+
 
 
 
