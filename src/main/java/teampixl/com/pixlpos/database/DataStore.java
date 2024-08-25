@@ -116,7 +116,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
     public void removeOrderItem(Order order, MenuItem item, int quantity) {
         order.removeMenuItem(item, quantity);
-        deleteOrderItemFromDatabase(order, item);
+        deleteOrderItemFromDatabase(order, item, quantity);
     }
 
 
@@ -453,16 +453,17 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
-    private void deleteOrderItemFromDatabase(Order order, MenuItem item) {
-        String sql = "DELETE FROM order_items WHERE order_id = ? AND menu_item_id = ?";
+    private void deleteOrderItemFromDatabase(Order order, MenuItem item, int quantity) {
+        String sql = "DELETE FROM order_items WHERE order_id = ? AND menu_item_id = ? AND quantity = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, (String) order.getMetadata().metadata().get("order_id"));
             pstmt.setString(2, (String) item.getMetadata().metadata().get("id"));
-            pstmt.executeUpdate();
+            pstmt.setInt(3, quantity);
 
+            pstmt.executeUpdate();
             System.out.println("Order item deleted from database.");
 
         } catch (SQLException e) {

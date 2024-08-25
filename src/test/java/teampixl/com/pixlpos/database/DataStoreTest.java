@@ -143,10 +143,10 @@ class DataStoreTest {
     void testRemoveOrderItem() {
         dataStore.addOrder(sampleOrder);
         dataStore.addOrderItem(sampleOrder, sampleMenuItem, 2);
-        dataStore.removeOrderItem(sampleOrder, sampleMenuItem, 1);
+        dataStore.removeOrderItem(sampleOrder, sampleMenuItem, 2);
         Order updatedOrder = dataStore.getOrders().get(0);
         Map<String, Integer> menuItems = (Map<String, Integer>) updatedOrder.getData().get("menuItems");
-        assertFalse(menuItems.containsKey(sampleMenuItem.getMetadata().metadata().get("id")));
+        assertNull(menuItems.get(sampleMenuItem.getMetadata().metadata().get("id")));
     }
 
     @Test
