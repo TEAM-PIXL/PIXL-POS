@@ -1,121 +1,165 @@
 package teampixl.com.pixlpos.database;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
-import teampixl.com.pixlpos.constructs.MenuItem.ItemType;
-import teampixl.com.pixlpos.constructs.Users.UserRole;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import javafx.collections.ObservableList;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DataStoreTest {
+class DataStoreTest {
 
-    private DataStore dataStore;
+    private static DataStore dataStore;
+    private static MenuItem sampleMenuItem;
+    private static Users sampleUser;
+    private static Order sampleOrder;
 
     @BeforeEach
-    public void setUp() {
+    void setup() {
         dataStore = DataStore.getInstance();
-        dataStore.clearData(); // Clear the datastore before each test
+        dataStore.clearData();  // Clear all data before each test
+
+        // Sample MenuItem
+        sampleMenuItem = new MenuItem("Burger", 5.99, MenuItem.ItemType.MAIN, true, "A juicy burger", MenuItem.DietaryRequirement.GLUTEN_FREE);
+
+        // Sample User
+        sampleUser = new Users("john_doe", "password123", "john@example.com", Users.UserRole.WAITER);
+
+        // Sample Order
+        sampleOrder = new Order(1, (String) sampleUser.getMetadata().metadata().get("id"));
+
+        dataStore.addUser(sampleUser);  // Add the sample user to the database
     }
 
     @Test
-    public void testAddAndRetrieveMenuItem() {
-        MenuItem menuItem = new MenuItem("Burger", 10.99, ItemType.MAIN, true, "Delicious beef burger", MenuItem.DietaryRequirement.NONE);
-        dataStore.addMenuItem(menuItem);
-
-        MenuItem retrievedItem = dataStore.getMenuItems().stream()
-                .filter(item -> item.getMetadata().metadata().get("itemName").equals("Burger"))
-                .findFirst()
-                .orElse(null);
-
-        assertNotNull(retrievedItem, "MenuItem should be found in DataStore");
-        assertEquals(menuItem.getMetadata().metadata().get("price"), retrievedItem.getMetadata().metadata().get("price"), "Prices should match");
+    void testAddMenuItem() {
+        dataStore.addMenuItem(sampleMenuItem);
+        assertEquals(1, dataStore.getMenuItems().size());
     }
 
     @Test
-    public void testUpdateMenuItem() {
-        MenuItem menuItem = new MenuItem("Salad", 5.99, ItemType.ENTREE, true, "Fresh garden salad", MenuItem.DietaryRequirement.VEGAN);
-        dataStore.addMenuItem(menuItem);
-
-        // Update price
-        menuItem.updateMetadata("price", 6.99);
-        dataStore.updateMenuItem(menuItem);
-
-        MenuItem updatedItem = dataStore.getMenuItems().stream()
-                .filter(item -> item.getMetadata().metadata().get("itemName").equals("Salad"))
-                .findFirst()
-                .orElse(null);
-
-        assertNotNull(updatedItem, "Updated MenuItem should be found in DataStore");
-        assertEquals(6.99, updatedItem.getMetadata().metadata().get("price"), "Updated price should match");
+    void testGetMenuItem() {
+        dataStore.addMenuItem(sampleMenuItem);
+        MenuItem item = dataStore.getMenuItem("Burger");
+        assertNotNull(item, "MenuItem should not be null");
+        assertEquals("Burger", item.getMetadata().metadata().get("itemName"));
     }
 
     @Test
-    public void testRemoveMenuItem() {
-        MenuItem menuItem = new MenuItem("Pizza", 8.99, ItemType.MAIN, true, "Cheesy pizza", MenuItem.DietaryRequirement.NONE);
-        dataStore.addMenuItem(menuItem);
-
-        dataStore.removeMenuItem(menuItem);
-
-        MenuItem removedItem = dataStore.getMenuItems().stream()
-                .filter(item -> item.getMetadata().metadata().get("itemName").equals("Pizza"))
-                .findFirst()
-                .orElse(null);
-
-        assertNull(removedItem, "MenuItem should be removed from DataStore");
+    void testUpdateMenuItem() {
+        dataStore.addMenuItem(sampleMenuItem);
+        sampleMenuItem.setDataValue("description", "A very juicy burger");
+        dataStore.updateMenuItem(sampleMenuItem);
+        MenuItem updatedItem = dataStore.getMenuItems().get(0);
+        assertEquals("A very juicy burger", updatedItem.getData().get("description"));
     }
 
     @Test
-    public void testAddAndRetrieveOrder() {
-        Users user = new Users("waiter", "password", "waiter@example.com", UserRole.WAITER);
-        dataStore.addUser(user);
-
-        Order order = new Order(1, user.getMetadata().metadata().get("id").toString());
-        dataStore.addOrder(order);
-
-        Order retrievedOrder = dataStore.getOrders().stream()
-                .filter(o -> o.getMetadata().metadata().get("order_number").equals(1))
-                .findFirst()
-                .orElse(null);
-
-        assertNotNull(retrievedOrder, "Order should be found in DataStore");
-        assertEquals(order.getMetadata().metadata().get("order_number"), retrievedOrder.getMetadata().metadata().get("order_number"), "Order numbers should match");
+    void testRemoveMenuItem() {
+        dataStore.addMenuItem(sampleMenuItem);
+        dataStore.removeMenuItem(sampleMenuItem);
+        assertEquals(0, dataStore.getMenuItems().size());
     }
 
     @Test
-    public void testCompleteOrder() {
-        Users user = new Users("waiter", "password", "waiter@example.com", UserRole.WAITER);
-        dataStore.addUser(user);
-
-        Order order = new Order(2, user.getMetadata().metadata().get("id").toString());
-        dataStore.addOrder(order);
-
-        order.completeOrder();
-        dataStore.updateOrder(order);
-
-        Order completedOrder = dataStore.getOrders().stream()
-                .filter(o -> o.getMetadata().metadata().get("order_number").equals(2))
-                .findFirst()
-                .orElse(null);
-
-        assertNotNull(completedOrder, "Completed Order should be found in DataStore");
-        assertTrue((Boolean) completedOrder.getMetadata().metadata().get("is_completed"), "Order should be marked as completed");
+    void testAddUser() {
+        assertEquals(1, dataStore.getUsers().size());
     }
 
     @Test
-    public void testAddAndRetrieveUser() {
-        Users user = new Users("cook", "password123", "cook@example.com", UserRole.COOK);
-        dataStore.addUser(user);
+    void testGetUser() {
+        Users user = dataStore.getUser("john_doe");
+        assertNotNull(user, "User should not be null");
+        assertEquals("john_doe", user.getMetadata().metadata().get("username"));
+    }
 
-        Users retrievedUser = dataStore.getUsers().stream()
-                .filter(u -> u.getMetadata().metadata().get("username").equals("cook"))
-                .findFirst()
-                .orElse(null);
+    @Test
+    void testUpdateUser() {
+        sampleUser.setDataValue("email", "john_new@example.com");
+        dataStore.updateUser(sampleUser);
+        Users updatedUser = dataStore.getUsers().get(0);
+        assertEquals("john_new@example.com", updatedUser.getData().get("email"));
+    }
 
-        assertNotNull(retrievedUser, "User should be found in DataStore");
-        assertEquals(user.getMetadata().metadata().get("email"), retrievedUser.getMetadata().metadata().get("email"), "Emails should match");
+    @Test
+    void testRemoveUser() {
+        dataStore.removeUser(sampleUser);
+        assertEquals(0, dataStore.getUsers().size());
+    }
+
+    @Test
+    void testAddOrder() {
+        dataStore.addOrder(sampleOrder);
+        assertEquals(1, dataStore.getOrders().size());
+    }
+
+    @Test
+    void testGetOrders() {
+        dataStore.addOrder(sampleOrder);
+        ObservableList<Order> orders = dataStore.getOrders();
+        assertEquals(1, orders.size(), "There should be exactly 1 order");
+    }
+
+    @Test
+    void testUpdateOrder() {
+        dataStore.addOrder(sampleOrder);
+        sampleOrder.updateOrderStatus(Order.OrderStatus.IN_PROGRESS);
+        dataStore.updateOrder(sampleOrder);
+        Order updatedOrder = dataStore.getOrders().get(0);
+        assertEquals(Order.OrderStatus.IN_PROGRESS, updatedOrder.getMetadata().metadata().get("order_status"));
+    }
+
+    @Test
+    void testRemoveOrder() {
+        dataStore.addOrder(sampleOrder);
+        dataStore.removeOrder(sampleOrder);
+        assertEquals(0, dataStore.getOrders().size());
+    }
+
+    @Test
+    void testAddOrderItem() {
+        dataStore.addOrder(sampleOrder);
+        dataStore.addOrderItem(sampleOrder, sampleMenuItem, 2);
+        Order updatedOrder = dataStore.getOrders().get(0);
+        Map<String, Integer> menuItems = (Map<String, Integer>) updatedOrder.getData().get("menuItems");
+        assertEquals(2, menuItems.get(sampleMenuItem.getMetadata().metadata().get("id")));
+    }
+
+    @Test
+    void testUpdateOrderItem() {
+        dataStore.addOrder(sampleOrder);
+        dataStore.addOrderItem(sampleOrder, sampleMenuItem, 2);
+        dataStore.updateOrderItem(sampleOrder, sampleMenuItem, 3);
+        Order updatedOrder = dataStore.getOrders().get(0);
+        Map<String, Integer> menuItems = (Map<String, Integer>) updatedOrder.getData().get("menuItems");
+        assertEquals(3, menuItems.get(sampleMenuItem.getMetadata().metadata().get("id")));
+    }
+
+    @Test
+    void testRemoveOrderItem() {
+        dataStore.addOrder(sampleOrder);
+        dataStore.addOrderItem(sampleOrder, sampleMenuItem, 2);
+        dataStore.removeOrderItem(sampleOrder, sampleMenuItem, 2);
+        Order updatedOrder = dataStore.getOrders().get(0);
+        Map<String, Integer> menuItems = (Map<String, Integer>) updatedOrder.getData().get("menuItems");
+        assertNull(menuItems.get(sampleMenuItem.getMetadata().metadata().get("id")));
+    }
+
+    @Test
+    void testClearData() {
+        dataStore.addMenuItem(sampleMenuItem);
+        dataStore.addOrder(sampleOrder);
+        dataStore.clearData();
+        assertEquals(0, dataStore.getMenuItems().size());
+        assertEquals(0, dataStore.getOrders().size());
+        assertEquals(0, dataStore.getUsers().size());
     }
 }
+
+
+
 
