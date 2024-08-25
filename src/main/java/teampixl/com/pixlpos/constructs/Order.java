@@ -134,6 +134,23 @@ public class Order {
         }
     }
 
+    public void updateMenuItem(MenuItem menuItem, int quantity) {
+        Object menuItemsObj = data.get("menuItems");
+
+        if (menuItemsObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Integer> menuItems = (Map<String, Integer>) menuItemsObj;
+            String itemId = (String) menuItem.getMetadata().metadata().get("id");
+
+            menuItems.put(itemId, quantity);
+
+            updateTotal(menuItem, quantity);
+            updateTimestamp();
+        } else {
+            throw new IllegalStateException("Expected menuItems to be a Map<String, Integer>");
+        }
+    }
+
     public void completeOrder() {
         updateOrderStatus(OrderStatus.COMPLETED);
     }
