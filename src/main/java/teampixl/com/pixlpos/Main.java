@@ -7,74 +7,73 @@ import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
 
 public class Main {
+
     public static void main(String[] args) {
-        // Initialize the database
+        // Initialize database but don't clear tables
         DatabaseHelper.initializeDatabase();
+        System.out.println("Database initialized and tables created.");
+
+        // Initialize DataStore
         DataStore dataStore = DataStore.getInstance();
 
-        // Clear existing data
-        dataStore.clearData();
+        // Test Users
+        Users user1 = new Users("admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
+        Users user2 = new Users("waiter", "waiter", "waiter@example.com", Users.UserRole.WAITER);
 
-        // Create some test users
-        Users user1 = new Users("waiter", "waiterpass", "waiter@example.com", Users.UserRole.WAITER);
-        Users user2 = new Users("cook", "cookpass", "cook@example.com", Users.UserRole.COOK);
-
-        // Add users to the datastore
         dataStore.addUser(user1);
+        System.out.println("User 1 added to database.");
         dataStore.addUser(user2);
+        System.out.println("User 2 added to database.");
 
-        // Create some test menu items
-        MenuItem menuItem1 = new MenuItem("Chicken Curry", 15.49, MenuItem.ItemType.MAIN, true, "Delicious chicken curry", MenuItem.DietaryRequirement.SPICY);
-        MenuItem menuItem2 = new MenuItem("Vegan Salad", 12.99, MenuItem.ItemType.ENTREE, true, "Healthy vegan salad", MenuItem.DietaryRequirement.VEGAN);
-        MenuItem menuItem3 = new MenuItem("Cheese Pizza", 9.99, MenuItem.ItemType.MAIN, true, "Cheesy pizza", null);
+        System.out.println("Retrieving all users from the database:");
+        dataStore.getUsers().forEach(user -> System.out.println(user));
 
-        // Add menu items to the datastore
-        dataStore.addMenuItem(menuItem1);
-        dataStore.addMenuItem(menuItem2);
-        dataStore.addMenuItem(menuItem3);
+        // Test MenuItems
+        MenuItem item1 = new MenuItem("Chicken Curry", 15.49, MenuItem.ItemType.MAIN, true, "Delicious chicken curry", MenuItem.DietaryRequirement.SPICY);
+        MenuItem item2 = new MenuItem("Pizza", 18.99, MenuItem.ItemType.MAIN, true, "Cheesy pizza with toppings", null);
+        MenuItem item3 = new MenuItem("Vegan Salad", 12.99, MenuItem.ItemType.ENTREE, true, "Healthy vegan salad", MenuItem.DietaryRequirement.VEGAN);
 
-        // Create a test order
-        Order order = new Order(1, (String) user1.getMetadata().metadata().get("id"));
-        order.addMenuItem(menuItem1, 2);
-        order.addMenuItem(menuItem3, 1);
+        dataStore.addMenuItem(item1);
+        System.out.println("MenuItem 1 added to database.");
+        dataStore.addMenuItem(item2);
+        System.out.println("MenuItem 2 added to database.");
+        dataStore.addMenuItem(item3);
+        System.out.println("MenuItem 3 added to database.");
 
-        // Add the order to the datastore
-        dataStore.addOrder(order);
+        System.out.println("Retrieving all menu items from the database:");
+        dataStore.getMenuItems().forEach(item -> System.out.println(item));
 
-        // Retrieve and display data from the datastore
-        System.out.println("Users in DataStore:");
-        for (Users user : dataStore.getUsers()) {
-            System.out.println(user);
-        }
+        // Test Orders
+        Order order1 = new Order(1, (String) user1.getMetadata().metadata().get("id"));
+        order1.addMenuItem(item1, 2);
+        order1.addMenuItem(item3, 1);
 
-        System.out.println("\nMenu Items in DataStore:");
-        for (MenuItem item : dataStore.getMenuItems()) {
-            System.out.println(item);
-        }
+        Order order2 = new Order(2, (String) user2.getMetadata().metadata().get("id"));
+        order2.addMenuItem(item2, 3);
 
-        System.out.println("\nOrders in DataStore:");
-        for (Order ord : dataStore.getOrders()) {
-            System.out.println(ord);
-        }
+        dataStore.addOrder(order1);
+        System.out.println("Order 1 added to database.");
+        dataStore.addOrder(order2);
+        System.out.println("Order 2 added to database.");
 
-        // Testing clearing the database
-        dataStore.clearData();
-        System.out.println("\nData cleared.");
+        System.out.println("Retrieving all orders from the database:");
+        dataStore.getOrders().forEach(order -> System.out.println(order));
 
-        System.out.println("Users in DataStore after clearing:");
-        for (Users user : dataStore.getUsers()) {
-            System.out.println(user);
-        }
+        // Simulate application exit and re-run
+        System.out.println("\n--- Simulating Application Exit and Re-Run ---");
+        // Re-initialize DataStore to simulate a new session
+        dataStore = DataStore.getInstance();
 
-        System.out.println("Menu Items in DataStore after clearing:");
-        for (MenuItem item : dataStore.getMenuItems()) {
-            System.out.println(item);
-        }
+        System.out.println("Retrieving all users from the database after re-initialization:");
+        dataStore.getUsers().forEach(user -> System.out.println(user));
 
-        System.out.println("Orders in DataStore after clearing:");
-        for (Order ord : dataStore.getOrders()) {
-            System.out.println(ord);
-        }
+        System.out.println("Retrieving all menu items from the database after re-initialization:");
+        dataStore.getMenuItems().forEach(item -> System.out.println(item));
+
+        System.out.println("Retrieving all orders from the database after re-initialization:");
+        dataStore.getOrders().forEach(order -> System.out.println(order));
     }
 }
+
+
 

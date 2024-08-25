@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Objects;
 
 public class DatabaseHelper {
 
@@ -17,10 +16,11 @@ public class DatabaseHelper {
     }
 
     private static String getDatabaseFilePath() {
-        // Get the resource directory path
-        String resourceDir = new File(Objects.requireNonNull(DatabaseHelper.class.getResource("/teampixl/com/pixlpos/database/")).getPath()).getAbsolutePath();
-        // Set the full path to the SQLite database file
-        return resourceDir + File.separator + "pixlpos.db";
+        // Get the absolute path to the database file in the resources directory
+        File resourceDir = new File("src/main/resources/teampixl/com/pixlpos/database");
+        File dbFile = new File(resourceDir, "pixlpos.db");
+
+        return dbFile.getAbsolutePath();
     }
 
     // Connect to SQLite database
