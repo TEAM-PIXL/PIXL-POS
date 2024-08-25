@@ -27,7 +27,7 @@ public class Main {
         System.out.println("User 2 added to database.");
 
         System.out.println("Retrieving all users from the database:");
-        dataStore.getUsers().forEach(user -> System.out.println(user));
+        dataStore.getUsers().forEach(System.out::println);
 
         // Test MenuItems
         MenuItem item1 = new MenuItem("Chicken Curry", 15.49, MenuItem.ItemType.MAIN, true, "Delicious chicken curry", MenuItem.DietaryRequirement.SPICY);
@@ -42,7 +42,7 @@ public class Main {
         System.out.println("MenuItem 3 added to database.");
 
         System.out.println("Retrieving all menu items from the database:");
-        dataStore.getMenuItems().forEach(item -> System.out.println(item));
+        dataStore.getMenuItems().forEach(System.out::println);
 
         // Test Orders
         Order order1 = new Order(1, (String) user1.getMetadata().metadata().get("id"));
@@ -58,7 +58,7 @@ public class Main {
         System.out.println("Order 2 added to database.");
 
         System.out.println("Retrieving all orders from the database:");
-        dataStore.getOrders().forEach(order -> System.out.println(order));
+        dataStore.getOrders().forEach(System.out::println);
 
         // Simulate application exit and re-run
         System.out.println("\n--- Simulating Application Exit and Re-Run ---");
@@ -66,13 +66,13 @@ public class Main {
         dataStore = DataStore.getInstance();
 
         System.out.println("Retrieving all users from the database after re-initialization:");
-        dataStore.getUsers().forEach(user -> System.out.println(user));
+        dataStore.getUsers().forEach(System.out::println);
 
         System.out.println("Retrieving all menu items from the database after re-initialization:");
-        dataStore.getMenuItems().forEach(item -> System.out.println(item));
+        dataStore.getMenuItems().forEach(System.out::println);
 
         System.out.println("Retrieving all orders from the database after re-initialization:");
-        dataStore.getOrders().forEach(order -> System.out.println(order));
+        dataStore.getOrders().forEach(System.out::println);
     }
 }
 

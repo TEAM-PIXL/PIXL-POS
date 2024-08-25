@@ -30,6 +30,7 @@ class OrderTest {
         assertEquals(Order.OrderStatus.PENDING, order.getMetadata().metadata().get("order_status"));
     }
 
+    @SuppressWarnings({"unchecked", "SuspiciousMethodCalls"})
     @Test
     void testAddMenuItemToOrder() {
         Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
