@@ -3,13 +3,14 @@ package teampixl.com.pixlpos.database;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.util.Map;
 
-public class DataStore {
+public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
     private static DataStore instance = null;
     private ObservableList<MenuItem> menuItems;
@@ -53,6 +54,11 @@ public class DataStore {
         deleteMenuItemFromDatabase(item);
     }
 
+    @Override
+    public MenuItem getMenuItem(String itemName) {
+        return null;
+    }
+
     // CRUD operations for Orders
     public ObservableList<Order> getOrders() {
         return orders;
@@ -94,6 +100,11 @@ public class DataStore {
     public void removeUser(Users user) {
         users.remove(user);
         deleteUserFromDatabase(user);
+    }
+
+    @Override
+    public Users getUser(String username) {
+        return null;
     }
 
     // Load MenuItems from the SQLite database
