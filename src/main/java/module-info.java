@@ -18,6 +18,7 @@ module PIXL.POS {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
+    requires jbcrypt;
 
     opens teampixl.com.pixlpos.application to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.loginconsole to javafx.fxml;
