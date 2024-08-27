@@ -10,6 +10,4 @@ module PIXL.POS {
     requires javafx.graphics;
     requires jbcrypt;
 
-    opens teampixl.com.pixlpos.controllers to javafx.fxml;
-    exports teampixl.com.pixlpos;
 }
