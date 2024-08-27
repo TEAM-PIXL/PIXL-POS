@@ -5,6 +5,7 @@ import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
+import teampixl.com.pixlpos.authentication.PasswordUtils;
 
 public class Main {
 
@@ -27,7 +28,7 @@ public class Main {
         System.out.println("User 2 added to database.");
 
         System.out.println("Retrieving all users from the database:");
-        dataStore.getUsers().forEach(System.out::println);
+        dataStore.getUsers().forEach(user -> System.out.println(user));
 
         // Test MenuItems
         MenuItem item1 = new MenuItem("Chicken Curry", 15.49, MenuItem.ItemType.MAIN, true, "Delicious chicken curry", MenuItem.DietaryRequirement.SPICY);
@@ -42,7 +43,7 @@ public class Main {
         System.out.println("MenuItem 3 added to database.");
 
         System.out.println("Retrieving all menu items from the database:");
-        dataStore.getMenuItems().forEach(System.out::println);
+        dataStore.getMenuItems().forEach(item -> System.out.println(item));
 
         // Test Orders
         Order order1 = new Order(1, (String) user1.getMetadata().metadata().get("id"));
@@ -58,7 +59,7 @@ public class Main {
         System.out.println("Order 2 added to database.");
 
         System.out.println("Retrieving all orders from the database:");
-        dataStore.getOrders().forEach(System.out::println);
+        dataStore.getOrders().forEach(order -> System.out.println(order));
 
         // Simulate application exit and re-run
         System.out.println("\n--- Simulating Application Exit and Re-Run ---");
@@ -66,13 +67,38 @@ public class Main {
         dataStore = DataStore.getInstance();
 
         System.out.println("Retrieving all users from the database after re-initialization:");
-        dataStore.getUsers().forEach(System.out::println);
+        dataStore.getUsers().forEach(user -> System.out.println(user));
 
         System.out.println("Retrieving all menu items from the database after re-initialization:");
-        dataStore.getMenuItems().forEach(System.out::println);
+        dataStore.getMenuItems().forEach(item -> System.out.println(item));
 
         System.out.println("Retrieving all orders from the database after re-initialization:");
-        dataStore.getOrders().forEach(System.out::println);
+        dataStore.getOrders().forEach(order -> System.out.println(order));
+
+        System.out.println("Testing Authentication...");
+
+        // Creating a new user with a plain password
+        Users user = new Users("testUser", "testPassword123", "test@example.com", Users.UserRole.WAITER);
+
+        // Hash the password and verify it
+        String plainPassword = "testPassword123";
+        String hashedPassword = PasswordUtils.hashPassword(plainPassword);
+        boolean isPasswordValid = PasswordUtils.verifyPassword(plainPassword, hashedPassword);
+
+        // Output the results
+        System.out.println("Plain Password: " + plainPassword);
+        System.out.println("Hashed Password: " + hashedPassword);
+        System.out.println("Is Password Valid: " + isPasswordValid);
+
+        // Test with wrong password
+        boolean isWrongPasswordValid = PasswordUtils.verifyPassword("wrongPassword", hashedPassword);
+        System.out.println("Is Wrong Password Valid: " + isWrongPasswordValid);
+
+        if (isPasswordValid && !isWrongPasswordValid) {
+            System.out.println("Authentication tests passed.");
+        } else {
+            System.out.println("Authentication tests failed.");
+        }
     }
 }
 
