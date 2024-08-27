@@ -1,6 +1,5 @@
 package teampixl.com.pixlpos.common;
 
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -33,7 +32,7 @@ public class GuiCommon {
     ====================================================================================================================================================================================*/
 
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
-    public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/login-screen.fxml";
+    public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml";
 
     /*===================================================================================================================================================================================
     Code Description:

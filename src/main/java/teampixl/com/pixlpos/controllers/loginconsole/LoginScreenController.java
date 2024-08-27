@@ -26,6 +26,9 @@ public class LoginScreenController {
     @FXML
     private Button loginButton;
 
+    @FXML
+    private Button exitButton;
+
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Login Error");
