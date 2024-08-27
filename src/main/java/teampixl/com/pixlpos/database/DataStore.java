@@ -40,9 +40,9 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
     private static DataStore instance = null;
-    private ObservableList<MenuItem> menuItems;
-    private ObservableList<Order> orders;
-    private ObservableList<Users> users;
+    private final ObservableList<MenuItem> menuItems;
+    private final ObservableList<Order> orders;
+    private final ObservableList<Users> users;
 
     private DataStore() {
         menuItems = FXCollections.observableArrayList();
@@ -156,13 +156,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
     }
 
     public void updateOrderItem(Order order, MenuItem menuItem, int quantity) {
-        Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
-        String key = (String) menuItem.getMetadata().metadata().get("id");
-        if (menuItems.containsKey(key)) {
-            menuItems.put(key, quantity);
-        }
-        // Save the updated order back to the data store
-        updateOrder(order);
+        order.updateMenuItem(menuItem, quantity);
+        updateOrderItemInDatabase(order, menuItem, quantity);
     }
 
     public void removeOrderItem(Order order, MenuItem item, int quantity) {
@@ -395,7 +390,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
-    private ObservableList<Map<String, Object>> loadOrderItems(String orderId) {
+    private void loadOrderItems(String orderId) {
         ObservableList<Map<String, Object>> orderItemsList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM order_items WHERE order_id = ?";
 
@@ -420,7 +415,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
             System.out.println(e.getMessage());
         }
 
-        return orderItemsList;
     }
 
     private void saveOrderToDatabase(Order order) {
@@ -448,6 +442,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void saveOrderItemsToDatabase(Order order) {
         String sql = "INSERT INTO order_items(order_id, menu_item_id, quantity) VALUES(?, ?, ?)";
 
