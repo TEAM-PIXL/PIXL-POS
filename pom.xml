@@ -79,7 +79,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>teampixl.com.pixlpos/teampixl.com.pixlpos.HelloApplication</mainClass>
+                            <mainClass>teampixl.com.pixlpos/teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
