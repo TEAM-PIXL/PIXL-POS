@@ -101,28 +101,20 @@ public class MenuItem {
     }
 
     public void addIngredient(Ingredients ingredient) {
-        if (ingredient == null) {
-            throw new IllegalArgumentException("Ingredient cannot be null");
-        }
         ingredients.put((String) ingredient.getMetadata().metadata().get("uuid"), ingredient);
-    }
-
-    public void removeIngredient(Ingredients ingredient) {
-        if (ingredient == null) {
-            throw new IllegalArgumentException("Ingredient cannot be null");
-        }
-        ingredients.remove(ingredient.getMetadata().metadata().get("uuid"));
     }
 
     public boolean hasIngredient(String ingredientUUID) {
         return ingredients.containsKey(ingredientUUID);
     }
 
-    public void updateIngredient(String ingredientUUID, Ingredients updatedIngredient) {
-        if (ingredientUUID == null || !ingredients.containsKey(ingredientUUID)) {
-            throw new IllegalArgumentException("Ingredient not found");
-        }
-        ingredients.put(ingredientUUID, updatedIngredient);
+    public void removeIngredient(Ingredients ingredient) {
+        ingredients.remove((String) ingredient.getMetadata().metadata().get("uuid"));
+    }
+
+    public void updateIngredient(String oldIngredientUUID, Ingredients newIngredient) {
+        ingredients.remove(oldIngredientUUID);
+        ingredients.put((String) newIngredient.getMetadata().metadata().get("uuid"), newIngredient);
     }
 
     public void clearIngredients() {
@@ -165,7 +157,11 @@ public class MenuItem {
 
     @Override
     public String toString() {
-        return String.format("MenuItem{Metadata: %s, Data: %s}", new HashMap<>(metadata.metadata()), new HashMap<>(data));
+        return "MenuItem{" +
+                "metadata=" + metadata +
+                ", data=" + data +
+                ", ingredients=" + ingredients +
+                '}';
     }
 }
 
