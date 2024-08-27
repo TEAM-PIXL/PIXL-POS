@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.authentication.PasswordUtils;
 
 public class Users {
 
@@ -40,11 +41,11 @@ public class Users {
         - additional_info: null
     ============================================================================================================================================================*/
 
-    public Users(String username, String password, String email, UserRole role) {
+    public Users(String username, String plainPassword, String email, UserRole role) {
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("username cannot be null or empty");
         }
-        if (password == null || password.isEmpty()) {
+        if (plainPassword == null || plainPassword.isEmpty()) {
             throw new IllegalArgumentException("password cannot be null or empty");
         }
         if (role == null) {
@@ -63,9 +64,9 @@ public class Users {
 
         // Data
         this.data = new HashMap<>();
-        data.put("password", password);  // Store encrypted password in practice
-        data.put("email", email);
-        data.put("additional_info", null);  // Optional field for additional info
+        this.data.put("password", PasswordUtils.hashPassword(plainPassword));  // Store hashed password
+        this.data.put("email", email);
+        this.data.put("additional_info", null);  // Optional field for additional info
     }
 
     /*============================================================================================================================================================

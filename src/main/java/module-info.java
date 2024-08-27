@@ -8,7 +8,8 @@ module PIXL.POS {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
-    requires org.
+    requires jbcrypt;
 
+    opens teampixl.com.pixlpos.controllers to javafx.fxml;
     exports teampixl.com.pixlpos;
 }

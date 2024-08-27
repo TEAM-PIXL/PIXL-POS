@@ -43,6 +43,7 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.41.2.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mindrot/jbcrypt -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>

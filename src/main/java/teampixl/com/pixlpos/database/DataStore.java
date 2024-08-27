@@ -7,6 +7,7 @@ import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.HashMap;
+import teampixl.com.pixlpos.authentication.PasswordUtils;
 
 import java.sql.*;
 import java.util.Map;
@@ -218,7 +219,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
                 return user;
             }
         }
-        return null;
+        return null; // User not found
+    }
+
+    public void updateUserPassword(Users user, String newPassword) {
+        String hashedPassword = PasswordUtils.hashPassword(newPassword);
+        user.setDataValue("password", hashedPassword);
+        updateUserInDatabase(user);
     }
 
 
@@ -660,7 +667,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, (String) user.getMetadata().metadata().get("username"));
-            pstmt.setString(2, (String) user.getData().get("password"));
+            pstmt.setString(2, (String) user.getData().get("password")); // Ensure password is stored as a hash
             pstmt.setString(3, (String) user.getData().get("email"));
             pstmt.setString(4, user.getMetadata().metadata().get("role").toString());
             pstmt.setLong(5, (Long) user.getMetadata().metadata().get("updated_at"));
