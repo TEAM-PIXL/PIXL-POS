@@ -12,6 +12,7 @@ public class MenuItem {
     - Enumerations for ItemType and DietaryRequirement
     - MetadataWrapper object for metadata
     - Map object for data
+    - Map object for ingredients
     ============================================================================================================================================================*/
 
     public enum ItemType {
@@ -32,6 +33,7 @@ public class MenuItem {
 
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
+    private final Map<String, Ingredients> ingredients;
 
     /*============================================================================================================================================================
     Code Description:
@@ -89,7 +91,42 @@ public class MenuItem {
         data.put("description", description);
         data.put("notes", null);  // Default to null
         data.put("amountOrdered", 0);  // Default value is 0
-        data.put("ingredients", null);  // Optional field for ingredients
+
+        // Ingredients - can be empty, using a Map to link ingredient UUIDs to the actual Ingredients
+        this.ingredients = new HashMap<>();
+    }
+
+    public Map<String, Ingredients> getIngredients() {
+        return ingredients;
+    }
+
+    public void addIngredient(Ingredients ingredient) {
+        if (ingredient == null) {
+            throw new IllegalArgumentException("Ingredient cannot be null");
+        }
+        ingredients.put((String) ingredient.getMetadata().metadata().get("uuid"), ingredient);
+    }
+
+    public void removeIngredient(Ingredients ingredient) {
+        if (ingredient == null) {
+            throw new IllegalArgumentException("Ingredient cannot be null");
+        }
+        ingredients.remove(ingredient.getMetadata().metadata().get("uuid"));
+    }
+
+    public boolean hasIngredient(String ingredientUUID) {
+        return ingredients.containsKey(ingredientUUID);
+    }
+
+    public void updateIngredient(String ingredientUUID, Ingredients updatedIngredient) {
+        if (ingredientUUID == null || !ingredients.containsKey(ingredientUUID)) {
+            throw new IllegalArgumentException("Ingredient not found");
+        }
+        ingredients.put(ingredientUUID, updatedIngredient);
+    }
+
+    public void clearIngredients() {
+        ingredients.clear();
     }
 
     /*============================================================================================================================================================

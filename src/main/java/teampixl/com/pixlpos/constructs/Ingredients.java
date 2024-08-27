@@ -8,6 +8,13 @@ import teampixl.com.pixlpos.database.MetadataWrapper;
 
 public class Ingredients {
 
+    /*===============================================================================================================================================================================================================
+    Code Description:
+    - Enumerations for StockStatus and UnitType
+    - MetadataWrapper object for metadata
+    - Map object for data
+    ===============================================================================================================================================================================================================*/
+
     public enum StockStatus {
         INSTOCK,
         LOWSTOCK,
@@ -22,6 +29,23 @@ public class Ingredients {
 
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
+
+    /*===============================================================================================================================================================================================================
+    Code Description:
+    - Constructor for Ingredients object.
+
+    Metadata:
+        - uuid: UUID
+        - itemName: itemName
+        - stockStatus: stockStatus
+        - onOrder: onOrder
+        - lastUpdated: timestamp for last update
+
+    Data:
+        - unit: unitType
+        - numeral: numeral
+        - notes: notes
+    ===============================================================================================================================================================================================================*/
 
     public Ingredients(String itemName, StockStatus stockStatus, boolean onOrder, UnitType unitType, Object numeral, String notes) {
         if (itemName == null || itemName.isEmpty()) {
@@ -53,6 +77,18 @@ public class Ingredients {
         data.put("numeral", numeral);
         data.put("notes", notes);
     }
+
+    /*===============================================================================================================================================================================================================
+    Code Description:
+    - Getters for metadata and data
+
+    Methods:
+    - getMetadata(): MetadataWrapper
+    - getData(): Map<String, Object>
+    - updateMetadata(String key, Object value): void
+    - updateData(String key, Object value): void
+    - toString(): String
+    ===============================================================================================================================================================================================================*/
 
     public MetadataWrapper getMetadata() {
         return metadata;
