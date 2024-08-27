@@ -62,35 +62,35 @@ public class Ingredients {
         return data;
     }
 
-    public void updateStockStatus(StockStatus newStatus) {
-        if (newStatus == null) {
-            throw new IllegalArgumentException("stockStatus cannot be null");
+    // Method to update metadata, similar to Order.java
+    public void updateMetadata(String key, Object value) {
+        if (key.equals("stockStatus") && !(value instanceof StockStatus)) {
+            throw new IllegalArgumentException("Invalid value type for stockStatus");
         }
-        this.metadata.updateMetadata("stockStatus", newStatus);
-        this.metadata.updateMetadata("lastUpdated", LocalDateTime.now());
+        if (key.equals("onOrder") && !(value instanceof Boolean)) {
+            throw new IllegalArgumentException("Invalid value type for onOrder");
+        }
+        metadata.metadata().put(key, value);
+        metadata.metadata().put("lastUpdated", LocalDateTime.now()); // Automatically update lastUpdated
     }
 
-    public void updateNumeral(Object newNumeral) {
-        UnitType unitType = (UnitType) data.get("unit");
-        if (unitType == UnitType.QTY && !(newNumeral instanceof Integer)) {
-            throw new IllegalArgumentException("Numeral must be an Integer for QTY unit type");
+    // Method to update data, similar to how metadata is updated
+    public void updateData(String key, Object value) {
+        if (key.equals("numeral")) {
+            UnitType unitType = (UnitType) data.get("unit");
+            if (unitType == UnitType.QTY && !(value instanceof Integer)) {
+                throw new IllegalArgumentException("Numeral must be an Integer for QTY unit type");
+            }
+            if ((unitType == UnitType.KG || unitType == UnitType.L) && !(value instanceof Double)) {
+                throw new IllegalArgumentException("Numeral must be a Double for KG or L unit types");
+            }
         }
-        if ((unitType == UnitType.KG || unitType == UnitType.L) && !(newNumeral instanceof Double)) {
-            throw new IllegalArgumentException("Numeral must be a Double for KG or L unit types");
-        }
-        this.data.put("numeral", newNumeral);
-        this.metadata.updateMetadata("lastUpdated", LocalDateTime.now());
-    }
-
-    public void updateNotes(String newNotes) {
-        this.data.put("notes", newNotes);
-        this.metadata.updateMetadata("lastUpdated", LocalDateTime.now());
+        data.put(key, value);
+        updateMetadata("lastUpdated", LocalDateTime.now()); // Update lastUpdated whenever data is changed
     }
 
     @Override
     public String toString() {
         return String.format("Ingredients{Metadata: %s, Data: %s}", metadata.metadata(), new HashMap<>(data));
     }
-
-
 }
