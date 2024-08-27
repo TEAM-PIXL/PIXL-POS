@@ -5,6 +5,7 @@ import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
+import teampixl.com.pixlpos.authentication.PasswordUtils;
 
 public class Main {
 
@@ -73,6 +74,31 @@ public class Main {
 
         System.out.println("Retrieving all orders from the database after re-initialization:");
         dataStore.getOrders().forEach(order -> System.out.println(order));
+
+        System.out.println("Testing Authentication...");
+
+        // Creating a new user with a plain password
+        Users user = new Users("testUser", "testPassword123", "test@example.com", Users.UserRole.WAITER);
+
+        // Hash the password and verify it
+        String plainPassword = "testPassword123";
+        String hashedPassword = PasswordUtils.hashPassword(plainPassword);
+        boolean isPasswordValid = PasswordUtils.verifyPassword(plainPassword, hashedPassword);
+
+        // Output the results
+        System.out.println("Plain Password: " + plainPassword);
+        System.out.println("Hashed Password: " + hashedPassword);
+        System.out.println("Is Password Valid: " + isPasswordValid);
+
+        // Test with wrong password
+        boolean isWrongPasswordValid = PasswordUtils.verifyPassword("wrongPassword", hashedPassword);
+        System.out.println("Is Wrong Password Valid: " + isWrongPasswordValid);
+
+        if (isPasswordValid && !isWrongPasswordValid) {
+            System.out.println("Authentication tests passed.");
+        } else {
+            System.out.println("Authentication tests failed.");
+        }
     }
 }
 
