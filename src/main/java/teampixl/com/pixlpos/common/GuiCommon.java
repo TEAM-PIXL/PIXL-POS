@@ -3,6 +3,7 @@ package teampixl.com.pixlpos.common;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 
@@ -44,7 +45,9 @@ public class GuiCommon {
 
     public static void loadScene(String fxmlPath, String title, Stage stage) {
         try {
+            BorderPane root = new BorderPane(); // Create the root element
             FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
+            fxmlLoader.setRoot(root); // Set the root before loading
             Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
             stage.setScene(scene);
             stage.setTitle(title);
