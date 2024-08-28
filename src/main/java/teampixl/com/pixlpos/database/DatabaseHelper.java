@@ -47,6 +47,8 @@ public class DatabaseHelper {
     - users: This table stores the user information.
     - menu_items: This table stores the menu items.
     - orders: This table stores the order information.
+    - ingredients: This table stores the ingredient information.
+    - menu_item_ingredients: This table stores the relationship between menu items and ingredients.
     ============================================================================================================================================================*/
 
     public static void initializeDatabase() {
@@ -103,17 +105,42 @@ public class DatabaseHelper {
     );
 """;
 
+        String sqlCreateIngredientsTable = """
+    CREATE TABLE IF NOT EXISTS ingredients (
+        ingredient_id TEXT PRIMARY KEY,
+        item_name TEXT NOT NULL,
+        stock_status TEXT NOT NULL,
+        on_order INTEGER NOT NULL,
+        last_updated DATETIME NOT NULL,
+        unit_type TEXT NOT NULL,
+        numeral REAL,
+        notes TEXT
+    );
+""";
+
+        String sqlCreateMenuItemIngredientsTable = """
+    CREATE TABLE IF NOT EXISTS menu_item_ingredients (
+        menu_item_id TEXT NOT NULL,
+        ingredient_id TEXT NOT NULL,
+        PRIMARY KEY (menu_item_id, ingredient_id),
+        FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
+        FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
+    );
+""";
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(sqlCreateUsersTable);
             stmt.execute(sqlCreateMenuItemsTable);
             stmt.execute(sqlCreateOrdersTable);
             stmt.execute(sqlCreateOrderItemsTable);
+            stmt.execute(sqlCreateIngredientsTable);
+            stmt.execute(sqlCreateMenuItemIngredientsTable);
             System.out.println("Database initialized and tables created.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 }
+
 
 
