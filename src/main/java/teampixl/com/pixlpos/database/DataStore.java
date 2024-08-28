@@ -103,6 +103,20 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         deleteMenuItemFromDatabase(item);
     }
 
+    public void addMenuItemIngredient(MenuItem menuItem, Ingredients ingredient) {
+        menuItem.addIngredient(ingredient);
+        saveMenuItemIngredientsToDatabase(menuItem);
+    }
+
+    public void removeMenuItemIngredient(MenuItem menuItem, Ingredients ingredient) {
+        menuItem.removeIngredient(ingredient);
+        updateMenuItemIngredientsInDatabase(menuItem);
+    }
+
+    public void updateMenuItemIngredient(MenuItem menuItem) {
+        updateMenuItemIngredientsInDatabase(menuItem);
+    }
+
     @Override
     public MenuItem getMenuItem(String itemName) {
         for (MenuItem item : menuItems) {
@@ -371,6 +385,49 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setString(1, (String) item.getMetadata().metadata().get("id"));
             pstmt.executeUpdate();
             System.out.println("MenuItem deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void saveMenuItemIngredientsToDatabase(MenuItem menuItem) {
+        String sql = "INSERT INTO menu_item_ingredients(menu_item_id, ingredient_id) VALUES(?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            Map<String, Ingredients> ingredientsMap = (Map<String, Ingredients>) menuItem.getData().get("ingredients");
+
+            for (String ingredientId : ingredientsMap.keySet()) {
+                pstmt.setString(1, (String) menuItem.getMetadata().metadata().get("id"));
+                pstmt.setString(2, ingredientId);
+                pstmt.executeUpdate();
+            }
+
+            System.out.println("MenuItem-Ingredients relationships saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateMenuItemIngredientsInDatabase(MenuItem menuItem) {
+        deleteMenuItemIngredientsFromDatabase(menuItem);
+        saveMenuItemIngredientsToDatabase(menuItem);
+    }
+
+    private void deleteMenuItemIngredientsFromDatabase(MenuItem menuItem) {
+        String sql = "DELETE FROM menu_item_ingredients WHERE menu_item_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) menuItem.getMetadata().metadata().get("id"));
+            pstmt.executeUpdate();
+
+            System.out.println("MenuItem-Ingredients relationships deleted from database.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
