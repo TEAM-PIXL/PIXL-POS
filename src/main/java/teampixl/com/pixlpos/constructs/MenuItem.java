@@ -14,7 +14,6 @@ public class MenuItem implements IDataManager {
     - Enumerations for ItemType and DietaryRequirement
     - MetadataWrapper object for metadata
     - Map object for data
-    - Map object for ingredients
     ============================================================================================================================================================*/
 
     public enum ItemType {
@@ -54,7 +53,7 @@ public class MenuItem implements IDataManager {
         - description: description
         - notes: null
         - amountOrdered: 0
-        - ingredients: null
+        - ingredients: map to store ingredients using ingredient_id as the key
     ============================================================================================================================================================*/
 
     public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description, DietaryRequirement dietaryRequirement) {
@@ -107,8 +106,6 @@ public class MenuItem implements IDataManager {
     - updateTimestamp(): updates timestamp
     =========================================================================================================================================================================================================*/
 
-
-
     public Map<String, Ingredients> getIngredients() {
         Object ingredientsObj = data.get("ingredients");
 
@@ -123,7 +120,11 @@ public class MenuItem implements IDataManager {
 
     public void addIngredient(Ingredients ingredient) {
         Map<String, Ingredients> ingredients = getIngredients();
-        String ingredientId = (String) ingredient.getMetadata().metadata().get("uuid");  // Accessing the UUID directly from metadata
+        String ingredientId = (String) ingredient.getMetadata().metadata().get("ingredient_id");  // Ensure correct key
+
+        if (ingredientId == null || ingredientId.isEmpty()) {
+            throw new IllegalArgumentException("Ingredient must have a valid ID.");
+        }
 
         if (ingredients.containsKey(ingredientId)) {
             throw new IllegalArgumentException("Ingredient already exists.");
@@ -134,28 +135,21 @@ public class MenuItem implements IDataManager {
     }
 
     public void updateIngredient(String oldIngredientUUID, Ingredients newIngredient) {
-        Object ingredientsObj = data.get("ingredients");
+        Map<String, Ingredients> ingredients = getIngredients();
+        String newIngredientId = (String) newIngredient.getMetadata().metadata().get("ingredient_id");  // Ensure correct key
 
-        if (ingredientsObj instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, Ingredients> ingredients = (Map<String, Ingredients>) ingredientsObj;
-            String newIngredientId = (String) newIngredient.getMetadata().metadata().get("uuid");  // Accessing the UUID directly from metadata
-
-            if (ingredients.containsKey(oldIngredientUUID)) {
-                ingredients.remove(oldIngredientUUID);
-                ingredients.put(newIngredientId, newIngredient);
-                updateTimestamp();
-            } else {
-                throw new IllegalArgumentException("Ingredient not found.");
-            }
+        if (ingredients.containsKey(oldIngredientUUID)) {
+            ingredients.remove(oldIngredientUUID);
+            ingredients.put(newIngredientId, newIngredient);
+            updateTimestamp();
         } else {
-            throw new IllegalStateException("Expected ingredients to be a Map<String, Ingredients>");
+            throw new IllegalArgumentException("Ingredient not found.");
         }
     }
 
     public void removeIngredient(Ingredients ingredient) {
         Map<String, Ingredients> ingredients = getIngredients();
-        String ingredientId = (String) ingredient.getMetadata().metadata().get("uuid");  // Accessing the UUID directly from metadata
+        String ingredientId = (String) ingredient.getMetadata().metadata().get("ingredient_id");  // Ensure correct key
 
         if (ingredients.containsKey(ingredientId)) {
             ingredients.remove(ingredientId);
@@ -213,6 +207,8 @@ public class MenuItem implements IDataManager {
     }
 
 }
+
+
 
 
 

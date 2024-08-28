@@ -391,14 +391,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void saveMenuItemIngredientsToDatabase(MenuItem menuItem) {
         String sql = "INSERT INTO menu_item_ingredients(menu_item_id, ingredient_id) VALUES(?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            Map<String, Ingredients> ingredientsMap = (Map<String, Ingredients>) menuItem.getData().get("ingredients");
+            Map<String, Ingredients> ingredientsMap = menuItem.getIngredients();
 
             for (String ingredientId : ingredientsMap.keySet()) {
                 pstmt.setString(1, (String) menuItem.getMetadata().metadata().get("id"));
@@ -821,7 +820,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String notes = rs.getString("notes");
 
                 Ingredients ingredient = new Ingredients(itemName, stockStatus, onOrder, unitType, numeral, notes);
-                ingredient.getMetadata().metadata().put("ingredient_id", ingredientId); // Set the ingredient ID from the database
+                ingredient.updateMetadata("ingredient_id", ingredientId); // Set the ingredient ID from the database
 
                 ingredients.add(ingredient);
             }
@@ -915,6 +914,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         clearOrders();
         clearUsers();
         clearOrderItems();
+        clearIngredients();
+        clearIngredient();
     }
 
     private void clearOrderItems() {
@@ -970,6 +971,35 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             stmt.execute(sql);
             System.out.println("Users table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void clearIngredients() {
+        ingredients.clear();
+        String sql = "DELETE FROM ingredients";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Ingredients table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void clearIngredient() {
+        String sql = "DELETE FROM menu_item_ingredients";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Ingredients table cleared.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
