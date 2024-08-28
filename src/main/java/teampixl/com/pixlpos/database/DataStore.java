@@ -4,6 +4,7 @@ import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.constructs.Ingredients;
+import teampixl.com.pixlpos.constructs.Stock;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,7 +14,7 @@ import teampixl.com.pixlpos.authentication.PasswordUtils;
 import java.sql.*;
 import java.util.Map;
 
-public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngredientsStore {
+public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngredientsStore, IStockStore {
 
 /*====================================================================================================================================================================================
 
@@ -45,18 +46,21 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     private final ObservableList<Order> orders;
     private final ObservableList<Users> users;
     private final ObservableList<Ingredients> ingredients;
+    private final ObservableList<Stock> stockItems;
 
     private DataStore() {
         menuItems = FXCollections.observableArrayList();
         orders = FXCollections.observableArrayList();
         users = FXCollections.observableArrayList();
         ingredients = FXCollections.observableArrayList();
+        stockItems = FXCollections.observableArrayList();
 
         // Load data from database on initialization
         loadMenuItemsFromDatabase();
         loadOrdersFromDatabase();
         loadUsersFromDatabase();
         loadIngredientsFromDatabase();
+        loadStockFromDatabase();
     }
 
     public static DataStore getInstance() {
@@ -104,13 +108,21 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     public void addMenuItemIngredient(MenuItem menuItem, Ingredients ingredient) {
-        menuItem.addIngredient(ingredient);
-        saveMenuItemIngredientsToDatabase(menuItem);
+        if (!menuItem.hasIngredient((String) ingredient.getMetadata().metadata().get("ingredient_id"))) {
+            menuItem.addIngredient(ingredient);
+            saveMenuItemIngredientsToDatabase(menuItem);
+        } else {
+            System.out.println("Ingredient already exists in MenuItem.");
+        }
     }
 
     public void removeMenuItemIngredient(MenuItem menuItem, Ingredients ingredient) {
-        menuItem.removeIngredient(ingredient);
-        updateMenuItemIngredientsInDatabase(menuItem);
+        if (menuItem.hasIngredient((String) ingredient.getMetadata().metadata().get("ingredient_id"))) {
+            menuItem.removeIngredient(ingredient);
+            updateMenuItemIngredientsInDatabase(menuItem);
+        } else {
+            System.out.println("Ingredient does not exist in MenuItem.");
+        }
     }
 
     public void updateMenuItemIngredient(MenuItem menuItem) {
@@ -276,6 +288,39 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for Stock. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods:
+        - getStockItems(): ObservableList<Stock> - Returns a list of all stock items.
+        - addStock(Stock stock): void - Adds a new stock item to the list of stock items.
+        - updateStock(Stock stock): void - Updates an existing stock item in the list of stock items.
+        - removeStock(Stock stock): void - Removes an existing stock item from the list of stock items.
+    ====================================================================================================================================================================*/
+
+
+
+    public ObservableList<Stock> getStockItems() {
+        return stockItems;
+    }
+
+    public void addStock(Stock stock) {
+        stockItems.add(stock);
+        saveStockToDatabase(stock);
+    }
+
+    public void updateStock(Stock stock) {
+        updateStockInDatabase(stock);
+    }
+
+    public void removeStock(Stock stock) {
+        stockItems.remove(stock);
+        deleteStockFromDatabase(stock);
+    }
+
+
+
 /*====================================================================================================================================================================
 
 ---------------------------------------------------------------->    END OF API IMPLEMENTATION    <-------------------------------------------------------------------
@@ -300,6 +345,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         - updateMenuItemIngredientsInDatabase(MenuItem menuItem): void - Updates MenuItem-Ingredient relationships in the database.
         - deleteMenuItemIngredientsFromDatabase(MenuItem menuItem): void - Deletes MenuItem-Ingredient relationships from the database.
     ====================================================================================================================================================================*/
+
 
 
 
@@ -394,15 +440,22 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     private void saveMenuItemIngredientsToDatabase(MenuItem menuItem) {
         String sql = "INSERT INTO menu_item_ingredients(menu_item_id, ingredient_id) VALUES(?, ?)";
 
-        try (Connection conn = DatabaseHelper.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseHelper.connect()) {
 
-            Map<String, Ingredients> ingredientsMap = menuItem.getIngredients();
+            for (Map.Entry<String, Ingredients> entry : menuItem.getIngredients().entrySet()) {
+                String menuItemId = (String) menuItem.getMetadata().metadata().get("id");
+                String ingredientId = entry.getKey();
 
-            for (String ingredientId : ingredientsMap.keySet()) {
-                pstmt.setString(1, (String) menuItem.getMetadata().metadata().get("id"));
-                pstmt.setString(2, ingredientId);
-                pstmt.executeUpdate();
+                // Check if the combination already exists
+                if (!menuItemIngredientExists(menuItemId, ingredientId, conn)) {
+                    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                        pstmt.setString(1, menuItemId);
+                        pstmt.setString(2, ingredientId);
+                        pstmt.executeUpdate();
+                    }
+                } else {
+                    System.out.println("Ingredient-MenuItem relationship already exists.");
+                }
             }
 
             System.out.println("MenuItem-Ingredients relationships saved to database.");
@@ -410,6 +463,23 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private boolean menuItemIngredientExists(String menuItemId, String ingredientId, Connection conn) {
+        String checkSql = "SELECT COUNT(*) FROM menu_item_ingredients WHERE menu_item_id = ? AND ingredient_id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(checkSql)) {
+            pstmt.setString(1, menuItemId);
+            pstmt.setString(2, ingredientId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 
     private void updateMenuItemIngredientsInDatabase(MenuItem menuItem) {
@@ -813,13 +883,9 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
                 String itemName = rs.getString("item_name");
-                Ingredients.StockStatus stockStatus = Ingredients.StockStatus.valueOf(rs.getString("stock_status"));
-                boolean onOrder = rs.getInt("on_order") == 1;
-                Ingredients.UnitType unitType = Ingredients.UnitType.valueOf(rs.getString("unit_type"));
-                Object numeral = unitType == Ingredients.UnitType.QTY ? rs.getInt("numeral") : rs.getDouble("numeral");
                 String notes = rs.getString("notes");
 
-                Ingredients ingredient = new Ingredients(itemName, stockStatus, onOrder, unitType, numeral, notes);
+                Ingredients ingredient = new Ingredients(itemName, notes);
                 ingredient.updateMetadata("ingredient_id", ingredientId); // Set the ingredient ID from the database
 
                 ingredients.add(ingredient);
@@ -831,19 +897,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void saveIngredientToDatabase(Ingredients ingredient) {
-        String sql = "INSERT INTO ingredients(ingredient_id, item_name, stock_status, on_order, last_updated, unit_type, numeral, notes) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ingredients(ingredient_id, item_name, notes) VALUES(?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
             pstmt.setString(2, (String) ingredient.getMetadata().metadata().get("itemName"));
-            pstmt.setString(3, ingredient.getMetadata().metadata().get("stockStatus").toString());
-            pstmt.setInt(4, (Boolean) ingredient.getMetadata().metadata().get("onOrder") ? 1 : 0);
-            pstmt.setString(5, ingredient.getMetadata().metadata().get("lastUpdated").toString());
-            pstmt.setString(6, ingredient.getData().get("unit").toString());
-            pstmt.setObject(7, ingredient.getData().get("numeral"));
-            pstmt.setString(8, (String) ingredient.getData().get("notes"));
+            pstmt.setString(3, (String) ingredient.getData().get("notes"));
 
             pstmt.executeUpdate();
             System.out.println("Ingredient saved to database.");
@@ -854,19 +915,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void updateIngredientInDatabase(Ingredients ingredient) {
-        String sql = "UPDATE ingredients SET item_name = ?, stock_status = ?, on_order = ?, last_updated = ?, unit_type = ?, numeral = ?, notes = ? WHERE ingredient_id = ?";
+        String sql = "UPDATE ingredients SET item_name = ?, notes = ? WHERE ingredient_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, (String) ingredient.getMetadata().metadata().get("itemName"));
-            pstmt.setString(2, ingredient.getMetadata().metadata().get("stockStatus").toString());
-            pstmt.setInt(3, (Boolean) ingredient.getMetadata().metadata().get("onOrder") ? 1 : 0);
-            pstmt.setString(4, ingredient.getMetadata().metadata().get("lastUpdated").toString());
-            pstmt.setString(5, ingredient.getData().get("unit").toString());
-            pstmt.setObject(6, ingredient.getData().get("numeral"));
-            pstmt.setString(7, (String) ingredient.getData().get("notes"));
-            pstmt.setString(8, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
+            pstmt.setString(2, (String) ingredient.getData().get("notes"));
+            pstmt.setString(3, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
 
             pstmt.executeUpdate();
             System.out.println("Ingredient updated in database.");
@@ -889,6 +945,121 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for Stock. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadStockFromDatabase(): void - Loads stock from the database.
+        - saveStockToDatabase(Stock stock): void - Saves a stock item to the database.
+        - updateStockInDatabase(Stock stock): void - Updates a stock item in the database.
+        - deleteStockFromDatabase(Stock stock): void - Deletes a stock item from the database.
+
+        Methods for Ingredient-Stock relationships:
+        - getIngredientById(String ingredientId): Ingredients - Returns an ingredient with the specified ID.
+    ====================================================================================================================================================================*/
+
+
+    private void loadStockFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM stock")) {
+
+            while (rs.next()) {
+                String ingredientId = rs.getString("ingredient_id");
+                Ingredients ingredient = getIngredientById(ingredientId);  // Fetch the ingredient by its ID
+
+                if (ingredient != null) {
+                    Stock.StockStatus stockStatus = Stock.StockStatus.valueOf(rs.getString("stock_status"));
+                    Stock.UnitType unitType = Stock.UnitType.valueOf(rs.getString("unit_type"));
+                    Object numeral;
+                    if (unitType == Stock.UnitType.QTY) {
+                        numeral = rs.getInt("numeral");
+                    } else {
+                        numeral = rs.getDouble("numeral");
+                    }
+                    boolean onOrder = rs.getInt("on_order") == 1;
+
+                    Stock stock = new Stock(ingredient, stockStatus, unitType, numeral, onOrder);
+                    stockItems.add(stock);
+                } else {
+                    System.out.println("Ingredient not found for ID: " + ingredientId);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void saveStockToDatabase(Stock stock) {
+        String sql = "INSERT INTO stock(stock_id, ingredient_id, stock_status, on_order, created_at, last_updated, unit_type, numeral) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) stock.getMetadata().metadata().get("stock_id"));
+            pstmt.setString(2, (String) stock.getMetadata().metadata().get("ingredient_id"));
+            pstmt.setString(3, stock.getMetadata().metadata().get("stockStatus").toString());
+            pstmt.setInt(4, (Boolean) stock.getMetadata().metadata().get("onOrder") ? 1 : 0);
+            pstmt.setString(5, stock.getMetadata().metadata().get("created_at").toString());
+            pstmt.setString(6, stock.getMetadata().metadata().get("lastUpdated").toString());
+            pstmt.setString(7, stock.getData().get("unit").toString());
+            pstmt.setObject(8, stock.getData().get("numeral"));
+
+            pstmt.executeUpdate();
+            System.out.println("Stock saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateStockInDatabase(Stock stock) {
+        String sql = "UPDATE stock SET stock_status = ?, on_order = ?, last_updated = ?, unit_type = ?, numeral = ? WHERE stock_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, stock.getMetadata().metadata().get("stock_status").toString());
+            pstmt.setInt(2, (Boolean) stock.getMetadata().metadata().get("on_order") ? 1 : 0);
+            pstmt.setString(3, stock.getMetadata().metadata().get("last_updated").toString());
+            pstmt.setString(4, stock.getData().get("unit").toString());
+            pstmt.setObject(5, stock.getData().get("numeral"));
+            pstmt.setString(6, (String) stock.getMetadata().metadata().get("stock_id"));
+
+            pstmt.executeUpdate();
+            System.out.println("Stock updated in database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void deleteStockFromDatabase(Stock stock) {
+        String sql = "DELETE FROM stock WHERE stock_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) stock.getMetadata().metadata().get("stock_id"));
+            pstmt.executeUpdate();
+            System.out.println("Stock deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private Ingredients getIngredientById(String ingredientId) {
+        for (Ingredients ingredient : ingredients) {
+            if (ingredient.getMetadata().metadata().get("ingredient_id").equals(ingredientId)) {
+                return ingredient;
+            }
+        }
+        return null;
     }
 
 
@@ -916,6 +1087,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         clearOrderItems();
         clearIngredients();
         clearIngredient();
+        clearStock();
     }
 
     private void clearOrderItems() {
@@ -1000,6 +1172,21 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             stmt.execute(sql);
             System.out.println("Ingredients table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void clearStock() {
+        stockItems.clear();
+        String sql = "DELETE FROM stock";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Stock table cleared.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());

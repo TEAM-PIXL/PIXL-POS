@@ -134,18 +134,18 @@ public class MenuItem implements IDataManager {
         updateTimestamp();
     }
 
-    public void updateIngredient(String oldIngredientUUID, Ingredients newIngredient) {
+    public void updateIngredient(String oldIngredientId, Ingredients newIngredient) {
         Map<String, Ingredients> ingredients = getIngredients();
-        String newIngredientId = (String) newIngredient.getMetadata().metadata().get("ingredient_id");  // Ensure correct key
-
-        if (ingredients.containsKey(oldIngredientUUID)) {
-            ingredients.remove(oldIngredientUUID);
-            ingredients.put(newIngredientId, newIngredient);
-            updateTimestamp();
+        if (ingredients.containsKey(oldIngredientId)) {
+            ingredients.remove(oldIngredientId);
         } else {
             throw new IllegalArgumentException("Ingredient not found.");
         }
+        String newIngredientId = (String) newIngredient.getMetadata().metadata().get("ingredient_id");
+        ingredients.put(newIngredientId, newIngredient);
+        updateTimestamp();
     }
+
 
     public void removeIngredient(Ingredients ingredient) {
         Map<String, Ingredients> ingredients = getIngredients();

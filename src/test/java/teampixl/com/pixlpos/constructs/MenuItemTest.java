@@ -2,35 +2,27 @@ package teampixl.com.pixlpos.constructs;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.HashMap;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class MenuItemTest {
 
     private MenuItem menuItem;
     private Ingredients tomatoSauce;
-    private Ingredients cheese;
 
     @BeforeEach
     void setUp() {
-        // Create ingredients
-        tomatoSauce = new Ingredients("Tomato Sauce", Ingredients.StockStatus.INSTOCK, false, Ingredients.UnitType.KG, 1.5, "Organic tomato sauce");
-        cheese = new Ingredients("Cheese", Ingredients.StockStatus.INSTOCK, false, Ingredients.UnitType.KG, 0.5, "Mozzarella cheese");
-
-        // Create a menu item
+        tomatoSauce = new Ingredients("Tomato Sauce", "Organic tomato sauce");
         menuItem = new MenuItem("Pizza", 14.99, MenuItem.ItemType.MAIN, true, "Delicious pizza with tomato sauce and cheese", MenuItem.DietaryRequirement.NONE);
     }
 
     @Test
     void testAddIngredient() {
         menuItem.addIngredient(tomatoSauce);
-
-        // Check if ingredient is added
-        assertTrue(menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("uuid")));
-
-        // Verify that the ingredient is in the ingredients map
-        Ingredients addedIngredient = menuItem.getIngredients().get((String) tomatoSauce.getMetadata().metadata().get("uuid"));
+        assertTrue(menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id")));
+        Ingredients addedIngredient = menuItem.getIngredients().get((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"));
         assertNotNull(addedIngredient);
         assertEquals("Tomato Sauce", addedIngredient.getMetadata().metadata().get("itemName"));
     }
@@ -38,24 +30,18 @@ class MenuItemTest {
     @Test
     void testRemoveIngredient() {
         menuItem.addIngredient(tomatoSauce);
-
-        // Remove ingredient and check if it's removed
         menuItem.removeIngredient(tomatoSauce);
-        assertFalse(menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("uuid")));
+        assertFalse(menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id")));
     }
 
     @Test
     void testUpdateIngredient() {
-      menuItem.addIngredient(tomatoSauce);
-
-        // Update the ingredient
-        Ingredients updatedTomatoSauce = new Ingredients("Tomato Sauce", Ingredients.StockStatus.INSTOCK, false, Ingredients.UnitType.KG, 2.0, "Organic tomato sauce - updated");
-        menuItem.updateIngredient((String) tomatoSauce.getMetadata().metadata().get("uuid"), updatedTomatoSauce);
-
-        // Check if the ingredient is updated
-        Ingredients updatedIngredient = menuItem.getIngredients().get((String) tomatoSauce.getMetadata().metadata().get("uuid"));
+        menuItem.addIngredient(tomatoSauce);
+        Ingredients updatedTomatoSauce = new Ingredients("Tomato Sauce", "Organic tomato sauce - updated");
+        menuItem.updateIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"), updatedTomatoSauce);
+        Ingredients updatedIngredient = menuItem.getIngredients().get((String) updatedTomatoSauce.getMetadata().metadata().get("ingredient_id"));
         assertNotNull(updatedIngredient);
-        assertEquals(2.0, updatedIngredient.getData().get("numeral"));
+        assertEquals("Organic tomato sauce - updated", updatedIngredient.getData().get("notes"));
     }
 
 
@@ -68,23 +54,15 @@ class MenuItemTest {
     @Test
     void testTimestampUpdateOnIngredientModification() throws InterruptedException {
         menuItem.addIngredient(tomatoSauce);
-
-        // Get the timestamp before updating the ingredient
         long timestampBeforeUpdate = (long) menuItem.getMetadata().metadata().get("updated_at");
-
-        // Add a small delay to ensure the timestamp difference is noticeable
         Thread.sleep(10);
-
-        // Update the ingredient
-        Ingredients updatedTomatoSauce = new Ingredients("Tomato Sauce", Ingredients.StockStatus.INSTOCK, false, Ingredients.UnitType.KG, 2.0, "Organic tomato sauce - updated");
-        menuItem.updateIngredient((String) tomatoSauce.getMetadata().metadata().get("uuid"), updatedTomatoSauce);
-
-        // Get the timestamp after updating the ingredient
+        Ingredients updatedTomatoSauce = new Ingredients("Tomato Sauce", "Organic tomato sauce - updated");
+        menuItem.updateIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"), updatedTomatoSauce);
         long timestampAfterUpdate = (long) menuItem.getMetadata().metadata().get("updated_at");
-
-        // Check if the timestamp is updated
         assertTrue(timestampAfterUpdate > timestampBeforeUpdate);
     }
 }
+
+
 
 

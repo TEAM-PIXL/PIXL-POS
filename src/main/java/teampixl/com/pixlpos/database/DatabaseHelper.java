@@ -62,7 +62,7 @@ public class DatabaseHelper {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
-        """;
+    """;
 
         String sqlCreateMenuItemsTable = """
         CREATE TABLE IF NOT EXISTS menu_items (
@@ -78,7 +78,7 @@ public class DatabaseHelper {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
-        """;
+    """;
 
         String sqlCreateOrdersTable = """
         CREATE TABLE IF NOT EXISTS orders (
@@ -92,7 +92,7 @@ public class DatabaseHelper {
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
-        """;
+    """;
 
         String sqlCreateOrderItemsTable = """
         CREATE TABLE IF NOT EXISTS order_items (
@@ -103,30 +103,39 @@ public class DatabaseHelper {
             FOREIGN KEY (order_id) REFERENCES orders(order_id),
             FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
         );
-        """;
+    """;
 
         String sqlCreateIngredientsTable = """
-        CREATE TABLE IF NOT EXISTS ingredients (
-            ingredient_id TEXT PRIMARY KEY,
-            item_name TEXT NOT NULL,
-            stock_status TEXT NOT NULL,
-            on_order BOOLEAN NOT NULL,
-            last_updated TEXT NOT NULL,
-            unit_type TEXT NOT NULL,
-            numeral REAL NOT NULL,
-            notes TEXT
-        );
-        """;
+    CREATE TABLE IF NOT EXISTS ingredients (
+        ingredient_id TEXT PRIMARY KEY,
+        item_name TEXT NOT NULL,
+        notes TEXT
+    );
+    """;
+
+        String sqlCreateStockTable = """
+    CREATE TABLE IF NOT EXISTS stock (
+        stock_id TEXT PRIMARY KEY,
+        ingredient_id TEXT NOT NULL,
+        stock_status TEXT NOT NULL,
+        on_order INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        last_updated TEXT NOT NULL,
+        unit_type TEXT NOT NULL,
+        numeral REAL NOT NULL,
+        FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
+    );
+    """;
 
         String sqlCreateMenuItemIngredientsTable = """
-        CREATE TABLE IF NOT EXISTS menu_item_ingredients (
-            menu_item_id TEXT NOT NULL,
-            ingredient_id TEXT NOT NULL,
-            PRIMARY KEY (menu_item_id, ingredient_id),
-            FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
-            FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
-        );
-        """;
+    CREATE TABLE IF NOT EXISTS menu_item_ingredients (
+        menu_item_id TEXT NOT NULL,
+        ingredient_id TEXT NOT NULL,
+        PRIMARY KEY (menu_item_id, ingredient_id),
+        FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
+        FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
+    );
+    """;
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(sqlCreateUsersTable);
@@ -134,13 +143,13 @@ public class DatabaseHelper {
             stmt.execute(sqlCreateOrdersTable);
             stmt.execute(sqlCreateOrderItemsTable);
             stmt.execute(sqlCreateIngredientsTable);
+            stmt.execute(sqlCreateStockTable);
             stmt.execute(sqlCreateMenuItemIngredientsTable);
             System.out.println("Database initialized and tables created.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
-
 }
 
 

@@ -32,8 +32,8 @@ class DataStoreTest {
         sampleMenuItem = new MenuItem("Sample Item", 9.99, MenuItem.ItemType.MAIN, true, "Sample description", MenuItem.DietaryRequirement.NONE);
 
         // Sample Ingredients
-        sampleIngredient1 = new Ingredients("Ingredient 1", Ingredients.StockStatus.INSTOCK, false, Ingredients.UnitType.KG, 2.5, "Ingredient 1 Notes");
-        sampleIngredient2 = new Ingredients("Ingredient 2", Ingredients.StockStatus.LOWSTOCK, true, Ingredients.UnitType.L, 1.5, "Ingredient 2 Notes");
+        sampleIngredient1 = new Ingredients("Ingredient 1", "Ingredient 1 Notes");
+        sampleIngredient2 = new Ingredients("Ingredient 2", "Ingredient 2 Notes");
 
         // Sample User
         sampleUser = new Users("sample_user", "password", "user@example.com", Users.UserRole.ADMIN);
@@ -176,12 +176,9 @@ class DataStoreTest {
 
     @Test
     void testUpdateIngredient() {
-        Ingredients ingredient = new Ingredients("Ingredient 1", Ingredients.StockStatus.INSTOCK, false, Ingredients.UnitType.KG, 1.5, "Ingredient 1 Notes");
-        dataStore.addIngredient(ingredient);
-
-        ingredient.setDataValue("notes", "Updated notes");
-        dataStore.updateIngredient(ingredient);
-
+        dataStore.addIngredient(sampleIngredient1);
+        sampleIngredient1.setDataValue("notes", "Updated notes");
+        dataStore.updateIngredient(sampleIngredient1);
         Ingredients updatedIngredient = dataStore.getIngredients().get(0);  // Assuming the first ingredient in the list
         assertEquals("Updated notes", updatedIngredient.getData().get("notes"));
     }
@@ -197,7 +194,7 @@ class DataStoreTest {
     void testAddMenuItemIngredient() {
         dataStore.addMenuItem(sampleMenuItem);
         dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1);
-        assertTrue(sampleMenuItem.hasIngredient((String) sampleIngredient1.getMetadata().metadata().get("uuid")));
+        assertTrue(sampleMenuItem.hasIngredient((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id")));
     }
 
     @Test
@@ -206,7 +203,7 @@ class DataStoreTest {
         dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1);
         sampleIngredient1.setDataValue("notes", "Updated ingredient notes");
         dataStore.updateMenuItemIngredient(sampleMenuItem);
-        Ingredients updatedIngredient = sampleMenuItem.getIngredients().get((String) sampleIngredient1.getMetadata().metadata().get("uuid"));
+        Ingredients updatedIngredient = sampleMenuItem.getIngredients().get((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id"));
         assertEquals("Updated ingredient notes", updatedIngredient.getData().get("notes"));
     }
 
@@ -215,6 +212,6 @@ class DataStoreTest {
         dataStore.addMenuItem(sampleMenuItem);
         dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1);
         dataStore.removeMenuItemIngredient(sampleMenuItem, sampleIngredient1);
-        assertFalse(sampleMenuItem.hasIngredient((String) sampleIngredient1.getMetadata().metadata().get("uuid")));
+        assertFalse(sampleMenuItem.hasIngredient((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id")));
     }
 }
