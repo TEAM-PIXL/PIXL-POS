@@ -11,9 +11,9 @@ public interface IMenuItemStore {
     void removeMenuItem(MenuItem item);
     MenuItem getMenuItem(String itemName);
     void updateMenuItem(MenuItem item);
-    void updateMenuItemIngredient(MenuItem menuItem);
+    void updateMenuItemIngredient(MenuItem menuItem, Ingredients ingredient, Object numeral);
     void removeMenuItemIngredient(MenuItem menuItem, Ingredients ingredient);
-    void addMenuItemIngredient(MenuItem menuItem, Ingredients ingredient);
+    void addMenuItemIngredient(MenuItem menuItem, Ingredients ingredient, Object numeral);
 }
 
 

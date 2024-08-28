@@ -193,25 +193,31 @@ class DataStoreTest {
     @Test
     void testAddMenuItemIngredient() {
         dataStore.addMenuItem(sampleMenuItem);
-        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1);
+        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1, 1.0);  // Assuming the numeral is 1.0
         assertTrue(sampleMenuItem.hasIngredient((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id")));
     }
 
     @Test
     void testUpdateMenuItemIngredient() {
         dataStore.addMenuItem(sampleMenuItem);
-        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1);
-        sampleIngredient1.setDataValue("notes", "Updated ingredient notes");
-        dataStore.updateMenuItemIngredient(sampleMenuItem);
-        Ingredients updatedIngredient = sampleMenuItem.getIngredients().get((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id"));
-        assertEquals("Updated ingredient notes", updatedIngredient.getData().get("notes"));
+        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1, 1.0);
+        dataStore.updateMenuItemIngredient(sampleMenuItem, sampleIngredient1, 2.0);
+        Ingredients updatedIngredient = sampleMenuItem.getIngredients().get((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id")).ingredient();
+        Object updatedNumeral = sampleMenuItem.getIngredients().get((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id")).numeral();
+        assertEquals(2.0, updatedNumeral);
     }
 
     @Test
-    void testRemoveMenuItemIngredient() {
+    void testAddMenuItemIngredientWithNegativeNumeral() {
         dataStore.addMenuItem(sampleMenuItem);
-        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1);
-        dataStore.removeMenuItemIngredient(sampleMenuItem, sampleIngredient1);
-        assertFalse(sampleMenuItem.hasIngredient((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id")));
+        assertThrows(IllegalArgumentException.class, () -> dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1, -1.0));
+    }
+
+    @Test
+    void testUpdateMenuItemIngredientWithNegativeNumeral() {
+        dataStore.addMenuItem(sampleMenuItem);
+        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1, 1.0);  // Assuming the numeral is 1.0
+        assertThrows(IllegalArgumentException.class, () -> dataStore.updateMenuItemIngredient(sampleMenuItem, sampleIngredient1, -1.0));
     }
 }
+

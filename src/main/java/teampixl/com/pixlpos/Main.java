@@ -61,9 +61,9 @@ public class Main {
         dataStore.addMenuItem(item2);
         System.out.println("MenuItem 2 added to database.");
 
-        // Add ingredients to menu items
-        dataStore.addMenuItemIngredient(item1, ingredient1);  // Add Tomato Sauce to Pizza
-        dataStore.addMenuItemIngredient(item1, ingredient2);  // Add Cheese to Pizza
+        // Add ingredients to menu items with amounts
+        dataStore.addMenuItemIngredient(item1, ingredient1, 1.5);  // Add 1.5 KG of Tomato Sauce to Pizza
+        dataStore.addMenuItemIngredient(item1, ingredient2, 0.5);  // Add 0.5 KG of Cheese to Pizza
 
         System.out.println("Retrieving all menu items from the database:");
         dataStore.getMenuItems().forEach(item -> System.out.println(item));

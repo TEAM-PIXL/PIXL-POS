@@ -131,6 +131,7 @@ public class DatabaseHelper {
     CREATE TABLE IF NOT EXISTS menu_item_ingredients (
         menu_item_id TEXT NOT NULL,
         ingredient_id TEXT NOT NULL,
+        numeral REAL NOT NULL,
         PRIMARY KEY (menu_item_id, ingredient_id),
         FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
         FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)

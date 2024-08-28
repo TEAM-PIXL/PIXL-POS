@@ -20,44 +20,45 @@ class MenuItemTest {
 
     @Test
     void testAddIngredient() {
-        menuItem.addIngredient(tomatoSauce);
+        menuItem.addIngredient(tomatoSauce, 2.5);
         assertTrue(menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id")));
-        Ingredients addedIngredient = menuItem.getIngredients().get((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"));
-        assertNotNull(addedIngredient);
-        assertEquals("Tomato Sauce", addedIngredient.getMetadata().metadata().get("itemName"));
+        MenuItem.IngredientAmount addedIngredientAmount = menuItem.getIngredients().get((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"));
+        assertNotNull(addedIngredientAmount);
+        assertEquals("Tomato Sauce", addedIngredientAmount.ingredient().getMetadata().metadata().get("itemName"));
+        assertEquals(2.5, addedIngredientAmount.numeral());
     }
 
     @Test
     void testRemoveIngredient() {
-        menuItem.addIngredient(tomatoSauce);
+        menuItem.addIngredient(tomatoSauce, 2.5);
         menuItem.removeIngredient(tomatoSauce);
         assertFalse(menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id")));
     }
 
     @Test
     void testUpdateIngredient() {
-        menuItem.addIngredient(tomatoSauce);
+        menuItem.addIngredient(tomatoSauce, 2.5);
         Ingredients updatedTomatoSauce = new Ingredients("Tomato Sauce", "Organic tomato sauce - updated");
-        menuItem.updateIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"), updatedTomatoSauce);
-        Ingredients updatedIngredient = menuItem.getIngredients().get((String) updatedTomatoSauce.getMetadata().metadata().get("ingredient_id"));
-        assertNotNull(updatedIngredient);
-        assertEquals("Organic tomato sauce - updated", updatedIngredient.getData().get("notes"));
+        menuItem.updateIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"), updatedTomatoSauce, 3.0);
+        MenuItem.IngredientAmount updatedIngredientAmount = menuItem.getIngredients().get((String) updatedTomatoSauce.getMetadata().metadata().get("ingredient_id"));
+        assertNotNull(updatedIngredientAmount);
+        assertEquals("Organic tomato sauce - updated", updatedIngredientAmount.ingredient().getData().get("notes"));
+        assertEquals(3.0, updatedIngredientAmount.numeral());
     }
-
 
     @Test
     void testMenuItemToString() {
-        String expected = String.format("MenuItem{Metadata: %s, Data: %s}", new HashMap<>(menuItem.getMetadata().metadata()), new HashMap<>(menuItem.getData()));
+        String expected = String.format("MenuItem{Metadata: %s, Data: %s, Ingredients: %s}", new HashMap<>(menuItem.getMetadata().metadata()), new HashMap<>(menuItem.getData()), menuItem.getIngredients());
         assertEquals(expected, menuItem.toString());
     }
 
     @Test
     void testTimestampUpdateOnIngredientModification() throws InterruptedException {
-        menuItem.addIngredient(tomatoSauce);
+        menuItem.addIngredient(tomatoSauce, 2.5);
         long timestampBeforeUpdate = (long) menuItem.getMetadata().metadata().get("updated_at");
         Thread.sleep(10);
         Ingredients updatedTomatoSauce = new Ingredients("Tomato Sauce", "Organic tomato sauce - updated");
-        menuItem.updateIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"), updatedTomatoSauce);
+        menuItem.updateIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"), updatedTomatoSauce, 3.0);
         long timestampAfterUpdate = (long) menuItem.getMetadata().metadata().get("updated_at");
         assertTrue(timestampAfterUpdate > timestampBeforeUpdate);
     }

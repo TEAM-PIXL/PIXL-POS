@@ -49,13 +49,15 @@ public class Stock implements IDataManager {
         - numeral: numeral
     ========================================================================================================================================================================================================================================================*/
 
-
     public Stock(Ingredients ingredient, StockStatus stockStatus, UnitType unitType, Object numeral, boolean onOrder) {
         if (unitType == UnitType.QTY && !(numeral instanceof Integer)) {
             throw new IllegalArgumentException("Numeral must be an Integer for QTY unit type");
         }
         if ((unitType == UnitType.KG || unitType == UnitType.L) && !(numeral instanceof Double)) {
             throw new IllegalArgumentException("Numeral must be a Double for KG or L unit types");
+        }
+        if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
+            numeral = 0;  // Set numeral to 0 if it's negative
         }
 
         // Metadata
@@ -73,6 +75,9 @@ public class Stock implements IDataManager {
         this.data = new HashMap<>();
         data.put("unit", unitType);
         data.put("numeral", numeral);
+
+        // Adjust stock status based on the initial numeral value
+        adjustStockStatus(numeral);
     }
 
     /*======================================================================================================================================================================================================================================================
@@ -84,6 +89,7 @@ public class Stock implements IDataManager {
         - getData(): Map<String, Object>
         - updateMetadata(String key, Object value): void
         - setDataValue(String key, Object value): void
+        - adjustStockStatus(Object numeral): void
         - toString(): String
     ========================================================================================================================================================================================================================================================*/
 
@@ -104,7 +110,32 @@ public class Stock implements IDataManager {
     }
 
     public void setDataValue(String key, Object value) {
+        if ("numeral".equals(key)) {
+            if (value instanceof Integer && (Integer) value < 0) {
+                value = 0;
+            } else if (value instanceof Double && (Double) value < 0) {
+                value = 0.0;
+            }
+            adjustStockStatus(value);  // Adjust stock status when numeral is updated
+        }
         data.put(key, value);
+    }
+
+    private void adjustStockStatus(Object numeral) {
+        double numeralValue = numeral instanceof Integer ? (Integer) numeral : (Double) numeral;
+
+        if (numeralValue == 0) {
+            updateMetadata("stockStatus", StockStatus.NOSTOCK);
+        } else if (!Double.isNaN(getLowStockThreshold()) && numeralValue <= getLowStockThreshold()) {
+            updateMetadata("stockStatus", StockStatus.LOWSTOCK);
+        } else {
+            updateMetadata("stockStatus", StockStatus.INSTOCK);
+        }
+    }
+
+    private double getLowStockThreshold() {
+        // This method should retrieve the low stock threshold from an external source (e.g., a configuration file, database, or external service)
+        return Double.NaN;  // Return NaN if no threshold is set
     }
 
     @Override
@@ -112,4 +143,5 @@ public class Stock implements IDataManager {
         return String.format("Stock{Metadata: %s, Data: %s}", metadata.metadata(), new HashMap<>(data));
     }
 }
+
 
