@@ -3,10 +3,12 @@ package teampixl.com.pixlpos.constructs;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 import teampixl.com.pixlpos.authentication.PasswordUtils;
 
-public class Users {
+public class Users implements IDataManager {
 
     /*============================================================================================================================================================
     Code Description:
