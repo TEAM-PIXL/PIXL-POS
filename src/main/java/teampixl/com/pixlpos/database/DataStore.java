@@ -56,6 +56,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         loadMenuItemsFromDatabase();
         loadOrdersFromDatabase();
         loadUsersFromDatabase();
+        loadIngredientsFromDatabase();
     }
 
     public static DataStore getInstance() {
@@ -725,6 +726,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         }
     }
 
+
+
     /*====================================================================================================================================================================
     Code Description:
     This section of code outlines the methods used to interact with the database for Ingredients. It includes methods for loading, saving, updating, and deleting data.
@@ -735,6 +738,95 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         - updateIngredientInDatabase(Ingredients ingredient): void - Updates an ingredient in the database.
         - deleteIngredientFromDatabase(Ingredients ingredient): void - Deletes an ingredient from the database.
     ====================================================================================================================================================================*/
+
+
+
+    private void loadIngredientsFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM ingredients")) {
+
+            while (rs.next()) {
+                String ingredientId = rs.getString("ingredient_id");
+                String itemName = rs.getString("item_name");
+                Ingredients.StockStatus stockStatus = Ingredients.StockStatus.valueOf(rs.getString("stock_status"));
+                boolean onOrder = rs.getInt("on_order") == 1;
+                Ingredients.UnitType unitType = Ingredients.UnitType.valueOf(rs.getString("unit_type"));
+                Object numeral = unitType == Ingredients.UnitType.QTY ? rs.getInt("numeral") : rs.getDouble("numeral");
+                String notes = rs.getString("notes");
+
+                Ingredients ingredient = new Ingredients(itemName, stockStatus, onOrder, unitType, numeral, notes);
+                ingredient.getMetadata().metadata().put("ingredient_id", ingredientId); // Set the ingredient ID from the database
+
+                ingredients.add(ingredient);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void saveIngredientToDatabase(Ingredients ingredient) {
+        String sql = "INSERT INTO ingredients(ingredient_id, item_name, stock_status, on_order, last_updated, unit_type, numeral, notes) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
+            pstmt.setString(2, (String) ingredient.getMetadata().metadata().get("itemName"));
+            pstmt.setString(3, ingredient.getMetadata().metadata().get("stockStatus").toString());
+            pstmt.setInt(4, (Boolean) ingredient.getMetadata().metadata().get("onOrder") ? 1 : 0);
+            pstmt.setString(5, ingredient.getMetadata().metadata().get("lastUpdated").toString());
+            pstmt.setString(6, ingredient.getData().get("unit").toString());
+            pstmt.setObject(7, ingredient.getData().get("numeral"));
+            pstmt.setString(8, (String) ingredient.getData().get("notes"));
+
+            pstmt.executeUpdate();
+            System.out.println("Ingredient saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateIngredientInDatabase(Ingredients ingredient) {
+        String sql = "UPDATE ingredients SET item_name = ?, stock_status = ?, on_order = ?, last_updated = ?, unit_type = ?, numeral = ?, notes = ? WHERE ingredient_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) ingredient.getMetadata().metadata().get("itemName"));
+            pstmt.setString(2, ingredient.getMetadata().metadata().get("stockStatus").toString());
+            pstmt.setInt(3, (Boolean) ingredient.getMetadata().metadata().get("onOrder") ? 1 : 0);
+            pstmt.setString(4, ingredient.getMetadata().metadata().get("lastUpdated").toString());
+            pstmt.setString(5, ingredient.getData().get("unit").toString());
+            pstmt.setObject(6, ingredient.getData().get("numeral"));
+            pstmt.setString(7, (String) ingredient.getData().get("notes"));
+            pstmt.setString(8, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
+
+            pstmt.executeUpdate();
+            System.out.println("Ingredient updated in database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void deleteIngredientFromDatabase(Ingredients ingredient) {
+        String sql = "DELETE FROM ingredients WHERE ingredient_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
+            pstmt.executeUpdate();
+            System.out.println("Ingredient deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
 
     /*====================================================================================================================================================================
