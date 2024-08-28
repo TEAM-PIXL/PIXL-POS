@@ -247,15 +247,17 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     public void addIngredient(Ingredients ingredient) {
-
+        ingredients.add(ingredient);
+        saveIngredientToDatabase(ingredient);
     }
 
     public void updateIngredient(Ingredients ingredient) {
-
+        updateIngredientInDatabase(ingredient);
     }
 
     public void removeIngredient(Ingredients ingredient) {
-
+        ingredients.remove(ingredient);
+        deleteIngredientFromDatabase(ingredient);
     }
 
 
