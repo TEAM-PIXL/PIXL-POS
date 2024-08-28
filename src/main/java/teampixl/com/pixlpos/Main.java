@@ -4,6 +4,7 @@ import teampixl.com.pixlpos.constructs.Ingredients;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.constructs.Stock;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
 import teampixl.com.pixlpos.authentication.PasswordUtils;
@@ -32,16 +33,24 @@ public class Main {
         dataStore.getUsers().forEach(user -> System.out.println(user));
 
         // Test Ingredients
-        Ingredients ingredient1 = new Ingredients("Tomato Sauce", Ingredients.StockStatus.INSTOCK, false, Ingredients.UnitType.KG, 2.0, "Fresh tomato sauce");
-        Ingredients ingredient2 = new Ingredients("Cheese", Ingredients.StockStatus.LOWSTOCK, true, Ingredients.UnitType.KG, 1.5, "Mozzarella cheese");
+        Ingredients ingredient1 = new Ingredients("Tomato Sauce", "Fresh tomato sauce");
+        Ingredients ingredient2 = new Ingredients("Cheese", "Mozzarella cheese");
 
-        dataStore.addIngredient(ingredient2);
         dataStore.addIngredient(ingredient1);
-
-
+        dataStore.addIngredient(ingredient2);
 
         System.out.println("Ingredients added to the database:");
         dataStore.getIngredients().forEach(ingredient -> System.out.println(ingredient));
+
+        // Test Stock
+        Stock stock1 = new Stock(ingredient1, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, 2.0, false);
+        Stock stock2 = new Stock(ingredient2, Stock.StockStatus.LOWSTOCK, Stock.UnitType.KG, 1.5, true);
+
+        dataStore.addStock(stock1);
+        dataStore.addStock(stock2);
+
+        System.out.println("Stock added to the database:");
+        dataStore.getStockItems().forEach(stock -> System.out.println(stock));
 
         // Test MenuItems
         MenuItem item1 = new MenuItem("Pizza", 18.99, MenuItem.ItemType.MAIN, true, "Cheesy pizza with toppings", null);
@@ -110,6 +119,7 @@ public class Main {
         }
     }
 }
+
 
 
 
