@@ -165,11 +165,6 @@ public class MenuItem implements IDataManager {
         }
     }
 
-    public void clearIngredients() {
-        getIngredients().clear();
-        updateTimestamp();
-    }
-
     public boolean hasIngredient(String ingredientUUID) {
         return getIngredients().containsKey(ingredientUUID);
     }
@@ -214,11 +209,9 @@ public class MenuItem implements IDataManager {
 
     @Override
     public String toString() {
-        return "MenuItem{" +
-                "metadata=" + metadata +
-                ", data=" + data +
-                '}';
+        return String.format("MenuItem{Metadata: %s, Data: %s}", new HashMap<>(metadata.metadata()), new HashMap<>(data));
     }
+
 }
 
 
