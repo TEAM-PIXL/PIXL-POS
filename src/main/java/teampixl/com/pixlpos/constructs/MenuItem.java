@@ -33,7 +33,6 @@ public class MenuItem {
 
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
-    private final Map<String, Ingredients> ingredients;
 
     /*============================================================================================================================================================
     Code Description:
@@ -75,50 +74,98 @@ public class MenuItem {
         metadataMap.put("itemType", itemType);
         metadataMap.put("activeItem", activeItem);
 
-        // Only add dietaryRequirement if it's not null
         if (dietaryRequirement != null) {
             metadataMap.put("dietaryRequirement", dietaryRequirement);
         }
 
-        metadataMap.put("created_at", System.currentTimeMillis()); // Timestamp for creation
-        metadataMap.put("updated_at", System.currentTimeMillis()); // Timestamp for last update
+        metadataMap.put("created_at", System.currentTimeMillis());
+        metadataMap.put("updated_at", System.currentTimeMillis());
 
-        // Create immutable map for metadata
-        this.metadata = new MetadataWrapper(Map.copyOf(metadataMap));
+        this.metadata = new MetadataWrapper(metadataMap);
 
         // Data
         this.data = new HashMap<>();
-        data.put("description", description);
-        data.put("notes", null);  // Default to null
-        data.put("amountOrdered", 0);  // Default value is 0
-
-        // Ingredients - can be empty, using a Map to link ingredient UUIDs to the actual Ingredients
-        this.ingredients = new HashMap<>();
+        this.data.put("description", description);
+        this.data.put("notes", null);
+        this.data.put("amountOrdered", 0);
+        this.data.put("ingredients", new HashMap<String, Ingredients>());
     }
 
+    /*=========================================================================================================================================================================================================
+    Code Description:
+    This section of the code contains methods to add, update, remove, clear and check for ingredients in a MenuItem object.
+
+    Methods:
+    - getIngredients(): returns ingredients
+    - addIngredient(Ingredients ingredient): adds ingredient
+    - updateIngredient(String oldIngredientUUID, Ingredients newIngredient): updates ingredient
+    - removeIngredient(Ingredients ingredient): removes ingredient
+    - clearIngredients(): clears ingredients
+    - hasIngredient(String ingredientUUID): checks if ingredient exists
+    - updateTimestamp(): updates timestamp
+    =========================================================================================================================================================================================================*/
+
+
+
     public Map<String, Ingredients> getIngredients() {
-        return ingredients;
+        return (Map<String, Ingredients>) data.get("ingredients");
     }
 
     public void addIngredient(Ingredients ingredient) {
-        ingredients.put((String) ingredient.getMetadata().metadata().get("uuid"), ingredient);
-    }
+        Map<String, Ingredients> ingredients = getIngredients();
+        String ingredientId = (String) ingredient.getMetadata().metadata().get("uuid");  // Accessing the UUID directly from metadata
 
-    public boolean hasIngredient(String ingredientUUID) {
-        return ingredients.containsKey(ingredientUUID);
-    }
+        if (ingredients.containsKey(ingredientId)) {
+            throw new IllegalArgumentException("Ingredient already exists.");
+        }
 
-    public void removeIngredient(Ingredients ingredient) {
-        ingredients.remove((String) ingredient.getMetadata().metadata().get("uuid"));
+        ingredients.put(ingredientId, ingredient);
+        updateTimestamp();
     }
 
     public void updateIngredient(String oldIngredientUUID, Ingredients newIngredient) {
-        ingredients.remove(oldIngredientUUID);
-        ingredients.put((String) newIngredient.getMetadata().metadata().get("uuid"), newIngredient);
+        Object ingredientsObj = data.get("ingredients");
+
+        if (ingredientsObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Ingredients> ingredients = (Map<String, Ingredients>) ingredientsObj;
+            String newIngredientId = (String) newIngredient.getMetadata().metadata().get("uuid");  // Accessing the UUID directly from metadata
+
+            if (ingredients.containsKey(oldIngredientUUID)) {
+                ingredients.remove(oldIngredientUUID);
+                ingredients.put(newIngredientId, newIngredient);
+                updateTimestamp();
+            } else {
+                throw new IllegalArgumentException("Ingredient not found.");
+            }
+        } else {
+            throw new IllegalStateException("Expected ingredients to be a Map<String, Ingredients>");
+        }
+    }
+
+    public void removeIngredient(Ingredients ingredient) {
+        Map<String, Ingredients> ingredients = getIngredients();
+        String ingredientId = (String) ingredient.getMetadata().metadata().get("uuid");  // Accessing the UUID directly from metadata
+
+        if (ingredients.containsKey(ingredientId)) {
+            ingredients.remove(ingredientId);
+            updateTimestamp();
+        } else {
+            throw new IllegalArgumentException("Ingredient not found.");
+        }
     }
 
     public void clearIngredients() {
-        ingredients.clear();
+        getIngredients().clear();
+        updateTimestamp();
+    }
+
+    public boolean hasIngredient(String ingredientUUID) {
+        return getIngredients().containsKey(ingredientUUID);
+    }
+
+    private void updateTimestamp() {
+        updateMetadata("updated_at", System.currentTimeMillis());
     }
 
     /*============================================================================================================================================================
@@ -160,7 +207,6 @@ public class MenuItem {
         return "MenuItem{" +
                 "metadata=" + metadata +
                 ", data=" + data +
-                ", ingredients=" + ingredients +
                 '}';
     }
 }

@@ -37,9 +37,10 @@ class MenuItemTest {
     @Test
     void testUpdateIngredient() {
         menuItem.addIngredient(flour);
-        menuItem.updateIngredient(String.valueOf(flour), sugar);
+        Ingredients newFlour = new Ingredients("Organic Flour", Ingredients.StockStatus.INSTOCK, false, Ingredients.UnitType.KG, 5.0, "Organic white flour");
+        menuItem.updateIngredient((String) flour.getMetadata().metadata().get("uuid"), newFlour);
         assertFalse(menuItem.hasIngredient((String) flour.getMetadata().metadata().get("uuid")));
-        assertTrue(menuItem.hasIngredient((String) sugar.getMetadata().metadata().get("uuid")));
+        assertTrue(menuItem.hasIngredient((String) newFlour.getMetadata().metadata().get("uuid")));
     }
 
     @Test
