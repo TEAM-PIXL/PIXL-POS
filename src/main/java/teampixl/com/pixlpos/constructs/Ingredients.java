@@ -37,7 +37,7 @@ public class Ingredients implements IDataManager {
     - Constructor for Ingredients object.
 
     Metadata:
-        - uuid: UUID
+        - ingredient_id: UUID
         - itemName: itemName
         - stockStatus: stockStatus
         - onOrder: onOrder
@@ -88,7 +88,7 @@ public class Ingredients implements IDataManager {
     - getMetadata(): MetadataWrapper
     - getData(): Map<String, Object>
     - updateMetadata(String key, Object value): void
-    - updateData(String key, Object value): void
+    - setDataValue(String key, Object value): void
     - toString(): String
     ===============================================================================================================================================================================================================*/
 
@@ -100,7 +100,7 @@ public class Ingredients implements IDataManager {
         return data;
     }
 
-    // Method to update metadata, similar to Order.java
+    // Method to update metadata, ensuring immutability
     public void updateMetadata(String key, Object value) {
         if (key.equals("stockStatus") && !(value instanceof StockStatus)) {
             throw new IllegalArgumentException("Invalid value type for stockStatus");
@@ -130,3 +130,5 @@ public class Ingredients implements IDataManager {
         return String.format("Ingredients{Metadata: %s, Data: %s}", metadata.metadata(), new HashMap<>(data));
     }
 }
+
+

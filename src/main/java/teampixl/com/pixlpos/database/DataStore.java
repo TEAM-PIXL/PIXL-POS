@@ -3,6 +3,7 @@ package teampixl.com.pixlpos.database;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.constructs.Ingredients;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,7 +13,7 @@ import teampixl.com.pixlpos.authentication.PasswordUtils;
 import java.sql.*;
 import java.util.Map;
 
-public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
+public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngredientsStore {
 
 /*====================================================================================================================================================================================
 
@@ -43,16 +44,19 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
     private final ObservableList<MenuItem> menuItems;
     private final ObservableList<Order> orders;
     private final ObservableList<Users> users;
+    private final ObservableList<Ingredients> ingredients;
 
     private DataStore() {
         menuItems = FXCollections.observableArrayList();
         orders = FXCollections.observableArrayList();
         users = FXCollections.observableArrayList();
+        ingredients = FXCollections.observableArrayList();
 
         // Load data from database on initialization
         loadMenuItemsFromDatabase();
         loadOrdersFromDatabase();
         loadUsersFromDatabase();
+        loadIngredientsFromDatabase();
     }
 
     public static DataStore getInstance() {
@@ -97,6 +101,20 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
     public void removeMenuItem(MenuItem item) {
         menuItems.remove(item);
         deleteMenuItemFromDatabase(item);
+    }
+
+    public void addMenuItemIngredient(MenuItem menuItem, Ingredients ingredient) {
+        menuItem.addIngredient(ingredient);
+        saveMenuItemIngredientsToDatabase(menuItem);
+    }
+
+    public void removeMenuItemIngredient(MenuItem menuItem, Ingredients ingredient) {
+        menuItem.removeIngredient(ingredient);
+        updateMenuItemIngredientsInDatabase(menuItem);
+    }
+
+    public void updateMenuItemIngredient(MenuItem menuItem) {
+        updateMenuItemIngredientsInDatabase(menuItem);
     }
 
     @Override
@@ -225,6 +243,39 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
 
 
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code handles the implementation of the IIngredientStore interface. It provides methods for adding, updating, and removing ingredients.
+
+    Methods:
+        - getIngredients(): ObservableList<Ingredients> - Returns a list of all ingredients.
+        - addIngredient(Ingredients ingredient): void - Adds a new ingredient to the list of ingredients.
+        - updateIngredient(Ingredients ingredient): void - Updates an existing ingredient in the list of ingredients.
+        - removeIngredient(Ingredients ingredient): void - Removes an existing ingredient from the list of ingredients.
+    ====================================================================================================================================================================*/
+
+
+
+    public ObservableList<Ingredients> getIngredients() {
+        return ingredients;
+    }
+
+    public void addIngredient(Ingredients ingredient) {
+        ingredients.add(ingredient);
+        saveIngredientToDatabase(ingredient);
+    }
+
+    public void updateIngredient(Ingredients ingredient) {
+        updateIngredientInDatabase(ingredient);
+    }
+
+    public void removeIngredient(Ingredients ingredient) {
+        ingredients.remove(ingredient);
+        deleteIngredientFromDatabase(ingredient);
+    }
+
+
+
 /*====================================================================================================================================================================
 
 ---------------------------------------------------------------->    END OF API IMPLEMENTATION    <-------------------------------------------------------------------
@@ -238,10 +289,16 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
     This section of code outlines the methods used to interact with the database for MenuItems. It includes methods for loading, saving, updating, and deleting data.
 
     Methods (INTERNAL):
+        Methods for lists of menu items:
         - loadMenuItemsFromDatabase(): void - Loads menu items from the database.
         - saveMenuItemToDatabase(MenuItem item): void - Saves a menu item to the database.
         - updateMenuItemInDatabase(MenuItem item): void - Updates a menu item in the database.
         - deleteMenuItemFromDatabase(MenuItem item): void - Deletes a menu item from the database.
+
+        Methods for Ingredient-MenuItem relationships:
+        - saveMenuItemIngredientsToDatabase(MenuItem menuItem): void - Saves MenuItem-Ingredient relationships to the database.
+        - updateMenuItemIngredientsInDatabase(MenuItem menuItem): void - Updates MenuItem-Ingredient relationships in the database.
+        - deleteMenuItemIngredientsFromDatabase(MenuItem menuItem): void - Deletes MenuItem-Ingredient relationships from the database.
     ====================================================================================================================================================================*/
 
 
@@ -328,6 +385,48 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
             pstmt.setString(1, (String) item.getMetadata().metadata().get("id"));
             pstmt.executeUpdate();
             System.out.println("MenuItem deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void saveMenuItemIngredientsToDatabase(MenuItem menuItem) {
+        String sql = "INSERT INTO menu_item_ingredients(menu_item_id, ingredient_id) VALUES(?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            Map<String, Ingredients> ingredientsMap = menuItem.getIngredients();
+
+            for (String ingredientId : ingredientsMap.keySet()) {
+                pstmt.setString(1, (String) menuItem.getMetadata().metadata().get("id"));
+                pstmt.setString(2, ingredientId);
+                pstmt.executeUpdate();
+            }
+
+            System.out.println("MenuItem-Ingredients relationships saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateMenuItemIngredientsInDatabase(MenuItem menuItem) {
+        deleteMenuItemIngredientsFromDatabase(menuItem);
+        saveMenuItemIngredientsToDatabase(menuItem);
+    }
+
+    private void deleteMenuItemIngredientsFromDatabase(MenuItem menuItem) {
+        String sql = "DELETE FROM menu_item_ingredients WHERE menu_item_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) menuItem.getMetadata().metadata().get("id"));
+            pstmt.executeUpdate();
+
+            System.out.println("MenuItem-Ingredients relationships deleted from database.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -695,6 +794,107 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
     /*====================================================================================================================================================================
     Code Description:
+    This section of code outlines the methods used to interact with the database for Ingredients. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadIngredientsFromDatabase(): void - Loads ingredients from the database.
+        - saveIngredientToDatabase(Ingredients ingredient): void - Saves an ingredient to the database.
+        - updateIngredientInDatabase(Ingredients ingredient): void - Updates an ingredient in the database.
+        - deleteIngredientFromDatabase(Ingredients ingredient): void - Deletes an ingredient from the database.
+    ====================================================================================================================================================================*/
+
+
+
+    private void loadIngredientsFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM ingredients")) {
+
+            while (rs.next()) {
+                String ingredientId = rs.getString("ingredient_id");
+                String itemName = rs.getString("item_name");
+                Ingredients.StockStatus stockStatus = Ingredients.StockStatus.valueOf(rs.getString("stock_status"));
+                boolean onOrder = rs.getInt("on_order") == 1;
+                Ingredients.UnitType unitType = Ingredients.UnitType.valueOf(rs.getString("unit_type"));
+                Object numeral = unitType == Ingredients.UnitType.QTY ? rs.getInt("numeral") : rs.getDouble("numeral");
+                String notes = rs.getString("notes");
+
+                Ingredients ingredient = new Ingredients(itemName, stockStatus, onOrder, unitType, numeral, notes);
+                ingredient.updateMetadata("ingredient_id", ingredientId); // Set the ingredient ID from the database
+
+                ingredients.add(ingredient);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void saveIngredientToDatabase(Ingredients ingredient) {
+        String sql = "INSERT INTO ingredients(ingredient_id, item_name, stock_status, on_order, last_updated, unit_type, numeral, notes) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
+            pstmt.setString(2, (String) ingredient.getMetadata().metadata().get("itemName"));
+            pstmt.setString(3, ingredient.getMetadata().metadata().get("stockStatus").toString());
+            pstmt.setInt(4, (Boolean) ingredient.getMetadata().metadata().get("onOrder") ? 1 : 0);
+            pstmt.setString(5, ingredient.getMetadata().metadata().get("lastUpdated").toString());
+            pstmt.setString(6, ingredient.getData().get("unit").toString());
+            pstmt.setObject(7, ingredient.getData().get("numeral"));
+            pstmt.setString(8, (String) ingredient.getData().get("notes"));
+
+            pstmt.executeUpdate();
+            System.out.println("Ingredient saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateIngredientInDatabase(Ingredients ingredient) {
+        String sql = "UPDATE ingredients SET item_name = ?, stock_status = ?, on_order = ?, last_updated = ?, unit_type = ?, numeral = ?, notes = ? WHERE ingredient_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) ingredient.getMetadata().metadata().get("itemName"));
+            pstmt.setString(2, ingredient.getMetadata().metadata().get("stockStatus").toString());
+            pstmt.setInt(3, (Boolean) ingredient.getMetadata().metadata().get("onOrder") ? 1 : 0);
+            pstmt.setString(4, ingredient.getMetadata().metadata().get("lastUpdated").toString());
+            pstmt.setString(5, ingredient.getData().get("unit").toString());
+            pstmt.setObject(6, ingredient.getData().get("numeral"));
+            pstmt.setString(7, (String) ingredient.getData().get("notes"));
+            pstmt.setString(8, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
+
+            pstmt.executeUpdate();
+            System.out.println("Ingredient updated in database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void deleteIngredientFromDatabase(Ingredients ingredient) {
+        String sql = "DELETE FROM ingredients WHERE ingredient_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) ingredient.getMetadata().metadata().get("ingredient_id"));
+            pstmt.executeUpdate();
+            System.out.println("Ingredient deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    /*====================================================================================================================================================================
+    Code Description:
     This section of code outlines the method used to clear all data from the database.
 
     Methods:
@@ -714,6 +914,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         clearOrders();
         clearUsers();
         clearOrderItems();
+        clearIngredients();
+        clearIngredient();
     }
 
     private void clearOrderItems() {
@@ -769,6 +971,35 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
 
             stmt.execute(sql);
             System.out.println("Users table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void clearIngredients() {
+        ingredients.clear();
+        String sql = "DELETE FROM ingredients";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Ingredients table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void clearIngredient() {
+        String sql = "DELETE FROM menu_item_ingredients";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Ingredients table cleared.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
