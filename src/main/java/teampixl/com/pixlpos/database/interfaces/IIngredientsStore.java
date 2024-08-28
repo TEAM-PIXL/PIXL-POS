@@ -9,7 +9,4 @@ public interface IIngredientsStore {
     void addIngredient(Ingredients ingredient);
     void updateIngredient(Ingredients ingredient);
     void removeIngredient(Ingredients ingredient);
-    void updateMenuItemIngredient(MenuItem menuItem);
-    void removeMenuItemIngredient(MenuItem menuItem, Ingredients ingredient);
-    void addMenuItemIngredient(MenuItem menuItem, Ingredients ingredient);
 }
