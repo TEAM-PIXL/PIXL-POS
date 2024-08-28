@@ -223,6 +223,16 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         updateUserInDatabase(user);
     }
 
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code handles the implementation of the IIngredientStore interface. It provides methods for adding, updating, and removing ingredients.
+
+    Methods:
+        - getIngredients(): ObservableList<Ingredients> - Returns a list of all ingredients.
+        - addIngredient(Ingredients ingredient): void - Adds a new ingredient to the list of ingredients.
+        - updateIngredient(Ingredients ingredient): void - Updates an existing ingredient in the list of ingredients.
+        - removeIngredient(Ingredients ingredient): void - Removes an existing ingredient from the list of ingredients.
+    ====================================================================================================================================================================*/
 
 
 /*====================================================================================================================================================================
@@ -691,6 +701,16 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
         }
     }
 
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for Ingredients. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadIngredientsFromDatabase(): void - Loads ingredients from the database.
+        - saveIngredientToDatabase(Ingredients ingredient): void - Saves an ingredient to the database.
+        - updateIngredientInDatabase(Ingredients ingredient): void - Updates an ingredient in the database.
+        - deleteIngredientFromDatabase(Ingredients ingredient): void - Deletes an ingredient from the database.
+    ====================================================================================================================================================================*/
 
 
     /*====================================================================================================================================================================
