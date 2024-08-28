@@ -16,7 +16,6 @@ class OrderTest {
     void setUp() {
         pizza = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "Cheesy pizza with toppings", MenuItem.DietaryRequirement.VEGETARIAN);
         salad = new MenuItem("Salad", 7.99, MenuItem.ItemType.ENTREE, true, "Fresh salad with vinaigrette", MenuItem.DietaryRequirement.VEGAN);
-
         order = new Order(1, "user123");
         order.addMenuItem(pizza, 2);
         order.addMenuItem(salad, 1);
