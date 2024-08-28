@@ -10,6 +10,13 @@ import teampixl.com.pixlpos.database.MetadataWrapper;
 
 public class Stock implements IDataManager {
 
+    /*======================================================================================================================================================================================================================================================
+    Code Description:
+    - Enumerations for StockStatus and UnitType
+    - MetadataWrapper object for metadata
+    - Map object for data
+    ========================================================================================================================================================================================================================================================*/
+
     public enum StockStatus {
         INSTOCK,
         LOWSTOCK,
@@ -24,6 +31,24 @@ public class Stock implements IDataManager {
 
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
+
+    /*======================================================================================================================================================================================================================================================
+    Code Description:
+    - The Stock class is a data structure that holds the stock information of an ingredient.
+
+    Metadata:
+        - stock_id: UUID
+        - ingredient_id: ingredient.getMetadata().metadata().get("ingredient_id")
+        - stockStatus: stockStatus
+        - onOrder: onOrder
+        - created_at: timestamp for creation
+        - lastUpdated: timestamp for last update
+
+    Data:
+        - unit: unitType
+        - numeral: numeral
+    ========================================================================================================================================================================================================================================================*/
+
 
     public Stock(Ingredients ingredient, StockStatus stockStatus, UnitType unitType, Object numeral, boolean onOrder) {
         if (unitType == UnitType.QTY && !(numeral instanceof Integer)) {
@@ -49,6 +74,19 @@ public class Stock implements IDataManager {
         data.put("unit", unitType);
         data.put("numeral", numeral);
     }
+
+    /*======================================================================================================================================================================================================================================================
+    Code Description:
+    - Getters for metadata and data.
+
+    Methods:
+        - getMetadata(): MetadataWrapper
+        - getData(): Map<String, Object>
+        - updateMetadata(String key, Object value): void
+        - setDataValue(String key, Object value): void
+        - toString(): String
+    ========================================================================================================================================================================================================================================================*/
+
 
     public MetadataWrapper getMetadata() {
         return metadata;

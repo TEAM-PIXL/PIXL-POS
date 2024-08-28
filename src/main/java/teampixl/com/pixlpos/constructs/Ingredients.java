@@ -65,7 +65,6 @@ public class Ingredients implements IDataManager {
     - toString(): String
     ===============================================================================================================================================================================================================*/
 
-
     public MetadataWrapper getMetadata() {
         return metadata;
     }
