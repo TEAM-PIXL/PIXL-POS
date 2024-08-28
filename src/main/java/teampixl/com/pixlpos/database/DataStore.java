@@ -275,10 +275,16 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     This section of code outlines the methods used to interact with the database for MenuItems. It includes methods for loading, saving, updating, and deleting data.
 
     Methods (INTERNAL):
+        Methods for lists of menu items:
         - loadMenuItemsFromDatabase(): void - Loads menu items from the database.
         - saveMenuItemToDatabase(MenuItem item): void - Saves a menu item to the database.
         - updateMenuItemInDatabase(MenuItem item): void - Updates a menu item in the database.
         - deleteMenuItemFromDatabase(MenuItem item): void - Deletes a menu item from the database.
+
+        Methods for Ingredient-MenuItem relationships:
+        - saveMenuItemIngredientsToDatabase(MenuItem menuItem): void - Saves MenuItem-Ingredient relationships to the database.
+        - updateMenuItemIngredientsInDatabase(MenuItem menuItem): void - Updates MenuItem-Ingredient relationships in the database.
+        - deleteMenuItemIngredientsFromDatabase(MenuItem menuItem): void - Deletes MenuItem-Ingredient relationships from the database.
     ====================================================================================================================================================================*/
 
 
