@@ -3,6 +3,8 @@ package teampixl.com.pixlpos.database;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.constructs.Ingredients;
+import teampixl.com.pixlpos.constructs.Stock;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -43,11 +45,15 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore {
     private final ObservableList<MenuItem> menuItems;
     private final ObservableList<Order> orders;
     private final ObservableList<Users> users;
+    private final ObservableList<Ingredients> ingredients;
+    private final ObservableList<Stock> stockItems;
 
     private DataStore() {
         menuItems = FXCollections.observableArrayList();
         orders = FXCollections.observableArrayList();
         users = FXCollections.observableArrayList();
+        ingredients = FXCollections.observableArrayList();
+        stockItems = FXCollections.observableArrayList();
 
         // Load data from database on initialization
         loadMenuItemsFromDatabase();
