@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
-public class Ingredients {
+public class Ingredients implements IDataManager {
 
     /*===============================================================================================================================================================================================================
     Code Description:
@@ -27,7 +29,7 @@ public class Ingredients {
         QTY
     }
 
-    private MetadataWrapper metadata;
+    private final MetadataWrapper metadata;
     private final Map<String, Object> data;
 
     /*===============================================================================================================================================================================================================
@@ -63,7 +65,7 @@ public class Ingredients {
 
         // Metadata
         Map<String, Object> metadataMap = new HashMap<>();
-        metadataMap.put("uuid", UUID.randomUUID().toString());
+        metadataMap.put("ingredient_id", UUID.randomUUID().toString());
         metadataMap.put("itemName", itemName);
         metadataMap.put("stockStatus", stockStatus);
         metadataMap.put("onOrder", onOrder);
@@ -111,18 +113,14 @@ public class Ingredients {
     }
 
     // Method to update data, similar to how metadata is updated
-    public void updateData(String key, Object value) {
-        if (key.equals("numeral")) {
-            UnitType unitType = (UnitType) data.get("unit");
-            if (unitType == UnitType.QTY && !(value instanceof Integer)) {
-                throw new IllegalArgumentException("Numeral must be an Integer for QTY unit type");
-            }
-            if ((unitType == UnitType.KG || unitType == UnitType.L) && !(value instanceof Double)) {
-                throw new IllegalArgumentException("Numeral must be a Double for KG or L unit types");
-            }
+    public void setDataValue(String key, Object value) {
+        if (key.equals("unit") && !(value instanceof UnitType)) {
+            throw new IllegalArgumentException("Invalid value type for unit");
+        }
+        if (key.equals("numeral") && !(value instanceof Integer || value instanceof Double)) {
+            throw new IllegalArgumentException("Invalid value type for numeral");
         }
         data.put(key, value);
-        updateMetadata("lastUpdated", LocalDateTime.now()); // Update lastUpdated whenever data is changed
     }
 
     @Override

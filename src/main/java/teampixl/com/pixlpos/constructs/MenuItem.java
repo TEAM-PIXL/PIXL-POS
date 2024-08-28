@@ -3,9 +3,11 @@ package teampixl.com.pixlpos.constructs;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
-public class MenuItem {
+public class MenuItem implements IDataManager {
 
     /*============================================================================================================================================================
     Code Description:
@@ -108,7 +110,15 @@ public class MenuItem {
 
 
     public Map<String, Ingredients> getIngredients() {
-        return (Map<String, Ingredients>) data.get("ingredients");
+        Object ingredientsObj = data.get("ingredients");
+
+        if (ingredientsObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Ingredients> ingredients = (Map<String, Ingredients>) ingredientsObj;
+            return ingredients;
+        } else {
+            throw new IllegalStateException("Expected ingredients to be a Map<String, Ingredients>");
+        }
     }
 
     public void addIngredient(Ingredients ingredient) {

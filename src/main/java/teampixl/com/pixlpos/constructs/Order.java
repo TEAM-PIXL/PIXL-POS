@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 
-public class Order {
+public class Order implements IDataManager {
 
     /*============================================================================================================================================================
     Code Description:
