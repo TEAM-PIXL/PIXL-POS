@@ -226,6 +226,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         updateUserInDatabase(user);
     }
 
+
+
     /*====================================================================================================================================================================
     Code Description:
     This section of code handles the implementation of the IIngredientStore interface. It provides methods for adding, updating, and removing ingredients.
@@ -236,6 +238,25 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         - updateIngredient(Ingredients ingredient): void - Updates an existing ingredient in the list of ingredients.
         - removeIngredient(Ingredients ingredient): void - Removes an existing ingredient from the list of ingredients.
     ====================================================================================================================================================================*/
+
+
+
+    public ObservableList<Ingredients> getIngredients() {
+        return ingredients;
+    }
+
+    public void addIngredient(Ingredients ingredient) {
+
+    }
+
+    public void updateIngredient(Ingredients ingredient) {
+
+    }
+
+    public void removeIngredient(Ingredients ingredient) {
+
+    }
+
 
 
 /*====================================================================================================================================================================
