@@ -29,7 +29,7 @@ public class Ingredients implements IDataManager {
         QTY
     }
 
-    private final MetadataWrapper metadata;
+    private MetadataWrapper metadata;
     private final Map<String, Object> data;
 
     /*===============================================================================================================================================================================================================
@@ -108,8 +108,10 @@ public class Ingredients implements IDataManager {
         if (key.equals("onOrder") && !(value instanceof Boolean)) {
             throw new IllegalArgumentException("Invalid value type for onOrder");
         }
-        metadata.metadata().put(key, value);
-        metadata.metadata().put("lastUpdated", LocalDateTime.now()); // Automatically update lastUpdated
+        Map<String, Object> updatedMetadata = new HashMap<>(metadata.metadata());
+        updatedMetadata.put(key, value);
+        updatedMetadata.put("lastUpdated", LocalDateTime.now());
+        this.metadata = new MetadataWrapper(updatedMetadata);
     }
 
     // Method to update data, similar to how metadata is updated
