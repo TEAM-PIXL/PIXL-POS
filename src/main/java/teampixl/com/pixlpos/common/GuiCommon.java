@@ -30,6 +30,12 @@ public class GuiCommon {
     Variables:
     - LOGIN_SCREEN_TITLE: The title of the login screen.
     - LOGIN_SCREEN_FXML: The path to the FXML file of the login screen.
+    - ADMIN_SCREEN_TITLE: The title of the admin screen.
+    - ADMIN_SCREEN_FXML: The path to the FXML file of the admin screen.
+    - COOK_SCREEN_TITLE: The title of the cook screen.
+    - COOK_SCREEN_FXML: The path to the FXML file of the cook screen.
+    - WAITER_SCREEN_TITLE: The title of the waiter screen.
+    - WAITER_SCREEN_FXML: The path to the FXML file of the waiter screen.
     ====================================================================================================================================================================================*/
 
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
