@@ -45,7 +45,15 @@ public class LoginScreenController {
     protected void onLoginButtonClick() {
         String username = usernameField.getText();
         String password = passwordField.getText();
-
-        User user = getUser(username);
+        if (AuthenticationManager.login(username, password)){
+            Users user = AuthenticationManager.getUser(username);
+            if (user.getRole() == Users.UserRole.ADMIN){
+                GuiCommon.loadAdminScreen((Stage) loginButton.getScene().getWindow());
+            } else {
+                GuiCommon.loadUserScreen((Stage) loginButton.getScene().getWindow());
+            }
+        } else {
+            showErrorDialog("Invalid username or password");
+        }
     }
 }
