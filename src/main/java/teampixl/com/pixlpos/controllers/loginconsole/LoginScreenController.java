@@ -69,4 +69,10 @@ public class LoginScreenController extends GuiCommon {
             showErrorDialog("Invalid username or password");
         }
     }
+
+    @FXML
+    protected void onExitButtonClick() {
+        Stage stage = (Stage) exitButton.getScene().getWindow();
+        stage.close();
+    }
 }
