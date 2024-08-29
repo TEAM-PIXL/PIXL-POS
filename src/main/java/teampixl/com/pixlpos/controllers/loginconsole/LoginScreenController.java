@@ -1,6 +1,5 @@
 package teampixl.com.pixlpos.controllers.loginconsole;
 
-import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
