@@ -38,6 +38,8 @@ public class GuiCommon {
     public static final String ADMIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/AdminStage.fxml";
     public static final String COOK_SCREEN_TITLE = "Cook Screen";
     public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage.fxml";
+    public static final String WAITER_SCREEN_TITLE = "Waiter Screen";
+    public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage.fxml";
 
     /*===================================================================================================================================================================================
     Code Description:

@@ -60,7 +60,7 @@ public class LoginScreenController extends GuiCommon {
                     GuiCommon.loadScene(GuiCommon.COOK_SCREEN_FXML, GuiCommon.COOK_SCREEN_TITLE, stage);
                     break;
                 case WAITER:
-                    GuiCommon.loadScene(GuiCommon.WAITER_SCREEN_TITLE, GuiCommon.WAITER_SCREEN_TITLE, stage);
+                    GuiCommon.loadScene(GuiCommon.WAITER_SCREEN_FXML, GuiCommon.WAITER_SCREEN_TITLE, stage);
                     break;
                 default:
                     showErrorDialog("Invalid user role");
