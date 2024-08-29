@@ -9,10 +9,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import teampixl.com.pixlpos.constructs.Users;
-import teampixl.com.pixlpos.database.interfaces;
-import teampixl.com.pixlpos.database.interfaces.IUserStore;
+import teampixl.com.pixlpos.authentication.LoginService;
+import teampixl.com.pixlpos.authentication.AuthenticationManager;
 
-public class LoginScreenController implements IUserStore {
+public class LoginScreenController {
 
     /*===================================================================================================================================================================================
     Code Description:
@@ -45,35 +45,7 @@ public class LoginScreenController implements IUserStore {
     protected void onLoginButtonClick() {
         String username = usernameField.getText();
         String password = passwordField.getText();
-    }
 
-    @Override
-    public ObservableList<Users> getUsers() {
-        return null;
-    }
-
-    @Override
-    public void addUser(Users user) {
-
-    }
-
-    @Override
-    public void removeUser(Users user) {
-
-    }
-
-    @Override
-    public Users getUser(String username) {
-        return null;
-    }
-
-    @Override
-    public void updateUser(Users user) {
-
-    }
-
-    @Override
-    public void updateUserPassword(Users user, String newPassword) {
-
+        User user = getUser(username);
     }
 }
