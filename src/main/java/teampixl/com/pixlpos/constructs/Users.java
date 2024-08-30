@@ -3,10 +3,12 @@ package teampixl.com.pixlpos.constructs;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 import teampixl.com.pixlpos.authentication.PasswordUtils;
 
-public class Users {
+public class Users implements IDataManager {
 
     /*============================================================================================================================================================
     Code Description:
@@ -64,9 +66,9 @@ public class Users {
 
         // Data
         this.data = new HashMap<>();
-        this.data.put("password", PasswordUtils.hashPassword(plainPassword));  // Store hashed password
+        this.data.put("password", PasswordUtils.hashPassword(plainPassword));
         this.data.put("email", email);
-        this.data.put("additional_info", null);  // Optional field for additional info
+        this.data.put("additional_info", null);
     }
 
     /*============================================================================================================================================================

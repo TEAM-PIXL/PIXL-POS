@@ -3,9 +3,11 @@ package teampixl.com.pixlpos.constructs;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
-public class MenuItem {
+public class MenuItem implements IDataManager {
 
     /*============================================================================================================================================================
     Code Description:
@@ -32,6 +34,7 @@ public class MenuItem {
 
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
+    private final Map<String, IngredientAmount> ingredients;
 
     /*============================================================================================================================================================
     Code Description:
@@ -51,7 +54,7 @@ public class MenuItem {
         - description: description
         - notes: null
         - amountOrdered: 0
-        - ingredients: null
+        - ingredients: map to store ingredients using ingredient_id as the key and IngredientAmount as the value
     ============================================================================================================================================================*/
 
     public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description, DietaryRequirement dietaryRequirement) {
@@ -73,23 +76,92 @@ public class MenuItem {
         metadataMap.put("itemType", itemType);
         metadataMap.put("activeItem", activeItem);
 
-        // Only add dietaryRequirement if it's not null
         if (dietaryRequirement != null) {
             metadataMap.put("dietaryRequirement", dietaryRequirement);
         }
 
-        metadataMap.put("created_at", System.currentTimeMillis()); // Timestamp for creation
-        metadataMap.put("updated_at", System.currentTimeMillis()); // Timestamp for last update
+        metadataMap.put("created_at", System.currentTimeMillis());
+        metadataMap.put("updated_at", System.currentTimeMillis());
 
-        // Create immutable map for metadata
-        this.metadata = new MetadataWrapper(Map.copyOf(metadataMap));
+        this.metadata = new MetadataWrapper(metadataMap);
 
         // Data
         this.data = new HashMap<>();
-        data.put("description", description);
-        data.put("notes", null);  // Default to null
-        data.put("amountOrdered", 0);  // Default value is 0
-        data.put("ingredients", null);  // Optional field for ingredients
+        this.data.put("description", description);
+        this.data.put("notes", null);
+        this.data.put("amountOrdered", 0);
+        this.ingredients = new HashMap<>();
+    }
+
+    /*=========================================================================================================================================================================================================
+    Code Description:
+    This section of the code contains methods to add, update, remove, clear and check for ingredients in a MenuItem object.
+
+    Methods:
+    - getIngredients(): returns ingredients
+    - addIngredient(Ingredients ingredient, Object numeral): adds ingredient with a numeral
+    - updateIngredient(String oldIngredientId, Ingredients newIngredient, Object numeral): updates ingredient with a numeral
+    - removeIngredient(Ingredients ingredient): removes ingredient
+    - clearIngredients(): clears ingredients
+    - hasIngredient(String ingredientId): checks if ingredient exists
+    - updateTimestamp(): updates timestamp
+    =========================================================================================================================================================================================================*/
+
+    public Map<String, IngredientAmount> getIngredients() {
+        return ingredients;
+    }
+
+    public void addIngredient(Ingredients ingredient, Object numeral) {
+        if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
+            throw new IllegalArgumentException("Numeral must be a non-negative value.");
+        }
+
+        String ingredientId = (String) ingredient.getMetadata().metadata().get("ingredient_id");
+
+        if (ingredientId == null || ingredientId.isEmpty()) {
+            throw new IllegalArgumentException("Ingredient must have a valid ID.");
+        }
+
+        if (ingredients.containsKey(ingredientId)) {
+            throw new IllegalArgumentException("Ingredient already exists.");
+        }
+
+        ingredients.put(ingredientId, new IngredientAmount(ingredient, numeral));
+        updateTimestamp();
+    }
+
+    public void updateIngredient(String oldIngredientId, Ingredients newIngredient, Object numeral) {
+        if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
+            throw new IllegalArgumentException("Numeral must be a non-negative value.");
+        }
+
+        if (ingredients.containsKey(oldIngredientId)) {
+            ingredients.remove(oldIngredientId);
+        } else {
+            throw new IllegalArgumentException("Ingredient not found.");
+        }
+        String newIngredientId = (String) newIngredient.getMetadata().metadata().get("ingredient_id");
+        ingredients.put(newIngredientId, new IngredientAmount(newIngredient, numeral));
+        updateTimestamp();
+    }
+
+    public void removeIngredient(Ingredients ingredient) {
+        String ingredientId = (String) ingredient.getMetadata().metadata().get("ingredient_id");
+
+        if (ingredients.containsKey(ingredientId)) {
+            ingredients.remove(ingredientId);
+            updateTimestamp();
+        } else {
+            throw new IllegalArgumentException("Ingredient not found.");
+        }
+    }
+
+    public boolean hasIngredient(String ingredientId) {
+        return ingredients.containsKey(ingredientId);
+    }
+
+    private void updateTimestamp() {
+        updateMetadata("updated_at", System.currentTimeMillis());
     }
 
     /*============================================================================================================================================================
@@ -128,9 +200,23 @@ public class MenuItem {
 
     @Override
     public String toString() {
-        return String.format("MenuItem{Metadata: %s, Data: %s}", new HashMap<>(metadata.metadata()), new HashMap<>(data));
+        return String.format("MenuItem{Metadata: %s, Data: %s, Ingredients: %s}", new HashMap<>(metadata.metadata()), new HashMap<>(data), ingredients);
     }
+
+    /*============================================================================================================================================================
+    Code Description:
+    - IngredientAmount class to hold an ingredient and its corresponding numeral.
+    ============================================================================================================================================================*/
+
+    public record IngredientAmount(Ingredients ingredient, Object numeral) {
+
+        @Override
+            public String toString() {
+                return String.format("IngredientAmount{Ingredient: %s, Numeral: %s}", ingredient, numeral);
+            }
+        }
 }
+
 
 
 
