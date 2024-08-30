@@ -18,8 +18,8 @@ public class LoginService {
     private DataStore dataStore = DataStore.getInstance();
 
     public boolean authenticate(String username, String plainPassword) {
-        Users user = dataStore.getUser(username);
-        if (user != null && PasswordUtils.verifyPassword(plainPassword, (String) user.getData().get("password"))) {
+        Users usercheck = dataStore.getUser(username);
+        if (usercheck != null && PasswordUtils.verifyPassword(plainPassword, (String) usercheck.getData().get("password"))) {
             return true; // Successful authentication
         }
         return false; // Authentication failed

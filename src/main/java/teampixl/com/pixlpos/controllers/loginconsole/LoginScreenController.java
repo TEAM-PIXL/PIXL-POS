@@ -48,7 +48,9 @@ public class LoginScreenController extends GuiCommon {
     protected void onLoginButtonClick() {
         String username = usernameField.getText();
         String password = passwordField.getText();
-        if (authManager.login(username, password)) {
+        boolean auth = authManager.login(username, password);
+        System.out.println("Auth: " + auth);
+        if (auth) {
             Users user = dataStore.getUser(username);
             Users.UserRole role = (Users.UserRole) user.getMetadata().metadata().get("role");
             Stage stage = (Stage) loginButton.getScene().getWindow();

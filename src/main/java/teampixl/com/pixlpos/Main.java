@@ -8,6 +8,7 @@ import teampixl.com.pixlpos.constructs.Stock;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
 import teampixl.com.pixlpos.authentication.PasswordUtils;
+import teampixl.com.pixlpos.authentication.AuthenticationManager;
 
 public class Main {
 
@@ -21,10 +22,11 @@ public class Main {
         dataStore.clearData();  // Clear all data before adding new data
 
         // Test Users
-        Users user1 = new Users("admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
+        AuthenticationManager.register("admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
         Users user2 = new Users("waiter", "waiter", "waiter@example.com", Users.UserRole.WAITER);
 
-        dataStore.addUser(user1);
+        Users user1 = dataStore.getUser("admin");
+
         System.out.println("User 1 added to database.");
         dataStore.addUser(user2);
         System.out.println("User 2 added to database.");

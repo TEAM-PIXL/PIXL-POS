@@ -22,10 +22,10 @@ public class AuthenticationManager {
 
 
 
-    private RegistrationService registrationService = new RegistrationService();
+    private static RegistrationService registrationService = new RegistrationService();
     private LoginService loginService = new LoginService();
 
-    public boolean register(String username, String password, String email, Users.UserRole role) {
+    public static boolean register(String username, String password, String email, Users.UserRole role) {
         return registrationService.registerUser(username, password, email, role);
     }
 
