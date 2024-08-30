@@ -47,8 +47,8 @@
                </PasswordField>
                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                   <children>
-                     <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" text="Login" />
-                     <Button fx:id="exitButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" text="Exit" />
+                     <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" text="Login" onAction="#onLoginButtonClick" />
+                     <Button fx:id="exitButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" text="Exit" onAction="#onExitButtonClick" />
                   </children>
                   <padding>
                      <Insets left="10.0" right="10.0" />
