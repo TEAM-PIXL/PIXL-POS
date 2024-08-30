@@ -43,11 +43,11 @@ public class Users implements IDataManager {
         - additional_info: null
     ============================================================================================================================================================*/
 
-    public Users(String username, String plainPassword, String email, UserRole role) {
+    public Users(String username, String hashedPassword, String email, UserRole role) {
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("username cannot be null or empty");
         }
-        if (plainPassword == null || plainPassword.isEmpty()) {
+        if (hashedPassword == null || hashedPassword.isEmpty()) {
             throw new IllegalArgumentException("password cannot be null or empty");
         }
         if (role == null) {
@@ -66,7 +66,7 @@ public class Users implements IDataManager {
 
         // Data
         this.data = new HashMap<>();
-        this.data.put("password", PasswordUtils.hashPassword(plainPassword));
+        this.data.put("password", hashedPassword);
         this.data.put("email", email);
         this.data.put("additional_info", null);
     }
