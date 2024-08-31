@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class AdminScreenControllerUser {
+public class AdminScreenController {
 
     @FXML
     private TextField usernameField;
