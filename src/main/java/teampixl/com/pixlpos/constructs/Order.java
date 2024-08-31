@@ -24,7 +24,7 @@ public class Order implements IDataManager {
     }
 
     private MetadataWrapper metadata;  // Metadata for the Order
-    private final Map<String, Object> data;  // Data associated with the Order
+    private final Map<String, Object> data;  // Data associated with the Order+
 
     /*============================================================================================================================================================
     Code Description:

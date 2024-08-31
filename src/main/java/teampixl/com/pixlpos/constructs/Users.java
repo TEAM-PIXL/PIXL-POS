@@ -66,7 +66,7 @@ public class Users implements IDataManager {
 
         // Data
         this.data = new HashMap<>();
-        this.data.put("password", PasswordUtils.hashPassword(plainPassword));
+        this.data.put("password", plainPassword);
         this.data.put("email", email);
         this.data.put("additional_info", null);
     }
