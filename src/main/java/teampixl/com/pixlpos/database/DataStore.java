@@ -142,6 +142,15 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         return null;
     }
 
+    public MenuItem getMenuItemById(String itemId) {
+        for (MenuItem item : menuItems) {
+            if (item.getMetadata().metadata().get("id").equals(itemId)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
 
 
     /*====================================================================================================================================================================

@@ -10,6 +10,7 @@ import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
 import teampixl.com.pixlpos.authentication.PasswordUtils;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
+import java.util.Map;
 
 public class Main {
 
@@ -453,7 +454,46 @@ public class Main {
             System.out.println("Order 3 removal failed.");
         }
 
-        dataStore.getOrders().forEach(System.out::println);
+        dataStore.addOrderItem(order1, item1, 1);
+        dataStore.updateOrder(order1);
+        dataStore.addOrderItem(order1, item3, 2);
+        dataStore.updateOrder(order1);
+
+        System.out.println(dataStore.getOrderItems(order1));
+        DataStore finalDataStore = dataStore;
+        dataStore.getOrderItems(order1).forEach((key, value) -> {
+            System.out.println("Key: " + key + " Value: " + value);
+            System.out.println(finalDataStore.getMenuItemById(key));
+        });
+        if (dataStore.getOrderItems(order1).size() == 2) {
+            System.out.println("Order 1 items added successfully.");
+        } else {
+            System.out.println("Order 1 items addition failed.");
+        }
+
+        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")).equals(1) && dataStore.getOrderItems(order1).get(item3.getMetadata().metadata().get("id")).equals(2)) {
+            System.out.println("Order 1 items added successfully.");
+        } else {
+            System.out.println("Order 1 items addition failed.");
+        }
+
+
+        dataStore.updateOrderItem(order1, item1, 2);
+        dataStore.updateOrder(order1);
+        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")).equals(2)) {
+            System.out.println("Order 1 item updated successfully.");
+        } else {
+            System.out.println("Order 1 item update failed.");
+        }
+
+        dataStore.removeOrderItem(order1, item1, 2);
+        dataStore.updateOrder(order1);
+        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")) == null) {
+            System.out.println("Order 1 item removed successfully.");
+        } else {
+            System.out.println("Order 1 item removal failed.");
+        }
+
         /*===================================================================================================================================================================================================================================
         Code Description:
         This section tests the functionality of the AuthenticationManager class. It tests the login and logout functionality of the application.
