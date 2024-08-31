@@ -465,6 +465,7 @@ public class Main {
             System.out.println("Key: " + key + " Value: " + value);
             System.out.println(finalDataStore.getMenuItemById(key));
         });
+
         if (dataStore.getOrderItems(order1).size() == 2) {
             System.out.println("Order 1 items added successfully.");
         } else {
@@ -478,10 +479,12 @@ public class Main {
         }
 
 
+
         dataStore.updateOrderItem(order1, item1, 2);
         dataStore.updateOrder(order1);
         if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")).equals(2)) {
             System.out.println("Order 1 item updated successfully.");
+            System.out.println(dataStore.getOrderItem(order1, item1.getMetadata().metadata().get("id").toString()));
         } else {
             System.out.println("Order 1 item update failed.");
         }
@@ -493,6 +496,15 @@ public class Main {
         } else {
             System.out.println("Order 1 item removal failed.");
         }
+
+        System.out.println(dataStore.getOrderItems(order1));
+        DataStore tempDatastore = dataStore;
+        dataStore.getOrderItems(order1).forEach((key, value) -> {
+            System.out.println("Key: " + key + " Value: " + value);
+            System.out.println(tempDatastore.getMenuItemById(key));
+        });
+
+        dataStore.getOrders().forEach(System.out::println);
 
         /*===================================================================================================================================================================================================================================
         Code Description:

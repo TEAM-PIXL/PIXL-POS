@@ -13,6 +13,7 @@ public interface IOrderStore {
     void removeOrder(Order order);
     void updateOrder(Order order);
     Map<String, Object> getOrderItems(Order order);
+    Map<String, Object> getOrderItem(Order order, String itemName);
     void addOrderItem(Order order, MenuItem item, int quantity);
     void removeOrderItem(Order order, MenuItem item, int quantity);
     void updateOrderItem(Order order, MenuItem item, int newQuantity);

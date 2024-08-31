@@ -203,6 +203,19 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         return getOrderItemsFromDatabase((String) order.getMetadata().metadata().get("order_id"));
     }
 
+    public Map<String, Object> getOrderItem(Order order, String menuItemId) {
+        Map<String, Object> orderItems = getOrderItemsFromDatabase((String) order.getMetadata().metadata().get("order_id"));
+        for (Map.Entry<String, Object> entry : orderItems.entrySet()) {
+            if (entry.getKey().equals(menuItemId)) {
+                Map<String, Object> orderItem = new HashMap<>();
+                orderItem.put("Item", getMenuItemById(entry.getKey()));
+                orderItem.put("Quantity", entry.getValue());
+                return orderItem;
+            }
+        }
+        return null;
+    }
+
     public void addOrderItem(Order order, MenuItem item, int quantity) {
         order.addMenuItem(item, quantity);
         saveOrderItemToDatabase(order, item, quantity);
