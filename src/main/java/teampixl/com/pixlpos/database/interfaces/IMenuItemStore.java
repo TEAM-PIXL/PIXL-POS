@@ -12,6 +12,7 @@ public interface IMenuItemStore {
     void addMenuItem(MenuItem item);
     void removeMenuItem(MenuItem item);
     MenuItem getMenuItem(String itemName);
+    MenuItem getMenuItemById(String itemId);
     void updateMenuItem(MenuItem item);
     Map<String, Object> getMenuItemIngredients(MenuItem menuItem);
     void updateMenuItemIngredient(MenuItem menuItem, Ingredients ingredient, Object numeral);
