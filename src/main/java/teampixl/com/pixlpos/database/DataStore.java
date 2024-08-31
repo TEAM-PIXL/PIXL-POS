@@ -113,6 +113,10 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         deleteMenuItemFromDatabase(item);
     }
 
+    public Map<String, Object> getMenuItemIngredients(MenuItem menuItem) {
+        return getMenuItemIngredientsFromDatabase(menuItem);
+    }
+
     public void addMenuItemIngredient(MenuItem menuItem, Ingredients ingredient, Object numeral) {
         menuItem.addIngredient(ingredient, numeral);
         saveMenuItemIngredientsToDatabase(menuItem, ingredient, numeral);
@@ -163,6 +167,15 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         return orders;
     }
 
+    public Order getOrder(int orderNumber) {
+        for (Order order : orders) {
+            if (order.getMetadata().metadata().get("order_number").equals(orderNumber)) {
+                return order;
+            }
+        }
+        return null;
+    }
+
     public void addOrder(Order order) {
         orders.add(order);
         saveOrderToDatabase(order);
@@ -175,6 +188,10 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     public void removeOrder(Order order) {
         orders.remove(order);
         deleteOrderFromDatabase(order);
+    }
+
+    public Map<String, Object> getOrderItems(Order order) {
+        return getOrderItemsFromDatabase((String) order.getMetadata().metadata().get("order_id"));
     }
 
     public void addOrderItem(Order order, MenuItem item, int quantity) {
@@ -260,6 +277,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     Methods:
         - getIngredients(): ObservableList<Ingredients> - Returns a list of all ingredients.
+        - getIngredient(String ingredientName): Ingredients - Returns an ingredient with the specified name.
         - addIngredient(Ingredients ingredient): void - Adds a new ingredient to the list of ingredients.
         - updateIngredient(Ingredients ingredient): void - Updates an existing ingredient in the list of ingredients.
         - removeIngredient(Ingredients ingredient): void - Removes an existing ingredient from the list of ingredients.
@@ -269,6 +287,15 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     public ObservableList<Ingredients> getIngredients() {
         return ingredients;
+    }
+
+    public Ingredients getIngredient(String ingredientName) {
+        for (Ingredients ingredient : ingredients) {
+            if (ingredient.getMetadata().metadata().get("itemName").equals(ingredientName)) {
+                return ingredient;
+            }
+        }
+        return null;
     }
 
     public void addIngredient(Ingredients ingredient) {
@@ -304,6 +331,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         return stockItems;
     }
 
+    public Stock getStockItem(String itemName) {
+        String checkIngredientId = getIngredientIdByIngredientName(itemName);
+        return getStockItemByIngredientId(checkIngredientId);
+    }
+
     public void addStock(Stock stock) {
         stockItems.add(stock);
         saveStockToDatabase(stock);
@@ -316,15 +348,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     public void removeStock(Stock stock) {
         stockItems.remove(stock);
         deleteStockFromDatabase(stock);
-    }
-
-    public Stock getStockItemByIngredientId(String ingredientId) {
-        for (Stock stock : stockItems) {
-            if (stock.getMetadata().metadata().get("ingredient_id").equals(ingredientId)) {
-                return stock;
-            }
-        }
-        return null;
     }
 
 
@@ -467,6 +490,32 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private Map<String, Object> getMenuItemIngredientsFromDatabase(MenuItem menuItem) {
+        Map<String, Object> ingredientsMap = new HashMap<>();
+        String sql = "SELECT * FROM menu_item_ingredients WHERE menu_item_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) menuItem.getMetadata().metadata().get("id"));
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String ingredientId = rs.getString("ingredient_id");
+                double numeral = rs.getDouble("numeral");  // Assuming that numeral is stored as REAL in SQLite
+                Ingredients ingredient = getIngredientById(ingredientId);  // You'll need a method to fetch ingredient by ID
+
+                assert ingredient != null;
+                ingredientsMap.put(ingredient.getMetadata().metadata().get("itemName").toString(), numeral);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return ingredientsMap;
     }
 
     private void saveMenuItemIngredientsToDatabase(MenuItem menuItem, Ingredients ingredient, Object numeral) {
@@ -613,6 +662,30 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             System.out.println(e.getMessage());
         }
 
+    }
+
+    private Map<String, Object> getOrderItemsFromDatabase(String orderId) {
+        Map<String, Object> orderItemsMap = new HashMap<>();
+        String sql = "SELECT * FROM order_items WHERE order_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, orderId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String menuItemId = rs.getString("menu_item_id");
+                int quantity = rs.getInt("quantity");
+
+                orderItemsMap.put(menuItemId, quantity);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return orderItemsMap;
     }
 
     private void saveOrderToDatabase(Order order) {
@@ -1165,7 +1238,23 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         }
     }
 
+    public Stock getStockItemByIngredientId(String ingredientId) {
+        for (Stock stockItem : stockItems) {
+            if (stockItem.getMetadata().metadata().get("ingredient_id").equals(ingredientId)) {
+                return stockItem;
+            }
+        }
+        return null;
+    }
 
+    private String getIngredientIdByIngredientName(String ingredientName) {
+        for (Ingredients ingredient : ingredients) {
+            if (ingredient.getMetadata().metadata().get("itemName").equals(ingredientName)) {
+                return (String) ingredient.getMetadata().metadata().get("ingredient_id");
+            }
+        }
+        return null;
+    }
 
     /*====================================================================================================================================================================
     Code Description:
