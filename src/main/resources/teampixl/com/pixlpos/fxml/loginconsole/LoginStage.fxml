@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@loginstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.loginconsole.LoginScreenController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@loginstage.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.loginconsole.LoginScreenController">
    <top>
       <AnchorPane prefHeight="0.0" prefWidth="600.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
    </top>
@@ -75,4 +75,4 @@
    <bottom>
       <AnchorPane prefHeight="0.0" prefWidth="600.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
    </bottom>
-</fx:root>
+</BorderPane>
