@@ -11,44 +11,48 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.loginconsole.LoginScreenController" prefHeight="400.0" prefWidth="600.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@loginstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.loginconsole.LoginScreenController">
    <top>
-      <AnchorPane prefHeight="49.0" prefWidth="600.0" style="-fx-background-color: #19b929;" BorderPane.alignment="CENTER">
-         <children>
-            <Label layoutX="34.0" layoutY="16.0" text="PIXL Services" />
-         </children>
-      </AnchorPane>
+      <AnchorPane prefHeight="0.0" prefWidth="600.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
    </top>
    <center>
       <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
          <AnchorPane prefHeight="3.0" prefWidth="247.0" style="-fx-background-color: white;" />
-         <VBox alignment="CENTER" prefHeight="183.0" prefWidth="247.0" style="-fx-background-color: gray; -fx-background-radius: 10 10 10 10;">
+         <VBox alignment="TOP_CENTER" prefHeight="352.0" prefWidth="435.0" styleClass="login-form_container">
             <children>
-               <AnchorPane prefHeight="78.0" prefWidth="200.0" style="-fx-background-color: #19b929; -fx-background-radius: 10 10 0 0;">
+               <AnchorPane prefHeight="78.0" prefWidth="200.0" styleClass="login-title">
                   <children>
-                     <Label alignment="CENTER" layoutX="42.0" layoutY="10.0" text="Staff Portal Login" textFill="WHITE">
+                     <Label alignment="CENTER" layoutX="42.0" layoutY="10.0" styleClass="login-label" text="Staff Portal Login" textFill="WHITE">
                         <font>
                            <Font size="20.0" />
                         </font>
                      </Label>
                   </children>
                </AnchorPane>
-               <Label text="Staff Username" textOverrun="CLIP" />
-               <TextField fx:id="usernameField" alignment="BOTTOM_CENTER">
+               <Label alignment="TOP_LEFT" text="Staff Username" textOverrun="CLIP">
+                  <VBox.margin>
+                     <Insets left="10.0" />
+                  </VBox.margin>
+               </Label>
+               <TextField fx:id="usernameField" alignment="BOTTOM_CENTER" prefHeight="37.0" prefWidth="329.0" styleClass="login-form_container">
                   <VBox.margin>
                      <Insets left="10.0" right="10.0" />
                   </VBox.margin>
                </TextField>
-               <Label alignment="CENTER" text="Password" />
-               <PasswordField fx:id="passwordField">
+               <Label alignment="CENTER" text="Password">
+                  <VBox.margin>
+                     <Insets left="10.0" />
+                  </VBox.margin>
+               </Label>
+               <PasswordField fx:id="passwordField" styleClass="text-field">
                   <VBox.margin>
                      <Insets left="10.0" right="10.0" />
                   </VBox.margin>
                </PasswordField>
-               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="372.0" spacing="20.0">
                   <children>
-                     <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" text="Login" onAction="#onLoginButtonClick" />
-                     <Button fx:id="exitButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" text="Exit" onAction="#onExitButtonClick" />
+                     <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="30.0" prefWidth="70.0" text="Login" />
+                     <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExitButtonClick" prefHeight="30.0" prefWidth="70.0" text="Exit" />
                   </children>
                   <padding>
                      <Insets left="10.0" right="10.0" />
@@ -59,13 +63,16 @@
       </VBox>
    </center>
    <left>
-      <AnchorPane prefHeight="238.0" prefWidth="181.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
+      <AnchorPane prefHeight="400.0" prefWidth="0.0" styleClass="header" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="49.0" layoutY="188.0" styleClass="header-label" text="PIXL Services" />
+         </children>
+      </AnchorPane>
    </left>
    <right>
-      <AnchorPane prefHeight="238.0" prefWidth="171.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
+      <AnchorPane prefHeight="400.0" prefWidth="0.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
    </right>
    <bottom>
-      <AnchorPane prefHeight="45.0" prefWidth="600.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
+      <AnchorPane prefHeight="0.0" prefWidth="600.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
    </bottom>
 </fx:root>
-
