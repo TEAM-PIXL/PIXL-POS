@@ -1,11 +1,13 @@
 package teampixl.com.pixlpos.common;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GuiCommon {
 
@@ -55,10 +57,17 @@ public class GuiCommon {
     - loadScene: This method loads a new scene in the application by setting the FXML file, title, and stage.
     ====================================================================================================================================================================================*/
 
+    private static final Map<String, Scene> sceneCache = new HashMap<>();
+
     public static void loadScene(String fxmlPath, String title, Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
-            Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
+            Scene scene = sceneCache.get(fxmlPath);
+            if (scene == null) {
+                FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
+                Parent root = fxmlLoader.load();
+                scene = new Scene(root, WIDTH, HEIGHT);
+                sceneCache.put(fxmlPath, scene);
+            }
             stage.setScene(scene);
             stage.setTitle(title);
             stage.show();
