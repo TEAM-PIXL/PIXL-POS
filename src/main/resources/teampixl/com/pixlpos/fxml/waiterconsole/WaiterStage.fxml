@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
@@ -15,22 +14,25 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">
    <right>
       <FlowPane hgap="20.0" prefHeight="768.0" prefWidth="500.0" style="-fx-background-color: #89c6c0;" vgap="20.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="120.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="220.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="320.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="420.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="20.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="120.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="220.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="320.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
-            <Button layoutX="420.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Button" />
+            <Button fx:id="classic" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Classic" />
+            <Button fx:id="bbqbacon" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="BBQ Bacon" />
+            <Button fx:id="mushroomswiss" layoutX="120.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Mushroom Swiss" />
+            <Button fx:id="spicy" layoutX="220.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Spicy Jalapeño " />
+            <Button fx:id="hawaiian" layoutX="320.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Hawaiian Pineapple" />
+            <Button fx:id="beyond" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Veggie Bean" />
+            <Button layoutX="20.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Beyond Meat" />
+            <Button fx:id="mediterranean" layoutX="120.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Mediterranean Falafel" />
+            <Button fx:id="teriyaki" layoutX="220.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Teriyaki Salmon " />
+            <Button fx:id="breakfast" layoutX="320.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Breakfast Burger" />
+            <Button fx:id="coke" layoutX="420.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Coke" />
+            <Button fx:id="fanta" layoutX="20.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Fanta" />
+            <Button fx:id="sprite" layoutX="120.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Sprite" />
+            <Button fx:id="icedtea" layoutX="220.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Iced tea" />
+            <Button fx:id="icedcoffee" layoutX="320.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Iced Coffee" />
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -67,11 +69,6 @@
    <center>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane prefHeight="55.0" prefWidth="524.0" style="-fx-background-color: cyan;">
-               <children>
-                  <Label layoutX="30.0" layoutY="19.0" text="PIXL Services" />
-               </children>
-            </AnchorPane>
             <Label alignment="CENTER" contentDisplay="RIGHT" text="Order#">
                <graphic>
                   <Text fx:id="ordernum" strokeType="OUTSIDE" strokeWidth="0.0" text="null">
@@ -100,7 +97,6 @@
             </HBox>
             <GridPane>
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
