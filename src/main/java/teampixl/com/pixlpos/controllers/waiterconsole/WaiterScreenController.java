@@ -14,7 +14,8 @@ import teampixl.com.pixlpos.database.DataStore;
 public class WaiterScreenController extends GuiCommon {
     /*===================================================================================================================================================================================
     Code Description:
-    This class is the controller for the login screen of the application. It handles the login functionality and navigation to different screens based on the user role.
-    At the moment, this is skeleton code and will be implemented further in the future.
+    This class is the controller for the waiter screen of the application. It handles creating menu orders which can be sent to the cook screen.
     ====================================================================================================================================================================================*/
+
+
 }
