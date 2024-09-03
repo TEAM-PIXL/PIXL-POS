@@ -6,7 +6,6 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
-import java.awt.*;
 import java.io.IOException;
 
 public class GuiCommon {
@@ -54,7 +53,8 @@ public class GuiCommon {
     This section contains the method to load a new scene in the application.
 
     Method:
-    - loadScene: This method loads a new scene in the application by setting the FXML file, title, and stage.
+    - loadScene: This method loads a new scene in the application by setting the FXML file, title, and node.
+    - loadStage: This method loads a new stage in the application by setting the FXML file, title, and stage.
     ====================================================================================================================================================================================*/
 
     public static void loadStage(String fxmlPath, String title, Stage stage) {

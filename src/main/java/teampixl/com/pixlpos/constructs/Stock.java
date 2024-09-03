@@ -57,10 +57,9 @@ public class Stock implements IDataManager {
             throw new IllegalArgumentException("Numeral must be a Double for KG or L unit types");
         }
         if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
-            numeral = 0;  // Set numeral to 0 if it's negative
+            numeral = 0;
         }
 
-        // Metadata
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("stock_id", UUID.randomUUID().toString());
         metadataMap.put("ingredient_id", ingredient.getMetadata().metadata().get("ingredient_id"));
@@ -71,12 +70,10 @@ public class Stock implements IDataManager {
 
         this.metadata = new MetadataWrapper(metadataMap);
 
-        // Data
         this.data = new HashMap<>();
         data.put("unit", unitType);
         data.put("numeral", numeral);
 
-        // Adjust stock status based on the initial numeral value
         adjustStockStatus(numeral);
     }
 
@@ -116,7 +113,7 @@ public class Stock implements IDataManager {
             } else if (value instanceof Double && (Double) value < 0) {
                 value = 0.0;
             }
-            adjustStockStatus(value);  // Adjust stock status when numeral is updated
+            adjustStockStatus(value);
         }
         data.put(key, value);
     }
@@ -134,8 +131,7 @@ public class Stock implements IDataManager {
     }
 
     private double getLowStockThreshold() {
-        // This method should retrieve the low stock threshold from an external source (e.g., a configuration file, database, or external service)
-        return Double.NaN;  // Return NaN if no threshold is set
+        return Double.NaN;
     }
 
     @Override

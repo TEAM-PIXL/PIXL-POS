@@ -20,8 +20,8 @@ public class LoginService {
     public boolean authenticate(String username, String plainPassword) {
         Users usercheck = dataStore.getUser(username);
         if (usercheck != null && PasswordUtils.verifyPassword(plainPassword, (String) usercheck.getData().get("password"))) {
-            return true; // Successful authentication
+            return true;
         }
-        return false; // Authentication failed
+        return false;
     }
 }

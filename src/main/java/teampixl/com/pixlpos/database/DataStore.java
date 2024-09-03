@@ -61,7 +61,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         ingredients = FXCollections.observableArrayList();
         stockItems = FXCollections.observableArrayList();
 
-        // Load data from database on initialization
         loadMenuItemsFromDatabase();
         loadOrdersFromDatabase();
         loadUsersFromDatabase();
@@ -1156,7 +1155,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setInt(2, (Boolean) stock.getMetadata().metadata().get("onOrder") ? 1 : 0);
             pstmt.setString(3, stock.getMetadata().metadata().get("lastUpdated").toString());
 
-            // Ensure unit and numeral are not null
             String unit = stock.getData().get("unit") != null ? stock.getData().get("unit").toString() : "UNKNOWN";
             Object numeral = stock.getData().get("numeral");
 

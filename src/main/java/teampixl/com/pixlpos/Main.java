@@ -10,7 +10,6 @@ import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
 import teampixl.com.pixlpos.authentication.PasswordUtils;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
-import java.util.Map;
 
 public class Main {
 
