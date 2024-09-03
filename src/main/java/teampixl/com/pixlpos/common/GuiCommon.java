@@ -3,8 +3,10 @@ package teampixl.com.pixlpos.common;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class GuiCommon {
@@ -55,15 +57,27 @@ public class GuiCommon {
     - loadScene: This method loads a new scene in the application by setting the FXML file, title, and stage.
     ====================================================================================================================================================================================*/
 
-    public static void loadScene(String fxmlPath, String title, Stage stage) {
+    public static void loadStage(String fxmlPath, String title, Stage stage) {
         try {
-            BorderPane root = new BorderPane(); // Create the root element
+            BorderPane root = new BorderPane();
             FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
-            fxmlLoader.setRoot(root); // Set the root before loading
+            fxmlLoader.setRoot(root);
             Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
             stage.setScene(scene);
             stage.setTitle(title);
             stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+        public static void loadScene(String fxmlPath, String title, Node node) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
+            Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
+            Stage stage = (Stage) node.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle(title);
         } catch (IOException e) {
             e.printStackTrace();
         }
