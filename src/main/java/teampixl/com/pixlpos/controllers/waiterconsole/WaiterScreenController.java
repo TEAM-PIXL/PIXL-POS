@@ -72,7 +72,6 @@ public class WaiterScreenController extends GuiCommon {
     private Button icedtea;
     @FXML
     private Button icedcoffee;
-    @FXML
-    private Button ;
+
 
 }
