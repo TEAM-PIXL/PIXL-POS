@@ -332,11 +332,11 @@
                <center>
                   <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <center>
-                        <VBox alignment="CENTER" prefHeight="751.0" prefWidth="679.0" styleClass="manage-user-container" BorderPane.alignment="CENTER">
+                        <VBox alignment="CENTER" prefHeight="751.0" prefWidth="608.0" styleClass="manage-user-container" BorderPane.alignment="CENTER">
                            <children>
                               <Label prefHeight="46.0" prefWidth="219.0" styleClass="database-label" text="Manage Menu Items">
                                  <VBox.margin>
-                                    <Insets left="-336.0" top="12.0" />
+                                    <Insets left="-336.0" top="10.0" />
                                  </VBox.margin>
                               </Label>
                               <Line endX="100.0" startX="-463.7373352050781" startY="0.7928932309150696" stroke="#4a85f6">
@@ -386,15 +386,15 @@
                                  <children>
                                     <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="171.0" styleClass="add-buttons" text="Add Menu Item">
                                        <HBox.margin>
-                                          <Insets left="68.0" right="25.0" />
+                                          <Insets left="64.0" right="25.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" styleClass="submit-button" text="Submit Changes">
+                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="183.0" styleClass="submit-button" text="Submit Changes">
                                        <HBox.margin>
                                           <Insets right="25.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" styleClass="cancel-button" text="Cancel" />
+                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="114.0" styleClass="cancel-button" text="Cancel" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="40.0" />
@@ -461,9 +461,9 @@
                   </BorderPane>
                </center>
                <top>
-                  <VBox prefHeight="92.0" prefWidth="1839.0" BorderPane.alignment="CENTER">
+                  <VBox prefHeight="110.0" prefWidth="1908.0" BorderPane.alignment="CENTER">
                      <children>
-                        <HBox prefHeight="107.0" prefWidth="1900.0" styleClass="header-container">
+                        <HBox prefHeight="92.0" prefWidth="1908.0" styleClass="header-container">
                            <children>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo" text="PIXL Services">
                                  <HBox.margin>
@@ -490,7 +490,7 @@
                               </Button>
                            </children>
                         </HBox>
-                        <HBox prefHeight="10.0" prefWidth="1900.0" styleClass="header-label">
+                        <HBox prefHeight="10.0" prefWidth="1908.0" styleClass="header-label">
                            <children>
                               <Line endX="1789.2928466796875" startX="-100.0" stroke="#757575" />
                            </children>
