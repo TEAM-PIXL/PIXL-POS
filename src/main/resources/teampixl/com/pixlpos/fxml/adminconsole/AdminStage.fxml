@@ -257,7 +257,7 @@
                               </Button>
                            </children>
                         </HBox>
-                        <HBox prefHeight="10.0" prefWidth="1900.0" styleClass="header-con">
+                        <HBox prefHeight="10.0" prefWidth="1900.0" styleClass="header-line">
                            <children>
                               <Line endX="1789.2928466796875" startX="-100.0" stroke="#757575" />
                            </children>
@@ -349,7 +349,7 @@
                                     <Insets right="400.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="560.0" />
+                              <TextField alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="560.0" styleClass="text-field" />
                               <Label prefHeight="40.0" prefWidth="83.0" text="Price">
                                  <VBox.margin>
                                     <Insets right="473.0" top="20.0" />
@@ -490,7 +490,7 @@
                               </Button>
                            </children>
                         </HBox>
-                        <HBox prefHeight="10.0" prefWidth="1900.0" styleClass="header-con">
+                        <HBox prefHeight="10.0" prefWidth="1900.0" styleClass="header-label">
                            <children>
                               <Line endX="1789.2928466796875" startX="-100.0" stroke="#757575" />
                            </children>
