@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.cookconsole.CookScreenController">
    <top>
       <AnchorPane prefHeight="99.0" prefWidth="1024.0" style="-fx-background-color: #868181;" BorderPane.alignment="CENTER">
          <children>
@@ -23,15 +23,15 @@
       </AnchorPane>
    </top>
    <center>
-      <ListView orientation="HORIZONTAL" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="orderview" orientation="HORIZONTAL" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0" style="-fx-background-color: #868181;" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Refresh" />
-            <Button layoutX="422.0" layoutY="23.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Complete" textFill="#00ff33" />
-            <Button layoutX="537.0" layoutY="23.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Logout" textFill="RED" />
+            <Button fx:id="refresh" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Refresh" />
+            <Button fx:id="complete" layoutX="422.0" layoutY="23.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Complete" textFill="#00ff33" />
+            <Button fx:id="logout" layoutX="537.0" layoutY="23.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Logout" textFill="RED" />
          </children>
       </HBox>
    </bottom>
-</BorderPane>
+</fx:root>
