@@ -23,8 +23,8 @@ public class Order implements IDataManager {
         CANCELED
     }
 
-    private MetadataWrapper metadata;  // Metadata for the Order
-    private final Map<String, Object> data;  // Data associated with the Order+
+    private MetadataWrapper metadata;
+    private final Map<String, Object> data;
 
     /*============================================================================================================================================================
     Code Description:
@@ -76,6 +76,8 @@ public class Order implements IDataManager {
         - updateOrderStatus(OrderStatus newStatus): Updates the status of the order.
         - completeOrder(): Marks the order as completed and updates the status.
         - updateTimestamp(): Updates the timestamp in the metadata.
+        - deductIngredientsFromStock(MenuItem menuItem, int quantity): Deducts the ingredients from stock.
+        - restoreIngredientsToStock(MenuItem menuItem, int quantity): Restores the ingredients to stock.
     ============================================================================================================================================================*/
 
     public void addMenuItem(MenuItem item, int quantity) {

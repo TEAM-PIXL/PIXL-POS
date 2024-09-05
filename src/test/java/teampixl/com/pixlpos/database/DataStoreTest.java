@@ -26,22 +26,18 @@ class DataStoreTest {
     void setup() {
         DatabaseHelper.initializeDatabase();
         dataStore = DataStore.getInstance();
-        dataStore.clearData();  // Clear all data before each test
+        dataStore.clearData();
 
-        // Sample MenuItem
         sampleMenuItem = new MenuItem("Sample Item", 9.99, MenuItem.ItemType.MAIN, true, "Sample description", MenuItem.DietaryRequirement.NONE);
 
-        // Sample Ingredients
         sampleIngredient1 = new Ingredients("Ingredient 1", "Ingredient 1 Notes");
         sampleIngredient2 = new Ingredients("Ingredient 2", "Ingredient 2 Notes");
 
-        // Sample User
         sampleUser = new Users("sample_user", "password", "user@example.com", Users.UserRole.ADMIN);
 
-        // Sample Order
         sampleOrder = new Order(1, (String) sampleUser.getMetadata().metadata().get("id"));
 
-        dataStore.addUser(sampleUser);  // Add the sample user to the database
+        dataStore.addUser(sampleUser);
     }
 
     @Test
@@ -179,7 +175,7 @@ class DataStoreTest {
         dataStore.addIngredient(sampleIngredient1);
         sampleIngredient1.setDataValue("notes", "Updated notes");
         dataStore.updateIngredient(sampleIngredient1);
-        Ingredients updatedIngredient = dataStore.getIngredients().get(0);  // Assuming the first ingredient in the list
+        Ingredients updatedIngredient = dataStore.getIngredients().get(0);
         assertEquals("Updated notes", updatedIngredient.getData().get("notes"));
     }
 
@@ -193,7 +189,7 @@ class DataStoreTest {
     @Test
     void testAddMenuItemIngredient() {
         dataStore.addMenuItem(sampleMenuItem);
-        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1, 1.0);  // Assuming the numeral is 1.0
+        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1, 1.0);
         assertTrue(sampleMenuItem.hasIngredient((String) sampleIngredient1.getMetadata().metadata().get("ingredient_id")));
     }
 
@@ -216,7 +212,7 @@ class DataStoreTest {
     @Test
     void testUpdateMenuItemIngredientWithNegativeNumeral() {
         dataStore.addMenuItem(sampleMenuItem);
-        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1, 1.0);  // Assuming the numeral is 1.0
+        dataStore.addMenuItemIngredient(sampleMenuItem, sampleIngredient1, 1.0);
         assertThrows(IllegalArgumentException.class, () -> dataStore.updateMenuItemIngredient(sampleMenuItem, sampleIngredient1, -1.0));
     }
 }

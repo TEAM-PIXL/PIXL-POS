@@ -13,7 +13,8 @@ public class MenuItem implements IDataManager {
     Code Description:
     - Enumerations for ItemType and DietaryRequirement
     - MetadataWrapper object for metadata
-    - Map object for data
+    - Map to store data
+    - Map to store ingredients
     ============================================================================================================================================================*/
 
     public enum ItemType {

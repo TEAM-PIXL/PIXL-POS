@@ -54,7 +54,6 @@ public class Users implements IDataManager {
             throw new IllegalArgumentException("role cannot be null");
         }
 
-        // Metadata
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("id", UUID.randomUUID().toString());
         metadataMap.put("username", username);
@@ -64,7 +63,6 @@ public class Users implements IDataManager {
 
         this.metadata = new MetadataWrapper(metadataMap);
 
-        // Data
         this.data = new HashMap<>();
         this.data.put("password", plainPassword);
         this.data.put("email", email);

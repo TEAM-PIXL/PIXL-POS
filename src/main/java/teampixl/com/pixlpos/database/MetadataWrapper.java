@@ -16,13 +16,11 @@ import java.util.Objects;
 public record MetadataWrapper(Map<String, Object> metadata) implements Comparable<MetadataWrapper> {
 
     public MetadataWrapper {
-        // Ensure the map is immutable and unmodifiable
         metadata = Map.copyOf(metadata);
     }
 
     @Override
     public int compareTo(MetadataWrapper other) {
-        // Compare based on a unique identifier, such as the id field
         String thisId = (String) this.metadata.get("id");
         String otherId = (String) other.metadata.get("id");
 

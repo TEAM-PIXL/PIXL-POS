@@ -60,7 +60,7 @@ public class Ingredients implements IDataManager {
     - getMetadata(): MetadataWrapper
     - getData(): Map<String, Object>
     - updateMetadata(String key, Object value): void
-    - updateData(String key, Object value): void
+    - setDataValue(String key, Object value): void
     - toString(): String
     ===============================================================================================================================================================================================================*/
 

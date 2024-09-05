@@ -57,15 +57,15 @@ public class LoginScreenController extends GuiCommon {
             switch (role) {
                 case ADMIN:
                     System.out.println("Loading Admin Page");
-                    GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_FXML, GuiCommon.ADMIN_SCREEN_TITLE, stage);
+                    GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_FXML, GuiCommon.ADMIN_SCREEN_TITLE, loginButton);
                     break;
                 case COOK:
                     System.out.println("Loading Cook Page");
-                    GuiCommon.loadScene(GuiCommon.COOK_SCREEN_FXML, GuiCommon.COOK_SCREEN_TITLE, stage);
+                    GuiCommon.loadScene(GuiCommon.COOK_SCREEN_FXML, GuiCommon.COOK_SCREEN_TITLE, loginButton);
                     break;
                 case WAITER:
                     System.out.println("Loading Waiter Page");
-                    GuiCommon.loadScene(GuiCommon.WAITER_SCREEN_FXML, GuiCommon.WAITER_SCREEN_TITLE, stage);
+                    GuiCommon.loadScene(GuiCommon.WAITER_SCREEN_FXML, GuiCommon.WAITER_SCREEN_TITLE, loginButton);
                     break;
                 default:
                     showErrorDialog("Invalid user role");

@@ -20,7 +20,7 @@ public class RegistrationService {
 
     public boolean registerUser(String username, String plainPassword, String email, Users.UserRole role) {
         if (dataStore.usernameExists(username)) {
-            return false; // Username already exists
+            return false;
         }
         String hashedPassword = PasswordUtils.hashPassword(plainPassword);
         Users newUser = new Users(username, hashedPassword, email, role);
