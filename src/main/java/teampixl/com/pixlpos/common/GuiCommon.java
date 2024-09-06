@@ -3,6 +3,7 @@ package teampixl.com.pixlpos.common;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -82,17 +83,22 @@ public class GuiCommon {
 
         try {
             URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
+            System.out.println(fxmlURL);
             if (fxmlURL == null) {
                 throw new FileNotFoundException("FXML file not found at path: " + fxmlPath);
             }
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+            System.out.println((String) fxmlLoader.getRoot());
 
             if (fxmlLoader.getRoot() == null) {
-                fxmlLoader.setRoot(new BorderPane());
+                if (ADMIN_SCREEN_FXML != fxmlPath){
+                    fxmlLoader.setRoot(new BorderPane());
+                }
             }
 
             Parent rootNode = fxmlLoader.load();
+            System.out.println(rootNode);
             Scene scene = new Scene(rootNode, width, height);
 
             Stage stage = (Stage) node.getScene().getWindow();
