@@ -10,6 +10,9 @@ import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.DataStore;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class WaiterScreenController extends GuiCommon {
     /*===================================================================================================================================================================================
     Code Description:
@@ -75,6 +78,7 @@ public class WaiterScreenController extends GuiCommon {
     private Button icedcoffee;
 
     private int currentRow = 0;
+    private Map<String, Integer> orderItems = new HashMap<>();
 
     @FXML
     private void initialize() {
@@ -94,9 +98,24 @@ public class WaiterScreenController extends GuiCommon {
         icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
     }
 
+    private void updateOrderSummary() {
+        orderSummaryGrid.getChildren().clear();
+        currentRow = 0;
+        for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
+            String itemName = entry.getKey();
+            int quantity = entry.getValue();
+            Label itemLabel = new Label("x" + quantity + " " + itemName);
+            orderSummaryGrid.add(itemLabel, 0, currentRow);
+            currentRow++;
+        }
+    }
+
     private void addItemToOrder(String itemName) {
-        Label itemLabel = new Label(itemName);
-        orderSummaryGrid.add(itemLabel, 0, currentRow);
-        currentRow++;
+        if (orderItems.containsKey(itemName)) {
+            orderItems.put(itemName, orderItems.get(itemName) + 1);
+        } else {
+            orderItems.put(itemName, 1);
+        }
+        updateOrderSummary();
     }
 }
