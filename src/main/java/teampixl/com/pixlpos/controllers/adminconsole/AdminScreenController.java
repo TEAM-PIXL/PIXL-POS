@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -106,7 +107,7 @@ public class AdminScreenController {
     @FXML
     protected void onNewUserButtonClick() {
         // Handle new user button click
-        try  {
+        try {
 
             String username = usernameField.getText();
             String password = passwordField.getText();
@@ -115,10 +116,9 @@ public class AdminScreenController {
 
             if (username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
-            }
-
-            if(dataStore.getUser(username) == null) {
-                boolean registerUser = AuthenticationManager.register(username,password,email,role);
+            } else {
+            if (dataStore.getUser(username) == null) {
+                boolean registerUser = AuthenticationManager.register(username, password, email, role);
                 if (registerUser) {
                     initialize();
                     showAlert(Alert.AlertType.CONFIRMATION, "New User", "New User has been created");
@@ -128,6 +128,7 @@ public class AdminScreenController {
             } else {
                 showAlert(Alert.AlertType.ERROR, "New User", "User already exists");
             }
+            }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "New User", "Unexpected error occured: " + e.getMessage());
         }
@@ -136,47 +137,50 @@ public class AdminScreenController {
     @FXML
     protected void onDeleteUserButtonClick() {
         // Handle delete user button click
-        if (loadedUser != null) {
-            dataStore.removeUser(loadedUser);
-            onCancelButtonClick();
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("User Deleted Successfully");
-            alert.showAndWait();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Failed");
-            alert.setHeaderText(null);
-            alert.setContentText("Please Select a User");
-            alert.showAndWait();
+        try{
+            if (loadedUser != null) {
+                dataStore.removeUser(loadedUser);
+                initialize();
+                showAlert(Alert.AlertType.CONFIRMATION, "Deleted User", "User has been deleted");
+            }
+            else{
+                showAlert(Alert.AlertType.ERROR, "Deleted User", "Select a user to delete");
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Deleted User", "Unexpected error occured: " + e.getMessage());
         }
-
     }
 
     @FXML
     protected void onSubmitChangesButtonClick() {
         // Handle submit changes button click
+        try{
             String username = usernameField.getText();
             String password = passwordField.getText();
             String email = emailField.getText();
             Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
+            }else {
 
-            loadedUser.updateMetadata("username", username);
-            loadedUser.updateMetadata("role", role);
-            loadedUser.setDataValue("password", password);
-            loadedUser.setDataValue("email", email);
-            loadedUser.updateMetadata("updated_at", System.currentTimeMillis());
-            dataStore.updateUser(loadedUser);
 
-            onCancelButtonClick();
-            loadedUser = null;
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success!");
-            alert.setHeaderText(null); // You can set a header text or leave it null
-            alert.setContentText("Successfully Updated User");
-            alert.showAndWait(); // Show the alert and wait for user action
+                try {
+                    loadedUser.updateMetadata("username", username);
+                    loadedUser.updateMetadata("role", role);
+                    loadedUser.setDataValue("password", password);
+                    loadedUser.setDataValue("email", email);
+                    loadedUser.updateMetadata("updated_at", System.currentTimeMillis());
+                    dataStore.updateUser(loadedUser);
+                    showAlert(Alert.AlertType.CONFIRMATION, "Updated User", "User has been updated");
+                    initialize();
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Updated User", "Unexpected error occured while updating user: " + e.getMessage());
+                }
+            }
+        }
+        catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -188,26 +192,28 @@ public class AdminScreenController {
     protected void onSearchButtonClick() {
         // Handle search button click
         String searchInput = searchField.getText();
-        if (!searchInput.isEmpty()) {
+        if (searchInput.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a User");
-        }
-        try {
-            loadedUser = dataStore.getUser(searchInput);
-            if (loadedUser == null) {
-                showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
-            }
-            Object username = loadedUser.getMetadata().metadata().get("username");
-            Object password = loadedUser.getData().get("password");
-            Object email = loadedUser.getData().get("email");
-            Object role = loadedUser.getMetadata().metadata().get("role");
+        }else {
+            try {
+                loadedUser = dataStore.getUser(searchInput);
+                if (loadedUser == null) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
+                }else {
+                    Object username = loadedUser.getMetadata().metadata().get("username");
+                    Object password = loadedUser.getData().get("password");
+                    Object email = loadedUser.getData().get("email");
+                    Object role = loadedUser.getMetadata().metadata().get("role");
 
-            usernameField.setText(username.toString());
-            passwordField.setText(password.toString());
-            emailField.setText(email.toString());
-            roleField.setValue(Users.UserRole.valueOf(role.toString()));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
+                    usernameField.setText(username.toString());
+                    passwordField.setText(password.toString());
+                    emailField.setText(email.toString());
+                    roleField.setValue(Users.UserRole.valueOf(role.toString()));
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
+            }
         }
     }
 
