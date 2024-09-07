@@ -161,8 +161,16 @@ public class WaiterScreenController extends GuiCommon {
         if (selectedItem != null) {
             String itemText = selectedItem.getText();
             String itemName = itemText.substring(itemText.indexOf(" ") + 1).split(" - Note:")[0]; // Extract item name correctly
-            String note = notes.getText();
-            orderNotes.put(itemName, note); // Update the note in the map
+            String currentNote = orderNotes.getOrDefault(itemName, ""); // Get the current note or an empty string if no note exists
+            String newNote = notes.getText();
+
+            // Save the current state before updating the note
+            actionStack.push(() -> {
+                orderNotes.put(itemName, currentNote); // Restore the previous note
+                updateOrderSummary();
+            });
+
+            orderNotes.put(itemName, newNote); // Update the note in the map
             updateOrderSummary();
         }
     }
