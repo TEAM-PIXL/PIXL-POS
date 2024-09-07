@@ -99,6 +99,12 @@ public class AdminScreenController {
             boolean registerUser = AuthenticationManager.register(username,password,email,role);
 
             onCancelButtonClick();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("User Already Exists");
+            alert.showAndWait();
         }
     }
 
@@ -110,20 +116,26 @@ public class AdminScreenController {
     @FXML
     protected void onSubmitChangesButtonClick() {
         // Handle submit changes button click
-        String username = usernameField.getText();
-        String password = passwordField.getText();
-        String email = emailField.getText();
-        Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            String email = emailField.getText();
+            Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
 
-        loadedUser.updateMetadata("username", username);
-        loadedUser.updateMetadata("role", role);
-        loadedUser.setDataValue("password",password);
-        loadedUser.setDataValue("email", email);
-        loadedUser.updateMetadata("updated_at", System.currentTimeMillis());
-        dataStore.updateUser(loadedUser);
+            loadedUser.updateMetadata("username", username);
+            loadedUser.updateMetadata("role", role);
+            loadedUser.setDataValue("password", password);
+            loadedUser.setDataValue("email", email);
+            loadedUser.updateMetadata("updated_at", System.currentTimeMillis());
+            dataStore.updateUser(loadedUser);
 
-        onCancelButtonClick();
-        loadedUser = null;
+            onCancelButtonClick();
+            loadedUser = null;
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success!");
+            alert.setHeaderText(null); // You can set a header text or leave it null
+            alert.setContentText("Successfully Updated User");
+            alert.showAndWait(); // Show the alert and wait for user action
     }
 
     @FXML
@@ -148,6 +160,12 @@ public class AdminScreenController {
             passwordField.setText(password.toString());
             emailField.setText(email.toString());
             roleField.setValue(Users.UserRole.valueOf(role.toString()));
+        }else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("User Not Found");
+            alert.showAndWait();
         }
     }
 
