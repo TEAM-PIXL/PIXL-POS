@@ -95,7 +95,7 @@
                   </Label>
                </children>
             </HBox>
-            <GridPane>
+            <GridPane fx:id="orderSummaryGrid">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
