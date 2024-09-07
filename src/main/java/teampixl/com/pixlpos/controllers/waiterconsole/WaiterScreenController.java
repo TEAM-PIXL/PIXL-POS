@@ -12,6 +12,7 @@ import teampixl.com.pixlpos.database.DataStore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class WaiterScreenController extends GuiCommon {
     /*===================================================================================================================================================================================
@@ -80,6 +81,7 @@ public class WaiterScreenController extends GuiCommon {
     private int currentRow = 0;
     private Map<String, Integer> orderItems = new HashMap<>();
     private Label selectedItem = null;
+    private Stack<Runnable> actionStack = new Stack<>();
 
     @FXML
     private void initialize() {
@@ -106,6 +108,14 @@ public class WaiterScreenController extends GuiCommon {
         } else {
             orderItems.put(itemName, 1);
         }
+        actionStack.push(() -> {
+            if (orderItems.get(itemName) == 1) {
+                orderItems.remove(itemName);
+            } else {
+                orderItems.put(itemName, orderItems.get(itemName) - 1);
+            }
+            updateOrderSummary();
+        });
         updateOrderSummary();
     }
 
@@ -135,7 +145,12 @@ public class WaiterScreenController extends GuiCommon {
         if (selectedItem != null) {
             String itemText = selectedItem.getText();
             String itemName = itemText.substring(itemText.indexOf(" ") + 1);
+            int quantity = orderItems.get(itemName);
             orderItems.remove(itemName);
+            actionStack.push(() -> {
+                orderItems.put(itemName, quantity);
+                updateOrderSummary();
+            });
             updateOrderSummary();
         }
     }
@@ -145,5 +160,12 @@ public class WaiterScreenController extends GuiCommon {
         orderItems.clear();
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
+    }
+
+    @FXML
+    private void correctLastItem() {
+        if (!actionStack.isEmpty()) {
+            actionStack.pop().run();
+        }
     }
 }
