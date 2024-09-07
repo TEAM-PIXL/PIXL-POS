@@ -2,6 +2,8 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
@@ -64,7 +66,7 @@ public class AdminScreenController {
     @FXML
     private TextField searchField;
 
-    private DataStore dataStore = DataStore.getInstance();
+    private DataStore dataStore;
 
     private Users loadedUser;
 
@@ -72,12 +74,16 @@ public class AdminScreenController {
     @FXML
     public void initialize() {
         // Initialization code here
+        dataStore = DataStore.getInstance();
         roleField.getItems().addAll(Arrays.asList(Users.UserRole.values()));
+        loadedUser = null;
     }
 
     @FXML
     protected void onExitButtonClick() {
         // Handle exit button click
+        Stage stage = (Stage) exitButton.getScene().getWindow();
+        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitButton);
     }
 
     @FXML
@@ -158,5 +164,6 @@ public class AdminScreenController {
         passwordField.clear();
         emailField.clear();
         roleField.setValue(null);
+        loadedUser = null;
     }
 }
