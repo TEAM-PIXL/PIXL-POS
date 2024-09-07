@@ -1,12 +1,16 @@
 package teampixl.com.pixlpos.common;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 
 public class GuiCommon {
 
@@ -20,8 +24,8 @@ public class GuiCommon {
     - ICON_PATH: The path to the icon image of the application.
     ===================================================================================================================================================================================*/
 
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 800;
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
     public static final String ICON_PATH = "images/icon.JPG";
 
     /*===================================================================================================================================================================================
@@ -71,16 +75,47 @@ public class GuiCommon {
         }
     }
 
-        public static void loadScene(String fxmlPath, String title, Node node) {
+    public static void loadScene(String fxmlPath, String title, Node node, int width, int height) {
+        if (node == null || node.getScene() == null) {
+            System.err.println("Error: Provided node is null or not attached to any scene.");
+            return;
+        }
+
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
-            Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
+            URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
+            System.out.println(fxmlURL);
+            if (fxmlURL == null) {
+                throw new FileNotFoundException("FXML file not found at path: " + fxmlPath);
+            }
+
+            FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+            System.out.println((String) fxmlLoader.getRoot());
+
+            if (fxmlLoader.getRoot() == null) {
+                if (ADMIN_SCREEN_FXML != fxmlPath){
+                    fxmlLoader.setRoot(new BorderPane());
+                }
+            }
+
+            Parent rootNode = fxmlLoader.load();
+            System.out.println(rootNode);
+            Scene scene = new Scene(rootNode, width, height);
+
             Stage stage = (Stage) node.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle(title);
+            stage.show();
         } catch (IOException e) {
+            System.err.println("Failed to load the FXML file: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("An unexpected error occurred: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public static void loadScene(String fxmlPath, String title, Node node) {
+        loadScene(fxmlPath, title, node, WIDTH, HEIGHT);
     }
 
 }
