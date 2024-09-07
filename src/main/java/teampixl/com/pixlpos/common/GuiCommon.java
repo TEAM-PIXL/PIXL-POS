@@ -24,8 +24,8 @@ public class GuiCommon {
     - ICON_PATH: The path to the icon image of the application.
     ===================================================================================================================================================================================*/
 
-    public static final int WIDTH = 768;
-    public static final int HEIGHT = 1024;
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
     public static final String ICON_PATH = "images/icon.JPG";
 
     /*===================================================================================================================================================================================
