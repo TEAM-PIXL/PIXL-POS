@@ -1,13 +1,11 @@
 package teampixl.com.pixlpos.controllers.waiterconsole;
 
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.text.Text;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.DataStore;
@@ -41,6 +39,9 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private Text ordernum;
 
+    @FXML
+    private GridPane orderSummaryGrid;
+
     /* These buttons are hardcoded and connected to database items for the prototype*/
     @FXML
     private Button classic;
@@ -73,5 +74,29 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private Button icedcoffee;
 
+    private int currentRow = 0;
 
+    @FXML
+    private void initialize() {
+        classic.setOnAction(event -> addItemToOrder("Classic"));
+        bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon"));
+        mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss"));
+        spicy.setOnAction(event -> addItemToOrder("Spicy Jalapeño"));
+        hawaiian.setOnAction(event -> addItemToOrder("Hawaiian Pineapple"));
+        beyond.setOnAction(event -> addItemToOrder("Veggie Bean"));
+        mediterranean.setOnAction(event -> addItemToOrder("Mediterranean Falafel"));
+        teriyaki.setOnAction(event -> addItemToOrder("Teriyaki Salmon"));
+        breakfast.setOnAction(event -> addItemToOrder("Breakfast Burger"));
+        coke.setOnAction(event -> addItemToOrder("Coke"));
+        fanta.setOnAction(event -> addItemToOrder("Fanta"));
+        sprite.setOnAction(event -> addItemToOrder("Sprite"));
+        icedtea.setOnAction(event -> addItemToOrder("Iced tea"));
+        icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
+    }
+
+    private void addItemToOrder(String itemName) {
+        Label itemLabel = new Label(itemName);
+        orderSummaryGrid.add(itemLabel, 0, currentRow);
+        currentRow++;
+    }
 }
