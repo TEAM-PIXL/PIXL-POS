@@ -66,7 +66,8 @@ public class AdminScreenController {
 
     private DataStore dataStore = DataStore.getInstance();
 
-    private Label usernameLabel;
+    private Users loadedUser;
+
 
     @FXML
     public void initialize() {
@@ -103,6 +104,20 @@ public class AdminScreenController {
     @FXML
     protected void onSubmitChangesButtonClick() {
         // Handle submit changes button click
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+        String email = emailField.getText();
+        Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
+
+        loadedUser.updateMetadata("username", username);
+        loadedUser.updateMetadata("role", role);
+        loadedUser.setDataValue("password",password);
+        loadedUser.setDataValue("email", email);
+        loadedUser.updateMetadata("updated_at", System.currentTimeMillis());
+        dataStore.updateUser(loadedUser);
+
+        onCancelButtonClick();
+        loadedUser = null;
     }
 
     @FXML
@@ -115,12 +130,13 @@ public class AdminScreenController {
         // Handle search button click
         String searchInput = searchField.getText();
         if (!searchInput.isEmpty()) {
-            Users searchedUser = dataStore.getUser(searchInput);
+            loadedUser = dataStore.getUser(searchInput);
 
-            Object username = searchedUser.getMetadata().metadata().get("username");
-            Object password = searchedUser.getData().get("password");
-            Object email = searchedUser.getData().get("email");
-            Object role = searchedUser.getMetadata().metadata().get("role");
+            Object username = loadedUser.getMetadata().metadata().get("username");
+            Object password = loadedUser.getData().get("password");
+            Object email = loadedUser.getData().get("email");
+            Object role = loadedUser.getMetadata().metadata().get("role");
+            Object id = loadedUser.getMetadata().metadata().get("id");
 
             usernameField.setText(username.toString());
             passwordField.setText(password.toString());

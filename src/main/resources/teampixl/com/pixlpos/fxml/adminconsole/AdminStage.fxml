@@ -157,7 +157,7 @@
                                           <Insets left="110.0" right="25.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" styleClass="submit-button" text="Submit Changes">
+                                    <Button mnemonicParsing="false" styleClass="submit-button" text="Submit Changes" onAction="#onSubmitChangesButtonClick">
                                        <HBox.margin>
                                           <Insets right="25.0" />
                                        </HBox.margin>
@@ -390,7 +390,7 @@
                                           <Insets left="64.0" right="25.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="183.0" styleClass="submit-button" text="Submit Changes">
+                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="183.0" styleClass="submit-button" text="Submit Changes" >
                                        <HBox.margin>
                                           <Insets right="25.0" />
                                        </HBox.margin>
