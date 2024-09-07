@@ -47,6 +47,7 @@ public class WaiterScreenController extends GuiCommon {
     private GridPane orderSummaryGrid;
 
     /* These buttons are hardcoded and connected to database items for the prototype*/
+    /* Buttons for the different menu items */
     @FXML
     private Button classic;
     @FXML
@@ -77,11 +78,13 @@ public class WaiterScreenController extends GuiCommon {
     private Button icedtea;
     @FXML
     private Button icedcoffee;
+    /* End of hardcoded buttons */
 
     private int currentRow = 0;
     private Map<String, Integer> orderItems = new HashMap<>();
     private Label selectedItem = null;
     private Stack<Runnable> actionStack = new Stack<>();
+    private Map<String, String> orderNotes = new HashMap<>();
 
     @FXML
     private void initialize() {
@@ -90,6 +93,7 @@ public class WaiterScreenController extends GuiCommon {
         mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss"));
         spicy.setOnAction(event -> addItemToOrder("Spicy Jalapeño"));
         hawaiian.setOnAction(event -> addItemToOrder("Hawaiian Pineapple"));
+        veggie.setOnAction(event -> addItemToOrder("Veggie Bean"));
         beyond.setOnAction(event -> addItemToOrder("Veggie Bean"));
         mediterranean.setOnAction(event -> addItemToOrder("Mediterranean Falafel"));
         teriyaki.setOnAction(event -> addItemToOrder("Teriyaki Salmon"));
@@ -99,7 +103,10 @@ public class WaiterScreenController extends GuiCommon {
         sprite.setOnAction(event -> addItemToOrder("Sprite"));
         icedtea.setOnAction(event -> addItemToOrder("Iced tea"));
         icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
+        beyond.setOnAction(event -> addItemToOrder("Beyond Burger"));
+
         restart.setOnAction(event -> restartOrder());
+        applynotes.setOnAction(event -> applyNoteToSelectedItem());
     }
 
     private void addItemToOrder(String itemName) {
@@ -107,10 +114,12 @@ public class WaiterScreenController extends GuiCommon {
             orderItems.put(itemName, orderItems.get(itemName) + 1);
         } else {
             orderItems.put(itemName, 1);
+            orderNotes.put(itemName, ""); // Initialize note for new item
         }
         actionStack.push(() -> {
             if (orderItems.get(itemName) == 1) {
                 orderItems.remove(itemName);
+                orderNotes.remove(itemName); // Remove note for removed item
             } else {
                 orderItems.put(itemName, orderItems.get(itemName) - 1);
             }
@@ -125,7 +134,8 @@ public class WaiterScreenController extends GuiCommon {
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
             String itemName = entry.getKey();
             int quantity = entry.getValue();
-            Label itemLabel = new Label("x" + quantity + " " + itemName);
+            String note = orderNotes.get(itemName);
+            Label itemLabel = new Label("x" + quantity + " " + itemName + (note.isEmpty() ? "" : " - Note: " + note));
             itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
             orderSummaryGrid.add(itemLabel, 0, currentRow);
             currentRow++;
@@ -138,6 +148,23 @@ public class WaiterScreenController extends GuiCommon {
         }
         selectedItem = itemLabel;
         selectedItem.setStyle("-fx-background-color: lightblue;"); // Highlight selected item
+
+        // Extract item name and display the associated note in the TextField
+        String itemText = selectedItem.getText();
+        String itemName = itemText.substring(itemText.indexOf(" ") + 1).split(" - Note:")[0]; // Extract item name correctly
+        String note = orderNotes.getOrDefault(itemName, ""); // Get the note or an empty string if no note exists
+        notes.setText(note);
+    }
+
+    @FXML
+    private void applyNoteToSelectedItem() {
+        if (selectedItem != null) {
+            String itemText = selectedItem.getText();
+            String itemName = itemText.substring(itemText.indexOf(" ") + 1).split(" - Note:")[0]; // Extract item name correctly
+            String note = notes.getText();
+            orderNotes.put(itemName, note); // Update the note in the map
+            updateOrderSummary();
+        }
     }
 
     @FXML
