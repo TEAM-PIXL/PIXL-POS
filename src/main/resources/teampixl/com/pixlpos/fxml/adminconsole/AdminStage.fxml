@@ -152,7 +152,7 @@
                               </ChoiceBox>
                               <HBox prefHeight="43.0" prefWidth="569.0">
                                  <children>
-                                    <Button mnemonicParsing="false" styleClass="add-buttons" text="Add User">
+                                    <Button mnemonicParsing="false" styleClass="add-buttons" text="Add User" onAction="#onNewUserButtonClick">
                                        <HBox.margin>
                                           <Insets left="110.0" right="25.0" />
                                        </HBox.margin>

@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.authentication.AuthenticationManager;
 
 import java.util.Arrays;
 
@@ -81,6 +82,17 @@ public class AdminScreenController {
     @FXML
     protected void onNewUserButtonClick() {
         // Handle new user button click
+        if (dataStore.getUser(usernameField.getText()) == null)  {
+
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            String email = emailField.getText();
+            Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
+
+            boolean registerUser = AuthenticationManager.register(username,password,email,role);
+
+            onCancelButtonClick();
+        }
     }
 
     @FXML
