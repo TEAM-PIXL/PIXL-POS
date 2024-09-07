@@ -1,14 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="teampixl.com.pixlpos.fxml.cookconsole.CookStage"
-            prefHeight="400.0" prefWidth="600.0">
 
-</AnchorPane>
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.cookconsole.CookScreenController">
+   <top>
+      <AnchorPane prefHeight="99.0" prefWidth="1024.0" style="-fx-background-color: #868181;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="23.0" layoutY="41.0" text="PIXL Services" />
+            <Label layoutX="435.0" layoutY="22.0" text="ORDERS">
+               <font>
+                  <Font size="40.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </top>
+   <center>
+      <ListView fx:id="orderview" fixedCellSize="0.0" orientation="HORIZONTAL" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <effect>
+            <Glow />
+         </effect>
+      </ListView>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0" style="-fx-background-color: #868181;" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="refresh" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Refresh" />
+            <Button fx:id="complete" layoutX="422.0" layoutY="23.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Complete" textFill="#00ff33" />
+            <Button fx:id="logout" layoutX="537.0" layoutY="23.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Logout" textFill="RED" />
+         </children>
+      </HBox>
+   </bottom>
+</fx:root>
