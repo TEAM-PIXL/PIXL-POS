@@ -90,6 +90,7 @@ public class AdminScreenController {
     public void initialize() {
         // Initialization code here
         dataStore = DataStore.getInstance();
+        onCancelButtonClick();
         populateUserGrid();
         roleField.getItems().addAll(Arrays.asList(Users.UserRole.values()));
         loadedUser = null;
@@ -105,22 +106,30 @@ public class AdminScreenController {
     @FXML
     protected void onNewUserButtonClick() {
         // Handle new user button click
-        if (dataStore.getUser(usernameField.getText()) == null)  {
+        try  {
 
             String username = usernameField.getText();
             String password = passwordField.getText();
             String email = emailField.getText();
             Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
 
-            boolean registerUser = AuthenticationManager.register(username,password,email,role);
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
+            }
 
-            onCancelButtonClick();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Failed");
-            alert.setHeaderText(null);
-            alert.setContentText("User Already Exists");
-            alert.showAndWait();
+            if(dataStore.getUser(username) == null) {
+                boolean registerUser = AuthenticationManager.register(username,password,email,role);
+                if (registerUser) {
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "New User", "New User has been created");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New User", "Registration Failed");
+                }
+            } else {
+                showAlert(Alert.AlertType.ERROR, "New User", "User already exists");
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "New User", "Unexpected error occured: " + e.getMessage());
         }
     }
 
@@ -180,8 +189,13 @@ public class AdminScreenController {
         // Handle search button click
         String searchInput = searchField.getText();
         if (!searchInput.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a User");
+        }
+        try {
             loadedUser = dataStore.getUser(searchInput);
-
+            if (loadedUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
+            }
             Object username = loadedUser.getMetadata().metadata().get("username");
             Object password = loadedUser.getData().get("password");
             Object email = loadedUser.getData().get("email");
@@ -191,12 +205,9 @@ public class AdminScreenController {
             passwordField.setText(password.toString());
             emailField.setText(email.toString());
             roleField.setValue(Users.UserRole.valueOf(role.toString()));
-        }else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Failed");
-            alert.setHeaderText(null);
-            alert.setContentText("User Not Found");
-            alert.showAndWait();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
         }
     }
 
@@ -263,5 +274,13 @@ public class AdminScreenController {
         emailField.setText(email.toString());
         roleField.setValue(Users.UserRole.valueOf(role.toString()));
         loadedUser = User;
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
