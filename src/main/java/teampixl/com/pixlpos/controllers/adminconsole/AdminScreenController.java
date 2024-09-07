@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
+
+import java.util.Arrays;
+
 public class AdminScreenController {
 
     @FXML
@@ -34,7 +37,7 @@ public class AdminScreenController {
     private TextField emailField;
 
     @FXML
-    private ChoiceBox<String> roleField;
+    private ChoiceBox<Users.UserRole> roleField;
 
     @FXML
     private TextField itemNameField;
@@ -67,6 +70,7 @@ public class AdminScreenController {
     @FXML
     public void initialize() {
         // Initialization code here
+        roleField.getItems().addAll(Arrays.asList(Users.UserRole.values()));
     }
 
     @FXML
@@ -109,7 +113,7 @@ public class AdminScreenController {
             usernameField.setText(username.toString());
             passwordField.setText(password.toString());
             emailField.setText(email.toString());
-            roleField.setValue(role.toString());
+            roleField.setValue(Users.UserRole.valueOf(role.toString()));
         }
     }
 
@@ -117,5 +121,14 @@ public class AdminScreenController {
     protected void onClearButtonClick() {
         // Handle clear button click
         searchField.clear();
+    }
+
+    @FXML
+    protected void onCancelButtonClick() {
+        // Handle clear button click
+        usernameField.clear();
+        passwordField.clear();
+        emailField.clear();
+        roleField.setValue(null);
     }
 }

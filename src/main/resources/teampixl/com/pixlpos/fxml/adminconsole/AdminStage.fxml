@@ -162,7 +162,7 @@
                                           <Insets right="25.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" styleClass="cancel-button" text="Cancel" />
+                                    <Button mnemonicParsing="false" styleClass="cancel-button" text="Cancel" onAction="#onCancelButtonClick"/>
                                  </children>
                                  <VBox.margin>
                                     <Insets top="150.0" />
