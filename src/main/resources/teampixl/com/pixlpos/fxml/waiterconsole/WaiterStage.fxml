@@ -45,9 +45,9 @@
             <FlowPane hgap="20.0" prefHeight="150.0" prefWidth="525.0" vgap="10.0">
                <children>
                   <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Item Correct" />
-                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Void Item" />
+                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Void Item" onAction="#voidSelectedItem"/>
                   <Button layoutX="140.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Send" />
-                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Restart" />
+                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Restart" onAction="#restartOrder"/>
                   <Button fx:id="logout" layoutX="380.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Logout" />
                </children>
                <HBox.margin>

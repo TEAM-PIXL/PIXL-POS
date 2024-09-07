@@ -79,6 +79,7 @@ public class WaiterScreenController extends GuiCommon {
 
     private int currentRow = 0;
     private Map<String, Integer> orderItems = new HashMap<>();
+    private Label selectedItem = null;
 
     @FXML
     private void initialize() {
@@ -96,18 +97,7 @@ public class WaiterScreenController extends GuiCommon {
         sprite.setOnAction(event -> addItemToOrder("Sprite"));
         icedtea.setOnAction(event -> addItemToOrder("Iced tea"));
         icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
-    }
-
-    private void updateOrderSummary() {
-        orderSummaryGrid.getChildren().clear();
-        currentRow = 0;
-        for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
-            String itemName = entry.getKey();
-            int quantity = entry.getValue();
-            Label itemLabel = new Label("x" + quantity + " " + itemName);
-            orderSummaryGrid.add(itemLabel, 0, currentRow);
-            currentRow++;
-        }
+        restart.setOnAction(event -> restartOrder());
     }
 
     private void addItemToOrder(String itemName) {
@@ -117,5 +107,43 @@ public class WaiterScreenController extends GuiCommon {
             orderItems.put(itemName, 1);
         }
         updateOrderSummary();
+    }
+
+    private void updateOrderSummary() {
+        orderSummaryGrid.getChildren().clear();
+        currentRow = 0;
+        for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
+            String itemName = entry.getKey();
+            int quantity = entry.getValue();
+            Label itemLabel = new Label("x" + quantity + " " + itemName);
+            itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
+            orderSummaryGrid.add(itemLabel, 0, currentRow);
+            currentRow++;
+        }
+    }
+
+    private void selectItem(Label itemLabel) {
+        if (selectedItem != null) {
+            selectedItem.setStyle(""); // Reset previous selection style
+        }
+        selectedItem = itemLabel;
+        selectedItem.setStyle("-fx-background-color: lightblue;"); // Highlight selected item
+    }
+
+    @FXML
+    private void voidSelectedItem() {
+        if (selectedItem != null) {
+            String itemText = selectedItem.getText();
+            String itemName = itemText.substring(itemText.indexOf(" ") + 1);
+            orderItems.remove(itemName);
+            updateOrderSummary();
+        }
+    }
+
+    @FXML
+    private void restartOrder() {
+        orderItems.clear();
+        orderSummaryGrid.getChildren().clear();
+        currentRow = 0;
     }
 }
