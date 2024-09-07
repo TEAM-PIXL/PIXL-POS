@@ -1,16 +1,29 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import javafx.scene.layout.HBox;
 
 public class AdminScreenController {
+    /*===================================================================================================================================================================================
+    Code Description:
+    This class is the controller for the admin screen of the application. It handles the user search, modification and
+    display functionality.
+    ====================================================================================================================================================================================*/
 
     @FXML
     private TabPane root;
@@ -70,11 +83,14 @@ public class AdminScreenController {
 
     private Users loadedUser;
 
+    @FXML
+    private GridPane userTable;
 
     @FXML
     public void initialize() {
         // Initialization code here
         dataStore = DataStore.getInstance();
+        populateUserGrid();
         roleField.getItems().addAll(Arrays.asList(Users.UserRole.values()));
         loadedUser = null;
     }
@@ -111,6 +127,22 @@ public class AdminScreenController {
     @FXML
     protected void onDeleteUserButtonClick() {
         // Handle delete user button click
+        if (loadedUser != null) {
+            dataStore.removeUser(loadedUser);
+            onCancelButtonClick();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("User Deleted Successfully");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Select a User");
+            alert.showAndWait();
+        }
+
     }
 
     @FXML
@@ -154,7 +186,6 @@ public class AdminScreenController {
             Object password = loadedUser.getData().get("password");
             Object email = loadedUser.getData().get("email");
             Object role = loadedUser.getMetadata().metadata().get("role");
-            Object id = loadedUser.getMetadata().metadata().get("id");
 
             usernameField.setText(username.toString());
             passwordField.setText(password.toString());
@@ -183,5 +214,54 @@ public class AdminScreenController {
         emailField.clear();
         roleField.setValue(null);
         loadedUser = null;
+    }
+
+    private void populateUserGrid() {
+        int row = 0;
+
+        ObservableList<Users> listOfUsers = dataStore.getUsers();
+
+        for (Users user : listOfUsers) {
+
+            String readableDate = toReadableDate(user.getMetadata().metadata().get("created_at").toString());
+            Label usernameLabel = new Label(user.getMetadata().metadata().get("username").toString());
+            Label userSinceLabel = new Label(readableDate);
+            Label roleLabel = new Label(user.getMetadata().metadata().get("role").toString());
+
+            HBox rowContainer = new HBox(10);
+            rowContainer.setAlignment(Pos.CENTER_LEFT);
+            rowContainer.setOnMouseClicked(event -> populateUserParam(user));
+            userTable.add(usernameLabel,1, row);
+            userTable.add(userSinceLabel,2, row);
+            userTable.add(roleLabel,3, row);
+
+            userTable.add(rowContainer, 0, row);
+            GridPane.setColumnSpan(rowContainer, userTable.getColumnCount());
+            row++;
+
+        }
+    }
+
+    private String toReadableDate(String dateString){
+
+        long createAt = Long.parseLong(dateString);
+
+        LocalDateTime createdAtDateTime = Instant.ofEpochMilli(createAt).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return createdAtDateTime.format(formatter);
+    }
+
+    private void populateUserParam(Users User) {
+        Object username = User.getMetadata().metadata().get("username");
+        Object password = User.getData().get("password");
+        Object email = User.getData().get("email");
+        Object role = User.getMetadata().metadata().get("role");
+
+        usernameField.setText(username.toString());
+        passwordField.setText(password.toString());
+        emailField.setText(email.toString());
+        roleField.setValue(Users.UserRole.valueOf(role.toString()));
+        loadedUser = User;
     }
 }

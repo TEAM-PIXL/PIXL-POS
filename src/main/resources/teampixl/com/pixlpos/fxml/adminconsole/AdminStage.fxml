@@ -58,7 +58,7 @@
                               <Insets top="30.0" />
                            </VBox.margin>
                         </HBox>
-                        <GridPane alignment="TOP_CENTER" gridLinesVisible="true" styleClass="grid-pane">
+                        <GridPane alignment="TOP_CENTER" gridLinesVisible="true" styleClass="grid-pane" fx:id="userTable">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.73828125" minWidth="10.0" prefWidth="318.98974609375" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="430.221923828125" minWidth="10.0" prefWidth="275.01025390625" />
@@ -183,7 +183,7 @@
                      <bottom>
                         <ButtonBar buttonMinWidth="144.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="63.0" prefWidth="1256.0" BorderPane.alignment="CENTER">
                           <buttons>
-                              <Button mnemonicParsing="false" prefHeight="56.0" prefWidth="230.0" styleClass="delete-button" text="Delete User" />
+                              <Button mnemonicParsing="false" prefHeight="56.0" prefWidth="230.0" styleClass="delete-button" text="Delete User" onAction="#onDeleteUserButtonClick"/>
                               <Button mnemonicParsing="false" styleClass="edit-button" text="Edit User" textAlignment="CENTER" />
                           </buttons>
                            <opaqueInsets>
