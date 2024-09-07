@@ -157,6 +157,15 @@ public class WaiterScreenController extends GuiCommon {
 
     @FXML
     private void restartOrder() {
+        // Save the current state before clearing
+        Map<String, Integer> currentOrderItems = new HashMap<>(orderItems);
+        actionStack.push(() -> {
+            orderItems.clear();
+            orderItems.putAll(currentOrderItems);
+            updateOrderSummary();
+        });
+
+        // Clear the order
         orderItems.clear();
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
