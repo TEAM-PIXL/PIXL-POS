@@ -116,5 +116,6 @@ public class AdminScreenController {
     @FXML
     protected void onClearButtonClick() {
         // Handle clear button click
+        searchField.clear();
     }
 }
