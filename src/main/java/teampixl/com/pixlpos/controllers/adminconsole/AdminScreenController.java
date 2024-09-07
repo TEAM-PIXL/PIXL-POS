@@ -7,7 +7,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TabPane;
-
+import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.database.DataStore;
 public class AdminScreenController {
 
     @FXML
@@ -62,6 +63,11 @@ public class AdminScreenController {
     private Button clearButton;
 
     @FXML
+    private TextField searchField;
+
+    private DataStore dataStore = DataStore.getInstance();
+
+    @FXML
     public void initialize() {
         // Initialization code here
     }
@@ -94,6 +100,12 @@ public class AdminScreenController {
     @FXML
     protected void onSearchButtonClick() {
         // Handle search button click
+        String searchInput = searchField.getText();
+        if (!searchInput.isEmpty()) {
+            Users searchedUser = dataStore.getUser(searchInput);
+            Object username = searchedUser.getMetadata().metadata().get("username");
+            System.out.println(username);
+        }
     }
 
     @FXML
