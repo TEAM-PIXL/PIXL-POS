@@ -1,12 +1,7 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 public class AdminScreenController {
@@ -39,7 +34,7 @@ public class AdminScreenController {
     private TextField emailField;
 
     @FXML
-    private TextField roleField;
+    private ChoiceBox<String> roleField;
 
     @FXML
     private TextField itemNameField;
@@ -66,6 +61,8 @@ public class AdminScreenController {
     private TextField searchField;
 
     private DataStore dataStore = DataStore.getInstance();
+
+    private Label usernameLabel;
 
     @FXML
     public void initialize() {
@@ -103,8 +100,16 @@ public class AdminScreenController {
         String searchInput = searchField.getText();
         if (!searchInput.isEmpty()) {
             Users searchedUser = dataStore.getUser(searchInput);
+
             Object username = searchedUser.getMetadata().metadata().get("username");
-            System.out.println(username);
+            Object password = searchedUser.getData().get("password");
+            Object email = searchedUser.getData().get("email");
+            Object role = searchedUser.getMetadata().metadata().get("role");
+
+            usernameField.setText(username.toString());
+            passwordField.setText(password.toString());
+            emailField.setText(email.toString());
+            roleField.setValue(role.toString());
         }
     }
 
