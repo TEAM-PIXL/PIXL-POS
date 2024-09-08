@@ -112,11 +112,13 @@ public class AdminScreenController {
         roleField.getItems().addAll(new HashSet<>(Arrays.asList(Users.UserRole.values())));
         loadedUser = null;
         //Menu Item Management side
+        onMenuItemCancelButtonClick();
         populateMenuGrid();
         itemTypeField.getItems().clear();
         itemTypeField.getItems().addAll(MenuItem.ItemType.values());
         dietaryRequirementsField.getItems().clear();
         dietaryRequirementsField.getItems().addAll(MenuItem.DietaryRequirement.values());
+        loadedMenuItem = null;
 
     }
 
@@ -356,7 +358,7 @@ Methods for user management from here.
         Object price = menuItem.getMetadata().metadata().get("price");
         Object itemName = menuItem.getMetadata().metadata().get("itemName");
         Object itemType = menuItem.getMetadata().metadata().get("itemType");
-        priceField.setText(price.toString());
+        priceField.setText(Double.toString((double) price));
         itemNameField.setText(itemName.toString());
         itemTypeField.setValue(MenuItem.ItemType.valueOf(itemType.toString()));
         try {
@@ -410,6 +412,60 @@ Methods for user management from here.
         dietaryRequirementsField.setValue(null);
         itemDescriptionArea.clear();
         loadedMenuItem = null;
+    }
+
+    @FXML
+    protected void onNewMenuItemButtonClick() {
+        // Handle new user button click
+        try {
+            Double price;
+            String itemName = itemNameField.getText();
+            MenuItem.ItemType itemType = itemTypeField.getSelectionModel().getSelectedItem();
+            MenuItem.DietaryRequirement dietaryRequirement = dietaryRequirementsField.getValue();
+            String description = itemDescriptionArea.getText();
+
+            if (itemName.isEmpty() || itemType == null || description.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "Item Name, Item Type, Description and Price are required");
+            } else {
+                try {
+                    price = Double.parseDouble(priceField.getText());
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Please enter a valid price");
+                    return;
+                }
+                if (dataStore.getMenuItem(itemName) == null) {
+                    MenuItem newMenuItem = new MenuItem(itemName, price, MenuItem.ItemType.MAIN, true, description, null);
+                    dataStore.addMenuItem(newMenuItem);
+                    if (dataStore.getMenuItem(itemName) != null) {
+                        initialize();
+                        showAlert(Alert.AlertType.CONFIRMATION, "New Menu Item", "New Menu Item has been created");
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "New Menu Item", "Menu Item creation failed");
+                    }
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New Menu Item", "Menu Item already exists");
+                }
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "New Menu Item", "Unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    protected void onDeleteMenuItemButtonClick() {
+        // Handle delete user button click
+        try{
+            if (loadedMenuItem != null) {
+                dataStore.removeMenuItem(loadedMenuItem);
+                initialize();
+                showAlert(Alert.AlertType.CONFIRMATION, "Deleted Menu Item", "User has been deleted");
+            }
+            else{
+                showAlert(Alert.AlertType.ERROR, "Deleted User", "Select a user to delete");
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Deleted User", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
 /*===================================================================================================================================================================================

@@ -385,7 +385,7 @@
                               <TextArea prefHeight="200.0" prefWidth="569.0" fx:id="itemDescriptionArea"/>
                               <HBox prefHeight="43.0" prefWidth="569.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="171.0" styleClass="add-buttons" text="Add Menu Item">
+                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="171.0" styleClass="add-buttons" text="Add Menu Item" onAction="#onNewMenuItemButtonClick">
                                        <HBox.margin>
                                           <Insets left="64.0" right="25.0" />
                                        </HBox.margin>
