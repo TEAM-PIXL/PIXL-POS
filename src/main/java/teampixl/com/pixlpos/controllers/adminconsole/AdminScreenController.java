@@ -268,8 +268,7 @@ Methods for user management from here.
         int row = 0;
 
         ObservableList<Users> listOfUsers = dataStore.getUsers();
-        //Used to remove all but the first row, this is to keep formatting but may need to be fixed later.
-        userTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) >= 1);
+        userTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (Users user : listOfUsers) {
 
@@ -325,8 +324,7 @@ Methods for user management from here.
         int row = 0;
 
         ObservableList<MenuItem> listOfMenuItems = dataStore.getMenuItems();
-        //Used to remove all but the first row, this is to keep formatting but may need to be fixed later.
-        menuTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) >= 1);
+        menuTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (MenuItem menuItem : listOfMenuItems) {
 
