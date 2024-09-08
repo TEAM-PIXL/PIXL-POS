@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 
@@ -86,8 +87,13 @@ public class AdminScreenController {
 
     private Users loadedUser;
 
+    private MenuItem loadedMenuItem;
+
     @FXML
     private GridPane userTable;
+
+    @FXML
+    private GridPane menuTable;
 
     private HBox currentlyHighlightedRow;
 
@@ -95,11 +101,14 @@ public class AdminScreenController {
     public void initialize() {
         // Initialization code here
         dataStore = DataStore.getInstance();
+        //User Management Side
         onCancelButtonClick();
         populateUserGrid();
         roleField.getItems().clear();
         roleField.getItems().addAll(new HashSet<>(Arrays.asList(Users.UserRole.values())));
         loadedUser = null;
+        //Menu Item Management side
+        populateMenuGrid();
     }
 
     @FXML
@@ -304,5 +313,38 @@ public class AdminScreenController {
         }
             row.getStyleClass().add("grid-pane-highlight");
             currentlyHighlightedRow = row;
+    }
+
+    private void populateMenuGrid() {
+        int row = 0;
+
+        ObservableList<MenuItem> listOfMenuItems = dataStore.getMenuItems();
+        //Used to remove all but the first row, this is to keep formatting but may need to be fixed later.
+        menuTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) >= 1);
+
+        for (MenuItem menuItem : listOfMenuItems) {
+
+            Label priceLabel = new Label(menuItem.getMetadata().metadata().get("price").toString());
+            Label menuItemNameLabel = new Label(menuItem.getMetadata().metadata().get("itemName").toString());
+            Label itemTypeLabel = new Label(menuItem.getMetadata().metadata().get("itemType").toString());
+            try {
+                Label dietReq = new Label(menuItem.getMetadata().metadata().get("dietaryRequirement").toString());
+                menuTable.add(dietReq,3, row);
+            } catch (Exception e) {
+                System.out.println(("No Dietary Requirement"));
+            }
+
+            HBox rowContainer = new HBox(10);
+            rowContainer.setAlignment(Pos.CENTER_LEFT);
+            rowContainer.setOnMouseClicked(event -> {loadedMenuItem = menuItem; rowHighlight(rowContainer);});
+
+            menuTable.add(menuItemNameLabel, 0, row);
+            menuTable.add(priceLabel,1, row);
+            menuTable.add(itemTypeLabel,2, row);
+
+            GridPane.setColumnSpan(rowContainer, menuTable.getColumnCount());
+            row++;
+
+        }
     }
 }
