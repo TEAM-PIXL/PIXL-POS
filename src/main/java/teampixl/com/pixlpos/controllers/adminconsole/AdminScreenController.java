@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashSet;
+
 import javafx.scene.layout.HBox;
 
 public class AdminScreenController {
@@ -93,7 +95,8 @@ public class AdminScreenController {
         dataStore = DataStore.getInstance();
         onCancelButtonClick();
         populateUserGrid();
-        roleField.getItems().addAll(Arrays.asList(Users.UserRole.values()));
+        roleField.getItems().clear();
+        roleField.getItems().addAll(new HashSet<>(Arrays.asList(Users.UserRole.values())));
         loadedUser = null;
     }
 
@@ -200,15 +203,7 @@ public class AdminScreenController {
                 if (loadedUser == null) {
                     showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
                 }else {
-                    Object username = loadedUser.getMetadata().metadata().get("username");
-                    Object password = loadedUser.getData().get("password");
-                    Object email = loadedUser.getData().get("email");
-                    Object role = loadedUser.getMetadata().metadata().get("role");
-
-                    usernameField.setText(username.toString());
-                    passwordField.setText(password.toString());
-                    emailField.setText(email.toString());
-                    roleField.setValue(Users.UserRole.valueOf(role.toString()));
+                    populateUserParam(loadedUser);
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -237,6 +232,8 @@ public class AdminScreenController {
         int row = 0;
 
         ObservableList<Users> listOfUsers = dataStore.getUsers();
+        //Used to remove all but the first row, this is to keep formatting but may need to be fixed later.
+        userTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) >= 1);
 
         for (Users user : listOfUsers) {
 
