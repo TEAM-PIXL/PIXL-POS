@@ -2,7 +2,6 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -66,10 +65,10 @@ public class AdminScreenController {
     private TextField priceField;
 
     @FXML
-    private TextField itemTypeField;
+    private ChoiceBox<MenuItem.ItemType> itemTypeField;
 
     @FXML
-    private TextField dietaryRequirementsField;
+    private ChoiceBox<MenuItem.DietaryRequirement> dietaryRequirementsField;
 
     @FXML
     private TextArea itemDescriptionArea;
@@ -82,6 +81,9 @@ public class AdminScreenController {
 
     @FXML
     private TextField searchField;
+
+    @FXML
+    private TextField searchFieldMenuItem;
 
     private DataStore dataStore;
 
@@ -97,6 +99,8 @@ public class AdminScreenController {
 
     private HBox currentlyHighlightedRow;
 
+
+
     @FXML
     public void initialize() {
         // Initialization code here
@@ -110,6 +114,11 @@ public class AdminScreenController {
         //Menu Item Management side
         populateMenuGrid();
     }
+
+/*===================================================================================================================================================================================
+User Management:
+Methods for user management from here.
+====================================================================================================================================================================================*/
 
     @FXML
     protected void onExitButtonClick() {
@@ -299,21 +308,11 @@ public class AdminScreenController {
         loadedUser = User;
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 
-    private void rowHighlight(HBox row){
-        if (currentlyHighlightedRow != null){
-            currentlyHighlightedRow.getStyleClass().remove("grid-pane-highlight");
-        }
-            row.getStyleClass().add("grid-pane-highlight");
-            currentlyHighlightedRow = row;
-    }
+/*===================================================================================================================================================================================
+    Menu Management Methods:
+    Methods for handling menu management from here
+====================================================================================================================================================================================*/
 
     private void populateMenuGrid() {
         int row = 0;
@@ -334,17 +333,79 @@ public class AdminScreenController {
                 System.out.println(("No Dietary Requirement"));
             }
 
-            HBox rowContainer = new HBox(10);
-            rowContainer.setAlignment(Pos.CENTER_LEFT);
-            rowContainer.setOnMouseClicked(event -> {loadedMenuItem = menuItem; rowHighlight(rowContainer);});
+            HBox rowContainerMenu = new HBox(10);
+            rowContainerMenu.setAlignment(Pos.CENTER_LEFT);
+            rowContainerMenu.setOnMouseClicked(event -> {loadedMenuItem = menuItem; rowHighlight(rowContainerMenu);});
 
             menuTable.add(menuItemNameLabel, 0, row);
             menuTable.add(priceLabel,1, row);
             menuTable.add(itemTypeLabel,2, row);
 
-            GridPane.setColumnSpan(rowContainer, menuTable.getColumnCount());
+            GridPane.setColumnSpan(rowContainerMenu, menuTable.getColumnCount());
             row++;
 
         }
+    }
+
+    private void populateMenuItemParam(MenuItem menuItem) {
+        Object price = menuItem.getMetadata().metadata().get("price");
+        Object itemName = menuItem.getMetadata().metadata().get("itemName");
+        Object itemType = menuItem.getMetadata().metadata().get("itemType");
+        priceField.setText(price.toString());
+        itemNameField.setText(itemName.toString());
+        itemTypeField.setValue(MenuItem.ItemType.valueOf(itemType.toString()));
+        try {
+            Object dietaryRequirement = menuItem.getMetadata().metadata().get("dietaryRequirement");
+            dietaryRequirementsField.setValue(MenuItem.DietaryRequirement.valueOf(dietaryRequirement.toString()));
+        } catch (Exception e) {
+            System.out.println(("No Dietary Requirement"));
+        }
+        try {
+            Object description = menuItem.getData().get("description");
+            itemDescriptionArea.setText(description.toString());
+        } catch (Exception e) {
+            System.out.println(("No Description"));
+        }
+        loadedMenuItem = menuItem;
+    }
+
+    @FXML
+    protected void onMenuItemSearchButtonClick() {
+        // Handle search button click
+        String searchInput = searchFieldMenuItem.getText();
+        if (searchInput.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a Menu Item");
+        }else {
+            try {
+                loadedMenuItem = dataStore.getMenuItem(searchInput);
+                if (loadedMenuItem == null) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Menu Item not found");
+                }else {
+                    populateMenuItemParam(loadedMenuItem);
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
+            }
+        }
+    }
+
+/*===================================================================================================================================================================================
+    Methods for both User and Menu Item management:
+====================================================================================================================================================================================*/
+    private void rowHighlight(HBox row){
+        if (currentlyHighlightedRow != null){
+            currentlyHighlightedRow.getStyleClass().remove("grid-pane-highlight");
+        }
+        row.getStyleClass().add("grid-pane-highlight");
+        currentlyHighlightedRow = row;
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
