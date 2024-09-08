@@ -24,8 +24,7 @@ import javafx.scene.layout.HBox;
 public class AdminScreenController {
     /*===================================================================================================================================================================================
     Code Description:
-    This class is the controller for the admin screen of the application. It handles the user search, modification and
-    display functionality.
+    This class is the controller for the admin screen of the application.
     ====================================================================================================================================================================================*/
 
     @FXML
