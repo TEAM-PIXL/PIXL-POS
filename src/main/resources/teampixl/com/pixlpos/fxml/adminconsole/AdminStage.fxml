@@ -390,7 +390,7 @@
                                           <Insets left="64.0" right="25.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="183.0" styleClass="submit-button" text="Submit Changes" >
+                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="183.0" styleClass="submit-button" text="Submit Changes" onAction="#onSubmitChangesMenuItemButtonClick" >
                                        <HBox.margin>
                                           <Insets right="25.0" />
                                        </HBox.margin>

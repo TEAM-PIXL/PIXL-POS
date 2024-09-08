@@ -482,6 +482,43 @@ Methods for user management from here.
             showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occurred: " + e.getMessage());
         }
     }
+
+    @FXML
+    protected void onSubmitChangesMenuItemButtonClick() {
+        // Handle submit changes button click
+        try{
+            String itemName = itemNameField.getText();
+            Double price;
+            MenuItem.ItemType itemType = itemTypeField.getSelectionModel().getSelectedItem();
+            MenuItem.DietaryRequirement dietaryRequirement = dietaryRequirementsField.getSelectionModel().getSelectedItem();
+            String description = itemDescriptionArea.getText();
+            if (itemName.isEmpty() || itemType == null || description.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "Item Name, Item Type, Description and Price are required");
+            }else {
+                try{
+                    price = Double.parseDouble(priceField.getText());
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Please enter a valid price");
+                    return;
+                }
+                try {
+                    loadedMenuItem.updateMetadata("itemName", itemName);
+                    loadedMenuItem.updateMetadata("price", price);
+                    loadedMenuItem.setDataValue("description", description);
+                    loadedMenuItem.updateMetadata("itemType", itemType);
+                    loadedMenuItem.updateMetadata("dietaryRequirement", dietaryRequirement);
+                    dataStore.updateMenuItem(loadedMenuItem);
+                    showAlert(Alert.AlertType.CONFIRMATION, "Updated Menu Item", "Menu Item has been updated");
+                    initialize();
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Updated User", "Unexpected error occured while updating Menu Item: " + e.getMessage());
+                }
+            }
+        }
+        catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
+        }
+    }
 /*===================================================================================================================================================================================
     Methods for both User and Menu Item management:
 ====================================================================================================================================================================================*/
