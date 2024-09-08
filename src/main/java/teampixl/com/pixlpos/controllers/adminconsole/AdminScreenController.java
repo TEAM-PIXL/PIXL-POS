@@ -89,6 +89,8 @@ public class AdminScreenController {
     @FXML
     private GridPane userTable;
 
+    private HBox currentlyHighlightedRow;
+
     @FXML
     public void initialize() {
         // Initialization code here
@@ -187,8 +189,17 @@ public class AdminScreenController {
     }
 
     @FXML
-    protected void onCustomiseButtonClick() {
+    protected void onEditButtonClick() {
         // Handle customise button click
+        try{
+            if (loadedUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Please select a user from the table");
+            } else{
+                populateUserParam(loadedUser);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -244,7 +255,7 @@ public class AdminScreenController {
 
             HBox rowContainer = new HBox(10);
             rowContainer.setAlignment(Pos.CENTER_LEFT);
-            rowContainer.setOnMouseClicked(event -> populateUserParam(user));
+            rowContainer.setOnMouseClicked(event -> {loadedUser = user; rowHighlight(rowContainer);});
             userTable.add(usernameLabel,1, row);
             userTable.add(userSinceLabel,2, row);
             userTable.add(roleLabel,3, row);
@@ -285,5 +296,13 @@ public class AdminScreenController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void rowHighlight(HBox row){
+        if (currentlyHighlightedRow != null){
+            currentlyHighlightedRow.getStyleClass().remove("grid-pane-highlight");
+        }
+            row.getStyleClass().add("grid-pane-highlight");
+            currentlyHighlightedRow = row;
     }
 }

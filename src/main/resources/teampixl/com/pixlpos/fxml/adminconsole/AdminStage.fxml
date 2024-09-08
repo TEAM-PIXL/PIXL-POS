@@ -184,7 +184,7 @@
                         <ButtonBar buttonMinWidth="144.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="63.0" prefWidth="1256.0" BorderPane.alignment="CENTER">
                           <buttons>
                               <Button mnemonicParsing="false" prefHeight="56.0" prefWidth="230.0" styleClass="delete-button" text="Delete User" onAction="#onDeleteUserButtonClick"/>
-                              <Button mnemonicParsing="false" styleClass="edit-button" text="Edit User" textAlignment="CENTER" />
+                              <Button mnemonicParsing="false" styleClass="edit-button" text="Edit User" textAlignment="CENTER" onAction="#onEditButtonClick"/>
                           </buttons>
                            <opaqueInsets>
                               <Insets />
