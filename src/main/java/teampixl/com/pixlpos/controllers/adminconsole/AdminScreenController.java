@@ -476,10 +476,10 @@ Methods for user management from here.
             if (loadedMenuItem == null) {
                 showAlert(Alert.AlertType.ERROR, "Failed", "Please select a Menu Item from the table");
             } else{
-                populateUserParam(loadedUser);
+                populateMenuItemParam(loadedMenuItem);
             }
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occurred: " + e.getMessage());
         }
     }
 /*===================================================================================================================================================================================
@@ -489,7 +489,6 @@ Methods for user management from here.
         if (currentlyHighlightedRow != null){
             currentlyHighlightedRow.getStyleClass().remove("grid-pane-highlight");
         }
-        System.out.println("Higlight");
         row.getStyleClass().add("grid-pane-highlight");
         currentlyHighlightedRow = row;
     }
