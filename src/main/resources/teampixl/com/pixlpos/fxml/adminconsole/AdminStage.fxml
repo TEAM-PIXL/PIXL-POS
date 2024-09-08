@@ -416,8 +416,8 @@
                      <bottom>
                         <ButtonBar buttonMinWidth="144.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="63.0" prefWidth="1256.0" BorderPane.alignment="CENTER">
                            <buttons>
-                              <Button mnemonicParsing="false" prefHeight="56.0" prefWidth="230.0" styleClass="delete-button" text="Delete Menu Items" />
-                              <Button mnemonicParsing="false" styleClass="edit-button" text="Edit Menu Items" textAlignment="CENTER" />
+                              <Button mnemonicParsing="false" prefHeight="56.0" prefWidth="230.0" styleClass="delete-button" text="Delete Menu Items" onAction="#onDeleteMenuItemButtonClick"/>
+                              <Button mnemonicParsing="false" styleClass="edit-button" text="Edit Menu Items" textAlignment="CENTER" onAction="#onEditMenuItemButtonClick" />
                            </buttons>
                            <opaqueInsets>
                               <Insets />

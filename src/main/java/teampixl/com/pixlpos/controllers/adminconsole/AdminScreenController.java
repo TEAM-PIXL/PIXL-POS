@@ -349,6 +349,7 @@ Methods for user management from here.
             menuTable.add(itemTypeLabel,2, row);
 
             GridPane.setColumnSpan(rowContainerMenu, menuTable.getColumnCount());
+            menuTable.add(rowContainerMenu, 0, row);
             row++;
 
         }
@@ -458,16 +459,29 @@ Methods for user management from here.
             if (loadedMenuItem != null) {
                 dataStore.removeMenuItem(loadedMenuItem);
                 initialize();
-                showAlert(Alert.AlertType.CONFIRMATION, "Deleted Menu Item", "User has been deleted");
+                showAlert(Alert.AlertType.CONFIRMATION, "Deleted Menu Item", "Menu Item has been deleted");
             }
             else{
-                showAlert(Alert.AlertType.ERROR, "Deleted User", "Select a user to delete");
+                showAlert(Alert.AlertType.ERROR, "Deleted Menu Item", "Select a Menu Item to delete");
             }
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Deleted User", "Unexpected error occured: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Deleted Menu Item", "Unexpected error occurred: " + e.getMessage());
         }
     }
 
+    @FXML
+    protected void onEditMenuItemButtonClick() {
+        // Handle customise button click
+        try{
+            if (loadedMenuItem == null) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Please select a Menu Item from the table");
+            } else{
+                populateUserParam(loadedUser);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
+        }
+    }
 /*===================================================================================================================================================================================
     Methods for both User and Menu Item management:
 ====================================================================================================================================================================================*/
@@ -475,6 +489,7 @@ Methods for user management from here.
         if (currentlyHighlightedRow != null){
             currentlyHighlightedRow.getStyleClass().remove("grid-pane-highlight");
         }
+        System.out.println("Higlight");
         row.getStyleClass().add("grid-pane-highlight");
         currentlyHighlightedRow = row;
     }
