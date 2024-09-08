@@ -113,6 +113,11 @@ public class AdminScreenController {
         loadedUser = null;
         //Menu Item Management side
         populateMenuGrid();
+        itemTypeField.getItems().clear();
+        itemTypeField.getItems().addAll(MenuItem.ItemType.values());
+        dietaryRequirementsField.getItems().clear();
+        dietaryRequirementsField.getItems().addAll(MenuItem.DietaryRequirement.values());
+
     }
 
 /*===================================================================================================================================================================================
@@ -388,6 +393,23 @@ Methods for user management from here.
                 showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
             }
         }
+    }
+
+    @FXML
+    protected void onMenuItemClearButtonClick() {
+        // Handle clear button click
+        searchFieldMenuItem.clear();
+    }
+
+    @FXML
+    protected void onMenuItemCancelButtonClick() {
+        // Handle clear button click
+        priceField.clear();
+        itemNameField.clear();
+        itemTypeField.setValue(null);
+        dietaryRequirementsField.setValue(null);
+        itemDescriptionArea.clear();
+        loadedMenuItem = null;
     }
 
 /*===================================================================================================================================================================================
