@@ -34,6 +34,9 @@ public class AdminScreenController {
     private Button exitButton;
 
     @FXML
+    private Button exitMenuItemButton;
+
+    @FXML
     private Button newUserButton;
 
     @FXML
@@ -515,6 +518,13 @@ Methods for user management from here.
         catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
         }
+    }
+
+    @FXML
+    protected void onExitMenuItemButtonClick() {
+        // Handle exit button click
+        Stage stage = (Stage) exitMenuItemButton.getScene().getWindow();
+        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitMenuItemButton);
     }
 /*===================================================================================================================================================================================
     Methods for both User and Menu Item management:

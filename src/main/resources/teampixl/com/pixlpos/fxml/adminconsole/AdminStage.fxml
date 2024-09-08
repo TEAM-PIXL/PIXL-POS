@@ -481,7 +481,7 @@
                                     <Insets left="50.0" top="18.0" />
                                  </HBox.margin>
                               </Text>
-                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="155.0" styleClass="logout-button" text="Logout" >
+                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="155.0" styleClass="logout-button" text="Logout" fx:id="exitMenuItemButton" onAction="#onExitMenuItemButtonClick" >
                                  <font>
                                     <Font name="Monospaced Regular" size="13.0" />
                                  </font>
