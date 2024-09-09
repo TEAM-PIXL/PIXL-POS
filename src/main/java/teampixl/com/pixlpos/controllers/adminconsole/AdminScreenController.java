@@ -434,6 +434,10 @@ Methods for user management from here.
                     showAlert(Alert.AlertType.ERROR, "Failed", "Please enter a valid price");
                     return;
                 }
+                if (price < 0){
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Price cannot be negative");
+                    return;
+                }
                 if (dataStore.getMenuItem(itemName) == null) {
                     MenuItem newMenuItem = new MenuItem(itemName, price, MenuItem.ItemType.MAIN, true, description, null);
                     dataStore.addMenuItem(newMenuItem);
@@ -499,6 +503,10 @@ Methods for user management from here.
                     price = Double.parseDouble(priceField.getText());
                 } catch (NumberFormatException e) {
                     showAlert(Alert.AlertType.ERROR, "Failed", "Please enter a valid price");
+                    return;
+                }
+                if (price < 0){
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Price cannot be negative");
                     return;
                 }
                 try {
