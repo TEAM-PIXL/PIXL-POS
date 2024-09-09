@@ -158,6 +158,11 @@
     -fx-border-color: #CCCCCC;
 }
 
+/* GridPane row highlight styling */
+.grid-pane-highlight {
+    -fx-border-color: #3333FF;
+}
+
 /* TableView styling */
 .table-view {
     -fx-background-color: #FFFFFF;
