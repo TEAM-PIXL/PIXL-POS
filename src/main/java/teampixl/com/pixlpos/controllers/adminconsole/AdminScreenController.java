@@ -186,6 +186,10 @@ Methods for user management from here.
     @FXML
     protected void onSubmitChangesButtonClick() {
         // Handle submit changes button click
+        if (loadedUser == null) {
+            showAlert(Alert.AlertType.ERROR, "New User", "Please select a user");
+            return;
+        }
         try{
             String username = usernameField.getText();
             String password = passwordField.getText();
@@ -490,6 +494,10 @@ Methods for user management from here.
     @FXML
     protected void onSubmitChangesMenuItemButtonClick() {
         // Handle submit changes button click
+        if (loadedMenuItem == null) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please select a Menu Item");
+            return;
+        }
         try{
             String itemName = itemNameField.getText();
             Double price;
