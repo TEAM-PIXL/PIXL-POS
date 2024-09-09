@@ -10,7 +10,7 @@ class UsersTest {
 
     @BeforeEach
     void setUp() {
-        user = new Users("testUser", "password123", "test@example.com", Users.UserRole.ADMIN);
+        user = new Users("John", "Doe", "johndoe", "password", "johndoe@example.com", Users.UserRole.ADMIN);
     }
 
     @Test
@@ -30,6 +30,28 @@ class UsersTest {
     void testUpdateUserEmail() {
         user.setDataValue("email", "newemail@example.com");
         assertEquals("newemail@example.com", user.getData().get("email"));
+    }
+
+    @Test
+    void testUserIsActive() {
+        assertTrue((Boolean) user.getMetadata().metadata().get("is_active"));
+        user.updateMetadata("is_active", false);
+        assertFalse((Boolean) user.getMetadata().metadata().get("is_active"));
+    }
+
+    @Test
+    void testUserCreationWithNullUsername() {
+        assertThrows(IllegalArgumentException.class, () -> new Users("John", "Doe", null, "password", "", Users.UserRole.ADMIN));
+    }
+
+    @Test
+    void testUserCreationWithNullPassword() {
+        assertThrows(IllegalArgumentException.class, () -> new Users("John", "Doe", "johndoe", null, "", Users.UserRole.ADMIN));
+    }
+
+    @Test
+    void testUserCreationWithNullRole() {
+        assertThrows(IllegalArgumentException.class, () -> new Users("John", "Doe", "johndoe", "password", "", null));
     }
 
     @Test
