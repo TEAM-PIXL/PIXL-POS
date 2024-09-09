@@ -23,8 +23,8 @@
             <Button fx:id="mushroomswiss" layoutX="120.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Mushroom Swiss" />
             <Button fx:id="spicy" layoutX="220.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Spicy Jalapeño " />
             <Button fx:id="hawaiian" layoutX="320.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Hawaiian Pineapple" />
-            <Button fx:id="beyond" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Veggie Bean" />
-            <Button layoutX="20.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Beyond Meat" />
+            <Button fx:id="veggie" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Veggie Bean" />
+            <Button fx:id="beyond" layoutX="20.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Beyond Meat" />
             <Button fx:id="mediterranean" layoutX="120.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Mediterranean Falafel" />
             <Button fx:id="teriyaki" layoutX="220.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Teriyaki Salmon " />
             <Button fx:id="breakfast" layoutX="320.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Breakfast Burger" />
@@ -44,10 +44,10 @@
          <children>
             <FlowPane hgap="20.0" prefHeight="150.0" prefWidth="525.0" vgap="10.0">
                <children>
-                  <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Item Correct" />
-                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Void Item" />
+                  <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Item Correct" onAction="#correctLastItem"/>
+                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Void Item" onAction="#voidSelectedItem"/>
                   <Button layoutX="140.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Send" />
-                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Restart" />
+                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Restart" onAction="#restartOrder"/>
                   <Button fx:id="logout" layoutX="380.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Logout" />
                </children>
                <HBox.margin>
@@ -59,7 +59,7 @@
             </FlowPane>
             <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="495.0" spacing="10.0">
                <children>
-                  <Button fx:id="applynotes" mnemonicParsing="false" prefHeight="60.0" prefWidth="80.0" text="Apply Note" />
+                  <Button fx:id="applynotes" mnemonicParsing="false" prefHeight="60.0" prefWidth="80.0" text="Apply Note" onAction="#applyNoteToSelectedItem" />
                   <TextField fx:id="notes" prefHeight="60.0" prefWidth="380.0" promptText="Notes" />
                </children>
             </HBox>
@@ -95,7 +95,7 @@
                   </Label>
                </children>
             </HBox>
-            <GridPane>
+            <GridPane fx:id="orderSummaryGrid">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
