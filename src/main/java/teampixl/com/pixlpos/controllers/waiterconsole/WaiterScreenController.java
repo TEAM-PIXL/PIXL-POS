@@ -107,6 +107,8 @@ public class WaiterScreenController extends GuiCommon {
 
         restart.setOnAction(event -> restartOrder());
         applynotes.setOnAction(event -> applyNoteToSelectedItem());
+        applynotes.setOnAction(event -> logout());
+
     }
 
     private void addItemToOrder(String itemName) {
@@ -211,5 +213,10 @@ public class WaiterScreenController extends GuiCommon {
         if (!actionStack.isEmpty()) {
             actionStack.pop().run();
         }
+    }
+
+    @FXML
+    private void logout() {
+        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logout);
     }
 }
