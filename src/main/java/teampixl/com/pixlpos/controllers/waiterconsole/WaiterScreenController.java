@@ -2,12 +2,11 @@ package teampixl.com.pixlpos.controllers.waiterconsole;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
-import teampixl.com.pixlpos.constructs.Users;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
+import teampixl.com.pixlpos.constructs.MenuItem;
+import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.database.DataStore;
 
 import java.util.HashMap;
@@ -33,13 +32,13 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private Button itemcorrect;
     @FXML
-    private Button logout;
+    private Button logoutButton;
     @FXML
     private Text timeordered;
     @FXML
     private Text tablenum;
     @FXML
-    private Text timedue;
+    private Text totalprice;
     @FXML
     private Text ordernum;
 
@@ -85,59 +84,90 @@ public class WaiterScreenController extends GuiCommon {
     private Label selectedItem = null;
     private Stack<Runnable> actionStack = new Stack<>();
     private Map<String, String> orderNotes = new HashMap<>();
+    private DataStore dataStore;
+    private MenuItem menuItem;
+    private Integer orderNumber = 0;
+    private Double orderTotal = 0.00;
+
+    public WaiterScreenController() {
+        this.dataStore = DataStore.getInstance();
+    }
+
+    private void saveOrder(Order order) {
+        try {
+            dataStore.addOrder(order);
+            System.out.println("Order saved to database");
+            System.out.println("Order items:");
+            Map<String, Integer> testOrder = (Map<String, Integer>) order.getData().get("menuItems");
+            testOrder.forEach((key, value) -> System.out.println(dataStore.getMenuItemById(key).getMetadata().metadata().get("itemName") + " : " + value));
+            System.out.println("Order total: $" + order.getData().get("total"));
+        } catch (Exception e) {
+            System.out.println("Error saving order to database");
+        }
+    }
 
     @FXML
     private void initialize() {
-        classic.setOnAction(event -> addItemToOrder("Classic"));
-        bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon"));
-        mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss"));
-        spicy.setOnAction(event -> addItemToOrder("Spicy Jalapeño"));
-        hawaiian.setOnAction(event -> addItemToOrder("Hawaiian Pineapple"));
-        veggie.setOnAction(event -> addItemToOrder("Veggie Bean"));
-        beyond.setOnAction(event -> addItemToOrder("Veggie Bean"));
-        mediterranean.setOnAction(event -> addItemToOrder("Mediterranean Falafel"));
-        teriyaki.setOnAction(event -> addItemToOrder("Teriyaki Salmon"));
+        // Set the order number
+        ordernum.setText(orderNumber.toString());
+        totalprice.setText("$" + String.format("%.2f", orderTotal));
+        classic.setOnAction(event -> addItemToOrder("Classic Cheeseburger"));
+        bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon Cheeseburger"));
+        mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss Burger"));
+        spicy.setOnAction(event -> addItemToOrder("Spicy Jalapeño Burger"));
+        hawaiian.setOnAction(event -> addItemToOrder("Hawaiian Pineapple Burger"));
+        veggie.setOnAction(event -> addItemToOrder("Veggie Bean Burger"));
+        beyond.setOnAction(event -> addItemToOrder("Beyond Burger"));
+        mediterranean.setOnAction(event -> addItemToOrder("Mediterranean Falafel Burger"));
+        teriyaki.setOnAction(event -> addItemToOrder("Teriyaki Salmon Burger"));
         breakfast.setOnAction(event -> addItemToOrder("Breakfast Burger"));
         coke.setOnAction(event -> addItemToOrder("Coke"));
         fanta.setOnAction(event -> addItemToOrder("Fanta"));
         sprite.setOnAction(event -> addItemToOrder("Sprite"));
-        icedtea.setOnAction(event -> addItemToOrder("Iced tea"));
+        icedtea.setOnAction(event -> addItemToOrder("Iced Tea"));
         icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
-        beyond.setOnAction(event -> addItemToOrder("Beyond Burger"));
 
         restart.setOnAction(event -> restartOrder());
         applynotes.setOnAction(event -> applyNoteToSelectedItem());
+        logoutButton.setOnAction(event -> onLogoutButtonClick());
     }
 
     private void addItemToOrder(String itemName) {
-        if (orderItems.containsKey(itemName)) {
-            orderItems.put(itemName, orderItems.get(itemName) + 1);
-        } else {
-            orderItems.put(itemName, 1);
-            orderNotes.put(itemName, ""); // Initialize note for new item
-        }
-        actionStack.push(() -> {
-            if (orderItems.get(itemName) == 1) {
-                orderItems.remove(itemName);
-                orderNotes.remove(itemName); // Remove note for removed item
+        String itemNameID = (String)dataStore.getMenuItem(itemName).getMetadata().metadata().get("id");
+        if (itemNameID != null) {
+            if (orderItems.containsKey(itemNameID)) {
+                orderItems.put(itemNameID, orderItems.get(itemNameID) + 1);
             } else {
-                orderItems.put(itemName, orderItems.get(itemName) - 1);
+                orderItems.put(itemNameID, 1);
+                orderNotes.put(itemNameID, ""); // Initialize note for new item
             }
+
+            actionStack.push(() -> {
+                if (orderItems.get(itemNameID) == 1) {
+                    orderItems.remove(itemNameID);
+                    orderNotes.remove(itemNameID); // Remove note for removed item
+                } else {
+                    orderItems.put(itemNameID, orderItems.get(itemNameID) - 1);
+                }
+                updateOrderSummary();
+            });
             updateOrderSummary();
-        });
-        updateOrderSummary();
+        }
     }
 
     private void updateOrderSummary() {
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
-            String itemName = entry.getKey();
+            String itemNameID = entry.getKey();
             int quantity = entry.getValue();
-            String note = orderNotes.get(itemName);
+            String note = orderNotes.get(itemNameID);
+            String itemName = dataStore.getMenuItemById(itemNameID).getMetadata().metadata().get("itemName").toString();
             Label itemLabel = new Label("x" + quantity + " " + itemName + (note.isEmpty() ? "" : " - Note: " + note));
             itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
             orderSummaryGrid.add(itemLabel, 0, currentRow);
+            orderTotal = orderTotal + (Double)dataStore.getMenuItemById(itemNameID).getMetadata().metadata().get("price");
+            totalprice.setText("$" + String.format("%.2f", orderTotal));
             currentRow++;
         }
     }
@@ -161,16 +191,17 @@ public class WaiterScreenController extends GuiCommon {
         if (selectedItem != null) {
             String itemText = selectedItem.getText();
             String itemName = itemText.substring(itemText.indexOf(" ") + 1).split(" - Note:")[0]; // Extract item name correctly
-            String currentNote = orderNotes.getOrDefault(itemName, ""); // Get the current note or an empty string if no note exists
+            String itemNameID = (String)dataStore.getMenuItem(itemName).getMetadata().metadata().get("id");
+            String currentNote = orderNotes.getOrDefault(itemNameID, ""); // Get the current note or an empty string if no note exists
             String newNote = notes.getText();
 
             // Save the current state before updating the note
             actionStack.push(() -> {
-                orderNotes.put(itemName, currentNote); // Restore the previous note
+                orderNotes.put(itemNameID, currentNote); // Restore the previous note
                 updateOrderSummary();
             });
 
-            orderNotes.put(itemName, newNote); // Update the note in the map
+            orderNotes.put(itemNameID, newNote); // Update the note in the map
             updateOrderSummary();
         }
     }
@@ -180,10 +211,11 @@ public class WaiterScreenController extends GuiCommon {
         if (selectedItem != null) {
             String itemText = selectedItem.getText();
             String itemName = itemText.substring(itemText.indexOf(" ") + 1);
-            int quantity = orderItems.get(itemName);
-            orderItems.remove(itemName);
+            String itemNameID = (String)dataStore.getMenuItem(itemName).getMetadata().metadata().get("id");
+            int quantity = orderItems.get(itemNameID);
+            orderItems.remove(itemNameID);
             actionStack.push(() -> {
-                orderItems.put(itemName, quantity);
+                orderItems.put(itemNameID, quantity);
                 updateOrderSummary();
             });
             updateOrderSummary();
@@ -204,12 +236,37 @@ public class WaiterScreenController extends GuiCommon {
         orderItems.clear();
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
+        orderTotal = 0.00;
+        totalprice.setText("$" + String.format("%.2f", orderTotal));
     }
 
     @FXML
     private void correctLastItem() {
         if (!actionStack.isEmpty()) {
             actionStack.pop().run();
+        }
+    }
+
+    @FXML
+    private void onLogoutButtonClick() {
+        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
+    }
+
+    @FXML
+    private void sendOrder() {
+        if (orderItems.isEmpty()) {
+            System.out.println("No items in order");
+            return;
+        } else {
+            Order order = new Order(orderNumber, "test");
+            orderNumber++;
+            ordernum.setText(orderNumber.toString());
+            for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
+                menuItem = dataStore.getMenuItemById(entry.getKey());
+                order.addMenuItem(menuItem, entry.getValue());
+            }
+            saveOrder(order);
+            restartOrder();
         }
     }
 }
