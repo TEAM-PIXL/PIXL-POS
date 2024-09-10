@@ -18,12 +18,12 @@ public class RegistrationService {
 
     private DataStore dataStore = DataStore.getInstance();
 
-    public boolean registerUser(String username, String plainPassword, String email, Users.UserRole role) {
+    public boolean registerUser(String firstName, String lastName, String username, String plainPassword, String email, Users.UserRole role) {
         if (dataStore.usernameExists(username)) {
             return false;
         }
         String hashedPassword = PasswordUtils.hashPassword(plainPassword);
-        Users newUser = new Users(username, hashedPassword, email, role);
+        Users newUser = new Users(firstName, lastName, username, hashedPassword, email, role);
         dataStore.addUser(newUser);
         return true;
     }

@@ -427,6 +427,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         }
     }
 
+
     private void saveMenuItemToDatabase(MenuItem item) {
         String sql = "INSERT INTO menu_items(id, item_name, price, item_type, active_item, dietary_requirement, description, notes, amount_ordered) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -892,13 +893,15 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String id = rs.getString("id");
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
                 String username = rs.getString("username");
                 String roleStr = rs.getString("role");
                 Users.UserRole role = Users.UserRole.valueOf(roleStr);
                 String email = rs.getString("email");
                 String password = rs.getString("password");
 
-                Users user = new Users(username, password, email, role);
+                Users user = new Users(firstName, lastName,username, password, email, role);
                 user.updateMetadata("id", id);
                 users.add(user);
             }
@@ -927,18 +930,21 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void saveUserToDatabase(Users user) {
-        String sql = "INSERT INTO users(id, username, password, email, role, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users(id, first_name, last_name, username, password, email, role, created_at, updated_at, is_active) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, (String) user.getMetadata().metadata().get("id"));
-            pstmt.setString(2, (String) user.getMetadata().metadata().get("username"));
-            pstmt.setString(3, (String) user.getData().get("password"));
-            pstmt.setString(4, (String) user.getData().get("email"));
-            pstmt.setString(5, user.getMetadata().metadata().get("role").toString());
-            pstmt.setLong(6, (Long) user.getMetadata().metadata().get("created_at"));
-            pstmt.setLong(7, (Long) user.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(2, (String) user.getMetadata().metadata().get("first_name"));
+            pstmt.setString(3, (String) user.getMetadata().metadata().get("last_name"));
+            pstmt.setString(4, (String) user.getMetadata().metadata().get("username"));
+            pstmt.setString(5, (String) user.getData().get("password"));
+            pstmt.setString(6, (String) user.getData().get("email"));
+            pstmt.setString(7, user.getMetadata().metadata().get("role").toString());
+            pstmt.setLong(8, (Long) user.getMetadata().metadata().get("created_at"));
+            pstmt.setLong(9, (Long) user.getMetadata().metadata().get("updated_at"));
+            pstmt.setBoolean(10, (Boolean) user.getMetadata().metadata().get("is_active"));
 
             pstmt.executeUpdate();
             System.out.println("User saved to database.");
@@ -949,17 +955,20 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void updateUserInDatabase(Users user) {
-        String sql = "UPDATE users SET username = ?, password = ?, email = ?, role = ?, updated_at = ? WHERE id = ?";
+        String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, password = ?, email = ?, role = ?, updated_at = ?, is_active = ? WHERE id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) user.getMetadata().metadata().get("username"));
-            pstmt.setString(2, (String) user.getData().get("password")); // Ensure password is stored as a hash
-            pstmt.setString(3, (String) user.getData().get("email"));
-            pstmt.setString(4, user.getMetadata().metadata().get("role").toString());
-            pstmt.setLong(5, (Long) user.getMetadata().metadata().get("updated_at"));
-            pstmt.setString(6, (String) user.getMetadata().metadata().get("id"));
+            pstmt.setString(1, (String) user.getMetadata().metadata().get("first_name"));
+            pstmt.setString(2, (String) user.getMetadata().metadata().get("last_name"));
+            pstmt.setString(3, (String) user.getMetadata().metadata().get("username"));
+            pstmt.setString(4, (String) user.getData().get("password"));
+            pstmt.setString(5, (String) user.getData().get("email"));
+            pstmt.setString(6, user.getMetadata().metadata().get("role").toString());
+            pstmt.setLong(7, (Long) user.getMetadata().metadata().get("updated_at"));
+            pstmt.setBoolean(8, (Boolean) user.getMetadata().metadata().get("is_active"));
+            pstmt.setString(9, (String) user.getMetadata().metadata().get("id"));
 
             pstmt.executeUpdate();
             System.out.println("User updated in database.");

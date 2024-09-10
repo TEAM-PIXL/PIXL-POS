@@ -33,7 +33,7 @@ class DataStoreTest {
         sampleIngredient1 = new Ingredients("Ingredient 1", "Ingredient 1 Notes");
         sampleIngredient2 = new Ingredients("Ingredient 2", "Ingredient 2 Notes");
 
-        sampleUser = new Users("sample_user", "password", "user@example.com", Users.UserRole.ADMIN);
+        sampleUser = new Users("John", "Doe", "sample_user", "password", "johndoe@example.com", Users.UserRole.ADMIN);
 
         sampleOrder = new Order(1, (String) sampleUser.getMetadata().metadata().get("id"));
 
