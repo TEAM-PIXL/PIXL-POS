@@ -124,46 +124,47 @@ public class WaiterScreenController extends GuiCommon {
     private void initialize() {
         // Set the order number
         ordernum.setText("Order Number: " + order.getMetadata().metadata().get("order_number"));
-        classic.setOnAction(event -> addItemToOrder("Classic"));
-        bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon"));
-        mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss"));
-        spicy.setOnAction(event -> addItemToOrder("Spicy Jalapeño"));
-        hawaiian.setOnAction(event -> addItemToOrder("Hawaiian Pineapple"));
-        veggie.setOnAction(event -> addItemToOrder("Veggie Bean"));
-        beyond.setOnAction(event -> addItemToOrder("Veggie Bean"));
-        mediterranean.setOnAction(event -> addItemToOrder("Mediterranean Falafel"));
-        teriyaki.setOnAction(event -> addItemToOrder("Teriyaki Salmon"));
+        classic.setOnAction(event -> addItemToOrder("Classic Cheeseburger"));
+        bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon Cheeseburger"));
+        mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss Burger"));
+        spicy.setOnAction(event -> addItemToOrder("Spicy Jalapeño Burger"));
+        hawaiian.setOnAction(event -> addItemToOrder("Hawaiian Pineapple Burger"));
+        veggie.setOnAction(event -> addItemToOrder("Veggie Bean Burger"));
+        beyond.setOnAction(event -> addItemToOrder("Beyond Burger"));
+        mediterranean.setOnAction(event -> addItemToOrder("Mediterranean Falafel Burger"));
+        teriyaki.setOnAction(event -> addItemToOrder("Teriyaki Salmon Burger"));
         breakfast.setOnAction(event -> addItemToOrder("Breakfast Burger"));
         coke.setOnAction(event -> addItemToOrder("Coke"));
         fanta.setOnAction(event -> addItemToOrder("Fanta"));
         sprite.setOnAction(event -> addItemToOrder("Sprite"));
         icedtea.setOnAction(event -> addItemToOrder("Iced tea"));
         icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
-        beyond.setOnAction(event -> addItemToOrder("Beyond Burger"));
 
         restart.setOnAction(event -> restartOrder());
         applynotes.setOnAction(event -> applyNoteToSelectedItem());
         logout.setOnAction(event -> logout());
-
     }
 
     private void addItemToOrder(String itemName) {
-        if (orderItems.containsKey(itemName)) {
-            orderItems.put(itemName, orderItems.get(itemName) + 1);
-        } else {
-            orderItems.put(itemName, 1);
-            orderNotes.put(itemName, ""); // Initialize note for new item
-        }
-        actionStack.push(() -> {
-            if (orderItems.get(itemName) == 1) {
-                orderItems.remove(itemName);
-                orderNotes.remove(itemName); // Remove note for removed item
+        if (dataStore.getMenuItem(itemName) != null) {
+            if (orderItems.containsKey(itemName)) {
+                orderItems.put(itemName, orderItems.get(itemName) + 1);
             } else {
-                orderItems.put(itemName, orderItems.get(itemName) - 1);
+                orderItems.put(itemName, 1);
+                orderNotes.put(itemName, ""); // Initialize note for new item
             }
+
+            actionStack.push(() -> {
+                if (orderItems.get(itemName) == 1) {
+                    orderItems.remove(itemName);
+                    orderNotes.remove(itemName); // Remove note for removed item
+                } else {
+                    orderItems.put(itemName, orderItems.get(itemName) - 1);
+                }
+                updateOrderSummary();
+            });
             updateOrderSummary();
-        });
-        updateOrderSummary();
+        }
     }
 
     private void updateOrderSummary() {
