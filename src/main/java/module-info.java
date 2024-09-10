@@ -19,7 +19,6 @@ module PIXL.POS {
     requires javafx.fxml;
     requires javafx.graphics;
     requires jbcrypt;
-    requires org.junit.jupiter.api;
 
 
     opens teampixl.com.pixlpos.application to javafx.fxml;
