@@ -1,4 +1,4 @@
-module PIXL.POS {
+module PIXL.POS.src {
 
     /*===============================================================================================================================================================================
     -------------------------------------------------------------------------->   !!! IMPORTANT !!!   <---------------------------------------------------------------------------
@@ -14,7 +14,6 @@ module PIXL.POS {
     requires java.base;
     requires java.logging;
     requires java.xml;
-    requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
@@ -23,14 +22,12 @@ module PIXL.POS {
     opens teampixl.com.pixlpos.application to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.loginconsole to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.adminconsole to javafx.fxml;
-//    ENABLE THESE WHEN REQUIRED
     opens teampixl.com.pixlpos.controllers.cookconsole to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.waiterconsole to javafx.fxml;
 
     exports teampixl.com.pixlpos.application;
     exports teampixl.com.pixlpos.controllers.loginconsole;
     exports teampixl.com.pixlpos.controllers.adminconsole;
-//    ENABLE THESE WHEN REQUIRED
     exports teampixl.com.pixlpos.controllers.cookconsole;
     exports teampixl.com.pixlpos.controllers.waiterconsole;
 }

@@ -18,37 +18,39 @@
    <right>
       <FlowPane hgap="20.0" prefHeight="768.0" prefWidth="500.0" style="-fx-background-color: #89c6c0;" vgap="20.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="classic" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Classic" />
-            <Button fx:id="bbqbacon" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="BBQ Bacon" />
-            <Button fx:id="mushroomswiss" layoutX="120.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Mushroom Swiss" />
-            <Button fx:id="spicy" layoutX="220.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Spicy Jalapeño " />
-            <Button fx:id="hawaiian" layoutX="320.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Hawaiian Pineapple" />
-            <Button fx:id="veggie" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Veggie Bean" />
-            <Button fx:id="beyond" layoutX="20.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Beyond Meat" />
-            <Button fx:id="mediterranean" layoutX="120.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Mediterranean Falafel" />
-            <Button fx:id="teriyaki" layoutX="220.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Teriyaki Salmon " />
-            <Button fx:id="breakfast" layoutX="320.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Breakfast Burger" />
-            <Button fx:id="coke" layoutX="420.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Coke" />
-            <Button fx:id="fanta" layoutX="20.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Fanta" />
-            <Button fx:id="sprite" layoutX="120.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Sprite" />
-            <Button fx:id="icedtea" layoutX="220.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Iced tea" />
-            <Button fx:id="icedcoffee" layoutX="320.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Iced Coffee" />
+            <Button fx:id="classic" mnemonicParsing="false" styleClass="menu-button" text="Classic" />
+            <Button fx:id="bbqbacon" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="BBQ Bacon" />
+            <Button fx:id="mushroomswiss" layoutX="120.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Mushroom Swiss" />
+            <Button fx:id="spicy" layoutX="220.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Spicy Jalapeño " />
+            <Button fx:id="hawaiian" layoutX="320.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Hawaiian Pineapple" />
+            <Button fx:id="veggie" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Veggie Bean" />
+            <Button fx:id="beyond" layoutX="20.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Beyond Meat" />
+            <Button fx:id="mediterranean" layoutX="120.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Mediterranean Falafel" />
+            <Button fx:id="teriyaki" layoutX="220.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Teriyaki Salmon " />
+            <Button fx:id="breakfast" layoutX="320.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Breakfast Burger" />
+            <Button fx:id="coke" layoutX="420.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Coke" />
+            <Button fx:id="fanta" layoutX="20.0" layoutY="220.0" mnemonicParsing="false" styleClass="menu-button" text="Fanta" />
+            <Button fx:id="sprite" layoutX="120.0" layoutY="220.0" mnemonicParsing="false" styleClass="menu-button" text="Sprite" />
+            <Button fx:id="icedtea" layoutX="220.0" layoutY="220.0" mnemonicParsing="false" styleClass="menu-button" text="Iced tea" />
+            <Button fx:id="icedcoffee" layoutX="320.0" layoutY="220.0" mnemonicParsing="false" styleClass="menu-button" text="Iced Coffee" />
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
+         <BorderPane.margin>
+            <Insets left="10.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
       </FlowPane>
    </right>
    <bottom>
-      <HBox prefHeight="150.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
+      <HBox prefHeight="103.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
          <children>
-            <FlowPane hgap="20.0" prefHeight="150.0" prefWidth="525.0" vgap="10.0">
+            <FlowPane hgap="20.0" prefHeight="90.0" prefWidth="512.0" vgap="10.0">
                <children>
-                  <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Item Correct" onAction="#correctLastItem"/>
-                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Void Item" onAction="#voidSelectedItem"/>
-                  <Button layoutX="140.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Send" onAction="#sendOrder"/>
-                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Restart" onAction="#restartOrder"/>
-                  <Button fx:id="logoutButton" layoutX="380.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Logout" onAction="#onLogoutButtonClick"/>
+                  <Button fx:id="send" layoutX="140.0" layoutY="20.0" mnemonicParsing="false" styleClass="send-button" text="Send" onAction="#sendOrder"/>
+                  <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="35.0" prefWidth="128.0" styleClass="correct-buttons" text="Item Correct" onAction="#correctLastItem"/>
+                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="111.0" styleClass="void-button" text="Void Item" onAction="#voidSelectedItem"/>
+                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="90.0" styleClass="restart-button" text="Restart" onAction="#restartOrder"/>
                </children>
                <HBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -59,19 +61,19 @@
             </FlowPane>
             <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="495.0" spacing="10.0">
                <children>
-                  <Button fx:id="applynotes" mnemonicParsing="false" prefHeight="60.0" prefWidth="80.0" text="Apply Note" onAction="#applyNoteToSelectedItem" />
-                  <TextField fx:id="notes" prefHeight="60.0" prefWidth="380.0" promptText="Notes" />
+                  <Button fx:id="applynotes" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="apply-note-button" text="Apply Note" onAction="#applyNoteToSelectedItem"/>
+                  <TextField fx:id="notes" prefHeight="50.0" prefWidth="334.0" promptText="Notes" />
                </children>
             </HBox>
          </children>
       </HBox>
    </bottom>
    <center>
-      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="485.0" styleClass="order-container" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" contentDisplay="RIGHT" text="Order#">
+            <Label contentDisplay="RIGHT" styleClass="order-label" text="Order#">
                <graphic>
-                  <Text fx:id="ordernum" strokeType="OUTSIDE" strokeWidth="0.0" text="null">
+                  <Text fx:id="ordernum" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="order-label" text="null">
                      <font>
                         <Font size="25.0" />
                      </font>
@@ -80,22 +82,33 @@
                <font>
                   <Font size="30.0" />
                </font>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
             </Label>
-            <HBox alignment="CENTER" prefHeight="48.0" prefWidth="524.0" spacing="30.0" style="-fx-border-color: black;">
+            <Line endX="450.0" stroke="#4a85f6" strokeWidth="0.5">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Line>
+            <HBox alignment="CENTER" prefHeight="48.0" prefWidth="524.0" spacing="30.0" styleClass="order-header">
                <children>
-                  <Label contentDisplay="BOTTOM" style="-fx-border-color: black;" text="Time Ordered">
+                  <Label contentDisplay="RIGHT" prefHeight="39.0" prefWidth="110.0" styleClass="time-label" text="Time Ordered :">
                      <graphic>
                         <Text fx:id="timeordered" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
                      </graphic>
                   </Label>
-                  <Label contentDisplay="BOTTOM" style="-fx-border-color: black;" text="Table/Takeaway">
+                  <Label contentDisplay="RIGHT" prefHeight="39.0" prefWidth="130.0" styleClass="table-label" text="Table/Takeaway :">
                      <graphic>
                         <Text fx:id="tablenum" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
                      </graphic>
                   </Label>
                </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
             </HBox>
-            <GridPane fx:id="orderSummaryGrid">
+            <GridPane styleClass="grid-pane" fx:id="orderSummaryGrid">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
@@ -105,16 +118,58 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-            <HBox alignment="CENTER" prefHeight="45.0" prefWidth="524.0" spacing="30.0" style="-fx-border-color: black;">
+            <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label contentDisplay="BOTTOM" text="Time due">
-                     <graphic>
+                  <HBox alignment="CENTER" prefHeight="45.0" prefWidth="524.0" spacing="30.0" styleClass="order-header">
+                     <children>
+                        <Label contentDisplay="BOTTOM" text="Time due:" />
                         <Text fx:id="timedue" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
-                     </graphic>
-                  </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
+         <BorderPane.margin>
+            <Insets left="20.0" right="10.0" top="20.0" />
+         </BorderPane.margin>
       </VBox>
    </center>
+   <top>
+      <VBox prefHeight="49.0" prefWidth="1025.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="83.0" prefWidth="1025.0" styleClass="header-container">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo" text="PIXL Services">
+                     <HBox.margin>
+                        <Insets left="45.0" top="10.0" />
+                     </HBox.margin>
+                  </Text>
+                  <Line endX="-0.6213661432266235" endY="39.872005462646484" startX="-0.6213654279708862" startY="74.14559936523438">
+                     <HBox.margin>
+                        <Insets left="45.0" top="8.0" />
+                     </HBox.margin>
+                  </Line>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message" text="Hello Admin" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets left="50.0" top="15.0" />
+                     </HBox.margin>
+                  </Text>
+                  <Button fx:id="logoutButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="32.0" prefWidth="118.0" styleClass="logout-button" text="Logout">
+                     <font>
+                        <Font name="Monospaced Regular" size="13.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="490.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox prefHeight="30.0" prefWidth="1025.0" />
+            <Line endX="1024.0" stroke="#757575" />
+         </children>
+      </VBox>
+   </top>
 </fx:root>
