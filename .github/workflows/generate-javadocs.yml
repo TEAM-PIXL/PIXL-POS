@@ -26,20 +26,23 @@ jobs:
           distribution: 'corretto'
           java-version: '21'
 
-      - name: Generate Javadocs
+      - name: Generate Javadocs for Individual Modules
         run: |
-          mvn javadoc:javadoc
+          for module in $(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' exec:exec); do
+            mvn javadoc:javadoc -pl $module
+          done
 
       - name: Upload Javadocs as artifact
         if: success()
         uses: actions/upload-artifact@v3
         with:
           name: javadocs
-          path: target/site/apidocs
+          path: '**/target/site/apidocs'
 
       - name: Deploy Javadocs to GitHub Pages
         if: success() && github.ref == 'refs/heads/development' || github.ref == 'refs/heads/quality' || github.ref == 'refs/heads/production'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/site/apidocs
+          publish_dir: './**/target/site/apidocs'
+
