@@ -87,6 +87,7 @@ public class WaiterScreenController extends GuiCommon {
     private Stack<Runnable> actionStack = new Stack<>();
     private Map<String, String> orderNotes = new HashMap<>();
     private DataStore dataStore;
+    private Order order;
 
     private WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
@@ -121,6 +122,8 @@ public class WaiterScreenController extends GuiCommon {
 
     @FXML
     private void initialize() {
+        // Set the order number
+        ordernum.setText("Order Number: " + order.getMetadata().metadata().get("order_number"));
         classic.setOnAction(event -> addItemToOrder("Classic"));
         bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon"));
         mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss"));
