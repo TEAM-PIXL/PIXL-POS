@@ -26,11 +26,10 @@ jobs:
           distribution: 'corretto'
           java-version: '21'
 
-      - name: Generate Javadocs for Individual Modules
+      - name: Generate Javadocs for all modules
         run: |
-          for module in $(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' exec:exec); do
-            mvn javadoc:javadoc -pl $module
-          done
+          # Clean and generate Javadocs for all modules
+          mvn clean javadoc:javadoc --fail-at-end
 
       - name: Upload Javadocs as artifact
         if: success()
