@@ -305,10 +305,47 @@ public class Main {
         MenuItem item3 = new MenuItem("Fish & Chips", 22.99, MenuItem.ItemType.MAIN, true, "Fresh fish fillet with chips", null);
         MenuItem item4 = new MenuItem("Basil Pasta", 15.99, MenuItem.ItemType.MAIN, true, "Pasta with fresh basil", MenuItem.DietaryRequirement.VEGETARIAN);
 
+        /* Add Hardcoded items to menu items */
+
+        MenuItem item5 = new MenuItem("Classic Cheeseburger", 17.95, MenuItem.ItemType.MAIN, true, "A timeless favorite with juicy beef, melted cheese, and classic toppings.", MenuItem.DietaryRequirement.NONE);
+        MenuItem item6 = new MenuItem("BBQ Bacon Cheeseburger", 17.95, MenuItem.ItemType.MAIN, true, "A smoky BBQ twist on the classic cheeseburger with crispy bacon and tangy BBQ sauce.", MenuItem.DietaryRequirement.NONE);
+        MenuItem item7 = new MenuItem("Mushroom Swiss Burger", 17.95, MenuItem.ItemType.MAIN, true, "A savory burger with sautéed mushrooms, Swiss cheese, and a touch of garlic aioli.", MenuItem.DietaryRequirement.VEGETARIAN);
+        MenuItem item8 = new MenuItem("Spicy Jalapeño Burger", 18.95, MenuItem.ItemType.MAIN, true, "A fiery burger with jalapeños, pepper jack cheese, and a spicy chipotle mayo.", MenuItem.DietaryRequirement.NONE);
+        MenuItem item9 = new MenuItem("Hawaiian Pineapple Burger", 18.95, MenuItem.ItemType.MAIN, true, "A tropical burger with grilled pineapple, ham, and a sweet teriyaki glaze.", MenuItem.DietaryRequirement.NONE);
+        MenuItem item10 = new MenuItem("Veggie Bean Burger", 20.95, MenuItem.ItemType.MAIN, true, "A hearty vegetarian burger with a blend of beans, grains, and spices.", MenuItem.DietaryRequirement.VEGAN);
+        MenuItem item11 = new MenuItem("Beyond Burger", 20.95, MenuItem.ItemType.MAIN, true, "A plant-based burger that looks, cooks, and tastes like beef.", MenuItem.DietaryRequirement.VEGAN);
+        MenuItem item12 = new MenuItem("Mediterranean Falafel Burger", 20.95, MenuItem.ItemType.MAIN, true, "A flavorful burger with crispy falafel, hummus, and a tangy tzatziki sauce.", MenuItem.DietaryRequirement.NONE);
+        MenuItem item13 = new MenuItem("Teriyaki Salmon Burger", 19.95, MenuItem.ItemType.MAIN, true, "A fresh burger with grilled salmon, avocado, and a sweet teriyaki glaze.", MenuItem.DietaryRequirement.NONE);
+        MenuItem item14 = new MenuItem("Breakfast Burger", 19.95, MenuItem.ItemType.MAIN, true, "A hearty burger with a fried egg, crispy bacon, and melted cheese on a toasted bun.", MenuItem.DietaryRequirement.NONE);
+
+        MenuItem item15 = new MenuItem("Coke", 3, MenuItem.ItemType.DRINK, true, "Classic Coca-Cola", MenuItem.DietaryRequirement.NONE);
+        MenuItem item16 = new MenuItem("Fanta", 3, MenuItem.ItemType.DRINK, true, "Refreshing Fanta Orange", MenuItem.DietaryRequirement.NONE);
+        MenuItem item17 = new MenuItem("Sprite", 3, MenuItem.ItemType.DRINK, true, "Crisp Sprite Lemon-Lime", MenuItem.DietaryRequirement.NONE);
+        MenuItem item18 = new MenuItem("Iced Tea", 4.5, MenuItem.ItemType.DRINK, true, "Chilled Iced Tea", MenuItem.DietaryRequirement.NONE);
+        MenuItem item19 = new MenuItem("Iced Coffee", 4.5, MenuItem.ItemType.DRINK, true, "Iced Coffee with Cream", MenuItem.DietaryRequirement.NONE);
+
+        /* Finish Hardcoded items to menu items */
+
         dataStore.addMenuItem(item1);
         dataStore.addMenuItem(item2);
         dataStore.addMenuItem(item3);
         dataStore.addMenuItem(item4);
+        dataStore.addMenuItem(item5);
+        dataStore.addMenuItem(item6);
+        dataStore.addMenuItem(item7);
+        dataStore.addMenuItem(item8);
+        dataStore.addMenuItem(item9);
+        dataStore.addMenuItem(item10);
+        dataStore.addMenuItem(item11);
+        dataStore.addMenuItem(item12);
+        dataStore.addMenuItem(item13);
+        dataStore.addMenuItem(item14);
+        dataStore.addMenuItem(item15);
+        dataStore.addMenuItem(item16);
+        dataStore.addMenuItem(item17);
+        dataStore.addMenuItem(item18);
+        dataStore.addMenuItem(item19);
+
         System.out.println("Menu items added to the database:");
 
         ObservableList<MenuItem> checkMenuItems = dataStore.getMenuItems();
