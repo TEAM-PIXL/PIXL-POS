@@ -55,12 +55,15 @@ public class DatabaseHelper {
         String sqlCreateUsersTable = """
         CREATE TABLE IF NOT EXISTS users (
             id TEXT PRIMARY KEY,
+            first_name TEXT NOT NULL,
+            last_name TEXT NOT NULL,
             username TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             email TEXT,
             role TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            is_active INTEGER NOT NULL DEFAULT 1
         );
     """;
 

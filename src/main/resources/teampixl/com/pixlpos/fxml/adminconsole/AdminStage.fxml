@@ -308,7 +308,7 @@
                               <Insets top="30.0" />
                            </VBox.margin>
                         </HBox>
-                        <GridPane alignment="TOP_CENTER" gridLinesVisible="true" styleClass="grid-pane">
+                        <GridPane alignment="TOP_CENTER" gridLinesVisible="true" styleClass="grid-pane" fx:id="menuTable">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="318.21673583984375" minWidth="10.0" prefWidth="306.19122314453125" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="291.0467529296875" minWidth="10.0" prefWidth="209.5977783203125" />
@@ -350,19 +350,19 @@
                                     <Insets right="400.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="560.0" styleClass="text-field" />
+                              <TextField alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="560.0" styleClass="text-field" fx:id="itemNameField" />
                               <Label prefHeight="40.0" prefWidth="83.0" text="Price">
                                  <VBox.margin>
                                     <Insets right="473.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField />
+                              <TextField fx:id="priceField"/>
                               <Label alignment="CENTER" contentDisplay="BOTTOM" prefHeight="40.0" prefWidth="257.0" text="Item Type">
                                  <VBox.margin>
                                     <Insets right="470.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <ChoiceBox layoutX="31.0" layoutY="532.0" prefHeight="45.0" prefWidth="396.0">
+                              <ChoiceBox layoutX="31.0" layoutY="532.0" prefHeight="45.0" prefWidth="396.0" fx:id="itemTypeField">
                                  <VBox.margin>
                                     <Insets right="210.0" />
                                  </VBox.margin>
@@ -372,7 +372,7 @@
                                     <Insets right="360.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <ChoiceBox prefHeight="45.0" prefWidth="398.0">
+                              <ChoiceBox prefHeight="45.0" prefWidth="398.0" fx:id="dietaryRequirementsField">
                                  <VBox.margin>
                                     <Insets right="210.0" />
                                  </VBox.margin>
@@ -382,20 +382,20 @@
                                     <Insets right="360.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextArea prefHeight="200.0" prefWidth="569.0" />
+                              <TextArea prefHeight="200.0" prefWidth="569.0" fx:id="itemDescriptionArea"/>
                               <HBox prefHeight="43.0" prefWidth="569.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="171.0" styleClass="add-buttons" text="Add Menu Item">
+                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="171.0" styleClass="add-buttons" text="Add Menu Item" onAction="#onNewMenuItemButtonClick">
                                        <HBox.margin>
                                           <Insets left="64.0" right="25.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="183.0" styleClass="submit-button" text="Submit Changes" >
+                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="183.0" styleClass="submit-button" text="Submit Changes" onAction="#onSubmitChangesMenuItemButtonClick" >
                                        <HBox.margin>
                                           <Insets right="25.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="114.0" styleClass="cancel-button" text="Cancel" />
+                                    <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="114.0" styleClass="cancel-button" text="Cancel" onAction="#onMenuItemCancelButtonClick"/>
                                  </children>
                                  <VBox.margin>
                                     <Insets top="40.0" />
@@ -416,8 +416,8 @@
                      <bottom>
                         <ButtonBar buttonMinWidth="144.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="63.0" prefWidth="1256.0" BorderPane.alignment="CENTER">
                            <buttons>
-                              <Button mnemonicParsing="false" prefHeight="56.0" prefWidth="230.0" styleClass="delete-button" text="Delete Menu Items" />
-                              <Button mnemonicParsing="false" styleClass="edit-button" text="Edit Menu Items" textAlignment="CENTER" />
+                              <Button mnemonicParsing="false" prefHeight="56.0" prefWidth="230.0" styleClass="delete-button" text="Delete Menu Items" onAction="#onDeleteMenuItemButtonClick"/>
+                              <Button mnemonicParsing="false" styleClass="edit-button" text="Edit Menu Items" textAlignment="CENTER" onAction="#onEditMenuItemButtonClick" />
                            </buttons>
                            <opaqueInsets>
                               <Insets />
@@ -440,17 +440,17 @@
                               </Text>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="search-bar-container">
                                  <children>
-                                    <TextField alignment="CENTER" prefHeight="45.0" prefWidth="360.0" promptText="Enter Menu Item:">
+                                    <TextField alignment="CENTER" prefHeight="45.0" prefWidth="360.0" promptText="Enter Menu Item:" fx:id="searchFieldMenuItem">
                                        <HBox.margin>
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="110.0" styleClass="search-button" text="Search">
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="110.0" styleClass="search-button" text="Search" onAction="#onMenuItemSearchButtonClick">
                                        <HBox.margin>
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="110.0" styleClass="cancel-button" text="Clear" />
+                                    <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="110.0" styleClass="cancel-button" text="Clear" onAction="#onMenuItemClearButtonClick"/>
                                  </children>
                                  <VBox.margin>
                                     <Insets left="40.0" right="20.0" />
@@ -481,7 +481,7 @@
                                     <Insets left="50.0" top="18.0" />
                                  </HBox.margin>
                               </Text>
-                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="155.0" styleClass="logout-button" text="Logout" >
+                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="155.0" styleClass="logout-button" text="Logout" fx:id="exitMenuItemButton" onAction="#onExitMenuItemButtonClick" >
                                  <font>
                                     <Font name="Monospaced Regular" size="13.0" />
                                  </font>

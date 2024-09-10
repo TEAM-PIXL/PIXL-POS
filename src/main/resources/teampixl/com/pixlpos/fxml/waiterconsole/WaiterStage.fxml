@@ -62,7 +62,7 @@
             </FlowPane>
             <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="495.0" spacing="10.0">
                <children>
-                  <Button fx:id="applynotes" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="apply-note-button" text="Apply Note" />
+                  <Button fx:id="applynotes" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="apply-note-button" text="Apply Note" onAction="#applyNoteToSelectedItem"/>
                   <TextField fx:id="notes" prefHeight="50.0" prefWidth="334.0" promptText="Notes" />
                </children>
             </HBox>
@@ -109,7 +109,7 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </HBox>
-            <GridPane styleClass="grid-pane">
+            <GridPane styleClass="grid-pane" fx:id="orderSummaryGrid">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>

@@ -61,9 +61,9 @@ public class Main {
                 - removeUser()
         ===================================================================================================================================================================================================================================*/
 
-        boolean registerAdmin = AuthenticationManager.register("admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
-        boolean registerWaiter =  AuthenticationManager.register("waiter", "waiter", "waiter@example.com", Users.UserRole.WAITER);
-        boolean registerCook =  AuthenticationManager.register("cook", "cook", "cook@example.com", Users.UserRole.COOK);
+        boolean registerAdmin = AuthenticationManager.register("admin", "admin", "admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
+        boolean registerWaiter =  AuthenticationManager.register("waiter", "waiter","waiter", "waiter", "waiter@example.com", Users.UserRole.WAITER);
+        boolean registerCook =  AuthenticationManager.register("cook", "cook","cook", "cook", "cook@example.com", Users.UserRole.COOK);
 
         if (registerAdmin && registerWaiter && registerCook) {
             System.out.println("Admin, Waiter, and Cook registered successfully.");
@@ -81,7 +81,7 @@ public class Main {
             System.out.println("Admin, Waiter, and Cook retrieval failed.");
         }
 
-        boolean registerTest =  AuthenticationManager.register("test", "test", "test123@example.com", Users.UserRole.WAITER);
+        boolean registerTest =  AuthenticationManager.register("test", "test","test", "test", "test123@example.com", Users.UserRole.WAITER);
         if (registerTest) {
             System.out.println("Test user registered successfully.");
         } else {
