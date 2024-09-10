@@ -1,0 +1,13 @@
+module:PIXL.POS.src
+teampixl.com.pixlpos
+teampixl.com.pixlpos.application
+teampixl.com.pixlpos.authentication
+teampixl.com.pixlpos.common
+teampixl.com.pixlpos.constructs
+teampixl.com.pixlpos.constructs.interfaces
+teampixl.com.pixlpos.controllers.adminconsole
+teampixl.com.pixlpos.controllers.cookconsole
+teampixl.com.pixlpos.controllers.loginconsole
+teampixl.com.pixlpos.controllers.waiterconsole
+teampixl.com.pixlpos.database
+teampixl.com.pixlpos.database.interfaces
