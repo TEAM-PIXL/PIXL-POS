@@ -61,6 +61,12 @@ public class AdminScreenController {
     private ChoiceBox<Users.UserRole> roleField;
 
     @FXML
+    private TextField firstNameField;
+
+    @FXML
+    private TextField lastNameField;
+
+    @FXML
     private TextField itemNameField;
 
     @FXML
@@ -140,17 +146,18 @@ Methods for user management from here.
     protected void onNewUserButtonClick() {
         // Handle new user button click
         try {
-
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
             String username = usernameField.getText();
             String password = passwordField.getText();
             String email = emailField.getText();
             Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
 
-            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
+            if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
             } else {
             if (dataStore.getUser(username) == null) {
-                boolean registerUser = AuthenticationManager.register(username, password, email, role);
+                boolean registerUser = AuthenticationManager.register(firstName, lastName, username, password, email, role);
                 if (registerUser) {
                     initialize();
                     showAlert(Alert.AlertType.CONFIRMATION, "New User", "New User has been created");
