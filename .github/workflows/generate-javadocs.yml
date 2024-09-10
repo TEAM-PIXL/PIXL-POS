@@ -28,8 +28,7 @@ jobs:
 
       - name: Generate Javadocs for all modules
         run: |
-          # Clean and generate Javadocs for all modules
-          mvn clean javadoc:javadoc --fail-at-end
+          mvn -DexcludePackageNames="" clean javadoc:javadoc -DskipTests
 
       - name: Upload Javadocs as artifact
         if: success()
