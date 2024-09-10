@@ -27,7 +27,7 @@ jobs:
 
       - name: Generate Javadocs for all modules
         run: |
-          mvn javadoc:javadoc 
+          mvn clean package source:jar javadoc:jar -Peclipse-release -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
 
       - name: Upload Javadocs as artifact
         uses: actions/upload-artifact@v4
