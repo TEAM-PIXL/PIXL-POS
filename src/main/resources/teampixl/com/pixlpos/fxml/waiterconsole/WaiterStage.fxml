@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">
+   <right>
+      <FlowPane hgap="20.0" prefHeight="768.0" prefWidth="500.0" style="-fx-background-color: #89c6c0;" vgap="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="classic" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Classic" />
+            <Button fx:id="bbqbacon" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="BBQ Bacon" />
+            <Button fx:id="mushroomswiss" layoutX="120.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Mushroom Swiss" />
+            <Button fx:id="spicy" layoutX="220.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Spicy Jalapeño " />
+            <Button fx:id="hawaiian" layoutX="320.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Hawaiian Pineapple" />
+            <Button fx:id="veggie" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Veggie Bean" />
+            <Button fx:id="beyond" layoutX="20.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Beyond Meat" />
+            <Button fx:id="mediterranean" layoutX="120.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Mediterranean Falafel" />
+            <Button fx:id="teriyaki" layoutX="220.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Teriyaki Salmon " />
+            <Button fx:id="breakfast" layoutX="320.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Breakfast Burger" />
+            <Button fx:id="coke" layoutX="420.0" layoutY="120.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Coke" />
+            <Button fx:id="fanta" layoutX="20.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Fanta" />
+            <Button fx:id="sprite" layoutX="120.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Sprite" />
+            <Button fx:id="icedtea" layoutX="220.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Iced tea" />
+            <Button fx:id="icedcoffee" layoutX="320.0" layoutY="220.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" text="Iced Coffee" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </FlowPane>
+   </right>
+   <bottom>
+      <HBox prefHeight="150.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
+         <children>
+            <FlowPane hgap="20.0" prefHeight="150.0" prefWidth="525.0" vgap="10.0">
+               <children>
+                  <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Item Correct" onAction="#correctLastItem"/>
+                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Void Item" onAction="#voidSelectedItem"/>
+                  <Button layoutX="140.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Send" />
+                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Restart" onAction="#restartOrder"/>
+                  <Button fx:id="logout" layoutX="380.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Logout" />
+               </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </FlowPane>
+            <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="495.0" spacing="10.0">
+               <children>
+                  <Button fx:id="applynotes" mnemonicParsing="false" prefHeight="60.0" prefWidth="80.0" text="Apply Note" onAction="#applyNoteToSelectedItem" />
+                  <TextField fx:id="notes" prefHeight="60.0" prefWidth="380.0" promptText="Notes" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </bottom>
+   <center>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" contentDisplay="RIGHT" text="Order#">
+               <graphic>
+                  <Text fx:id="ordernum" strokeType="OUTSIDE" strokeWidth="0.0" text="null">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Text>
+               </graphic>
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" prefHeight="48.0" prefWidth="524.0" spacing="30.0" style="-fx-border-color: black;">
+               <children>
+                  <Label contentDisplay="BOTTOM" style="-fx-border-color: black;" text="Time Ordered">
+                     <graphic>
+                        <Text fx:id="timeordered" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
+                     </graphic>
+                  </Label>
+                  <Label contentDisplay="BOTTOM" style="-fx-border-color: black;" text="Table/Takeaway">
+                     <graphic>
+                        <Text fx:id="tablenum" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
+                     </graphic>
+                  </Label>
+               </children>
+            </HBox>
+            <GridPane fx:id="orderSummaryGrid">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <HBox alignment="CENTER" prefHeight="45.0" prefWidth="524.0" spacing="30.0" style="-fx-border-color: black;">
+               <children>
+                  <Label contentDisplay="BOTTOM" text="Time due">
+                     <graphic>
+                        <Text fx:id="timedue" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
+                     </graphic>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</fx:root>
