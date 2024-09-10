@@ -1,0 +1,44 @@
+name: Java Javadoc Generator
+
+on:
+  push:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
+  pull_request:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
+
+jobs:
+  generate-javadocs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Amazon Corretto)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Generate Javadocs for all modules
+        run: |
+          mvn -DexcludePackageNames="" clean javadoc:javadoc -DskipTests
+
+      - name: Upload Javadocs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: javadocs
+          path: '**/target/site/apidocs'
+
+      - name: Deploy Javadocs to GitHub Pages
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/quality' || github.ref == 'refs/heads/production')
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: './**/target/site/apidocs'
+
