@@ -88,20 +88,35 @@ public class WaiterScreenController extends GuiCommon {
     private Map<String, String> orderNotes = new HashMap<>();
     private DataStore dataStore;
 
-    public WaiterScreenController() {
+    private WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
     }
 
-    public void saveOrder(Order order) {
-        dataStore.addOrder(order);
+    private void saveOrder(Order order) {
+        try {
+            dataStore.addOrder(order);
+            System.out.println("Order saved to database");
+        } catch (Exception e) {
+            System.out.println("Error saving order to database");
+        }
     }
 
-    public void removeOrder(Order order) {
-        dataStore.removeOrder(order);
+    private void removeOrder(Order order) {
+        try {
+            dataStore.removeOrder(order);
+            System.out.println("Order removed from database");
+        } catch (Exception e) {
+            System.out.println("Error removing order from database");
+        }
     }
 
-    public void updateOrder(Order order) {
-        dataStore.updateOrder(order);
+    private void updateOrder(Order order) {
+        try {
+            dataStore.updateOrder(order);
+            System.out.println("Order updated in database");
+        } catch (Exception e) {
+            System.out.println("Error updating order in database");
+        }
     }
 
     @FXML
