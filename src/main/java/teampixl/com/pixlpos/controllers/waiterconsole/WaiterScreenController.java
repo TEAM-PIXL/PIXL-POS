@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
+import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.DataStore;
@@ -85,6 +86,23 @@ public class WaiterScreenController extends GuiCommon {
     private Label selectedItem = null;
     private Stack<Runnable> actionStack = new Stack<>();
     private Map<String, String> orderNotes = new HashMap<>();
+    private DataStore dataStore;
+
+    public WaiterScreenController() {
+        this.dataStore = DataStore.getInstance();
+    }
+
+    public void saveOrder(Order order) {
+        dataStore.addOrder(order);
+    }
+
+    public void removeOrder(Order order) {
+        dataStore.removeOrder(order);
+    }
+
+    public void updateOrder(Order order) {
+        dataStore.updateOrder(order);
+    }
 
     @FXML
     private void initialize() {
@@ -107,7 +125,7 @@ public class WaiterScreenController extends GuiCommon {
 
         restart.setOnAction(event -> restartOrder());
         applynotes.setOnAction(event -> applyNoteToSelectedItem());
-        applynotes.setOnAction(event -> logout());
+        logout.setOnAction(event -> logout());
 
     }
 
