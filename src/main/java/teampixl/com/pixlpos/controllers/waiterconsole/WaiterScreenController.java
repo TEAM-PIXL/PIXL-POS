@@ -2,13 +2,10 @@ package teampixl.com.pixlpos.controllers.waiterconsole;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 import teampixl.com.pixlpos.constructs.Order;
-import teampixl.com.pixlpos.constructs.Users;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.DataStore;
 
 import java.util.HashMap;
@@ -34,7 +31,7 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private Button itemcorrect;
     @FXML
-    private Button logout;
+    private Button logoutButton;
     @FXML
     private Text timeordered;
     @FXML
@@ -89,7 +86,7 @@ public class WaiterScreenController extends GuiCommon {
     private DataStore dataStore;
     private Order order;
 
-    private WaiterScreenController() {
+    public WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
     }
 
@@ -105,7 +102,7 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private void initialize() {
         // Set the order number
-        ordernum.setText("Order Number: " + order.getMetadata().metadata().get("order_number"));
+//        ordernum.setText("Order Number: " + order.getMetadata().metadata().get("order_number"));
         classic.setOnAction(event -> addItemToOrder("Classic Cheeseburger"));
         bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon Cheeseburger"));
         mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss Burger"));
@@ -124,24 +121,26 @@ public class WaiterScreenController extends GuiCommon {
 
         restart.setOnAction(event -> restartOrder());
         applynotes.setOnAction(event -> applyNoteToSelectedItem());
-        logout.setOnAction(event -> logout());
+        logoutButton.setOnAction(event -> onLogoutButtonClick());
     }
 
     private void addItemToOrder(String itemName) {
-        if (dataStore.getMenuItem(itemName) != null) {
-            if (orderItems.containsKey(itemName)) {
-                orderItems.put(itemName, orderItems.get(itemName) + 1);
+        String itemNameID = (String)dataStore.getMenuItem(itemName).getMetadata().metadata().get("id");
+        if (itemNameID != null) {
+            System.out.println(itemNameID);
+            if (orderItems.containsKey(itemNameID)) {
+                orderItems.put(itemNameID, orderItems.get(itemNameID) + 1);
             } else {
-                orderItems.put(itemName, 1);
-                orderNotes.put(itemName, ""); // Initialize note for new item
+                orderItems.put(itemNameID, 1);
+                orderNotes.put(itemNameID, ""); // Initialize note for new item
             }
 
             actionStack.push(() -> {
-                if (orderItems.get(itemName) == 1) {
-                    orderItems.remove(itemName);
-                    orderNotes.remove(itemName); // Remove note for removed item
+                if (orderItems.get(itemNameID) == 1) {
+                    orderItems.remove(itemNameID);
+                    orderNotes.remove(itemNameID); // Remove note for removed item
                 } else {
-                    orderItems.put(itemName, orderItems.get(itemName) - 1);
+                    orderItems.put(itemNameID, orderItems.get(itemNameID) - 1);
                 }
                 updateOrderSummary();
             });
@@ -153,9 +152,10 @@ public class WaiterScreenController extends GuiCommon {
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
-            String itemName = entry.getKey();
+            String itemNameID = entry.getKey();
             int quantity = entry.getValue();
-            String note = orderNotes.get(itemName);
+            String note = orderNotes.get(itemNameID);
+            String itemName = dataStore.getMenuItemById(itemNameID).getMetadata().metadata().get("itemName").toString();
             Label itemLabel = new Label("x" + quantity + " " + itemName + (note.isEmpty() ? "" : " - Note: " + note));
             itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
             orderSummaryGrid.add(itemLabel, 0, currentRow);
@@ -235,7 +235,7 @@ public class WaiterScreenController extends GuiCommon {
     }
 
     @FXML
-    private void logout() {
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logout);
+    private void onLogoutButtonClick() {
+        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
     }
 }
