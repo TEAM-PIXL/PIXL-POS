@@ -11,12 +11,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Line?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@waiterstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">
-   <right>
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@waiterstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">   <right>
       <FlowPane hgap="20.0" prefHeight="579.0" prefWidth="487.0" styleClass="menu-container" vgap="20.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="classic" mnemonicParsing="false" styleClass="menu-button" text="Classic" />
@@ -24,8 +23,8 @@
             <Button fx:id="mushroomswiss" layoutX="120.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Mushroom Swiss" />
             <Button fx:id="spicy" layoutX="220.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Spicy Jalapeño " />
             <Button fx:id="hawaiian" layoutX="320.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Hawaiian Pineapple" />
-            <Button fx:id="beyond" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Veggie Bean" />
-            <Button layoutX="20.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Beyond Meat" />
+            <Button fx:id="veggie" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="Veggie Bean" />
+            <Button fx:id="beyond" layoutX="20.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Beyond Meat" />
             <Button fx:id="mediterranean" layoutX="120.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Mediterranean Falafel" />
             <Button fx:id="teriyaki" layoutX="220.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Teriyaki Salmon " />
             <Button fx:id="breakfast" layoutX="320.0" layoutY="120.0" mnemonicParsing="false" styleClass="menu-button" text="Breakfast Burger" />
@@ -48,10 +47,10 @@
          <children>
             <FlowPane hgap="20.0" prefHeight="90.0" prefWidth="512.0" vgap="10.0">
                <children>
-                  <Button layoutX="140.0" layoutY="20.0" mnemonicParsing="false" styleClass="send-button" text="Send" />
-                  <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="35.0" prefWidth="128.0" styleClass="correct-buttons" text="Item Correct" />
-                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="111.0" styleClass="void-button" text="Void Item" />
-                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="90.0" styleClass="restart-button" text="Restart" />
+                  <Button fx:id="send" layoutX="140.0" layoutY="20.0" mnemonicParsing="false" styleClass="send-button" text="Send" onAction="#sendOrder"/>
+                  <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="35.0" prefWidth="128.0" styleClass="correct-buttons" text="Item Correct" onAction="#correctLastItem"/>
+                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="111.0" styleClass="void-button" text="Void Item" onAction="#voidSelectedItem"/>
+                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="90.0" styleClass="restart-button" text="Restart" onAction="#restartOrder"/>
                </children>
                <HBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -110,21 +109,13 @@
                </VBox.margin>
             </HBox>
             <GridPane styleClass="grid-pane" fx:id="orderSummaryGrid">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
             </GridPane>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
                   <HBox alignment="CENTER" prefHeight="45.0" prefWidth="524.0" spacing="30.0" styleClass="order-header">
                      <children>
-                        <Label contentDisplay="BOTTOM" text="Time due:" />
-                        <Text fx:id="timedue" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
+                        <Label contentDisplay="BOTTOM" text="Total:" />
+                        <Text fx:id="totalprice" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
                      </children>
                      <VBox.margin>
                         <Insets />
@@ -158,7 +149,7 @@
                         <Insets left="50.0" top="15.0" />
                      </HBox.margin>
                   </Text>
-                  <Button fx:id="exitButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onExitButtonClick" prefHeight="32.0" prefWidth="118.0" styleClass="logout-button" text="Logout">
+                  <Button fx:id="logoutButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="32.0" prefWidth="118.0" styleClass="logout-button" text="Logout">
                      <font>
                         <Font name="Monospaced Regular" size="13.0" />
                      </font>
