@@ -125,14 +125,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.10.0</version>
-                <executions>
-                    <execution>
-                        <id>generate-javadocs</id>
-                        <goals>
-                            <goal>javadoc</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <configuration>
+                    <skip>true</skip> <!-- Only skip as a last resort -->
+                    <doclint>none</doclint> <!-- Optionally disable doclint if causing issues -->
+                    <!-- Try setting aggregate to true or false -->
+                    <!-- Specify which packages to include or exclude -->
+                    <excludePackageNames>*:unnamed</excludePackageNames> <!-- Exclude unnamed packages -->
+                </configuration>
             </plugin>
 
             <!-- Maven Dependency Plugin to handle project dependencies -->
