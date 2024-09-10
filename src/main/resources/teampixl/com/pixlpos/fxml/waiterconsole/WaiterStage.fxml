@@ -46,7 +46,7 @@
                <children>
                   <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Item Correct" onAction="#correctLastItem"/>
                   <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Void Item" onAction="#voidSelectedItem"/>
-                  <Button layoutX="140.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Send" />
+                  <Button layoutX="140.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Send" onAction="#sendOrder"/>
                   <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Restart" onAction="#restartOrder"/>
                   <Button fx:id="logoutButton" layoutX="380.0" layoutY="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Logout" onAction="#onLogoutButtonClick"/>
                </children>

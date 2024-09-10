@@ -87,7 +87,7 @@ public class WaiterScreenController extends GuiCommon {
     private Map<String, String> orderNotes = new HashMap<>();
     private DataStore dataStore;
     private MenuItem menuItem;
-    private Integer orderNumber;
+    private Integer orderNumber = 0;
 
     public WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
@@ -95,7 +95,6 @@ public class WaiterScreenController extends GuiCommon {
 
     private void saveOrder(Order order) {
         try {
-            order.addMenuItem(orderItems);
             dataStore.addOrder(order);
             System.out.println("Order saved to database");
         } catch (Exception e) {
@@ -106,7 +105,7 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private void initialize() {
         // Set the order number
-        ordernum.setText("Order Number: " + orderNumber);
+        ordernum.setText(orderNumber.toString());
         classic.setOnAction(event -> addItemToOrder("Classic Cheeseburger"));
         bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon Cheeseburger"));
         mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss Burger"));
