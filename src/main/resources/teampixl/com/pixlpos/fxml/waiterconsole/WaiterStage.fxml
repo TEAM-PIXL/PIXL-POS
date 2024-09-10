@@ -13,10 +13,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Line?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">
-   <right>
-      <FlowPane hgap="20.0" prefHeight="768.0" prefWidth="500.0" style="-fx-background-color: #89c6c0;" vgap="20.0" BorderPane.alignment="CENTER">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@waiterstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">   <right>
+      <FlowPane hgap="20.0" prefHeight="579.0" prefWidth="487.0" styleClass="menu-container" vgap="20.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="classic" mnemonicParsing="false" styleClass="menu-button" text="Classic" />
             <Button fx:id="bbqbacon" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" styleClass="menu-button" text="BBQ Bacon" />
@@ -122,8 +122,8 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="45.0" prefWidth="524.0" spacing="30.0" styleClass="order-header">
                      <children>
-                        <Label contentDisplay="BOTTOM" text="Time due:" />
-                        <Text fx:id="timedue" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
+                        <Label contentDisplay="BOTTOM" text="Total:" />
+                        <Text fx:id="totalprice" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
                      </children>
                      <VBox.margin>
                         <Insets />

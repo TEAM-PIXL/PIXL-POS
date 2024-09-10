@@ -38,7 +38,7 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private Text tablenum;
     @FXML
-    private Text timedue;
+    private Text totalprice;
     @FXML
     private Text ordernum;
 
@@ -110,7 +110,7 @@ public class WaiterScreenController extends GuiCommon {
     private void initialize() {
         // Set the order number
         ordernum.setText(orderNumber.toString());
-        timedue.setText("$" + String.format("%.2f", orderTotal));
+        totalprice.setText("$" + String.format("%.2f", orderTotal));
         classic.setOnAction(event -> addItemToOrder("Classic Cheeseburger"));
         bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon Cheeseburger"));
         mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss Burger"));
@@ -167,7 +167,7 @@ public class WaiterScreenController extends GuiCommon {
             itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
             orderSummaryGrid.add(itemLabel, 0, currentRow);
             orderTotal = orderTotal + (Double)dataStore.getMenuItemById(itemNameID).getMetadata().metadata().get("price");
-            timedue.setText("$" + String.format("%.2f", orderTotal));
+            totalprice.setText("$" + String.format("%.2f", orderTotal));
             currentRow++;
         }
     }
@@ -235,7 +235,7 @@ public class WaiterScreenController extends GuiCommon {
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
         orderTotal = 0.00;
-        timedue.setText("$" + String.format("%.2f", orderTotal));
+        totalprice.setText("$" + String.format("%.2f", orderTotal));
     }
 
     @FXML
