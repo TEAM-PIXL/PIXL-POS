@@ -1,4 +1,4 @@
-module:PIXL.POS
+module:PIXL.POS.src
 teampixl.com.pixlpos
 teampixl.com.pixlpos.application
 teampixl.com.pixlpos.authentication

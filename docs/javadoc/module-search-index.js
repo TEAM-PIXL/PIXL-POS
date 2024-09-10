@@ -1,1 +1,1 @@
-moduleSearchIndex = [{"l":"PIXL.POS"}];updateSearchResults();
+moduleSearchIndex = [{"l":"PIXL.POS.src"}];updateSearchResults();
