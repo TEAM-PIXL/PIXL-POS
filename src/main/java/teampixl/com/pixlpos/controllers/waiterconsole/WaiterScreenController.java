@@ -5,7 +5,9 @@ import javafx.scene.layout.GridPane;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
+import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
+import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 
 import java.util.HashMap;
@@ -84,7 +86,8 @@ public class WaiterScreenController extends GuiCommon {
     private Stack<Runnable> actionStack = new Stack<>();
     private Map<String, String> orderNotes = new HashMap<>();
     private DataStore dataStore;
-    private Order order;
+    private MenuItem menuItem;
+    private Integer orderNumber;
 
     public WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
@@ -92,6 +95,7 @@ public class WaiterScreenController extends GuiCommon {
 
     private void saveOrder(Order order) {
         try {
+            order.addMenuItem(orderItems);
             dataStore.addOrder(order);
             System.out.println("Order saved to database");
         } catch (Exception e) {
@@ -102,7 +106,7 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private void initialize() {
         // Set the order number
-//        ordernum.setText("Order Number: " + order.getMetadata().metadata().get("order_number"));
+        ordernum.setText("Order Number: " + orderNumber);
         classic.setOnAction(event -> addItemToOrder("Classic Cheeseburger"));
         bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon Cheeseburger"));
         mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss Burger"));
@@ -237,5 +241,17 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private void onLogoutButtonClick() {
         GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
+    }
+
+    @FXML
+    private void sendOrder() {
+        Order order = new Order(orderNumber, "test");
+        orderNumber++;
+        for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
+            menuItem = dataStore.getMenuItemById(entry.getKey());
+            order.addMenuItem(menuItem, entry.getValue());
+        }
+        saveOrder(order);
+        restartOrder();
     }
 }
