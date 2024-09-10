@@ -349,7 +349,7 @@ public class Main {
         System.out.println("Menu items added to the database:");
 
         ObservableList<MenuItem> checkMenuItems = dataStore.getMenuItems();
-        if (checkMenuItems.size() == 4) {
+        if (checkMenuItems.size() == 19) {
             System.out.println("Menu items added successfully.");
         } else {
             System.out.println("Menu items addition failed.");

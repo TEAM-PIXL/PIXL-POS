@@ -124,7 +124,7 @@ public class WaiterScreenController extends GuiCommon {
         coke.setOnAction(event -> addItemToOrder("Coke"));
         fanta.setOnAction(event -> addItemToOrder("Fanta"));
         sprite.setOnAction(event -> addItemToOrder("Sprite"));
-        icedtea.setOnAction(event -> addItemToOrder("Iced tea"));
+        icedtea.setOnAction(event -> addItemToOrder("Iced Tea"));
         icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
 
         restart.setOnAction(event -> restartOrder());
