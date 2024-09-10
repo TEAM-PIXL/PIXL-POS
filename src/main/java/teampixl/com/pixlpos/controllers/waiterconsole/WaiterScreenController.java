@@ -102,24 +102,6 @@ public class WaiterScreenController extends GuiCommon {
         }
     }
 
-    private void removeOrder(Order order) {
-        try {
-            dataStore.removeOrder(order);
-            System.out.println("Order removed from database");
-        } catch (Exception e) {
-            System.out.println("Error removing order from database");
-        }
-    }
-
-    private void updateOrder(Order order) {
-        try {
-            dataStore.updateOrder(order);
-            System.out.println("Order updated in database");
-        } catch (Exception e) {
-            System.out.println("Error updating order in database");
-        }
-    }
-
     @FXML
     private void initialize() {
         // Set the order number
