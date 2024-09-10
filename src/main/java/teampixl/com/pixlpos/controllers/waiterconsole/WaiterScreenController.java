@@ -211,10 +211,11 @@ public class WaiterScreenController extends GuiCommon {
         if (selectedItem != null) {
             String itemText = selectedItem.getText();
             String itemName = itemText.substring(itemText.indexOf(" ") + 1);
-            int quantity = orderItems.get(itemName);
-            orderItems.remove(itemName);
+            String itemNameID = (String)dataStore.getMenuItem(itemName).getMetadata().metadata().get("id");
+            int quantity = orderItems.get(itemNameID);
+            orderItems.remove(itemNameID);
             actionStack.push(() -> {
-                orderItems.put(itemName, quantity);
+                orderItems.put(itemNameID, quantity);
                 updateOrderSummary();
             });
             updateOrderSummary();
