@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
-import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 
 import java.util.HashMap;
@@ -134,7 +133,6 @@ public class WaiterScreenController extends GuiCommon {
     private void addItemToOrder(String itemName) {
         String itemNameID = (String)dataStore.getMenuItem(itemName).getMetadata().metadata().get("id");
         if (itemNameID != null) {
-            System.out.println(itemNameID);
             if (orderItems.containsKey(itemNameID)) {
                 orderItems.put(itemNameID, orderItems.get(itemNameID) + 1);
             } else {
@@ -248,13 +246,18 @@ public class WaiterScreenController extends GuiCommon {
 
     @FXML
     private void sendOrder() {
-        Order order = new Order(orderNumber, "test");
-        orderNumber++;
-        for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
-            menuItem = dataStore.getMenuItemById(entry.getKey());
-            order.addMenuItem(menuItem, entry.getValue());
+        if (orderItems.isEmpty()) {
+            System.out.println("No items in order");
+            return;
+        } else {
+            Order order = new Order(orderNumber, "test");
+            orderNumber++;
+            for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
+                menuItem = dataStore.getMenuItemById(entry.getKey());
+                order.addMenuItem(menuItem, entry.getValue());
+            }
+            saveOrder(order);
+            restartOrder();
         }
-        saveOrder(order);
-        restartOrder();
     }
 }
