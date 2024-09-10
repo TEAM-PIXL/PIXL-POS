@@ -97,6 +97,10 @@ public class WaiterScreenController extends GuiCommon {
         try {
             dataStore.addOrder(order);
             System.out.println("Order saved to database");
+            System.out.println("Order items:");
+            Map<String, Integer> testOrder = (Map<String, Integer>) order.getData().get("menuItems");
+            testOrder.forEach((key, value) -> System.out.println(dataStore.getMenuItemById(key).getMetadata().metadata().get("itemName") + " : " + value));
+            System.out.println("Order total: $" + order.getData().get("total"));
         } catch (Exception e) {
             System.out.println("Error saving order to database");
         }
