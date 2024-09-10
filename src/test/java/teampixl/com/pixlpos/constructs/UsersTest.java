@@ -16,7 +16,7 @@ class UsersTest {
     @Test
     void testUserCreation() {
         assertNotNull(user.getMetadata().metadata().get("id"));
-        assertEquals("testUser", user.getMetadata().metadata().get("username"));
+        assertEquals("johndoe", user.getMetadata().metadata().get("username"));
         assertEquals(Users.UserRole.ADMIN, user.getMetadata().metadata().get("role"));
     }
 
