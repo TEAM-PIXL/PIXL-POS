@@ -1,4 +1,4 @@
-module PIXL.POS.src {
+module PIXL.POS {
 
     /*===============================================================================================================================================================================
     -------------------------------------------------------------------------->   !!! IMPORTANT !!!   <---------------------------------------------------------------------------
@@ -18,6 +18,7 @@ module PIXL.POS.src {
     requires javafx.fxml;
     requires javafx.graphics;
     requires jbcrypt;
+    requires org.junit.jupiter;
 
     opens teampixl.com.pixlpos.application to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.loginconsole to javafx.fxml;
