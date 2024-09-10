@@ -25,8 +25,8 @@ public class AuthenticationManager {
     private static final RegistrationService registrationService = new RegistrationService();
     private static final LoginService loginService = new LoginService();
 
-    public static boolean register(String username, String password, String email, Users.UserRole role) {
-        return registrationService.registerUser(username, password, email, role);
+    public static boolean register(String firstName, String lastName, String username, String password, String email, Users.UserRole role) {
+        return registrationService.registerUser(firstName, lastName, username, password, email, role);
     }
 
     public static boolean login(String username, String password) {
