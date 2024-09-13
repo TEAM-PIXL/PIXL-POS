@@ -10,6 +10,7 @@ import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.DataStore;
 
+import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -33,7 +34,7 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private Button itemcorrect;
     @FXML
-    private Button logout;
+    private Button logoutButton;
     @FXML
     private Text timeordered;
     @FXML
@@ -78,6 +79,9 @@ public class WaiterScreenController extends GuiCommon {
     private Button icedtea;
     @FXML
     private Button icedcoffee;
+
+    @FXML
+    private Button exitButton;
     /* End of hardcoded buttons */
 
     private int currentRow = 0;
@@ -86,24 +90,31 @@ public class WaiterScreenController extends GuiCommon {
     private Stack<Runnable> actionStack = new Stack<>();
     private Map<String, String> orderNotes = new HashMap<>();
 
+
+    @FXML
+    private void onLogoutButtonClick() {
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        stage.close();
+    }
+
     @FXML
     private void initialize() {
-        classic.setOnAction(event -> addItemToOrder("Classic"));
-        bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon"));
-        mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss"));
-        spicy.setOnAction(event -> addItemToOrder("Spicy Jalapeño"));
-        hawaiian.setOnAction(event -> addItemToOrder("Hawaiian Pineapple"));
-        veggie.setOnAction(event -> addItemToOrder("Veggie Bean"));
-        beyond.setOnAction(event -> addItemToOrder("Veggie Bean"));
-        mediterranean.setOnAction(event -> addItemToOrder("Mediterranean Falafel"));
-        teriyaki.setOnAction(event -> addItemToOrder("Teriyaki Salmon"));
-        breakfast.setOnAction(event -> addItemToOrder("Breakfast Burger"));
-        coke.setOnAction(event -> addItemToOrder("Coke"));
-        fanta.setOnAction(event -> addItemToOrder("Fanta"));
-        sprite.setOnAction(event -> addItemToOrder("Sprite"));
-        icedtea.setOnAction(event -> addItemToOrder("Iced tea"));
-        icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
-        beyond.setOnAction(event -> addItemToOrder("Beyond Burger"));
+//        classic.setOnAction(event -> addItemToOrder("Classic"));
+//        bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon"));
+//        mushroomswiss.setOnAction(event -> addItemToOrder("Mushroom Swiss"));
+//        spicy.setOnAction(event -> addItemToOrder("Spicy Jalapeño"));
+//        hawaiian.setOnAction(event -> addItemToOrder("Hawaiian Pineapple"));
+//        veggie.setOnAction(event -> addItemToOrder("Veggie Bean"));
+//        beyond.setOnAction(event -> addItemToOrder("Veggie Bean"));
+//        mediterranean.setOnAction(event -> addItemToOrder("Mediterranean Falafel"));
+//        teriyaki.setOnAction(event -> addItemToOrder("Teriyaki Salmon"));
+//        breakfast.setOnAction(event -> addItemToOrder("Breakfast Burger"));
+//        coke.setOnAction(event -> addItemToOrder("Coke"));
+//        fanta.setOnAction(event -> addItemToOrder("Fanta"));
+//        sprite.setOnAction(event -> addItemToOrder("Sprite"));
+//        icedtea.setOnAction(event -> addItemToOrder("Iced tea"));
+//        icedcoffee.setOnAction(event -> addItemToOrder("Iced Coffee"));
+//        beyond.setOnAction(event -> addItemToOrder("Beyond Burger"));
 
         restart.setOnAction(event -> restartOrder());
         applynotes.setOnAction(event -> applyNoteToSelectedItem());
