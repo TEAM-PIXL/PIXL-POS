@@ -1,0 +1,6 @@
+# _config.yml
+sass:
+  style: compressed 
+exclude:
+  - assets/css/
+  - "**/*.scss"
