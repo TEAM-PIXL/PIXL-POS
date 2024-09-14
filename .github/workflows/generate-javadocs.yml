@@ -30,16 +30,11 @@ jobs:
         run: |
           mvn clean package source:jar javadoc:jar -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
 
-      - name: Install Bundler and Update PATH
+      - name: Install Bundler and Jekyll Dependencies in One Step
         run: |
           gem install bundler --user-install
-          echo 'export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"' >> $GITHUB_ENV
-          export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"  # Make it available in the current step
-          bundle --version  # Test if bundler is available
-
-      - name: Install Jekyll Dependencies
-        run: |
-          bundle install --path vendor/bundle
+          export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"
+          bundle install --path vendor/bundle 
 
       - name: Create .nojekyll file
         run: |
