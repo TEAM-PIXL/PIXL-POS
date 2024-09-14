@@ -31,7 +31,7 @@ public class Main {
         - getInstance() {Constructor}
         ===================================================================================================================================================================================================================================*/
 
-        DatabaseHelper.initializeDatabase()
+        DatabaseHelper.initializeDatabase();
         System.out.println("Database initialized and tables created.");
 
         DataStore dataStore = DataStore.getInstance();
