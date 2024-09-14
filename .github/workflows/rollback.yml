@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code with tags
+      - name: Checkout code with full history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -31,29 +31,11 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Revert to Last Successful Commit
+      - name: Revert Changes Since Last Good Commit
         run: |
-          git reset --hard ${{ env.last_good_commit }}
-          git reset HEAD .github/workflows/  # Unstage changes in the workflows directory
+          git revert --no-commit ${{ env.last_good_commit }}..HEAD
+          git commit -m "Reverted to last successful commit due to failure."
 
-      - name: Check for Changes to Commit
-        id: check_changes
+      - name: Force Push Changes
         run: |
-          if git diff --staged --quiet; then
-            echo "No changes to commit."
-            echo "skip_commit=true" >> $GITHUB_ENV
-          else
-            echo "Changes detected."
-            echo "skip_commit=false" >> $GITHUB_ENV
-          fi
-
-      - name: Commit and Push Reversion (if changes)
-        if: env.skip_commit == 'false'
-        run: |
-          git commit -m "Reverted to last successful commit without changing workflows"
-          git push --force  # Force push to ensure the rollback is reflected in the remote branch
-
-      - name: Force Push Reset (No Changes Detected)
-        if: env.skip_commit == 'true'
-        run: |
-          git push --force  # Force push even if there are no changes to commit, to update the branch to the reset commit
+          git push --force
