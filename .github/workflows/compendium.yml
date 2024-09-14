@@ -9,16 +9,16 @@ on:
 
 jobs:
   lint:
-    uses: ./.github/workflows/Compendium/lint.yml
+    uses: ./.github/workflows/lint.yml
 
   build:
     needs: lint
-    uses: ./.github/workflows/Compendium/build.yml
+    uses: ./.github/workflows/build.yml
 
   test:
     needs: build
-    uses: ./.github/workflows/Compendium/test.yml
+    uses: ./.github/workflows/test.yml
 
   deploy:
     needs: test
-    uses: ./.github/workflows/Compendium/deploy.yml
+    uses: ./.github/workflows/deploy.yml
