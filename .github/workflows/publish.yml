@@ -1,0 +1,79 @@
+name: Publish Javadocs
+
+on:
+  workflow_call:
+    inputs:
+      sha:
+        type: string
+        required: true
+        description: 'The commit SHA'
+      ref_name:
+        type: string
+        required: true
+        description: 'The branch name'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Amazon Corretto)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Generate Javadocs for all modules
+        run: |
+          mvn clean package source:jar javadoc:aggregate -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
+
+      - name: List contents of apidocs
+        run: |
+          ls -la target/site/apidocs/
+
+      - name: Configure Git for gh-pages
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
+      - name: Clone gh-pages branch or initialize it
+        run: |
+          if git ls-remote --exit-code --heads https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages; then
+            echo "Branch gh-pages exists. Cloning..."
+            git clone --depth=1 --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
+          else
+            echo "Branch gh-pages does not exist. Creating..."
+            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
+            cd gh-pages
+            git checkout --orphan gh-pages
+            git rm -rf .
+            touch .nojekyll
+            git add .nojekyll
+            git commit -m "Initial gh-pages commit"
+            git push origin gh-pages
+            cd ..
+          fi
+
+      - name: Verify current branch
+        run: |
+          cd gh-pages
+          git branch
+
+      - name: Copy Javadocs to gh-pages root
+        run: |
+          rsync -av --delete target/site/apidocs/* target/site/apidocs/.[!.]* gh-pages/
+
+      - name: List gh-pages directory after copying
+        run: |
+          ls -la gh-pages/
+
+      - name: Deploy to GitHub Pages
+        run: |
+          cd gh-pages
+          git status
+          git add .
+          git commit -m "Deploy Javadocs from ${{ inputs.sha }} on branch ${{ inputs.ref_name }}"
+          git push origin gh-pages
