@@ -129,11 +129,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.10.0</version>
                 <configuration>
-                    <skip>true</skip> <!-- Only skip as a last resort -->
-                    <doclint>none</doclint> <!-- Optionally disable doclint if causing issues -->
-                    <!-- Try setting aggregate to true or false -->
-                    <!-- Specify which packages to include or exclude -->
-                    <excludePackageNames>*:unnamed</excludePackageNames> <!-- Exclude unnamed packages -->
+                    <doclint>none</doclint>
+                    <excludePackageNames>*:unnamed</excludePackageNames>
                 </configuration>
             </plugin>
 
