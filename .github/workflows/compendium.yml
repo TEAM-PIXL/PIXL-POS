@@ -23,6 +23,9 @@ jobs:
     needs: [lint, build, test]
     if: ${{ needs.lint.outputs.success && needs.build.outputs.success && needs.test.outputs.success }}
     uses: ./.github/workflows/deploy.yml
+    with:
+      ref_name: ${{ github.ref_name }}
+      sha: ${{ github.sha }}
 
   rollback:
     needs: [lint, build, test]
