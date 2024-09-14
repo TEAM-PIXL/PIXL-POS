@@ -9,10 +9,9 @@ jobs:
 
     steps:
       - name: Checkout code with full history
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Configure Git User
         run: |
@@ -20,9 +19,7 @@ jobs:
           git config --global user.email "actions@github.com"
 
       - name: Find Last Successful Commit
-        id: find_last_good_commit
         run: |
-          # Retrieve the last successful commit based on deployment tags
           last_good_commit=$(git rev-list --tags='deployed_*' --max-count=1)
           if [[ -z "$last_good_commit" ]]; then
             echo "No previous successful deployment found."
@@ -33,10 +30,15 @@ jobs:
 
       - name: Revert to Last Successful Commit
         run: |
-          # Reset hard to the last successful commit
           git reset --hard ${{ env.last_good_commit }}
-          # Clean up any untracked files and directories
-          git clean -fdx
+          git restore --source=${{ env.last_good_commit }} --staged .github/workflows/  # Exclude workflow files correctly
+          git reset -- .github/workflows/  # Ensure workflow files are not included
+
+      - name: Commit if Necessary
+        run: |
+          if [[ `git status --porcelain` ]]; then
+            git commit -m "Revert to last successful commit due to failure in current build."
+          fi
 
       - name: Push Reverted Changes
         run: |
