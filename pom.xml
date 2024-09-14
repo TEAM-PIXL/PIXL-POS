@@ -133,7 +133,8 @@
                     <show>protected</show>
                     <detectJavaApiLink>true</detectJavaApiLink>
                     <sourcepath>${basedir}/src/main/java</sourcepath>
-                    <additionalJOptions>--module-path ${basedir}/target/classes</additionalJOptions>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <additionalJOptions>${modulepath.option}</additionalJOptions>
                 </configuration>
             </plugin>
 
@@ -181,6 +182,27 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <properties>
+                <modulepath.option>--module-path ${basedir}/target/classes</modulepath.option>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>ci</id>
+            <activation>
+                <property>
+                    <name>env.CI</name>
+                </property>
+            </activation>
+            <properties>
+                <modulepath.option></modulepath.option>
+            </properties>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>
