@@ -47,15 +47,17 @@ jobs:
             echo "skip_commit=false" >> $GITHUB_ENV
           fi
 
-      - name: Commit the Reversion
+      - name: Commit and Push Reversion
         if: env.skip_commit == 'false'
         run: |
           git add .  # Stage all changes for commit (excluding workflows)
           git commit -m "Reverted to last successful commit without changing workflows"
-          git push --force
+          git push --force  # Force push to ensure the rollback is reflected in the remote branch
 
-      - name: Skip Commit (Informational Step)
+      - name: Force Push Reset (No Changes Detected)
         if: env.skip_commit == 'true'
-        run: echo "No changes were detected, skipping commit."
+        run: |
+          git push --force  
+
 
 
