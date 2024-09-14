@@ -58,8 +58,8 @@ jobs:
       - name: Parse Checkstyle output for warnings and errors
         id: parse_checkstyle
         run: |
-          errors=$(grep -c '^\[ERROR\]' checkstyle-result.txt)
-          warnings=$(grep -c '^\[WARN\]' checkstyle-result.txt)
+          errors=$(grep -c '^\[ERROR\]' checkstyle-result.txt || true)
+          warnings=$(grep -c '^\[WARN\]' checkstyle-result.txt || true)
           echo "Warnings: $warnings"
           echo "Errors: $errors"
           echo "errors=$errors" >> $GITHUB_ENV
