@@ -18,14 +18,21 @@ module PIXL.POS {
     requires javafx.fxml;
     requires javafx.graphics;
     requires jbcrypt;
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.engine;
+    requires org.junit.platform.commons;
     requires org.junit.jupiter;
 
+    opens teampixl.com.pixlpos.database to org.junit.platform.commons, org.junit.jupiter.api;
+    opens teampixl.com.pixlpos.constructs to org.junit.platform.commons, org.junit.jupiter.api;
+    opens teampixl.com.pixlpos.authentication to org.junit.platform.commons, org.junit.jupiter.api;
     opens teampixl.com.pixlpos.application to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.loginconsole to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.adminconsole to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.cookconsole to javafx.fxml;
     opens teampixl.com.pixlpos.controllers.waiterconsole to javafx.fxml;
 
+    exports teampixl.com.pixlpos to org.junit.platform.commons, org.junit.jupiter.api;
     exports teampixl.com.pixlpos.application;
     exports teampixl.com.pixlpos.controllers.loginconsole;
     exports teampixl.com.pixlpos.controllers.adminconsole;
