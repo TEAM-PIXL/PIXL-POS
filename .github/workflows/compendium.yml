@@ -21,4 +21,11 @@ jobs:
 
   deploy:
     needs: test
+    if: success()
     uses: ./.github/workflows/deploy.yml
+
+  rollback:
+    needs: [lint, build, test]
+    if: failure()
+    uses: ./.github/workflows/rollback.yml
+
