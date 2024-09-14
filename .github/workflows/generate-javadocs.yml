@@ -30,6 +30,10 @@ jobs:
         run: |
           mvn clean package source:jar javadoc:jar -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
 
+      - name: Create .nojekyll file
+        run: |
+          echo "" > target/site/apidocs/.nojekyll
+
       - name: Upload Javadocs as artifact
         uses: actions/upload-artifact@v4
         with:
