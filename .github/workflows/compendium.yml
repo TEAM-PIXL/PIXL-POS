@@ -1,0 +1,41 @@
+name: Compendium
+
+on:
+  push:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
+
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+
+  build:
+    needs: lint
+    uses: ./.github/workflows/build.yml
+
+  test:
+    needs: build
+    uses: ./.github/workflows/test.yml
+
+  deploy:
+    needs: [lint, build, test]
+    if: ${{ needs.lint.outputs.success && needs.build.outputs.success && needs.test.outputs.success }}
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref_name: ${{ github.ref_name }}
+      sha: ${{ github.sha }}
+
+  publish:
+    needs: deploy
+    if: ${{ needs.deploy.result == 'success' }}
+    uses: ./.github/workflows/publish.yml
+    with:
+      ref_name: ${{ github.ref_name }}
+      sha: ${{ github.sha }}
+
+  rollback:
+    needs: [lint, build, test]
+    if: ${{ !needs.lint.outputs.success || !needs.build.outputs.success || !needs.test.outputs.success }}
+    uses: ./.github/workflows/rollback.yml

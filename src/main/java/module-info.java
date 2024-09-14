@@ -1,4 +1,4 @@
-module PIXL.POS.src {
+module PIXL.POS {
 
     /*===============================================================================================================================================================================
     -------------------------------------------------------------------------->   !!! IMPORTANT !!!   <---------------------------------------------------------------------------
@@ -18,16 +18,27 @@ module PIXL.POS.src {
     requires javafx.fxml;
     requires javafx.graphics;
     requires jbcrypt;
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.engine;
+    requires org.junit.platform.commons;
+    requires org.junit.jupiter;
 
-    opens teampixl.com.pixlpos.application to javafx.fxml;
-    opens teampixl.com.pixlpos.controllers.loginconsole to javafx.fxml;
-    opens teampixl.com.pixlpos.controllers.adminconsole to javafx.fxml;
-    opens teampixl.com.pixlpos.controllers.cookconsole to javafx.fxml;
-    opens teampixl.com.pixlpos.controllers.waiterconsole to javafx.fxml;
+    opens teampixl.com.pixlpos.database;
+    opens teampixl.com.pixlpos.constructs;
+    opens teampixl.com.pixlpos.authentication;
+    opens teampixl.com.pixlpos.application;
+    opens teampixl.com.pixlpos.controllers.loginconsole;
+    opens teampixl.com.pixlpos.controllers.adminconsole;
+    opens teampixl.com.pixlpos.controllers.cookconsole;
+    opens teampixl.com.pixlpos.controllers.waiterconsole;
 
+    exports teampixl.com.pixlpos;
     exports teampixl.com.pixlpos.application;
     exports teampixl.com.pixlpos.controllers.loginconsole;
     exports teampixl.com.pixlpos.controllers.adminconsole;
     exports teampixl.com.pixlpos.controllers.cookconsole;
     exports teampixl.com.pixlpos.controllers.waiterconsole;
+    exports teampixl.com.pixlpos.database;
+    exports teampixl.com.pixlpos.constructs;
+    exports teampixl.com.pixlpos.authentication;
 }
