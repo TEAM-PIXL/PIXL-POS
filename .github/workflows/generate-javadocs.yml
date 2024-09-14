@@ -33,8 +33,7 @@ jobs:
       - name: Install Bundler Locally and Update Path
         run: |
           gem install bundler --user-install
-          echo 'export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"' >> ~/.bashrc
-          source ~/.bashrc
+          echo 'export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"' >> $GITHUB_ENV
 
       - name: Install Jekyll Dependencies
         run: |
