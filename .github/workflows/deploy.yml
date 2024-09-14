@@ -12,6 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Tag Successful Commit
+        if: success()
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
