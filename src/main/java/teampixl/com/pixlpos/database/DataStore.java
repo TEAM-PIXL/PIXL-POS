@@ -139,7 +139,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     /**
      * Returns a map of all ingredients for a menu item.
      * @param menuItem MenuItem - The menu item to get ingredients for.
-     * @return Map<String, Object> - A map of all ingredients for the menu item.
+     * @return Map< - A map of all ingredients for the menu item.
      */
     public Map<String, Object> getMenuItemIngredients(MenuItem menuItem) {
         return getMenuItemIngredientsFromDatabase(menuItem);
@@ -277,7 +277,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     /**
      * Returns a map of all items in an order.
      * @param order Order - The order to get items for.
-     * @return Map<String, Object> - A map of all items in the order.
+     * @return Map - A map of all items in the order.
      */
     public Map<String, Object> getOrderItems(Order order) {
         return getOrderItemsFromDatabase((String) order.getMetadata().metadata().get("order_id"));
@@ -287,7 +287,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * Returns an item in an order with the specified menu item ID.
      * @param order Order - The order to get the item from.
      * @param menuItemId String - The menu item ID to get.
-     * @return Map<String, Object> - The item in the order with the specified menu item ID.
+     * @return Map - The item in the order with the specified menu item ID.
      */
     public Map<String, Object> getOrderItem(Order order, String menuItemId) {
         Map<String, Object> orderItems = getOrderItemsFromDatabase((String) order.getMetadata().metadata().get("order_id"));
