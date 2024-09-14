@@ -23,19 +23,27 @@ jobs:
 
       - name: Install Checkstyle
         run: |
-          curl -LJO "https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.0/checkstyle-10.12.0-all.jar"
+          curl -LJO https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.0/checkstyle-10.12.0-all.jar
           mv checkstyle-10.12.0-all.jar /usr/local/bin/checkstyle.jar
 
-      - name: Run Checkstyle
+      - name: Run Checkstyle and save output
         run: |
-          java -jar /usr/local/bin/checkstyle.jar -c /google_checks.xml src/ > checkstyle-result.txt
+          java -jar /usr/local/bin/checkstyle.jar -c /google_checks.xml src/ > checkstyle-result.txt 2>&1 || true
+        continue-on-error: true
 
       - name: Parse Checkstyle output for warnings and errors
         id: parse_checkstyle
         run: |
-          errors=$(grep -c "error" checkstyle-result.txt)
+          errors=$(grep -o -E "error" checkstyle-result.txt | wc -l)
+          warnings=$(grep -o -E "warning|WARN" checkstyle-result.txt | wc -l)
+          echo "Warnings: $warnings"
           echo "Errors: $errors"
-          if [ "$errors" -gt 0 ]; then
+          echo "errors=$errors" >> $GITHUB_ENV
+
+      - name: Fail if too many warnings or any errors
+        run: |
+          if [ ${{ env.errors }} -gt 0 ]; then
+            echo "Too many warnings or errors found. Failing the job."
             exit 1
           fi
 
