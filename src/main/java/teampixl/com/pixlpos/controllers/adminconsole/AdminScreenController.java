@@ -284,15 +284,20 @@ Methods for user management from here.
         userTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (Users user : listOfUsers) {
-
+            // Uncomment when implementing first and last name columns:
+            // Label firstNameLabel = new Label(user.getMetadata().metadata().get("first_name").toString());
+            // Label lastNameLabel = new Label(user.getMetadata().metadata().get("last_name").toString());
             String readableDate = toReadableDate(user.getMetadata().metadata().get("created_at").toString());
             Label usernameLabel = new Label(user.getMetadata().metadata().get("username").toString());
             Label userSinceLabel = new Label(readableDate);
             Label roleLabel = new Label(user.getMetadata().metadata().get("role").toString());
+            String fullName = user.getMetadata().metadata().get("first_name").toString() + " " + user.getMetadata().metadata().get("last_name").toString();
+            Label fullNameLabel = new Label(fullName);
 
             HBox rowContainer = new HBox(10);
             rowContainer.setAlignment(Pos.CENTER_LEFT);
             rowContainer.setOnMouseClicked(event -> {loadedUser = user; rowHighlight(rowContainer);});
+            userTable.add(fullNameLabel, 0, row);
             userTable.add(usernameLabel,1, row);
             userTable.add(userSinceLabel,2, row);
             userTable.add(roleLabel,3, row);
@@ -340,7 +345,6 @@ Methods for user management from here.
         menuTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (MenuItem menuItem : listOfMenuItems) {
-
             Label priceLabel = new Label(menuItem.getMetadata().metadata().get("price").toString());
             Label menuItemNameLabel = new Label(menuItem.getMetadata().metadata().get("itemName").toString());
             Label itemTypeLabel = new Label(menuItem.getMetadata().metadata().get("itemType").toString());
