@@ -30,6 +30,10 @@ jobs:
         run: |
           mvn clean package source:jar javadoc:jar -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
 
+      - name: List target/site directory
+        run: |
+          ls -la target/site/
+
       - name: Configure Git for gh-pages
         run: |
           git config --global user.name "GitHub Action"
@@ -39,9 +43,17 @@ jobs:
         run: |
           git clone --depth=1 --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
 
+      - name: Clean gh-pages directory
+        run: |
+          rm -rf gh-pages/*
+
       - name: Copy Javadocs to gh-pages root
         run: |
-          cp -r target/site/apidocs/. gh-pages/
+          cp -a target/site/apidocs/. gh-pages/
+
+      - name: List gh-pages directory after copying
+        run: |
+          ls -la gh-pages/
 
       - name: Create .nojekyll in gh-pages
         run: |
