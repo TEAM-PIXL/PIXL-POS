@@ -41,3 +41,8 @@ jobs:
             echo "Too many warnings or errors found. Failing the job."
             exit 1
           fi
+
+  rollback:
+    needs: lint
+    if: failure() && (github.ref == 'refs/heads/quality' || github.ref == 'refs/heads/production')
+    uses: ./.github/workflows/rollback.yml

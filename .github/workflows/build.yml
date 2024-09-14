@@ -26,3 +26,8 @@ jobs:
 
       - name: Build and Run Tests
         run: mvn clean install
+
+  rollback:
+    needs: build
+    if: failure() && (github.ref == 'refs/heads/quality' || github.ref == 'refs/heads/production')
+    uses: ./.github/workflows/rollback.yml

@@ -33,3 +33,8 @@ jobs:
         with:
           name: junit-results
           path: target/surefire-reports
+
+  rollback:
+    needs: test
+    if: failure() && (github.ref == 'refs/heads/quality' || github.ref == 'refs/heads/production')
+    uses: ./.github/workflows/rollback.yml
