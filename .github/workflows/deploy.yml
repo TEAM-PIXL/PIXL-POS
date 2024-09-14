@@ -12,9 +12,10 @@ jobs:
 
       - name: Tag Successful Commit
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@users.noreply.github.com"
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           branch_name=$(echo "${GITHUB_REF#refs/heads/}")
           git tag -a "deployed_${branch_name}_${{ github.sha }}" -m "Deployed for ${{ github.sha }} on $branch_name"
           git push origin "deployed_${branch_name}_${{ github.sha }}"
+
 

@@ -1,16 +1,12 @@
 name: Rollback on Failure
 
 on:
+  workflow_call:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Lint", "Build", "Run Unit Tests"]
-    types:
-      - completed
 
 jobs:
   rollback:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code with tags
         uses: actions/checkout@v4
@@ -41,3 +37,4 @@ jobs:
           git restore --staged .github/workflows/  # Exclude workflow files from the commit
           git commit -m "Revert to last successful commit without changing workflows"
           git push --force
+
