@@ -1,8 +1,7 @@
 name: Rollback on Failure
 
 on:
-  workflow_call:
-  workflow_dispatch:
+  workflow_call:  # This will be triggered by the Compendium workflow if any failures occur
 
 jobs:
   rollback:
@@ -10,34 +9,39 @@ jobs:
 
     steps:
       - name: Checkout code with full history
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Find Last Successful Commit for Branch
-        id: find_commit
-        run: |
-          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
-          last_good_commit=$(git log --tags="deployed_${branch_name}_*" --format=format:"%H" -n 1)
-          if [ -z "$last_good_commit" ]; then
-            echo "No previous successful commit found."
-            exit 1
-          fi
-          echo "Last good commit for branch: $last_good_commit"
-          echo "last_good_commit=$last_good_commit" >> $GITHUB_ENV
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Configure Git User
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Create Rollback Commit Without Workflow Files
+      - name: Find Last Successful Commit
+        id: find_last_good_commit
         run: |
-          git checkout ${{ env.last_good_commit }} -- . ':!**/.github/workflows/*'
-          git checkout -b temp-rollback-branch
-          git commit -m "Rollback to commit ${{ env.last_good_commit }} excluding workflow files"
-          git push origin temp-rollback-branch:development --force
+          # Retrieve the last successful commit based on deployment tags
+          last_good_commit=$(git rev-list --tags=deployed_* --max-count=1)
+          if [[ -z "$last_good_commit" ]]; then
+            echo "No previous successful deployment found."
+            exit 1
+          fi
+          echo "Last good commit: $last_good_commit"
+          echo "last_good_commit=$last_good_commit" >> $GITHUB_ENV
 
-      - name: Clean up Temporary Branch
+      - name: Revert to Last Successful Commit
         run: |
-          git branch -D temp-rollback-branch
+          # Reset hard to the last successful commit
+          git reset --hard ${{ env.last_good_commit }}
+          # Clean up any untracked files and directories
+          git clean -fdx
+
+      - name: Push Reverted Changes
+        run: |
+          # Force push to the repository to revert changes
+          git push origin HEAD:$(echo $GITHUB_REF | sed 's/refs\/heads\///') --force
+          token: ${{ secrets.PAT_TOKEN }}
+
+
