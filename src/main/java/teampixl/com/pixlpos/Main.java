@@ -31,10 +31,10 @@ public class Main {
         - getInstance() {Constructor}
         ===================================================================================================================================================================================================================================*/
 
-        DatabaseHelper.initializeDatabase();
+        DatabaseHelper.initializeDatabase()
         System.out.println("Database initialized and tables created.");
 
-        DataStore dataStore = DataStore.getInstance()
+        DataStore dataStore = DataStore.getInstance();
         dataStore.clearData();
 
         /*===================================================================================================================================================================================================================================
