@@ -6,6 +6,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * This class provides methods to establish a connection to the SQLite database and initialize the database.
+ */
 public class DatabaseHelper {
 
     /*============================================================================================================================================================
@@ -28,6 +31,11 @@ public class DatabaseHelper {
         return dbFile.getAbsolutePath();
     }
 
+    /**
+     * Establishes a connection to the SQLite database.
+     *
+     * @return Connection object
+     */
     public static Connection connect() {
         Connection conn = null;
         try {
@@ -51,6 +59,9 @@ public class DatabaseHelper {
     - menu_item_ingredients: This table stores the relationship between menu items and ingredients.
     ============================================================================================================================================================*/
 
+    /**
+     * Initializes the SQLite database and creates the tables if they do not exist.
+     */
     public static void initializeDatabase() {
         String sqlCreateUsersTable = """
         CREATE TABLE IF NOT EXISTS users (

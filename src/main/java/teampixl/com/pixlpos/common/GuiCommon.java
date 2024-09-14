@@ -3,7 +3,6 @@ package teampixl.com.pixlpos.common;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -12,6 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * Utility class for common GUI operations in the application.
+ * This class provides methods to load different stages and scenes using FXML files.
+ */
 public class GuiCommon {
 
     /*===================================================================================================================================================================================
@@ -23,44 +26,62 @@ public class GuiCommon {
     - HEIGHT: The height of the GUI window.
     - ICON_PATH: The path to the icon image of the application.
     ===================================================================================================================================================================================*/
-
+    /**
+     * The width of the GUI window.
+     */
     public static final int WIDTH = 1280;
+
+    /**
+     * The height of the GUI window.
+     */
     public static final int HEIGHT = 720;
+
+    /**
+     * The path to the icon image of the application.
+     */
     public static final String ICON_PATH = "images/icon.JPG";
 
-    /*===================================================================================================================================================================================
-    Code Description:
-    This section contains the constants for the FXML paths and screen titles.
-
-    Variables:
-    - LOGIN_SCREEN_TITLE: The title of the login screen.
-    - LOGIN_SCREEN_FXML: The path to the FXML file of the login screen.
-    - ADMIN_SCREEN_TITLE: The title of the admin screen.
-    - ADMIN_SCREEN_FXML: The path to the FXML file of the admin screen.
-    - COOK_SCREEN_TITLE: The title of the cook screen.
-    - COOK_SCREEN_FXML: The path to the FXML file of the cook screen.
-    - WAITER_SCREEN_TITLE: The title of the waiter screen.
-    - WAITER_SCREEN_FXML: The path to the FXML file of the waiter screen.
-    ====================================================================================================================================================================================*/
-
+    /**
+     * The title of the login screen.
+     */
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
+
+    /**
+     * The path to the FXML file of the login screen.
+     */
     public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml";
+    /**
+     * The title of the main screen.
+     */
     public static final String ADMIN_SCREEN_TITLE = "Admin Screen";
+    /**
+     * The path to the FXML file of the main screen.
+     */
     public static final String ADMIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/AdminStage.fxml";
+    /**
+     * The title of the cook screen.
+     */
     public static final String COOK_SCREEN_TITLE = "Cook Screen";
+    /**
+     * The path to the FXML file of the cook screen.
+     */
     public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage.fxml";
+    /**
+     * The title of the waiter screen.
+     */
     public static final String WAITER_SCREEN_TITLE = "Waiter Screen";
+    /**
+     * The path to the FXML file of the waiter screen.
+     */
     public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage.fxml";
 
-    /*===================================================================================================================================================================================
-    Code Description:
-    This section contains the method to load a new scene in the application.
-
-    Method:
-    - loadScene: This method loads a new scene in the application by setting the FXML file, title, and node.
-    - loadStage: This method loads a new stage in the application by setting the FXML file, title, and stage.
-    ====================================================================================================================================================================================*/
-
+    /**
+     * Loads a new stage in the application by setting the FXML file, title, and stage.
+     *
+     * @param fxmlPath the path to the FXML file
+     * @param title the title of the stage
+     * @param stage the stage to be loaded
+     */
     public static void loadStage(String fxmlPath, String title, Stage stage) {
         try {
             BorderPane root = new BorderPane();
@@ -75,6 +96,15 @@ public class GuiCommon {
         }
     }
 
+    /**
+     * Loads a new scene in the application by setting the FXML file, title, and node.
+     *
+     * @param fxmlPath the path to the FXML file
+     * @param title the title of the scene
+     * @param node the node to be loaded
+     * @param width the width of the scene
+     * @param height the height of the scene
+     */
     public static void loadScene(String fxmlPath, String title, Node node, int width, int height) {
         if (node == null || node.getScene() == null) {
             System.err.println("Error: Provided node is null or not attached to any scene.");
@@ -92,7 +122,7 @@ public class GuiCommon {
             System.out.println((String) fxmlLoader.getRoot());
 
             if (fxmlLoader.getRoot() == null) {
-                if (ADMIN_SCREEN_FXML != fxmlPath){
+                if (!ADMIN_SCREEN_FXML.equals(fxmlPath)){
                     fxmlLoader.setRoot(new BorderPane());
                 }
             }
@@ -114,6 +144,13 @@ public class GuiCommon {
         }
     }
 
+    /**
+     * Loads a new scene in the application by setting the FXML file, title, and node.
+     *
+     * @param fxmlPath the path to the FXML file
+     * @param title the title of the scene
+     * @param node the node to be loaded
+     */
     public static void loadScene(String fxmlPath, String title, Node node) {
         loadScene(fxmlPath, title, node, WIDTH, HEIGHT);
     }

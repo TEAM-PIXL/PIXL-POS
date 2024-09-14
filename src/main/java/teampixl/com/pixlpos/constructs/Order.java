@@ -7,6 +7,28 @@ import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 
+/**
+ * The Order class is a data structure that holds the information of an order.
+ * <p>
+ * Metadata:
+ * - order_id: UUID
+ * - order_number: orderNumber
+ * - user_id: userId
+ * - order_status: OrderStatus.PENDING
+ * - is_completed: false
+ * - created_at: timestamp for creation
+ * - updated_at: timestamp for last update
+ * <p>
+ * Data:
+ * - menuItems: Map<String, Integer> where key is MenuItem ID and value is the quantity
+ * - total: 0.0
+ * - special_requests: null
+ * - payment_details: null
+ * @see IDataManager
+ * @see MetadataWrapper
+ * @see MenuItem
+ * @see Stock
+ */
 public class Order implements IDataManager {
 
     /*============================================================================================================================================================
@@ -16,6 +38,9 @@ public class Order implements IDataManager {
     - Map object for data
     ============================================================================================================================================================*/
 
+    /**
+     * Enumerations for the status of an order.
+     */
     public enum OrderStatus {
         PENDING,
         IN_PROGRESS,
@@ -46,6 +71,11 @@ public class Order implements IDataManager {
         - payment_details: null
     ============================================================================================================================================================*/
 
+    /**
+     * Constructor for an order.
+     * @param orderNumber The order number.
+     * @param userId The user ID.
+     */
     public Order(int orderNumber, String userId) {
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("order_id", UUID.randomUUID().toString());
@@ -80,6 +110,11 @@ public class Order implements IDataManager {
         - restoreIngredientsToStock(MenuItem menuItem, int quantity): Restores the ingredients to stock.
     ============================================================================================================================================================*/
 
+    /**
+     * Adds a menu item to the order.
+     * @param item The menu item to add.
+     * @param quantity The quantity of the menu item to add.
+     */
     public void addMenuItem(MenuItem item, int quantity) {
         Object menuItemsObj = data.get("menuItems");
 
@@ -102,6 +137,11 @@ public class Order implements IDataManager {
         }
     }
 
+    /**
+     * Removes a menu item from the order.
+     * @param item The menu item to remove.
+     * @param quantity The quantity of the menu item to remove.
+     */
     public void removeMenuItem(MenuItem item, int quantity) {
         Object menuItemsObj = data.get("menuItems");
 
@@ -127,6 +167,11 @@ public class Order implements IDataManager {
         }
     }
 
+    /**
+     * Updates the quantity of a menu item in the order.
+     * @param menuItem The menu item to update.
+     * @param newQuantity The new quantity of the menu item.
+     */
     @SuppressWarnings("unchecked")
     public void updateMenuItem(MenuItem menuItem, int newQuantity) {
         Map<String, Integer> menuItems = (Map<String, Integer>) data.get("menuItems");
@@ -147,6 +192,10 @@ public class Order implements IDataManager {
         data.put("total", currentTotal + (itemPrice * quantity));
     }
 
+    /**
+     * Updates the status of the order.
+     * @param newStatus The new status of the order.
+     */
     public void updateOrderStatus(OrderStatus newStatus) {
         updateMetadata("order_status", newStatus);
         if (newStatus == OrderStatus.COMPLETED) {
@@ -154,6 +203,9 @@ public class Order implements IDataManager {
         }
     }
 
+    /**
+     * Marks the order as completed.
+     */
     public void completeOrder() {
         updateOrderStatus(OrderStatus.COMPLETED);
     }

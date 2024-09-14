@@ -2,13 +2,11 @@ package teampixl.com.pixlpos.authentication;
 
 import teampixl.com.pixlpos.constructs.Users;
 
+/**
+ * This class is responsible for managing the authentication of users. It is responsible for registering and logging in users.
+ * It uses the RegistrationService and LoginService classes to perform these operations.
+ */
 public class AuthenticationManager {
-
-    /**
-     * This class is responsible for managing the authentication of users. It is responsible for registering and logging in users.
-     * It uses the RegistrationService and LoginService classes to perform these operations.
-     */
-
 
     private static final RegistrationService registrationService = new RegistrationService();
     private static final LoginService loginService = new LoginService();
