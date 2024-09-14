@@ -1,0 +1,53 @@
+name: Java Javadoc Generator
+
+on:
+  push:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
+  pull_request:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
+
+jobs:
+  generate-javadocs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Amazon Corretto)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Generate Javadocs for all modules
+        run: |
+          mvn clean package source:jar javadoc:jar -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
+
+      - name: Clone gh-pages branch
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git clone --depth=1 --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
+
+      - name: Copy Javadocs to gh-pages
+        run: |
+          cp -r target/site/apidocs/* gh-pages/
+
+      - name: Create .nojekyll in gh-pages
+        run: |
+          touch gh-pages/.nojekyll  
+
+      - name: Deploy to GitHub Pages
+        run: |
+          cd gh-pages
+          git add .
+          git commit -m "Deploy Javadocs from ${{ github.sha }}"
+          git push
+
