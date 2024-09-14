@@ -18,36 +18,21 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Determine Branch Name
-        id: get_branch
+      - name: Find Last Successful Commit
         run: |
-          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
-          echo "::set-output name=branch_name::$branch_name"
-
-      - name: Find Last Successful Commit Tag for Current Branch
-        id: find_last_good_commit
-        run: |
-          branch_name=${{ steps.get_branch.outputs.branch_name }}
-          last_good_tag=$(git tag --list "deployed_${branch_name}_*" --sort=-creatordate | head -n 1)
-          if [[ -z "$last_good_tag" ]]; then
-            echo "No previous successful deployment found for branch $branch_name."
+          last_good_commit=$(git rev-list --tags='deployed_*' --max-count=1)
+          if [ -z "$last_good_commit" ]; then
+            echo "No previous successful deployment found."
             exit 1
           fi
-          echo "Last good tag for branch $branch_name: $last_good_tag"
-          echo "last_good_tag=$last_good_tag" >> $GITHUB_ENV
+          echo "Last good commit: $last_good_commit"
+          echo "last_good_commit=$last_good_commit" >> $GITHUB_ENV
 
-      - name: Revert to Last Successful Commit
+      - name: Revert to Last Successful Commit (excluding workflow files)
         run: |
-          git fetch --tags
-          git reset --hard ${{ env.last_good_tag }}
-          git clean -fdx  # Clean up any untracked files and directories
-          # Exclude workflow files from being reset
-          git restore --staged .github/workflows/
-          git reset -- .github/workflows/
-
-      - name: Reconfigure Remote with PAT
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+          git reset --hard ${{ env.last_good_commit }}
+          git reset --soft HEAD@{1}  # Keep the reset commit but make changes unstaged
+          git restore --staged .github/workflows/  # Exclude workflow files from the commit
 
       - name: Check for Changes to Commit
         id: check_changes
@@ -58,16 +43,18 @@ jobs:
           else
             echo "Changes detected."
             echo "skip_commit=false" >> $GITHUB_ENV
+          fi
 
-      - name: Commit and Push Reversion (if changes)
+      - name: Commit and Push if changes detected
         if: env.skip_commit == 'false'
         run: |
           git commit -m "Reverted to last successful commit without changing workflows"
-          git push origin HEAD:${{ steps.get_branch.outputs.branch_name }} --force 
-          
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+          git push --force
 
       - name: Force Push Reset (No Changes Detected)
         if: env.skip_commit == 'true'
         run: |
-          echo "No changes were detected, repository state is already at the last successful state."
+          echo "No changes were detected, but ensuring branch is reset to the last good commit."
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin HEAD:${{ steps.get_branch.outputs.branch_name }} --force
