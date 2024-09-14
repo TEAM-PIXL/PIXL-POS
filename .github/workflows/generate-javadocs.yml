@@ -30,10 +30,12 @@ jobs:
         run: |
           mvn clean package source:jar javadoc:jar -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
 
-      - name: Install Bundler Locally and Update Path
+      - name: Install Bundler and Update PATH
         run: |
           gem install bundler --user-install
           echo 'export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"' >> $GITHUB_ENV
+          export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"  # Make it available in the current step
+          bundle --version  # Test if bundler is available
 
       - name: Install Jekyll Dependencies
         run: |
@@ -60,3 +62,4 @@ jobs:
           git add .
           git commit -m "Deploy Javadocs from ${{ github.sha }}"
           git push
+
