@@ -35,6 +35,7 @@ jobs:
         run: |
           git reset --hard ${{ env.last_good_commit }}
           git restore --source=${{ env.last_good_commit }} --staged .github/workflows/  # Restore workflow files as they were
+          git reset -- .github/workflows/  # Exclude workflow files from the hard reset
 
       - name: Check for Changes to Commit
         id: check_changes
@@ -47,17 +48,15 @@ jobs:
             echo "skip_commit=false" >> $GITHUB_ENV
           fi
 
-      - name: Commit and Push Reversion
+      - name: Commit and Push Reversion (if changes)
         if: env.skip_commit == 'false'
         run: |
           git add .  # Stage all changes for commit (excluding workflows)
           git commit -m "Reverted to last successful commit without changing workflows"
-          git push --force  # Force push to ensure the rollback is reflected in the remote branch
+          git push --force  
 
       - name: Force Push Reset (No Changes Detected)
         if: env.skip_commit == 'true'
         run: |
           git push --force  
-
-
 
