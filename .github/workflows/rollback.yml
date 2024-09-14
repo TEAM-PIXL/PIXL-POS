@@ -9,10 +9,9 @@ jobs:
 
     steps:
       - name: Checkout code with full history
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Configure Git User
         run: |
@@ -27,9 +26,11 @@ jobs:
             exit 1
           fi
 
-      - name: Revert to Last Successful Commit
+      - name: Revert to Last Successful Commit (excluding workflow files)
         run: |
-          git reset --hard $last_good_commit
-          git clean -fdx
-          git push origin HEAD:$(echo $GITHUB_REF | sed 's/refs\/heads\///') --force
-          token: ${{ secrets.PAT_TOKEN }}
+          git reset --hard ${{ env.last_good_commit }}
+          git reset --soft HEAD@{1}  # Keep the reset commit but make changes unstaged
+          git restore --staged .github/workflows/  # Exclude workflow files from the commit
+          git commit -m "Revert to last successful commit without changing workflows"
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+          git push --force
