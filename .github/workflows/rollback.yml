@@ -36,9 +36,24 @@ jobs:
           git reset --hard ${{ env.last_good_commit }}
           git restore --source=${{ env.last_good_commit }} --staged .github/workflows/  # Restore workflow files as they were
 
+      - name: Check for Changes to Commit
+        id: check_changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            echo "skip_commit=true" >> $GITHUB_ENV
+          else
+            echo "Changes detected."
+            echo "skip_commit=false" >> $GITHUB_ENV
+
       - name: Commit the Reversion
+        if: env.skip_commit == 'false'
         run: |
           git add .  # Stage all changes for commit (excluding workflows)
           git commit -m "Reverted to last successful commit without changing workflows"
           git push --force
+
+      - name: Skip Commit (Informational Step)
+        if: env.skip_commit == 'true'
+        run: echo "No changes were detected, skipping commit."
 
