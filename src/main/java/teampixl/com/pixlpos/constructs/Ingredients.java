@@ -7,6 +7,23 @@ import java.util.UUID;
 import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
+/**
+ * Represents an ingredient with associated metadata and data. Implements IDataManager.
+ * <p>
+ * Metadata:
+ * - ingredient_id: UUID
+ * - itemName: itemName
+ * - stockStatus: stockStatus
+ * - onOrder: onOrder
+ * - lastUpdated: timestamp for last update
+ * <p>
+ * Data:
+ * - unit: unitType
+ * - numeral: numeral
+ * - notes: notes
+ * @see IDataManager
+ * @see MetadataWrapper
+ */
 public class Ingredients implements IDataManager {
 
     /*===============================================================================================================================================================================================================
@@ -35,19 +52,22 @@ public class Ingredients implements IDataManager {
         - notes: notes
     ===============================================================================================================================================================================================================*/
 
+    /**
+     * Constructor for Ingredients object.
+     * @param itemName Name of the ingredient.
+     * @param notes Notes about the ingredient.
+     */
     public Ingredients(String itemName, String notes) {
         if (itemName == null || itemName.isEmpty()) {
             throw new IllegalArgumentException("itemName cannot be null or empty");
         }
 
-        // Metadata
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("ingredient_id", UUID.randomUUID().toString());
         metadataMap.put("itemName", itemName);
 
         this.metadata = new MetadataWrapper(metadataMap);
 
-        // Data
         this.data = new HashMap<>();
         data.put("notes", notes);
     }

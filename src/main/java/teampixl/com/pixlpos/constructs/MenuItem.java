@@ -7,6 +7,30 @@ import java.util.UUID;
 import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
+/**
+ * The MenuItem class represents a menu item in the system. It contains metadata, data, and ingredients.
+ * <p>
+ * Metadata:
+ * - id: UUID
+ * - itemName: itemName
+ * - price: price
+ * - itemType: itemType
+ * - activeItem: activeItem
+ * - dietaryRequirement: dietaryRequirement
+ * - created_at: timestamp for creation
+ * - updated_at: timestamp for last update
+ * <p>
+ * Data:
+ * - description: description
+ * - notes: null
+ * - amountOrdered: 0
+ * - ingredients: map to store ingredients using ingredient_id as the key and IngredientAmount as the value
+ * Ingredients:
+ * - IngredientAmount: a record to hold an ingredient and its corresponding numeral
+ * @see MetadataWrapper
+ * @see IDataManager
+ * @see Ingredients
+ */
 public class MenuItem implements IDataManager {
 
     /*============================================================================================================================================================
@@ -17,6 +41,9 @@ public class MenuItem implements IDataManager {
     - Map to store ingredients
     ============================================================================================================================================================*/
 
+    /**
+     * Enumerations for ItemType
+     */
     public enum ItemType {
         ENTREE,
         MAIN,
@@ -24,6 +51,9 @@ public class MenuItem implements IDataManager {
         DRINK
     }
 
+    /**
+     * Enumerations for DietaryRequirement
+     */
     public enum DietaryRequirement {
         VEGAN,
         VEGETARIAN,
@@ -58,6 +88,16 @@ public class MenuItem implements IDataManager {
         - ingredients: map to store ingredients using ingredient_id as the key and IngredientAmount as the value
     ============================================================================================================================================================*/
 
+    /**
+     * Constructor for MenuItem object.
+     *
+     * @param itemName name of the item
+     * @param price price of the item
+     * @param itemType type of the item
+     * @param activeItem whether the item is active
+     * @param description description of the item
+     * @param dietaryRequirement dietary requirement of the item
+     */
     public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description, DietaryRequirement dietaryRequirement) {
         if (itemName == null || itemName.isEmpty()) {
             throw new IllegalArgumentException("itemName cannot be null or empty");
@@ -69,7 +109,6 @@ public class MenuItem implements IDataManager {
             throw new IllegalArgumentException("description cannot be null or empty");
         }
 
-        // Metadata
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("id", UUID.randomUUID().toString());
         metadataMap.put("itemName", itemName);
@@ -86,7 +125,6 @@ public class MenuItem implements IDataManager {
 
         this.metadata = new MetadataWrapper(metadataMap);
 
-        // Data
         this.data = new HashMap<>();
         this.data.put("description", description);
         this.data.put("notes", null);
@@ -98,20 +136,22 @@ public class MenuItem implements IDataManager {
     Code Description:
     This section of the code contains methods to add, update, remove, clear and check for ingredients in a MenuItem object.
 
-    Methods:
-    - getIngredients(): returns ingredients
-    - addIngredient(Ingredients ingredient, Object numeral): adds ingredient with a numeral
-    - updateIngredient(String oldIngredientId, Ingredients newIngredient, Object numeral): updates ingredient with a numeral
-    - removeIngredient(Ingredients ingredient): removes ingredient
-    - clearIngredients(): clears ingredients
-    - hasIngredient(String ingredientId): checks if ingredient exists
-    - updateTimestamp(): updates timestamp
+
     =========================================================================================================================================================================================================*/
 
+    /**
+     * Get the ingredients of the menu item.
+     * @return ingredients
+     */
     public Map<String, IngredientAmount> getIngredients() {
         return ingredients;
     }
 
+    /**
+     * Add an ingredient to the menu item.
+     * @param ingredient ingredient to add
+     * @param numeral amount of the ingredient
+     */
     public void addIngredient(Ingredients ingredient, Object numeral) {
         if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
             throw new IllegalArgumentException("Numeral must be a non-negative value.");
@@ -131,6 +171,12 @@ public class MenuItem implements IDataManager {
         updateTimestamp();
     }
 
+    /**
+     * Update an ingredient in the menu item.
+     * @param oldIngredientId ID of the ingredient to update
+     * @param newIngredient new ingredient to replace the old ingredient
+     * @param numeral new amount of the ingredient
+     */
     public void updateIngredient(String oldIngredientId, Ingredients newIngredient, Object numeral) {
         if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
             throw new IllegalArgumentException("Numeral must be a non-negative value.");
@@ -146,6 +192,10 @@ public class MenuItem implements IDataManager {
         updateTimestamp();
     }
 
+    /**
+     * Remove an ingredient from the menu item.
+     * @param ingredient ingredient to remove
+     */
     public void removeIngredient(Ingredients ingredient) {
         String ingredientId = (String) ingredient.getMetadata().metadata().get("ingredient_id");
 
@@ -157,6 +207,11 @@ public class MenuItem implements IDataManager {
         }
     }
 
+    /**
+     * Check if the menu item has an ingredient.
+     * @param ingredientId ID of the ingredient to check
+     * @return true if the menu item has the ingredient, false otherwise
+     */
     public boolean hasIngredient(String ingredientId) {
         return ingredients.containsKey(ingredientId);
     }
