@@ -1,0 +1,60 @@
+name: Java Javadoc Generator
+
+on:
+  push:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
+  pull_request:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
+
+jobs:
+  generate-javadocs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Amazon Corretto)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Generate Javadocs for all modules
+        run: |
+          mvn clean package source:jar javadoc:jar -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
+
+      - name: Install Bundler and Jekyll Dependencies
+        run: |
+          gem install bundler --user-install
+          export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"
+          bundle config set path 'vendor/bundle'  # Recommended configuration instead of --path flag
+          bundle install  # Install Jekyll and dependencies
+
+      - name: Create .nojekyll file
+        run: |
+          echo "" > target/site/apidocs/.nojekyll
+
+      - name: Upload Javadocs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: javadocs
+          path: 'target/site/apidocs/**'
+
+      - name: Deploy Javadocs to GitHub Pages
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/quality' || github.ref == 'refs/heads/production')
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git clone --depth=1 --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
+          cd gh-pages
+          cp -r ../target/site/apidocs/* ./
+          git add .
+          git commit -m "Deploy Javadocs from ${{ github.sha }}"
+          git push
