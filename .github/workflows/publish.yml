@@ -41,7 +41,7 @@ jobs:
 
       - name: Copy Javadocs to gh-pages root
         run: |
-          cp -r target/site/apidocs/* gh-pages/
+          cp -r target/site/apidocs/. gh-pages/
 
       - name: Create .nojekyll in gh-pages
         run: |
