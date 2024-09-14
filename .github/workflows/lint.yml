@@ -37,7 +37,7 @@ jobs:
       - name: Display Checkstyle Errors
         run: |
           echo "### Checkstyle Errors:"
-          grep '^\[ERROR\]' checkstyle-result.txt || echo "No errors found."
+          grep -o -E "error" checkstyle-result.txt || echo "No errors found."
 
       - name: Count Checkstyle Errors
         id: parse_checkstyle
