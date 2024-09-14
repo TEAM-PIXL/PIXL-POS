@@ -34,8 +34,11 @@ jobs:
       - name: Revert to Last Successful Commit (excluding workflow files)
         run: |
           git reset --hard ${{ env.last_good_commit }}
-          git reset --soft HEAD@{1}  # Keep the reset commit but make changes unstaged
-          git restore --staged .github/workflows/  # Exclude workflow files from the commit
-          git commit -m "Revert to last successful commit without changing workflows"
+          git restore --source=${{ env.last_good_commit }} --staged .github/workflows/  # Restore workflow files as they were
+
+      - name: Commit the Reversion
+        run: |
+          git add .  # Stage all changes for commit (excluding workflows)
+          git commit -m "Reverted to last successful commit without changing workflows"
           git push --force
 
