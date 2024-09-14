@@ -30,11 +30,12 @@ jobs:
         run: |
           mvn clean package source:jar javadoc:jar -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
 
-      - name: Install Bundler and Jekyll Dependencies in One Step
+      - name: Install Bundler and Jekyll Dependencies
         run: |
           gem install bundler --user-install
           export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"
-          bundle install --path vendor/bundle 
+          bundle config set path 'vendor/bundle'  # Recommended configuration instead of --path flag
+          bundle install  # Install Jekyll and dependencies
 
       - name: Create .nojekyll file
         run: |
@@ -57,4 +58,3 @@ jobs:
           git add .
           git commit -m "Deploy Javadocs from ${{ github.sha }}"
           git push
-
