@@ -139,7 +139,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     /**
      * Returns a map of all ingredients for a menu item.
      * @param menuItem MenuItem - The menu item to get ingredients for.
-     * @return Map< - A map of all ingredients for the menu item.
+     * @return Map - A map of all ingredients for the menu item.
      */
     public Map<String, Object> getMenuItemIngredients(MenuItem menuItem) {
         return getMenuItemIngredientsFromDatabase(menuItem);
