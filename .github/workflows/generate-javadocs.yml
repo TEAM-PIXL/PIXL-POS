@@ -30,11 +30,11 @@ jobs:
         run: |
           mvn clean package source:jar javadoc:jar -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
 
-      - name: Install Bundler Locally
+      - name: Install Bundler Locally and Update Path
         run: |
           gem install bundler --user-install
-          echo 'export PATH="$HOME/.gem/ruby/3.0.0/bin:$PATH"' >> $BASH_ENV
-          source $BASH_ENV
+          echo 'export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"' >> ~/.bashrc
+          source ~/.bashrc
 
       - name: Install Jekyll Dependencies
         run: |
