@@ -198,16 +198,21 @@ Methods for user management from here.
             return;
         }
         try{
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
             String username = usernameField.getText();
             String password = passwordField.getText();
             String email = emailField.getText();
             Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
-            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || firstName.isEmpty() ||
+                    lastName.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
             }else {
 
 
                 try {
+                    loadedUser.updateMetadata("first_name", firstName);
+                    loadedUser.updateMetadata("last_name", lastName);
                     loadedUser.updateMetadata("username", username);
                     loadedUser.updateMetadata("role", role);
                     loadedUser.setDataValue("password", password);
