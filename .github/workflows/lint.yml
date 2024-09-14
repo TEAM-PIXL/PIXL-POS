@@ -18,11 +18,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17 (Amazon Corretto)
+      - name: Set up JDK 21 (Amazon Corretto)
         uses: actions/setup-java@v4
         with:
           distribution: 'corretto'
-          java-version: '17'
+          java-version: '21'
 
       - name: Install Checkstyle
         run: |
@@ -31,7 +31,7 @@ jobs:
 
       - name: Download Checkstyle Configuration
         run: |
-          curl -LJO https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml
+          curl -LJO https://raw.githubusercontent.com/checkstyle/checkstyle/checkstyle-10.12.0/src/main/resources/google_checks.xml
           mv google_checks.xml /usr/local/bin/google_checks.xml
 
       - name: Verify Checkstyle JAR File
