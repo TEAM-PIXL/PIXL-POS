@@ -31,11 +31,11 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Revert to Last Successful Commit (excluding workflow files)
+      - name: Revert to Last Successful Commit (excluding all workflow files)
         run: |
           git reset --hard ${{ env.last_good_commit }}
-          git restore --source=${{ env.last_good_commit }} --staged .github/workflows/  # Restore workflow files as they were
-          git reset -- .github/workflows/  # Exclude workflow files from the hard reset
+          git restore --source=${{ env.last_good_commit }} --staged .github/workflows/  
+          git reset -- .github/workflows/ 
 
       - name: Check for Changes to Commit
         id: check_changes
@@ -53,7 +53,7 @@ jobs:
         run: |
           git add .  # Stage all changes for commit (excluding workflows)
           git commit -m "Reverted to last successful commit without changing workflows"
-          git push --force  
+          git push --force  # Force push to ensure the rollback is reflected in the remote branch
 
       - name: Force Push Reset (No Changes Detected)
         if: env.skip_commit == 'true'
