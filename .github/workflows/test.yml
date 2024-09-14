@@ -2,14 +2,17 @@ name: Run Unit Tests
 
 on:
   workflow_call:
+    outputs:
+      success:
+        description: 'Whether the test job succeeded.'
+        value: ${{ jobs.test.outputs.success }}
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     outputs:
-      success: ${{ steps.junit.outcome == 'success' }}
+      success: ${{ job.status == 'success' }}
 
     steps:
       - name: Checkout code
@@ -36,3 +39,4 @@ jobs:
         with:
           name: junit-results
           path: target/surefire-reports
+

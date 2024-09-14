@@ -2,14 +2,17 @@ name: Java Linter
 
 on:
   workflow_call:
+    outputs:
+      success:
+        description: 'Whether the lint job succeeded.'
+        value: ${{ jobs.lint.outputs.success }}
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     outputs:
-      success: ${{ steps.parse_checkstyle.outcome == 'success' }}
+      success: ${{ job.status == 'success' }}
 
     steps:
       - name: Checkout code
@@ -40,10 +43,9 @@ jobs:
           echo "Errors: $errors"
           echo "errors=$errors" >> $GITHUB_ENV
 
-      - name: Fail if too many warnings or any errors
+      - name: Fail if any errors
         run: |
           if [ ${{ env.errors }} -gt 0 ]; then
-            echo "Too many warnings or errors found. Failing the job."
+            echo "Errors found. Failing the job."
             exit 1
           fi
-
