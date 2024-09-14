@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  workflow_call:
+    outputs:
+      success:
+        description: 'Whether the build job succeeded.'
+        value: ${{ jobs.build.outputs.success }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    outputs:
+      success: ${{ job.status == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Amazon Corretto)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Build with Maven
+        id: build
+        run: mvn clean install
