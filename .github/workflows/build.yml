@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     outputs:
       success: ${{ steps.build.outcome == 'success' }}

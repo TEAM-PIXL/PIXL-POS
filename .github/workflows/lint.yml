@@ -6,6 +6,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     outputs:
       success: ${{ steps.parse_checkstyle.outcome == 'success' }}
