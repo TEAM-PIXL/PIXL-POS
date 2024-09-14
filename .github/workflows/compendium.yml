@@ -6,6 +6,11 @@ on:
       - 'development'
       - 'quality'
       - 'production'
+  pull_request:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
 
 jobs:
   lint:
