@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="8" />
+    <option name="CUSTOM_SCOPE_NAME" value="Project Production Files" />
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5dfbab93-b76d-4b3c-a93b-19c3d6002425" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/generate-javadocs.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/generate-javadocs.yml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="FxmlFile" />
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="package-info" />
+        <option value="module-info" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="development" />
+                <branch-info repo="$PROJECT_DIR$" source="feature/loginscreenui/v0.1" />
+              </list>
+            </value>
+          </entry>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/development" />
+                <branch-info repo="$PROJECT_DIR$" source="origin/feature/waitercontroller/v0.1" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature/admincontrollers/v0.2" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;parkermmr&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:TEAM-PIXL/PIXL-POS.git&quot;,
+    &quot;accountId&quot;: &quot;ff513fb6-3c9d-472c-b849-0fdd8fd42ee4&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="MavenRunner">
+    <option name="jreName" value="corretto-21" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2l5IecwdhfROjEuEgCrZxhRlRw5" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.PIXL-POS.executor&quot;: &quot;Run&quot;,
+    &quot;Application.POSApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.POSApplicationLauncher.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStoreTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStoreTest.testGetMenuItem.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStoreTest.testGetUser.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStoreTest.testRemoveOrderItem.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStoreTest.testUpdateIngredient.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStoreTest.testUpdateOrderItem.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.IngredientsTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MainTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MenuItemTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MenuItemTest.testSetDataValue.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MenuItemTest.testToString.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MenuItemTest.testUpdateIngredient.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.OrderTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.OrderTest.testToString.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PasswordUtilsTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StockTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UsersTest.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#47 on development&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;22&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/parke/OneDrive/Documents/SoftwareEngineering/Semester2-2024/CAB302/PIXL-POS/src/test/java/teampixl/com/pixlpos&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\parke\OneDrive\Documents\SoftwareEngineering\Semester2-2024\CAB302\PIXL-POS\src\test\java\teampixl\com\pixlpos" />
+      <recent name="C:\Users\parke\OneDrive\Documents\SoftwareEngineering\Semester2-2024\CAB302\PIXL-POS\src\test\java" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\parke\OneDrive\Documents\SoftwareEngineering\Semester2-2024\CAB302\PIXL-POS\src\main\java\teampixl\com\pixlpos" />
+      <recent name="C:\Users\parke\OneDrive\Documents\SoftwareEngineering\Semester2-2024\CAB302\PIXL-POS\src" />
+      <recent name="C:\Users\parke\OneDrive\Documents\SoftwareEngineering\Semester2-2024\CAB302\PIXL-POS\Documents" />
+      <recent name="C:\Users\parke\OneDrive\Documents\SoftwareEngineering\Semester2-2024\CAB302\PIXL-POS\src\main\resources\teampixl\com\pixlpos\fxml" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="PIXL-POS" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="corretto-21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="teampixl.com.pixlpos.application.POSApplicationLauncher" />
+      <module name="PIXL-POS" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.18034.62" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.18034.62" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5dfbab93-b76d-4b3c-a93b-19c3d6002425" name="Changes" comment="" />
+      <created>1724463607617</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1724463607617</updated>
+      <workItem from="1724463608592" duration="4000" />
+      <workItem from="1724464219198" duration="33560000" />
+      <workItem from="1724499790301" duration="585000" />
+      <workItem from="1724500510772" duration="755000" />
+      <workItem from="1724542041182" duration="4760000" />
+      <workItem from="1724547348381" duration="764000" />
+      <workItem from="1724548381161" duration="2402000" />
+      <workItem from="1724550881194" duration="8195000" />
+      <workItem from="1724560957577" duration="645000" />
+      <workItem from="1724561621928" duration="370000" />
+      <workItem from="1724562003734" duration="6129000" />
+      <workItem from="1724578595540" duration="2707000" />
+      <workItem from="1724717625015" duration="4661000" />
+      <workItem from="1724729206326" duration="3517000" />
+      <workItem from="1724744905675" duration="1996000" />
+      <workItem from="1724746917930" duration="10078000" />
+      <workItem from="1724802527843" duration="23806000" />
+      <workItem from="1724920915345" duration="630000" />
+      <workItem from="1725003040851" duration="316000" />
+      <workItem from="1725003370589" duration="917000" />
+      <workItem from="1725004472287" duration="3087000" />
+      <workItem from="1725066095784" duration="17950000" />
+      <workItem from="1725093487952" duration="809000" />
+      <workItem from="1725094379549" duration="728000" />
+      <workItem from="1725095124692" duration="939000" />
+      <workItem from="1725096076749" duration="1010000" />
+      <workItem from="1725097152503" duration="2096000" />
+      <workItem from="1725099260255" duration="45000" />
+      <workItem from="1725142468056" duration="699000" />
+      <workItem from="1725143907649" duration="815000" />
+      <workItem from="1725268746491" duration="704000" />
+      <workItem from="1725274425204" duration="152000" />
+      <workItem from="1725274717451" duration="650000" />
+      <workItem from="1725312705005" duration="1055000" />
+      <workItem from="1725320944663" duration="950000" />
+      <workItem from="1725325162178" duration="1054000" />
+      <workItem from="1725326423462" duration="71000" />
+      <workItem from="1725329578186" duration="2898000" />
+      <workItem from="1725336679408" duration="1750000" />
+      <workItem from="1725349588777" duration="32000" />
+      <workItem from="1725363685309" duration="1578000" />
+      <workItem from="1725407067128" duration="107000" />
+      <workItem from="1725411300231" duration="597000" />
+      <workItem from="1725451613919" duration="840000" />
+      <workItem from="1725673827744" duration="1084000" />
+      <workItem from="1725707817216" duration="330000" />
+      <workItem from="1725708356907" duration="358000" />
+      <workItem from="1725756517634" duration="2000" />
+      <workItem from="1725796921116" duration="135000" />
+      <workItem from="1725871962547" duration="464000" />
+      <workItem from="1725872743360" duration="305000" />
+      <workItem from="1725876094491" duration="592000" />
+      <workItem from="1725924031112" duration="3752000" />
+      <workItem from="1725927838243" duration="237000" />
+      <workItem from="1725929170947" duration="621000" />
+      <workItem from="1725929807228" duration="2635000" />
+      <workItem from="1725932475695" duration="46000" />
+      <workItem from="1725936734502" duration="4703000" />
+      <workItem from="1725943046187" duration="150000" />
+      <workItem from="1725953958999" duration="8886000" />
+      <workItem from="1725967599234" duration="77000" />
+      <workItem from="1725967686838" duration="356000" />
+      <workItem from="1725968195296" duration="2737000" />
+      <workItem from="1726271594089" duration="6804000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

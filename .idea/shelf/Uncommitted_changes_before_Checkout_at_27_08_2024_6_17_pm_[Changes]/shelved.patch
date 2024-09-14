@@ -1,0 +1,51 @@
+Index: src/main/java/teampixl/com/pixlpos/application/POSApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teampixl.com.pixlpos.application;\r\n\r\nimport javafx.application.Application;\r\nimport teampixl.com.pixlpos.common.GuiCommon;\r\nimport javafx.stage.Stage;\r\n\r\npublic class POSApplication extends Application {\r\n\r\n    /*===================================================================================================================================================================================\r\n    Code Description:\r\n    Entry point for the POS Application. This class extends the JavaFX Application class and overrides the start method to load the Login Screen FXML file.\r\n    This class utilizes the GuiCommon class to load the Login Screen FXML file and set the title of the stage.\r\n    ====================================================================================================================================================================================*/\r\n\r\n    @Override\r\n    public void start(Stage stage) {\r\n        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);\r\n    }\r\n\r\n    public static void main(String[] args) { launch(); }\r\n}\r\n
+===================================================================
+diff --git a/src/main/java/teampixl/com/pixlpos/application/POSApplication.java b/src/main/java/teampixl/com/pixlpos/application/POSApplication.java
+--- a/src/main/java/teampixl/com/pixlpos/application/POSApplication.java	
++++ b/src/main/java/teampixl/com/pixlpos/application/POSApplication.java	
+@@ -14,6 +14,7 @@
+ 
+     @Override
+     public void start(Stage stage) {
++        stage.setResizable(false);
+         GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);
+     }
+ 
+Index: src/main/java/teampixl/com/pixlpos/common/GuiCommon.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teampixl.com.pixlpos.common;\r\n\r\nimport javafx.fxml.FXMLLoader;\r\nimport javafx.scene.Scene;\r\nimport javafx.stage.Stage;\r\n\r\nimport java.io.IOException;\r\n\r\npublic class GuiCommon {\r\n\r\n    /*===================================================================================================================================================================================\r\n    Code Description:\r\n    This section contains the common constants used in the GUI of the application.\r\n\r\n    Variables:\r\n    - WIDTH: The width of the GUI window.\r\n    - HEIGHT: The height of the GUI window.\r\n    - ICON_PATH: The path to the icon image of the application.\r\n    ===================================================================================================================================================================================*/\r\n\r\n    public static final int WIDTH = 800;\r\n    public static final int HEIGHT = 800;\r\n    public static final String ICON_PATH = \"images/icon.JPG\";\r\n\r\n    /*===================================================================================================================================================================================\r\n    Code Description:\r\n    This section contains the constants for the FXML paths and screen titles.\r\n\r\n    Variables:\r\n    - LOGIN_SCREEN_TITLE: The title of the login screen.\r\n    - LOGIN_SCREEN_FXML: The path to the FXML file of the login screen.\r\n    ====================================================================================================================================================================================*/\r\n\r\n    public static final String LOGIN_SCREEN_TITLE = \"Login Screen\";\r\n    public static final String LOGIN_SCREEN_FXML = \"/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml\";\r\n\r\n    /*===================================================================================================================================================================================\r\n    Code Description:\r\n    This section contains the method to load a new scene in the application.\r\n\r\n    Method:\r\n    - loadScene: This method loads a new scene in the application by setting the FXML file, title, and stage.\r\n    ====================================================================================================================================================================================*/\r\n\r\n    public static void loadScene(String fxmlPath, String title, Stage stage) {\r\n        try {\r\n            FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));\r\n            Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);\r\n            stage.setScene(scene);\r\n            stage.setTitle(title);\r\n            stage.show();\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n}\r\n
+===================================================================
+diff --git a/src/main/java/teampixl/com/pixlpos/common/GuiCommon.java b/src/main/java/teampixl/com/pixlpos/common/GuiCommon.java
+--- a/src/main/java/teampixl/com/pixlpos/common/GuiCommon.java	
++++ b/src/main/java/teampixl/com/pixlpos/common/GuiCommon.java	
+@@ -3,7 +3,7 @@
+ import javafx.fxml.FXMLLoader;
+ import javafx.scene.Scene;
+ import javafx.stage.Stage;
+-
++import javafx.scene.Parent;
+ import java.io.IOException;
+ 
+ public class GuiCommon {
+@@ -45,7 +45,8 @@
+     public static void loadScene(String fxmlPath, String title, Stage stage) {
+         try {
+             FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
+-            Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
++            Parent root = fxmlLoader.load();
++            Scene scene = new Scene(root, WIDTH, HEIGHT);
+             stage.setScene(scene);
+             stage.setTitle(title);
+             stage.show();
+@@ -53,5 +54,6 @@
+             e.printStackTrace();
+         }
+     }
++}
+ 
+-}
++

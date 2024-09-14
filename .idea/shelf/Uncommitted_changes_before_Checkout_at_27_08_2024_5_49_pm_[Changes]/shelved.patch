@@ -1,0 +1,14 @@
+Index: src/main/java/teampixl/com/pixlpos/authentication/.authentication.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>## Authentication Package\r\n\r\nThis package contains the classes that are responsible for authenticating the user. The classes in this package are responsible for verifying the user's credentials and generating the authentication token.\r\nAt this point, the authentication package only handles authorization using a username and password. In the future, we may add other authentication methods such as OAuth using methods such as token-based authentication. The methods usable in this package are:\r\n\r\n```\r\n- authenticate(String username, String password): String\r\n- register(String username, String password, String email, Users.UserRole role): boolean\r\n- registUser(String username, String password, String email, Users.UserRole role): boolean\r\n- login(String username, String password): String\r\n- hashPassword(String password): String\r\n- verifyPassword(String password, String hash): boolean\r\n```\r\n\r\n## Token Authentication\r\n\r\nIn future the authentication package will be able to generate and verify tokens. The prototype token authentication methods are:\r\n\r\n```\r\n- verifyToken(String token): boolean\r\n- getUsernameFromToken(String token): String\r\n- getExpirationDateFromToken(String token): Date\r\n- generateToken(String username): String\r\n- isTokenExpired(String token): boolean\r\n- getClaimsFromToken(String token): Claims\r\n- generateExpirationDate(): Date\r\n- generateExpirationDate(long expiration): Date\r\n- generateExpirationDate(Date createdDate): Date\r\n- generateExpirationDate(Date createdDate, long expiration): Date\r\n```
+===================================================================
+diff --git a/src/main/java/teampixl/com/pixlpos/authentication/.authentication.md b/src/main/java/teampixl/com/pixlpos/authentication/.authentication.md
+--- a/src/main/java/teampixl/com/pixlpos/authentication/.authentication.md	
++++ b/src/main/java/teampixl/com/pixlpos/authentication/.authentication.md	
+@@ -1,4 +1,4 @@
+-## Authentication Package
++    ## Authentication Package
+ 
+ This package contains the classes that are responsible for authenticating the user. The classes in this package are responsible for verifying the user's credentials and generating the authentication token.
+ At this point, the authentication package only handles authorization using a username and password. In the future, we may add other authentication methods such as OAuth using methods such as token-based authentication. The methods usable in this package are:

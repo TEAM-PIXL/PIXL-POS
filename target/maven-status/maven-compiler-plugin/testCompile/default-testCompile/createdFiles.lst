@@ -1,0 +1,8 @@
+teampixl\com\pixlpos\constructs\StockTest.class
+teampixl\com\pixlpos\constructs\OrderTest.class
+teampixl\com\pixlpos\constructs\IngredientsTest.class
+teampixl\com\pixlpos\database\DataStoreTest.class
+teampixl\com\pixlpos\constructs\UsersTest.class
+teampixl\com\pixlpos\MainTest.class
+teampixl\com\pixlpos\constructs\MenuItemTest.class
+teampixl\com\pixlpos\authentication\PasswordUtilsTest.class
