@@ -1,7 +1,7 @@
 name: Rollback on Failure
 
 on:
-  workflow_call:  # This will be triggered by the Compendium workflow if any failures occur
+  workflow_call:
 
 jobs:
   rollback:
@@ -20,28 +20,16 @@ jobs:
           git config --global user.email "actions@github.com"
 
       - name: Find Last Successful Commit
-        id: find_last_good_commit
         run: |
-          # Retrieve the last successful commit based on deployment tags
-          last_good_commit=$(git rev-list --tags=deployed_* --max-count=1)
-          if [[ -z "$last_good_commit" ]]; then
+          last_good_commit=$(git rev-list --tags='deployed_*' --max-count=1)
+          if [ -z "$last_good_commit" ]; then
             echo "No previous successful deployment found."
             exit 1
           fi
-          echo "Last good commit: $last_good_commit"
-          echo "last_good_commit=$last_good_commit" >> $GITHUB_ENV
 
       - name: Revert to Last Successful Commit
         run: |
-          # Reset hard to the last successful commit
-          git reset --hard ${{ env.last_good_commit }}
-          # Clean up any untracked files and directories
+          git reset --hard $last_good_commit
           git clean -fdx
-
-      - name: Push Reverted Changes
-        run: |
-          # Force push to the repository to revert changes
           git push origin HEAD:$(echo $GITHUB_REF | sed 's/refs\/heads\///') --force
           token: ${{ secrets.PAT_TOKEN }}
-
-

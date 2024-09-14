@@ -9,15 +9,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Tag Successful Commit
-        if: success()
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
-          git tag -a "deployed_${branch_name}_${{ github.sha }}" -m "Deployed for ${{ github.sha }} on $branch_name"
-          git push origin "deployed_${branch_name}_${{ github.sha }}"
+          git tag -a "deployed_{{ github.ref_name }}_{{ github.sha }}" -m "Deployment tag for {{ github.sha }}"
+          git push origin "deployed_{{ github.ref_name }}_{{ github.sha }}"
 
 

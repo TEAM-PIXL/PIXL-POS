@@ -7,31 +7,31 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    outputs:
+      success: ${{ steps.junit.outcome == 'success' }}
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v2
         with:
           distribution: 'corretto'
           java-version: '21'
 
       - name: Cache Maven packages
-        uses: actions/cache@v4
+        uses: actions/cache@v2
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
 
       - name: Build and run tests
+        id: junit
         run: mvn test
 
       - name: Archive test results
-        if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
           name: junit-results
           path: target/surefire-reports
-

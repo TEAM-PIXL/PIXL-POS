@@ -10,29 +10,21 @@ on:
 jobs:
   lint:
     uses: ./.github/workflows/lint.yml
-    outputs:
-      lint-success: ${{ steps.lint.outcome == 'success' }}
 
   build:
     needs: lint
     uses: ./.github/workflows/build.yml
-    outputs:
-      build-success: ${{ steps.build.outcome == 'success' }}
 
   test:
     needs: build
     uses: ./.github/workflows/test.yml
-    outputs:
-      test-success: ${{ steps.test.outcome == 'success' }}
 
   deploy:
     needs: [lint, build, test]
-    if: ${{ needs.lint.outputs.lint-success && needs.build.outputs.build-success && needs.test.outputs.test-success }}
+    if: ${{ needs.lint.outputs.success && needs.build.outputs.success && needs.test.outputs.success }}
     uses: ./.github/workflows/deploy.yml
 
   rollback:
     needs: [lint, build, test]
-    if: ${{ !needs.lint.outputs.lint-success || !needs.build.outputs.build-success || !needs.test.outputs.test-success }}
+    if: ${{ !needs.lint.outputs.success || !needs.build.outputs.success || !needs.test.outputs.success }}
     uses: ./.github/workflows/rollback.yml
-
-
