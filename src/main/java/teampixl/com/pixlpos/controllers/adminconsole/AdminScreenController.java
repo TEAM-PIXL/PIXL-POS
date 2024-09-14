@@ -325,8 +325,10 @@ Methods for user management from here.
         Object email = User.getData().get("email");
         Object role = User.getMetadata().metadata().get("role");
         Object fistName = User.getMetadata().metadata().get("first_name");
+        Object lastName = User.getMetadata().metadata().get("last_name");
 
         firstNameField.setText(fistName.toString());
+        lastNameField.setText(lastName.toString());
         usernameField.setText(username.toString());
         passwordField.setText(password.toString());
         emailField.setText(email.toString());
