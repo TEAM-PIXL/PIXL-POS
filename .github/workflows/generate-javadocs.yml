@@ -36,9 +36,9 @@ jobs:
           git config --global user.email "action@github.com"
           git clone --depth=1 --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
 
-      - name: Copy Javadocs to gh-pages
+      - name: Copy Javadocs to gh-pages root
         run: |
-          cp -r target/site/apidocs/* gh-pages/
+          cp -r target/site/apidocs/* gh-pages/ 
 
       - name: Create .nojekyll in gh-pages
         run: |
@@ -50,4 +50,3 @@ jobs:
           git add .
           git commit -m "Deploy Javadocs from ${{ github.sha }}"
           git push
-
