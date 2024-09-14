@@ -45,6 +45,7 @@ jobs:
           else
             echo "Changes detected."
             echo "skip_commit=false" >> $GITHUB_ENV
+          fi
 
       - name: Commit the Reversion
         if: env.skip_commit == 'false'
@@ -56,4 +57,5 @@ jobs:
       - name: Skip Commit (Informational Step)
         if: env.skip_commit == 'true'
         run: echo "No changes were detected, skipping commit."
+
 
