@@ -1,0 +1,24 @@
+name: Compendium
+
+on:
+  push:
+    branches:
+      - 'development'
+      - 'quality'
+      - 'production'
+
+jobs:
+  lint:
+    uses: ./.github/workflows/Compendium/lint.yml
+
+  build:
+    needs: lint
+    uses: ./.github/workflows/Compendium/build.yml
+
+  test:
+    needs: build
+    uses: ./.github/workflows/Compendium/test.yml
+
+  deploy:
+    needs: test
+    uses: ./.github/workflows/Compendium/deploy.yml

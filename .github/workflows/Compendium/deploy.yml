@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+  workflow_call:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Tag Successful Commit
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
+          git tag -a "deployed_${branch_name}_${{ github.sha }}" -m "Deployed for ${{ github.sha }} on $branch_name"
+          git push origin "deployed_${branch_name}_${{ github.sha }}"
+
