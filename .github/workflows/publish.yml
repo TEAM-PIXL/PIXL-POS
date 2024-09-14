@@ -49,7 +49,7 @@ jobs:
 
       - name: Copy Javadocs to gh-pages root
         run: |
-          cp -a target/site/apidocs/. gh-pages/
+          rsync -av --delete target/site/apidocs/ gh-pages/
 
       - name: List gh-pages directory after copying
         run: |
@@ -65,3 +65,4 @@ jobs:
           git add .
           git commit -m "Deploy Javadocs from ${{ inputs.sha }} on branch ${{ inputs.ref_name }}"
           git push origin gh-pages
+
