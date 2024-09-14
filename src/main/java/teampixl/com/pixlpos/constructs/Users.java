@@ -7,6 +7,26 @@ import java.util.UUID;
 import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
+/**
+ * Users class is a construct for creating Users object. Implements IDataManager.
+ * <p>
+ * Metadata:
+ * - id: UUID
+ * - first_name: first name
+ * - last_name: last name
+ * - username: username
+ * - role: role
+ * - created_at: timestamp for creation
+ * - updated_at: timestamp for last update
+ * - is_active: boolean
+ * <p>
+ * Data:
+ * - password: password
+ * - email: email
+ * - additional_info: null
+ * @see IDataManager
+ * @see MetadataWrapper
+ */
 public class Users implements IDataManager {
 
     /*============================================================================================================================================================
@@ -16,6 +36,9 @@ public class Users implements IDataManager {
     - Map object for data
     ============================================================================================================================================================*/
 
+    /**
+     * Enumerations for UserRole
+     */
     public enum UserRole {
         WAITER,
         COOK,
@@ -45,6 +68,15 @@ public class Users implements IDataManager {
         - additional_info: null
     ============================================================================================================================================================*/
 
+    /**
+     * Constructor for Users object.
+     * @param firstName first name
+     * @param lastName last name
+     * @param username username
+     * @param plainPassword password
+     * @param email email
+     * @param role role
+     */
     public Users(String firstName, String lastName, String username, String plainPassword, String email, UserRole role) {
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("username cannot be null or empty");

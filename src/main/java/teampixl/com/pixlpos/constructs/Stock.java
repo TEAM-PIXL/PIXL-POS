@@ -8,6 +8,24 @@ import java.util.UUID;
 import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
+/**
+ * The Stock class is a data structure that holds the stock information of an ingredient.
+ * <p>
+ * Metadata:
+ * - stock_id: UUID
+ * - ingredient_id: ingredient.getMetadata().metadata().get("ingredient_id")
+ * - stockStatus: stockStatus
+ * - onOrder: onOrder
+ * - created_at: timestamp for creation
+ * - lastUpdated: timestamp for last update
+ * <p>
+ * Data:
+ * - unit: unitType
+ * - numeral: numeral
+ * @see IDataManager
+ * @see MetadataWrapper
+ * @see Ingredients
+ */
 public class Stock implements IDataManager {
 
     /*======================================================================================================================================================================================================================================================
@@ -17,12 +35,18 @@ public class Stock implements IDataManager {
     - Map object for data
     ========================================================================================================================================================================================================================================================*/
 
+    /**
+     * Enumerations for StockStatus
+     */
     public enum StockStatus {
         INSTOCK,
         LOWSTOCK,
         NOSTOCK
     }
 
+    /**
+     * Enumerations for UnitType
+     */
     public enum UnitType {
         KG,
         L,
@@ -49,6 +73,14 @@ public class Stock implements IDataManager {
         - numeral: numeral
     ========================================================================================================================================================================================================================================================*/
 
+    /**
+     * Constructor for Stock
+     * @param ingredient: Ingredients
+     * @param stockStatus: StockStatus
+     * @param unitType: UnitType
+     * @param numeral: Object
+     * @param onOrder: boolean
+     */
     public Stock(Ingredients ingredient, StockStatus stockStatus, UnitType unitType, Object numeral, boolean onOrder) {
         if (unitType == UnitType.QTY && !(numeral instanceof Integer)) {
             throw new IllegalArgumentException("Numeral must be an Integer for QTY unit type");
@@ -89,7 +121,6 @@ public class Stock implements IDataManager {
         - adjustStockStatus(Object numeral): void
         - toString(): String
     ========================================================================================================================================================================================================================================================*/
-
 
     public MetadataWrapper getMetadata() {
         return metadata;
