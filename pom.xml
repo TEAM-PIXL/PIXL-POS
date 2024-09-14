@@ -135,7 +135,7 @@
                     <sourcepath>${basedir}/src/main/java</sourcepath>
                     <!--suppress UnresolvedMavenProperty -->
                     <additionalJOptions>${modulepath.option}</additionalJOptions>
-                    <outputDirectory>${project.build.directory}/site/apidocs</outputDirectory>
+                    <outputDirectory>${project.build.directory}/site</outputDirectory>
                 </configuration>
             </plugin>
 
