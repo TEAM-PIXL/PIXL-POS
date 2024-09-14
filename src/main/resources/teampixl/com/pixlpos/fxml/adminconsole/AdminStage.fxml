@@ -114,8 +114,8 @@
                               </HBox>
                               <HBox prefHeight="47.0" prefWidth="570.0">
                                  <children>
-                                    <TextField alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="270.0" />
-                                    <TextField prefHeight="45.0" prefWidth="270.0">
+                                    <TextField alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="270.0" fx:id="firstNameField"/>
+                                    <TextField prefHeight="45.0" prefWidth="270.0" fx:id="lastNameField">
                                        <HBox.margin>
                                           <Insets left="30.0" />
                                        </HBox.margin>
