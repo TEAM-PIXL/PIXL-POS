@@ -130,7 +130,10 @@
                 <version>3.10.0</version>
                 <configuration>
                     <doclint>none</doclint>
-                    <excludePackageNames>*:unnamed</excludePackageNames>
+                    <show>protected</show>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <sourcepath>${basedir}/src/main/java</sourcepath>
+                    <additionalJOptions>--module-path ${basedir}/target/classes</additionalJOptions>
                 </configuration>
             </plugin>
 
