@@ -270,6 +270,8 @@ Methods for user management from here.
     @FXML
     protected void onCancelButtonClick() {
         // Handle clear button click
+        firstNameField.clear();
+        lastNameField.clear();
         usernameField.clear();
         passwordField.clear();
         emailField.clear();
