@@ -11,5 +11,4 @@ teampixl.com.pixlpos.controllers.loginconsole
 teampixl.com.pixlpos.controllers.waiterconsole
 teampixl.com.pixlpos.database
 teampixl.com.pixlpos.database.api
-teampixl.com.pixlpos.database.api.userapi
 teampixl.com.pixlpos.database.interfaces
