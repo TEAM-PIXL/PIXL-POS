@@ -165,7 +165,7 @@
                                     <Button mnemonicParsing="false" onAction="#onCancelButtonClick" styleClass="cancel-button" text="Cancel" />
                                  </children>
                                  <VBox.margin>
-                                    <Insets top="150.0" />
+                                    <Insets top="40.0" />
                                  </VBox.margin>
                               </HBox>
                            </children>
