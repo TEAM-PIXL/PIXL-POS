@@ -20,39 +20,17 @@ In order to manage the volume of and complexity of operations required to intera
 #### Users Module
 ```
 Superclass: UsersAPI
-Subclasses: UsersCRUD, UsersMetadata, UsersValidation
+Subclasses: UsersCRUD, StatusCode, UsersValidation
 
 UsersCRUD:
-// Handle getting user by various parameters and returning user ID to be used by backend methods.
-public String getUsersByUsername(String username); - Returns user id of the user with the specified username.
-public String getUsersByEmail(String email); - Returns user id of the user with the specified email.
-public String getUsersByFirstName(String firstName); - Returns user id of the user with the specified first name.
-public String getUsersByLastName(String lastName); - Returns user id of the user with the specified last name.
-
-// Handle put operations for user data and metadata.
-public void putUsersUsername(String userId, String username); - Updates the username of the user with the specified ID.
-public void putUsersEmail(String userId, String email); - Updates the email address of the user with the specified ID.
-public void putUsersFirstName(String userId, String firstName); - Updates the first name of the user with the specified ID.
-public void putUsersLastName(String userId, String lastName); - Updates the last name of the user with the specified ID.
-public void putUsersPassword(String userId, String password); - Updates the password of the user with the specified ID.
-public void putUsersRole(String userId, String role); - Updates the role of the user with the specified ID.
-public void putUsersStatus(String userId, String status); - Updates the status of the user with the specified ID.
-public void putUsersAdditionalInfo(String userId, String additionalInfo); - Updates the additional information of the user with the specified ID.
-
-// Handle validation operations for user data and metadata.
-public boolean validateUsername(String username); - Validates the username format.
-public boolean validateEmail(String email); - Validates the email address format.
-public boolean validateFirstName(String firstName); - Validates the first name format.
-public boolean validateLastName(String lastName); - Validates the last name format.
-public boolean validatePassword(String password); - Validates the password format.
-public boolean validateRole(String role); - Validates the role format.
-public boolean validateStatus(String status); - Validates the status format.
-public boolean validateAdditionalInfo(String additionalInfo); - Validates the additional information format.
+// Handle users validation operations for the database
+public StatusCode validateUsersByUsername(String username);
+public StatusCode validateUsersByEmailAddress(String email);
+public StatusCode validateUsersByFirstName(String firstName);
+public StatusCode validateUsersByLastName(String lastName);
+public StatusCode validateUsersByName(String firstName, String lastName);
+public StatusCode validateUsersByPassword(String username, String password);
+public StatusCode validateUsersRole(String role);
+public StatusCode validateUsersStatus(String status);
+public StatusCode validateUsersAdditionalInfo(String additionalInfo);
 ```
-
-public List<Users> getAllUsers(); - Returns a list of all users in the database.
-public Users getUserById(String userId); - Returns the user with the specified ID from the database.
-public Users getUserByUsername(String username); - Returns the user with the specified username from the database.
-public Users getUserByEmail(String email); - Returns the user with the specified email address from the database.
-public getUsernameById(String userId); - Returns the username of the user with the specified ID from the database.
-public getEmailById(String userId); - Returns the email address of the user with the specified ID from the database.

@@ -60,7 +60,9 @@ public class UsersAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateUsersByFirstName(String firstName) {
-        return firstName != null ? null : StatusCode.INVALID_FIRST_NAME;
+        if (firstName == null) {
+            return StatusCode.INVALID_FIRST_NAME;
+        }
     }
 
     /**
@@ -70,7 +72,10 @@ public class UsersAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateUsersByLastName(String lastName) {
-            return lastName != null ? null : StatusCode.INVALID_LAST_NAME;
+            if (lastName == null) {
+                return StatusCode.INVALID_LAST_NAME;
+            }
+            return StatusCode.SUCCESS;
     }
 
     /**
@@ -114,7 +119,10 @@ public class UsersAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateUsersRole(String role) {
-        return Users.UserRole.valueOf(role) != null ? null : StatusCode.INVALID_USER_ROLE;
+        if (Users.UserRole.valueOf(role) == null) {
+            return StatusCode.INVALID_USER_ROLE;
+        }
+        return StatusCode.SUCCESS;
     }
 
     /**
@@ -124,7 +132,10 @@ public class UsersAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateUsersStatus(String status) {
-        return Boolean.parseBoolean(status) ? null : StatusCode.INVALID_USER_STATUS;
+        if (status == null || (!status.equals("true") && !status.equals("false"))) {
+            return StatusCode.INVALID_USER_STATUS;
+        }
+        return StatusCode.SUCCESS;
     }
 
     /**
@@ -134,7 +145,10 @@ public class UsersAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateUsersAdditionalInfo(String additionalInfo) {
-        return additionalInfo != null ? null : StatusCode.INVALID_USER_ADDITIONAL_INFO;
+        if (additionalInfo == null) {
+            return StatusCode.INVALID_USER_ADDITIONAL_INFO;
+        }
+        return StatusCode.SUCCESS;
     }
 
     /**
