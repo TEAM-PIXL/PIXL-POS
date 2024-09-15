@@ -1,0 +1,31 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      ref_name:
+        type: string
+        required: true
+        description: 'The branch name'
+      sha:
+        type: string
+        required: true
+        description: 'The commit SHA'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Tag Successful Commit
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git tag -a "deployed_${{ inputs.ref_name }}_${{ inputs.sha }}" -m "Deployment tag for ${{ inputs.sha }}"
+          git push origin "deployed_${{ inputs.ref_name }}_${{ inputs.sha }}"
+
+
+
