@@ -8,13 +8,27 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * This class is responsible for managing the users in the database. It is responsible for getting, posting, putting, and deleting users.
+ */
 public class UsersAPI {
     private static DataStore dataStore = DataStore.getInstance();
 
+    /**
+     * Constructor for the UsersAPI class.
+     *
+     * @param dataStore the data store to use
+     */
     public UsersAPI(DataStore dataStore) {
         UsersAPI.dataStore = dataStore;
     }
 
+    /**
+     * Validates the username of a user.
+     *
+     * @param username the username to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersByUsername(String username) {
         if (username == null) {
             return StatusCode.INVALID_USERNAME;
@@ -24,6 +38,12 @@ public class UsersAPI {
         return userExists ? StatusCode.USER_ALREADY_EXISTS : StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates the email address of a user.
+     *
+     * @param email the email address to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersByEmailAddress(String email) {
         if (email == null || email.chars().filter(ch -> ch == '@').count() != 1) {
             return StatusCode.INVALID_EMAIL;
@@ -33,14 +53,33 @@ public class UsersAPI {
         return userExists ? StatusCode.USER_ALREADY_EXISTS : StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates the first name of a user.
+     *
+     * @param firstName the first name to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersByFirstName(String firstName) {
         return firstName != null ? null : StatusCode.INVALID_FIRST_NAME;
     }
 
+    /**
+     * Validates the last name of a user.
+     *
+     * @param lastName the last name to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersByLastName(String lastName) {
             return lastName != null ? null : StatusCode.INVALID_LAST_NAME;
     }
 
+    /**
+     * Validates the name of a user.
+     *
+     * @param firstName the first name to validate
+     * @param lastName the last name to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersByName(String firstName, String lastName) {
         if (firstName == null || lastName == null) {
             return StatusCode.INVALID_NAME;
@@ -51,6 +90,13 @@ public class UsersAPI {
         return userExists ? StatusCode.USER_ALREADY_EXISTS : StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates the password of a user.
+     *
+     * @param username the username of the user
+     * @param password the password to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersPassword(String username, String password) {
         if (username == null || password == null) {
             return StatusCode.INVALID_PASSWORD;
@@ -61,18 +107,47 @@ public class UsersAPI {
                 ? StatusCode.SUCCESS : StatusCode.INVALID_PASSWORD;
     }
 
+    /**
+     * Validates the role of a user.
+     *
+     * @param role the role to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersRole(String role) {
         return Users.UserRole.valueOf(role) != null ? null : StatusCode.INVALID_USER_ROLE;
     }
 
+    /**
+     * Validates the status of a user.
+     *
+     * @param status the status to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersStatus(String status) {
         return Boolean.parseBoolean(status) ? null : StatusCode.INVALID_USER_STATUS;
     }
 
+    /**
+     * Validates the additional information of a user.
+     *
+     * @param additionalInfo the additional information to validate
+     * @return the status code indicating the result of the validation
+     */
     public StatusCode validateUsersAdditionalInfo(String additionalInfo) {
         return additionalInfo != null ? null : StatusCode.INVALID_USER_ADDITIONAL_INFO;
     }
 
+    /**
+     * Posts a new user to the database.
+     *
+     * @param firstName the first name of the user
+     * @param lastName the last name of the user
+     * @param username the username of the user
+     * @param password the password of the user
+     * @param email the email of the user
+     * @param role the role of the user
+     * @return the status code indicating the result of the operation
+     */
     public StatusCode postUsers(String firstName, String lastName, String username, String password, String email, String role) {
         try {
             List<StatusCode> validations = List.of(
@@ -132,6 +207,13 @@ public class UsersAPI {
                 .orElse(null);
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param username the query to search for the user
+     * @param newUsername the new username to update
+     * @return status code indicating the result of the operation
+     */
     public StatusCode putUsersUsername(String username, String newUsername) {
         try {
             String id = getUsersByUsername(username);
@@ -153,6 +235,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param username the query to search for the user
+     * @param newEmail the new email to update
+     * @return status code indicating the result of the operation
+     */
     public StatusCode putUsersEmailAddress(String username, String newEmail) {
         try {
             String id = getUsersByUsername(username);
@@ -174,6 +263,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param username the query to search for the user
+     * @param newFirstName the new first name to update
+     * @return status code indicating the result of the operation
+     */
     public StatusCode putUsersFirstName(String username, String newFirstName) {
         try {
             String id = getUsersByUsername(username);
@@ -195,6 +291,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param username the query to search for the user
+     * @param newLastName the new last name to update
+     * @return status code indicating the result of the operation
+     */
     public StatusCode putUsersLastName(String username, String newLastName) {
         try {
             String id = getUsersByUsername(username);
@@ -216,6 +319,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param username the query to search for the user
+     * @param newPassword the new password to update
+     * @return status code indicating the result of the operation
+     */
     public StatusCode putUsersPassword(String username, String newPassword) {
         try {
             String id = getUsersByUsername(username);
@@ -236,6 +346,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param username the query to search for the user
+     * @param newRole the new role to update
+     * @return status code indicating the result of the operation
+     */
     public StatusCode putUsersRole(String username, String newRole) {
         try {
             String id = getUsersByUsername(username);
@@ -257,6 +374,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param username the query to search for the user
+     * @param newStatus the new status to update
+     * @return status code indicating the result of the operation
+     */
     public StatusCode putUsersStatus(String username, String newStatus) {
         try {
             String id = getUsersByUsername(username);
@@ -278,6 +402,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param username the query to search for the user
+     * @param newAdditionalInfo the new additional information to update
+     * @return status code indicating the result of the operation
+     */
     public StatusCode putUsersAdditionalInfo(String username, String newAdditionalInfo) {
         try {
             String id = getUsersByUsername(username);
@@ -299,6 +430,12 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param query the query to search for the user
+     * @return status code indicating the result of the operation
+     */
     public StatusCode deleteUser(String query) {
         try {
             List<Users> users = searchUsers(query);
@@ -317,6 +454,12 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Gets a user from the database.
+     *
+     * @param query the query to search for the user
+     * @return list of users matching the query
+     */
     public static List<Users> searchUsers(String query) {
         String[] parts = query.trim().split("\\s+");
 
