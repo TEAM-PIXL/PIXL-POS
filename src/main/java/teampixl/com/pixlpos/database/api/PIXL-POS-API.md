@@ -33,4 +33,23 @@ public StatusCode validateUsersByPassword(String username, String password);
 public StatusCode validateUsersRole(String role);
 public StatusCode validateUsersStatus(String status);
 public StatusCode validateUsersAdditionalInfo(String additionalInfo);
+
+// Handle users CRUD operations for the database
+public StatusCode postUsers(String username, String email, String firstName, String lastName, String password, String role, String additionalInfo);
+
+public StatusCode getUsers(String username);
+public StatusCode getUsersByEmail(String email);
+
+public StatusCode putUsersUsername(String username, String newUsername);
+public StatusCode putUsersEmail(String username, String newEmail);
+public StatusCode putUsersFirstName(String username, String newFirstName);
+public StatusCode putUsersLastName(String username, String newLastName);
+public StatusCode putUsersPassword(String username, String newPassword);
+public StatusCode putUsersRole(String username, String newRole);
+public StatusCode putUsersStatus(String username, String newStatus);
+public StatusCode putUsersAdditionalInfo(String username, String newAdditionalInfo);
+
+public StatusCode deleteUsers(String query);
+
+public StatusCode searchUsers(String query);
 ```

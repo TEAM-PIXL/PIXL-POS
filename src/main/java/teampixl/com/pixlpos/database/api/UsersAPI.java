@@ -161,9 +161,10 @@ public class UsersAPI {
      * @param password the password of the user
      * @param email the email of the user
      * @param role the role of the user
+     * @param additionalInfo the additional information of the user
      * @return the status code indicating the result of the operation
      */
-    public StatusCode postUsers(String firstName, String lastName, String username, String password, String email, String role) {
+    public StatusCode postUsers(String firstName, String lastName, String username, String password, String email, String role, String additionalInfo) {
         try {
             List<StatusCode> validations = List.of(
                     validateUsersByUsername(username),
@@ -182,12 +183,27 @@ public class UsersAPI {
             }
 
             Users.UserRole userRole = Users.UserRole.valueOf(role);
-            Users user = new Users(firstName, lastName, username, password, email, userRole);
+            Users user = new Users(firstName, lastName, username, password, email, userRole, additionalInfo);
             dataStore.addUser(user);
             return StatusCode.SUCCESS;
         } catch (Exception e) {
             return StatusCode.FAILURE;
         }
+    }
+
+    /**
+     * Posts a new user to the database.
+     *
+     * @param firstName the first name of the user
+     * @param lastName the last name of the user
+     * @param username the username of the user
+     * @param password the password of the user
+     * @param email the email of the user
+     * @param role the role of the user
+     * @return the status code indicating the result of the operation
+     */
+    public StatusCode postUsers(String firstName, String lastName, String username, String password, String email, String role) {
+        return postUsers(firstName, lastName, username, password, email, role, "");
     }
 
     private String getUsersByUsername(String username) {
@@ -201,22 +217,6 @@ public class UsersAPI {
     private String getUsersByEmailAddress(String email) {
         return dataStore.getUsers().stream()
                 .filter(user -> user.getData().get("email").toString().equals(email))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("id").toString())
-                .orElse(null);
-    }
-
-    private String getUsersByFirstName(String firstName) {
-        return dataStore.getUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("first_name").toString().equals(firstName))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("id").toString())
-                .orElse(null);
-    }
-
-    private String getUsersByLastName(String lastName) {
-        return dataStore.getUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("last_name").toString().equals(lastName))
                 .findFirst()
                 .map(user -> user.getMetadata().metadata().get("id").toString())
                 .orElse(null);

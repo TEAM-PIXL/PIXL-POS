@@ -77,7 +77,7 @@ public class Users implements IDataManager {
      * @param email email
      * @param role role
      */
-    public Users(String firstName, String lastName, String username, String plainPassword, String email, UserRole role) {
+    public Users(String firstName, String lastName, String username, String plainPassword, String email, UserRole role, String additionalInfo) {
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("username cannot be null or empty");
         }
@@ -109,7 +109,11 @@ public class Users implements IDataManager {
         this.data = new HashMap<>();
         this.data.put("password", plainPassword);
         this.data.put("email", email);
-        this.data.put("additional_info", null);
+        this.data.put("additional_info", additionalInfo);
+    }
+
+    public Users(String firstName, String lastName, String username, String plainPassword, String email, UserRole role) {
+        this(firstName, lastName, username, plainPassword, email, role, null);
     }
 
     /*============================================================================================================================================================

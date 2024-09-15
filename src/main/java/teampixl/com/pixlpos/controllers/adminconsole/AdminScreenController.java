@@ -12,7 +12,6 @@ import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.UsersAPI;
-import teampixl.com.pixlpos.database.api.StatusCode;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
