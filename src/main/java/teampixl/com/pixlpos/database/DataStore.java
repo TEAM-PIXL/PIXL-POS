@@ -410,6 +410,20 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     /**
+     * Returns a user with the specified user ID.
+     * @param userId String - The user ID of the user to get.
+     * @return Users - The user with the specified user ID.
+     */
+    public Users getUserById(String userId) {
+        for (Users user : users) {
+            if (user.getMetadata().metadata().get("user_id").equals(userId)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Updates a user's password.
      * @param user Users - The user to update the password for.
      * @param newPassword String - The new password.
