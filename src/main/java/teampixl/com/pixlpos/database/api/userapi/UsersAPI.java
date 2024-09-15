@@ -1,8 +1,9 @@
-package teampixl.com.pixlpos.database.api;
+package teampixl.com.pixlpos.database.api.userapi;
 
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
+import teampixl.com.pixlpos.database.api.StatusCode;
 
 import java.util.List;
 import java.util.Objects;
