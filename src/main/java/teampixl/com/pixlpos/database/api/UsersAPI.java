@@ -8,10 +8,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class UsersAPI {
-    private final DataStore dataStore;
+    private static DataStore dataStore = DataStore.getInstance();
 
     public UsersAPI(DataStore dataStore) {
-        this.dataStore = dataStore;
+        UsersAPI.dataStore = dataStore;
     }
 
     private StatusCode validateUsersByUsername(String username) {
@@ -174,14 +174,30 @@ public class UsersAPI {
         }
     }
 
-    public List<Users> searchUsers(String query) {
+    public static List<Users> searchUsers(String query) {
+        String[] parts = query.trim().split("\\s+");
+
+        if (parts.length > 2) {
+            return List.of();
+        }
+
         return dataStore.getUsers().parallelStream()
-                .filter(user -> user.getMetadata().metadata().values().stream()
-                        .filter(Objects::nonNull)
-                        .anyMatch(value -> value.toString().toLowerCase().contains(query.toLowerCase())) ||
-                        user.getData().values().stream()
+                .filter(user -> {
+                    if (parts.length == 2) {
+                        String firstName = parts[0].toLowerCase();
+                        String lastName = parts[1].toLowerCase();
+                        return user.getMetadata().metadata().get("first_name").toString().toLowerCase().contains(firstName) &&
+                                user.getMetadata().metadata().get("last_name").toString().toLowerCase().contains(lastName);
+                    } else {
+                        String singleQuery = parts[0].toLowerCase();
+                        return user.getMetadata().metadata().values().stream()
                                 .filter(Objects::nonNull)
-                                .anyMatch(value -> value.toString().toLowerCase().contains(query.toLowerCase())))
+                                .anyMatch(value -> value.toString().toLowerCase().contains(singleQuery)) ||
+                                user.getData().values().stream()
+                                        .filter(Objects::nonNull)
+                                        .anyMatch(value -> value.toString().toLowerCase().contains(singleQuery));
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
