@@ -1,86 +1,140 @@
+// src/main/java/teampixl/com/pixlpos/controllers/cookconsole/CookScreenController.java
 package teampixl.com.pixlpos.controllers.cookconsole;
 
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import teampixl.com.pixlpos.common.GuiCommon;
-import javafx.stage.Stage;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import teampixl.com.pixlpos.constructs.Users;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import teampixl.com.pixlpos.common.GuiCommon;
+import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.constructs.Users;
 
- // https://www.educba.com/javafx-listview/ this website to learn about listview
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
 public class CookScreenController extends GuiCommon {
-    /*===================================================================================================================================================================================
-    Code Description:
-    This class is the controller for the cook screen of the application. It handles displaying the orders and converting orders from database Infomation to visual dockets
-    ====================================================================================================================================================================================*/
-
-
     @FXML
-    private Button refresh;
+    private Button refreshButton;
     @FXML
-    private Button complete;
+    private Button completeButton;
     @FXML
-    private Button logout;
+    private Button logoutButton;
     @FXML
     private ListView<VBox> orderview;
+    private ObservableList<Order> orders;
+    private DataStore datastore;
 
+    @FXML
+    private void initialize() {
+        datastore = DataStore.getInstance();
+        orders = FXCollections.observableArrayList(datastore.getOrders());
+        updateOrderListView();
+    }
 
+    @FXML
+    private void onRefreshButtonClick() {
+        orders.setAll(datastore.getOrders());
+        updateOrderListView();
+    }
 
-    // this is the code i have for the order visual layout where items go in the gridpane and order details are in text objs
-     //this may change with emilys code
-     //consider switching to list views for our lists instead of gridpane? may be worth looking into
+    @FXML
+    private void onCompleteButtonClick() {
+        Order selectedOrder = getSelectedOrder();
+        if (selectedOrder != null) {
+            selectedOrder.updateOrderStatus(Order.OrderStatus.COMPLETED);
+            datastore.updateOrder(selectedOrder);
+            orders.setAll(datastore.getOrders());
+            updateOrderListView();
+        }
+    }
 
-    /*
-     <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label alignment="CENTER" contentDisplay="RIGHT" text="Order#">
-               <graphic>
-                  <Text fx:id="ordernum" strokeType="OUTSIDE" strokeWidth="0.0" text="null">
-                     <font>
-                        <Font size="25.0" />
-                     </font>
-                  </Text>
-               </graphic>
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" prefHeight="48.0" prefWidth="524.0" spacing="30.0" style="-fx-border-color: black;">
-               <children>
-                  <Label contentDisplay="BOTTOM" style="-fx-border-color: black;" text="Time Ordered">
-                     <graphic>
-                        <Text fx:id="timeordered" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
-                     </graphic>
-                  </Label>
-                  <Label contentDisplay="BOTTOM" style="-fx-border-color: black;" text="Table/Takeaway">
-                     <graphic>
-                        <Text fx:id="tablenum" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
-                     </graphic>
-                  </Label>
-               </children>
-            </HBox>
-            <GridPane>
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-            <HBox alignment="CENTER" prefHeight="45.0" prefWidth="524.0" spacing="30.0" style="-fx-border-color: black;">
-               <children>
-                  <Label contentDisplay="BOTTOM" text="Time due">
-                     <graphic>
-                        <Text fx:id="timedue" strokeType="OUTSIDE" strokeWidth="0.0" text="null" />
-                     </graphic>
-                  </Label>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-     */
+    @FXML
+    private void onLogoutButtonClick() {
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
+    }
+
+    private void updateOrderListView() {
+        orderview.getItems().clear();
+        for (Order order : orders) {
+            VBox orderVBox = new VBox();
+            orderVBox.setPadding(new Insets(10));
+            orderVBox.setSpacing(10);
+            orderVBox.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
+
+            // Order Number
+            Label orderNumLabel = new Label("Order#");
+            Text orderNumText = new Text(String.valueOf(order.getMetadata().metadata().get("order_number")));
+            orderNumText.setFont(new Font(25));
+            orderNumLabel.setGraphic(orderNumText);
+            orderNumLabel.setFont(new Font(30));
+
+            // Time Ordered
+            Label timeOrderedLabel = new Label("Time Ordered");
+            long unixTime = (long) order.getMetadata().metadata().get("created_at");
+            String humanReadableTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(unixTime));
+            Text timeOrderedText = new Text(humanReadableTime);
+            timeOrderedLabel.setGraphic(timeOrderedText);
+
+            // User ID to Username
+            Label userIdLabel = new Label("User");
+            String userId = order.getMetadata().metadata().get("user_id").toString();
+            try {
+                Users user = datastore.getUser(userId);
+                String username = user.getMetadata().metadata().get("username").toString();
+                Text userIdText = new Text(username);
+                userIdLabel.setGraphic(userIdText);
+            } catch (Exception e) {
+                Text userIdText = new Text("Unknown");
+                userIdLabel.setGraphic(userIdText);
+            }
+
+            // Order Items and Total
+            Label itemsLabel = new Label("Items");
+            VBox itemsVBox = new VBox();
+            Map<String, Object> orderItems = datastore.getOrderItems(order);
+            try {
+                for (Map.Entry<String, Object> entry : orderItems.entrySet()) {
+                    String itemKey = entry.getKey();
+                    String itemName = datastore.getMenuItemById(itemKey).getMetadata().metadata().get("itemName").toString();
+                    int quantity = (int) entry.getValue();
+                    Label itemLabel = new Label(itemName + " x" + quantity);
+                    itemsVBox.getChildren().add(itemLabel);
+                }
+            } catch (Exception e) {
+                Label itemLabel = new Label("No items");
+                itemsVBox.getChildren().add(itemLabel);
+            }
+            Label totalLabel = new Label("Total: " + order.getData().get("total"));
+
+            // Add all elements to the VBox
+            orderVBox.getChildren().addAll(orderNumLabel, timeOrderedLabel, userIdLabel, itemsLabel, itemsVBox, totalLabel);
+
+            // Add the VBox to the ListView
+            orderview.getItems().add(orderVBox);
+        }
+    }
+
+    private Order getSelectedOrder() {
+        VBox selectedVBox = orderview.getSelectionModel().getSelectedItem();
+        if (selectedVBox != null) {
+            Text orderNumText = (Text) ((Label) selectedVBox.getChildren().getFirst()).getGraphic();
+            int orderNumber = Integer.parseInt(orderNumText.getText());
+            for (Order order : orders) {
+                if (order.getMetadata().metadata().get("order_number").equals(orderNumber)) {
+                    return order;
+                }
+            }
+        }
+        return null;
+    }
 }
