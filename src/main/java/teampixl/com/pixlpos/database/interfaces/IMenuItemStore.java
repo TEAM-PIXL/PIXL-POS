@@ -3,7 +3,7 @@ package teampixl.com.pixlpos.database.interfaces;
 
 import javafx.collections.ObservableList;
 import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
-import teampixl.com.pixlpos.constructs.MenuItem;
+import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
 
 import java.util.Map;
 

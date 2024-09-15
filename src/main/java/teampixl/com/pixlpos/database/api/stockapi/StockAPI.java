@@ -1,10 +1,12 @@
 package teampixl.com.pixlpos.database.api.stockapi;
 
 import teampixl.com.pixlpos.database.api.ingredientsapi.*;
-import teampixl.com.pixlpos.constructs.Stock;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.StatusCode;
+
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 /**
@@ -264,6 +266,28 @@ public class StockAPI {
         } catch (Exception e) {
             return StatusCode.STOCK_DELETION_FAILED;
         }
+    }
+
+    /**
+     * Searches for stock items based on a query.
+     * @param query the query to search for stock items.
+     * @return list of stock items matching the query.
+     */
+    public List<Stock> searchStock(String query) {
+        String[] parts = query.trim().split("\\s+");
+
+        if (parts.length > 2) {
+            return List.of();
+        }
+
+        IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
+        List<String> ingredientIds = ingredientsAPI.searchIngredients(query).stream()
+                .map(ingredient -> (String) ingredient.getMetadata().metadata().get("ingredient_id"))
+                .toList();
+
+        return dataStore.getStockItems().parallelStream()
+                .filter(stock -> ingredientIds.contains(stock.getMetadata().metadata().get("ingredient_id")))
+                .collect(Collectors.toList());
     }
 
 }

@@ -164,7 +164,7 @@ public class IngredientsAPI {
      * @param query Search query.
      * @return List of Ingredients objects.
      */
-    public static List<Ingredients> searchIngredient(String query) {
+    public static List<Ingredients> searchIngredients(String query) {
         String[] parts = query.trim().split("\\s+");
 
         if (parts.length > 2) {
