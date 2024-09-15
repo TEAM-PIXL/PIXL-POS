@@ -74,6 +74,13 @@ public class IngredientsAPI {
                 .orElse(null);
     }
 
+    public Ingredients getIngredientById(String ingredientId) {
+        return dataStore.getIngredients().stream()
+                .filter(ingredient -> ingredient.getMetadata().metadata().get("ingredient_id").equals(ingredientId))
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
      * Gets ingredient by name.
      * @param ingredientName Name of the ingredient.
