@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.database.api;
 
 import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.authentication.AuthenticationManager;
 
 import java.util.List;
 import java.util.Objects;
@@ -14,28 +15,47 @@ public class UsersAPI {
         UsersAPI.dataStore = dataStore;
     }
 
-    private StatusCode validateUsersByUsername(String username) {
+    public StatusCode validateUsersByUsername(String username) {
         return dataStore.getUsers().stream()
                 .anyMatch(user -> user.getMetadata().metadata().get("username").toString().equals(username))
                 ? null : StatusCode.INVALID_USERNAME;
     }
 
-    private StatusCode validateUsersByEmailAddress(String email) {
+    public StatusCode validateUsersByEmailAddress(String email) {
         return dataStore.getUsers().stream()
                 .anyMatch(user -> user.getData().get("email").toString().equals(email))
                 ? null : StatusCode.INVALID_EMAIL;
     }
 
-    private StatusCode validateUsersByFirstName(String firstName) {
+    public StatusCode validateUsersByFirstName(String firstName) {
         return dataStore.getUsers().stream()
                 .anyMatch(user -> user.getMetadata().metadata().get("first_name").toString().equals(firstName))
                 ? null : StatusCode.INVALID_FIRST_NAME;
     }
 
-    private StatusCode validateUsersByLastName(String lastName) {
+    public StatusCode validateUsersByLastName(String lastName) {
         return dataStore.getUsers().stream()
                 .anyMatch(user -> user.getMetadata().metadata().get("last_name").toString().equals(lastName))
                 ? null : StatusCode.INVALID_LAST_NAME;
+    }
+
+    public StatusCode validateUsersPassword(String username, String password) {
+        return dataStore.getUsers().stream()
+                .anyMatch(user -> user.getMetadata().metadata().get("username").toString().equals(username) &&
+                        AuthenticationManager.login( username, password))
+                ? null : StatusCode.INVALID_PASSWORD;
+    }
+
+    public StatusCode validateUsersRole(String role) {
+        return Users.UserRole.valueOf(role) != null ? null : StatusCode.INVALID_USER_ROLE;
+    }
+
+    public StatusCode validateUsersStatus(String status) {
+        return Boolean.parseBoolean(status) ? null : StatusCode.INVALID_USER_STATUS;
+    }
+
+    public StatusCode validateUsersAdditionalInfo(String additionalInfo) {
+        return additionalInfo != null ? null : StatusCode.INVALID_USER_ADDITIONAL_INFO;
     }
 
     private String getUsersByUsername(String username) {
@@ -91,9 +111,9 @@ public class UsersAPI {
         }
     }
 
-    public StatusCode putUsersEmailAddress(String email, String newEmail) {
+    public StatusCode putUsersEmailAddress(String username, String newEmail) {
         try {
-            String id = getUsersByEmailAddress(email);
+            String id = getUsersByUsername(username);
             if (id == null) {
                 return StatusCode.USER_NOT_FOUND;
             }
@@ -112,9 +132,9 @@ public class UsersAPI {
         }
     }
 
-    public StatusCode putUsersFirstName(String firstName, String newFirstName) {
+    public StatusCode putUsersFirstName(String username, String newFirstName) {
         try {
-            String id = getUsersByFirstName(firstName);
+            String id = getUsersByUsername(username);
             if (id == null) {
                 return StatusCode.USER_NOT_FOUND;
             }
@@ -133,9 +153,9 @@ public class UsersAPI {
         }
     }
 
-    public StatusCode putUsersLastName(String lastName, String newLastName) {
+    public StatusCode putUsersLastName(String username, String newLastName) {
         try {
-            String id = getUsersByLastName(lastName);
+            String id = getUsersByUsername(username);
             if (id == null) {
                 return StatusCode.USER_NOT_FOUND;
             }
