@@ -2,7 +2,7 @@ package teampixl.com.pixlpos.database.interfaces;
 
 
 import javafx.collections.ObservableList;
-import teampixl.com.pixlpos.constructs.Ingredients;
+import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
 import teampixl.com.pixlpos.constructs.MenuItem;
 
 import java.util.Map;

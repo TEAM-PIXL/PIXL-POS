@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
+import teampixl.com.pixlpos.database.api.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
 
 /**
  * The MenuItem class represents a menu item in the system. It contains metadata, data, and ingredients.

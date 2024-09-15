@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
+import teampixl.com.pixlpos.database.api.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
 /**

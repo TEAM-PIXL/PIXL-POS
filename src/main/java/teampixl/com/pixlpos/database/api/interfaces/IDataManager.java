@@ -1,4 +1,4 @@
-package teampixl.com.pixlpos.constructs.interfaces;
+package teampixl.com.pixlpos.database.api.interfaces;
 
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
