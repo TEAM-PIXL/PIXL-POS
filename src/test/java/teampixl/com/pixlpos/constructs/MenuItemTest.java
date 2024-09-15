@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.constructs;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
 
 import java.util.HashMap;
 
