@@ -11,6 +11,8 @@ import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
+import teampixl.com.pixlpos.database.api.UsersAPI;
+import teampixl.com.pixlpos.database.api.StatusCode;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -18,6 +20,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import javafx.scene.layout.HBox;
 
@@ -253,11 +256,16 @@ Methods for user management from here.
             showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a User");
         }else {
             try {
-                loadedUser = dataStore.getUser(searchInput);
-                if (loadedUser == null) {
+                List<Users> usersList = UsersAPI.searchUsers(searchInput);
+                if (usersList.isEmpty()) {
                     showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
                 }else {
-                    populateUserParam(loadedUser);
+                    if (usersList.size() > 1) {
+                        showAlert(Alert.AlertType.ERROR, "Failed", "Multiple users found. Please refine your search");
+                    } else {
+                        loadedUser = usersList.getFirst();
+                        populateUserParam(loadedUser);
+                    }
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
