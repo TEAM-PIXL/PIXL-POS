@@ -114,7 +114,7 @@
                               </HBox>
                               <HBox prefHeight="47.0" prefWidth="570.0">
                                  <children>
-                                    <TextField alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="270.0" fx:id="firstNameField"/>
+                                    <TextField prefHeight="45.0" prefWidth="270.0" fx:id="firstNameField"/>
                                     <TextField prefHeight="45.0" prefWidth="270.0" fx:id="lastNameField">
                                        <HBox.margin>
                                           <Insets left="30.0" />
@@ -127,7 +127,7 @@
                                     <Insets right="510.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField fx:id="emailField" alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="560.0" />
+                              <TextField fx:id="emailField" prefHeight="45.0" prefWidth="560.0" />
                               <Label prefHeight="40.0" prefWidth="93.0" text="Username">
                                  <VBox.margin>
                                     <Insets right="473.0" top="20.0" />
@@ -139,7 +139,7 @@
                                     <Insets right="475.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <PasswordField fx:id="passwordField" alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="560.0" />
+                              <PasswordField fx:id="passwordField" prefHeight="45.0" prefWidth="560.0" />
                               <Label contentDisplay="BOTTOM" prefHeight="40.0" prefWidth="178.0" text="Select Role Type">
                                  <VBox.margin>
                                     <Insets right="390.0" top="20.0" />
@@ -350,7 +350,7 @@
                                     <Insets right="400.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <TextField alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="560.0" styleClass="text-field" fx:id="itemNameField" />
+                              <TextField prefHeight="45.0" prefWidth="560.0" styleClass="text-field" fx:id="itemNameField" />
                               <Label prefHeight="40.0" prefWidth="83.0" text="Price">
                                  <VBox.margin>
                                     <Insets right="473.0" top="20.0" />
