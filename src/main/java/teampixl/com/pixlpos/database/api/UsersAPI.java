@@ -63,6 +63,7 @@ public class UsersAPI {
         if (firstName == null) {
             return StatusCode.INVALID_FIRST_NAME;
         }
+        return StatusCode.SUCCESS;
     }
 
     /**

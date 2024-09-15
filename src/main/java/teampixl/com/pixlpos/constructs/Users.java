@@ -81,6 +81,12 @@ public class Users implements IDataManager {
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("username cannot be null or empty");
         }
+        if (firstName == null || firstName.isEmpty()) {
+            throw new IllegalArgumentException("first name cannot be null or empty");
+        }
+        if (lastName == null || lastName.isEmpty()) {
+            throw new IllegalArgumentException("last name cannot be null or empty");
+        }
         if (plainPassword == null || plainPassword.isEmpty()) {
             throw new IllegalArgumentException("password cannot be null or empty");
         }
