@@ -1,6 +1,5 @@
 package teampixl.com.pixlpos.database.api.userapi;
 
-import teampixl.com.pixlpos.constructs.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.StatusCode;

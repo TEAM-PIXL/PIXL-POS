@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.database.api.userapi.Users;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
