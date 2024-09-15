@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.database.api.userapi.Users;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

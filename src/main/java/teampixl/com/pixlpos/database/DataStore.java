@@ -2,7 +2,7 @@ package teampixl.com.pixlpos.database;
 
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
-import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.database.api.userapi.Users;
 import teampixl.com.pixlpos.constructs.Ingredients;
 import teampixl.com.pixlpos.constructs.Stock;
 import teampixl.com.pixlpos.database.interfaces.*;
