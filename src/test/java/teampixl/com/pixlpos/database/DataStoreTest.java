@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import teampixl.com.pixlpos.constructs.Ingredients;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
-import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.database.api.userapi.Users;
 
 import java.util.Map;
 

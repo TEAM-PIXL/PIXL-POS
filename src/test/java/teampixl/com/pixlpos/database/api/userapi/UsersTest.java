@@ -1,7 +1,8 @@
-package teampixl.com.pixlpos.constructs;
+package teampixl.com.pixlpos.database.api.userapi;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UsersTest {
