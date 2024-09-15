@@ -1,4 +1,3 @@
-// src/main/java/teampixl/com/pixlpos/controllers/cookconsole/CookScreenController.java
 package teampixl.com.pixlpos.controllers.cookconsole;
 
 import javafx.collections.FXCollections;
@@ -71,21 +70,18 @@ public class CookScreenController extends GuiCommon {
             orderVBox.setSpacing(10);
             orderVBox.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
 
-            // Order Number
             Label orderNumLabel = new Label("Order#");
             Text orderNumText = new Text(String.valueOf(order.getMetadata().metadata().get("order_number")));
             orderNumText.setFont(new Font(25));
             orderNumLabel.setGraphic(orderNumText);
             orderNumLabel.setFont(new Font(30));
 
-            // Time Ordered
             Label timeOrderedLabel = new Label("Time Ordered");
             long unixTime = (long) order.getMetadata().metadata().get("created_at");
             String humanReadableTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(unixTime));
             Text timeOrderedText = new Text(humanReadableTime);
             timeOrderedLabel.setGraphic(timeOrderedText);
 
-            // User ID to Username
             Label userIdLabel = new Label("User");
             String userId = order.getMetadata().metadata().get("user_id").toString();
             try {
@@ -98,7 +94,6 @@ public class CookScreenController extends GuiCommon {
                 userIdLabel.setGraphic(userIdText);
             }
 
-            // Order Items and Total
             Label itemsLabel = new Label("Items");
             VBox itemsVBox = new VBox();
             Map<String, Object> orderItems = datastore.getOrderItems(order);
@@ -116,10 +111,8 @@ public class CookScreenController extends GuiCommon {
             }
             Label totalLabel = new Label("Total: " + order.getData().get("total"));
 
-            // Add all elements to the VBox
             orderVBox.getChildren().addAll(orderNumLabel, timeOrderedLabel, userIdLabel, itemsLabel, itemsVBox, totalLabel);
 
-            // Add the VBox to the ListView
             orderview.getItems().add(orderVBox);
         }
     }
