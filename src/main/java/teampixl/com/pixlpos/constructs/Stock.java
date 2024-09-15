@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
+import teampixl.com.pixlpos.database.api.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
 
 /**
  * The Stock class is a data structure that holds the stock information of an ingredient.

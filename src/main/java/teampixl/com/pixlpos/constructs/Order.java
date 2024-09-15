@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.MetadataWrapper;
-import teampixl.com.pixlpos.constructs.interfaces.IDataManager;
+import teampixl.com.pixlpos.database.api.interfaces.IDataManager;
 
 /**
  * The Order class is a data structure that holds the information of an order.
