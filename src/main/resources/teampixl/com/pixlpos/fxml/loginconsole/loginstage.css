@@ -13,7 +13,7 @@
 /* Header label styling */
 .header-label {
     -fx-text-fill: #4A85F6;
-    -fx-font-size: 24px;
+    -fx-font-size: 30px;
     -fx-font-weight: bold;
     -fx-font-family: "Arial", sans-serif;
 }
