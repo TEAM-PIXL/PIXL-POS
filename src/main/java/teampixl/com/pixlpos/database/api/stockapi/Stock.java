@@ -1,4 +1,4 @@
-package teampixl.com.pixlpos.constructs;
+package teampixl.com.pixlpos.database.api.stockapi;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

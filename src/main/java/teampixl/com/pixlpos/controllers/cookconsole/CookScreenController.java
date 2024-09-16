@@ -12,9 +12,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.constructs.Order;
+import teampixl.com.pixlpos.database.api.orderapi.Order;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.userapi.Users;
+import teampixl.com.pixlpos.database.api.userapi.UserStack;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,12 +32,21 @@ public class CookScreenController extends GuiCommon {
     private ListView<VBox> orderview;
     private ObservableList<Order> orders;
     private DataStore datastore;
+    private UserStack userStack = UserStack.getInstance();
 
     @FXML
     private void initialize() {
+
         datastore = DataStore.getInstance();
         orders = FXCollections.observableArrayList(datastore.getOrders());
         updateOrderListView();
+
+        Users currentUser = userStack.getCurrentUser();
+        if (currentUser != null) {
+            System.out.println("Current User: " + currentUser.getMetadata().metadata().get("username"));
+        } else {
+            System.err.println("Error: Current user is not set.");
+        }
     }
 
     @FXML

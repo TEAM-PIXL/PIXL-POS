@@ -74,6 +74,13 @@ public class IngredientsAPI {
                 .orElse(null);
     }
 
+    public Ingredients getIngredientById(String ingredientId) {
+        return dataStore.getIngredients().stream()
+                .filter(ingredient -> ingredient.getMetadata().metadata().get("ingredient_id").equals(ingredientId))
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
      * Gets ingredient by name.
      * @param ingredientName Name of the ingredient.
@@ -157,7 +164,7 @@ public class IngredientsAPI {
      * @param query Search query.
      * @return List of Ingredients objects.
      */
-    public static List<Ingredients> searchIngredient(String query) {
+    public static List<Ingredients> searchIngredients(String query) {
         String[] parts = query.trim().split("\\s+");
 
         if (parts.length > 2) {

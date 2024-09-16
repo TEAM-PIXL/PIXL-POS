@@ -1,7 +1,9 @@
-package teampixl.com.pixlpos.constructs;
+package teampixl.com.pixlpos.database.api.orderapi;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;

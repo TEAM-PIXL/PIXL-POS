@@ -2,10 +2,10 @@ package teampixl.com.pixlpos;
 
 import javafx.collections.ObservableList;
 import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
-import teampixl.com.pixlpos.constructs.MenuItem;
-import teampixl.com.pixlpos.constructs.Order;
+import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
+import teampixl.com.pixlpos.database.api.orderapi.Order;
 import teampixl.com.pixlpos.database.api.userapi.Users;
-import teampixl.com.pixlpos.constructs.Stock;
+import teampixl.com.pixlpos.database.api.stockapi.Stock;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
 import teampixl.com.pixlpos.authentication.PasswordUtils;
