@@ -1,10 +1,10 @@
-package teampixl.com.pixlpos.database.api.menuapi;
+package teampixl.com.pixlpos.database.api;
 
-import teampixl.com.pixlpos.database.api.*;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.api.menuapi.*;
-import teampixl.com.pixlpos.database.api.ingredientsapi.*;
-import teampixl.com.pixlpos.database.api.stockapi.*;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
+import teampixl.com.pixlpos.models.Ingredients;
+import teampixl.com.pixlpos.models.MenuItem;
+
 import java.util.List;
 
 public class MenuAPI {

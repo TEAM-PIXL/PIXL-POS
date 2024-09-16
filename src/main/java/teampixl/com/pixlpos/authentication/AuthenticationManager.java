@@ -1,6 +1,6 @@
 package teampixl.com.pixlpos.authentication;
 
-import teampixl.com.pixlpos.database.api.userapi.Users;
+import teampixl.com.pixlpos.models.Users;
 
 /**
  * This class is responsible for managing the authentication of users. It is responsible for registering and logging in users.

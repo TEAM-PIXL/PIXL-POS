@@ -1,8 +1,7 @@
-package teampixl.com.pixlpos.database.api.menuapi;
+package teampixl.com.pixlpos.models;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
 
 import java.util.HashMap;
 

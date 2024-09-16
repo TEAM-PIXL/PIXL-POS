@@ -1,10 +1,10 @@
-package teampixl.com.pixlpos.database.api.ingredientsapi;
+package teampixl.com.pixlpos.models;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import teampixl.com.pixlpos.database.api.interfaces.IDataManager;
+import teampixl.com.pixlpos.models.interfaces.IDataManager;
 import teampixl.com.pixlpos.database.MetadataWrapper;
 
 /**

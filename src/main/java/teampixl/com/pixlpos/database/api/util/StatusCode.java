@@ -1,4 +1,4 @@
-package teampixl.com.pixlpos.database.api;
+package teampixl.com.pixlpos.database.api.util;
 
 public enum StatusCode {
     SUCCESS,

@@ -5,8 +5,8 @@ import javafx.scene.layout.GridPane;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
-import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
-import teampixl.com.pixlpos.database.api.orderapi.Order;
+import teampixl.com.pixlpos.models.MenuItem;
+import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
 
 import java.util.HashMap;

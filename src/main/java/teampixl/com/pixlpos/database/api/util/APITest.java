@@ -1,6 +1,6 @@
-package teampixl.com.pixlpos.database.api;
+package teampixl.com.pixlpos.database.api.util;
 
-import teampixl.com.pixlpos.database.api.userapi.UserStack;
+import teampixl.com.pixlpos.database.api.UserStack;
 
 public class APITest {
     public static void main(String[] args) {

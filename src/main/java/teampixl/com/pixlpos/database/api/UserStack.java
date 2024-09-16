@@ -1,6 +1,7 @@
-package teampixl.com.pixlpos.database.api.userapi;
+package teampixl.com.pixlpos.database.api;
 
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.models.Users;
 
 public class UserStack extends UsersAPI {
     private static final DataStore dataStore = DataStore.getInstance();

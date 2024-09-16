@@ -12,10 +12,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.database.api.orderapi.Order;
+import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.api.userapi.Users;
-import teampixl.com.pixlpos.database.api.userapi.UserStack;
+import teampixl.com.pixlpos.models.Users;
+import teampixl.com.pixlpos.database.api.UserStack;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

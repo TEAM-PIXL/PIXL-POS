@@ -1,10 +1,10 @@
 package teampixl.com.pixlpos.database;
 
-import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
-import teampixl.com.pixlpos.database.api.orderapi.Order;
-import teampixl.com.pixlpos.database.api.userapi.Users;
-import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
-import teampixl.com.pixlpos.database.api.stockapi.Stock;
+import teampixl.com.pixlpos.models.MenuItem;
+import teampixl.com.pixlpos.models.Order;
+import teampixl.com.pixlpos.models.Users;
+import teampixl.com.pixlpos.models.Ingredients;
+import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
