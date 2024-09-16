@@ -4,17 +4,33 @@ import teampixl.com.pixlpos.database.DataStore;
 
 public class UserStack extends UsersAPI {
     private static final DataStore dataStore = DataStore.getInstance();
-    public UserStack() { super(dataStore); }
+    private static UserStack instance;
+
+    private UserStack() {
+        super(dataStore);
+    }
+
+    /**
+     * Gets the instance of the UserStack.
+     *
+     * @return the instance of the UserStack
+     */
+    public static synchronized UserStack getInstance() {
+        if (instance == null) {
+            instance = new UserStack();
+        }
+        return instance;
+    }
 
     /**
      * Stack for the current user.
      */
-    public Users currentUser;
+    private Users currentUser;
 
     /**
      * Stack for the current user id.
      */
-    public String currentUserId;
+    private String currentUserId;
 
     /**
      * Sets the current user.
@@ -50,6 +66,8 @@ public class UserStack extends UsersAPI {
     /**
      * Clears the current user.
      */
-    public void clearCurrentUser() { currentUser = null; currentUserId = null; }
-
+    public void clearCurrentUser() {
+        currentUser = null;
+        currentUserId = null;
+    }
 }

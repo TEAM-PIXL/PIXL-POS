@@ -12,8 +12,19 @@ import java.util.stream.Collectors;
  * This class is responsible for managing the users in the database. It is responsible for getting, posting, putting, and deleting users.
  */
 public class UsersAPI {
+    private static UsersAPI instance;
     private static DataStore dataStore = DataStore.getInstance();
 
+    private UsersAPI() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static synchronized UsersAPI getInstance() {
+        if (instance == null) {
+            instance = new UsersAPI();
+        }
+        return instance;
+    }
     /**
      * Constructor for the UsersAPI class.
      *
