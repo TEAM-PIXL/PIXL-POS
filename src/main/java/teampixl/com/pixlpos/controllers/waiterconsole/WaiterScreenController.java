@@ -263,7 +263,7 @@ public class WaiterScreenController extends GuiCommon {
         if (orderItems.isEmpty()) {
             System.out.println("No items in order");
         } else {
-            String userID = UsersAPI.searchUsers("waiter").get(0).getMetadata().metadata().get("id").toString(); // Must be changed once instance is implemented
+            String userID = userStack.getCurrentUserId();
             Order order = new Order(orderNumber, userID);
             orderNumber++;
             ordernum.setText(orderNumber.toString());
