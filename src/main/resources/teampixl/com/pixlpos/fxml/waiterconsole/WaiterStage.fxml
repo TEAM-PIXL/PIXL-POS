@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.shape.Line?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@waiterstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">   <right>
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@waiterstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">   <right>
       <FlowPane hgap="20.0" prefHeight="579.0" prefWidth="487.0" styleClass="menu-container" vgap="20.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="classic" mnemonicParsing="false" styleClass="menu-button" text="Classic" />
