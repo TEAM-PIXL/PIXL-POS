@@ -206,7 +206,7 @@ public class UsersAPI {
         return postUsers(firstName, lastName, username, password, email, role, "");
     }
 
-    private String getUsersByUsername(String username) {
+    public static String getUsersByUsername(String username) {
         return dataStore.getUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(username))
                 .findFirst()
@@ -214,7 +214,7 @@ public class UsersAPI {
                 .orElse(null);
     }
 
-    private String getUsersByEmailAddress(String email) {
+    public String getUsersByEmailAddress(String email) {
         return dataStore.getUsers().stream()
                 .filter(user -> user.getData().get("email").toString().equals(email))
                 .findFirst()

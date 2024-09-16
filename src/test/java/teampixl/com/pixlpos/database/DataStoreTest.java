@@ -4,8 +4,8 @@ import javafx.collections.ObservableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import teampixl.com.pixlpos.database.api.ingredientsapi.Ingredients;
-import teampixl.com.pixlpos.constructs.MenuItem;
-import teampixl.com.pixlpos.constructs.Order;
+import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
+import teampixl.com.pixlpos.database.api.orderapi.Order;
 import teampixl.com.pixlpos.database.api.userapi.Users;
 
 import java.util.Map;

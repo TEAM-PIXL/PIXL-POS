@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.constructs.Order;
+import teampixl.com.pixlpos.database.api.orderapi.Order;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.userapi.Users;
 
