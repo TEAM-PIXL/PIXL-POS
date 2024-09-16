@@ -158,6 +158,7 @@ public class WaiterScreenController extends GuiCommon {
     private void updateOrderSummary() {
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
+        orderTotal = 0.00; // Reset total before recalculation
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
             String itemNameID = entry.getKey();
             int quantity = entry.getValue();
@@ -166,11 +167,12 @@ public class WaiterScreenController extends GuiCommon {
             Label itemLabel = new Label("x" + quantity + " " + itemName + (note.isEmpty() ? "" : " - Note: " + note));
             itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
             orderSummaryGrid.add(itemLabel, 0, currentRow);
-            orderTotal = orderTotal + (Double)dataStore.getMenuItemById(itemNameID).getMetadata().metadata().get("price");
-            totalprice.setText("$" + String.format("%.2f", orderTotal));
+            orderTotal += (Double)dataStore.getMenuItemById(itemNameID).getMetadata().metadata().get("price") * quantity;
             currentRow++;
         }
+        totalprice.setText("$" + String.format("%.2f", orderTotal));
     }
+
 
     private void selectItem(Label itemLabel) {
         if (selectedItem != null) {
