@@ -3,7 +3,6 @@ teampixl.com.pixlpos
 teampixl.com.pixlpos.application
 teampixl.com.pixlpos.authentication
 teampixl.com.pixlpos.common
-teampixl.com.pixlpos.constructs
 teampixl.com.pixlpos.controllers.adminconsole
 teampixl.com.pixlpos.controllers.cookconsole
 teampixl.com.pixlpos.controllers.loginconsole
@@ -12,5 +11,8 @@ teampixl.com.pixlpos.database
 teampixl.com.pixlpos.database.api
 teampixl.com.pixlpos.database.api.ingredientsapi
 teampixl.com.pixlpos.database.api.interfaces
+teampixl.com.pixlpos.database.api.menuapi
+teampixl.com.pixlpos.database.api.orderapi
+teampixl.com.pixlpos.database.api.stockapi
 teampixl.com.pixlpos.database.api.userapi
 teampixl.com.pixlpos.database.interfaces
