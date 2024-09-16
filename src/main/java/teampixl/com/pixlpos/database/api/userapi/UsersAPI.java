@@ -15,9 +15,7 @@ public class UsersAPI {
     private static UsersAPI instance;
     private static DataStore dataStore = DataStore.getInstance();
 
-    private UsersAPI() {
-        // Private constructor to prevent instantiation
-    }
+    private UsersAPI() { }
 
     public static synchronized UsersAPI getInstance() {
         if (instance == null) {
