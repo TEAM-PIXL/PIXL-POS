@@ -6,8 +6,8 @@
 /* TopBar styling */
 .header-container {
     -fx-background-color: white;
-    -fx-padding: 7px;
     -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
 }
 
 .header-line {
