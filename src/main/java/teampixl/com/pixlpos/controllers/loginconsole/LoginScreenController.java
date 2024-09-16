@@ -7,8 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
-import teampixl.com.pixlpos.database.api.userapi.UserStack;
-import teampixl.com.pixlpos.database.api.userapi.Users;
+import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.DataStore;
 

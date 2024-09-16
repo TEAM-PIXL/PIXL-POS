@@ -1,6 +1,6 @@
 package teampixl.com.pixlpos.database.interfaces;
 
-import teampixl.com.pixlpos.database.api.userapi.Users;
+import teampixl.com.pixlpos.models.Users;
 import javafx.collections.ObservableList;
 
 public interface IUserStore {

@@ -1,7 +1,8 @@
-package teampixl.com.pixlpos.database.api.ingredientsapi;
+package teampixl.com.pixlpos.database.api;
 
-import teampixl.com.pixlpos.database.api.StatusCode;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
+import teampixl.com.pixlpos.models.Ingredients;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,14 +11,19 @@ import java.util.stream.Collectors;
  * API for managing ingredients in the database.
  */
 public class IngredientsAPI {
-    private static DataStore dataStore = DataStore.getInstance();
+    private static IngredientsAPI instance;
+    private static final DataStore dataStore = DataStore.getInstance();
+
+    private IngredientsAPI() { }
 
     /**
      * Constructor for IngredientsAPI object.
-     * @param dataStore DataStore object.
      */
-    public IngredientsAPI(DataStore dataStore) {
-        IngredientsAPI.dataStore = dataStore;
+    public static synchronized IngredientsAPI getInstance() {
+        if (instance == null) {
+            instance = new IngredientsAPI();
+        }
+        return instance;
     }
 
     /**

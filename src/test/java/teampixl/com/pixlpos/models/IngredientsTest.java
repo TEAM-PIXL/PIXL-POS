@@ -1,4 +1,4 @@
-package teampixl.com.pixlpos.database.api.ingredientsapi;
+package teampixl.com.pixlpos.models;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

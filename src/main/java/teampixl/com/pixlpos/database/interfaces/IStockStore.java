@@ -1,7 +1,7 @@
 package teampixl.com.pixlpos.database.interfaces;
 
 import javafx.collections.ObservableList;
-import teampixl.com.pixlpos.database.api.stockapi.Stock;
+import teampixl.com.pixlpos.models.Stock;
 
 public interface IStockStore {
     ObservableList<Stock> getStockItems();
