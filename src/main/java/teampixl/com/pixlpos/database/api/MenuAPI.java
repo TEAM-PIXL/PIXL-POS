@@ -153,8 +153,7 @@ public class MenuAPI {
                     validateMenuItemByName(menuItemName),
                     validateMenuItemByPrice(menuItemPrice),
                     validateMenuItemByCategory(menuItemCategory),
-                    validateMenuItemByDescription(menuItemDescription),
-                    validateMenuItemByNotes(menuItemNotes)
+                    validateMenuItemByDescription(menuItemDescription)
             );
 
             for (StatusCode statusCode : statusCodes) {

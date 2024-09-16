@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 public class OrderAPI {
     private static final DataStore dataStore = DataStore.getInstance();
@@ -95,7 +96,7 @@ public class OrderAPI {
      * @param orderNumber the order number
      * @return the order id
      */
-    public String getOrderByNumber(String orderNumber) {
+    public static String getOrderByNumber(String orderNumber) {
         return dataStore.getOrders().stream()
                 .filter(order -> order.getMetadata().metadata().get("order_number").toString().equals(orderNumber))
                 .findFirst()
@@ -109,11 +110,20 @@ public class OrderAPI {
      * @param orderId the order id
      * @return the order
      */
-    public Order getOrderById(String orderId) {
+    public static Order getOrderById(String orderId) {
         return dataStore.getOrders().stream()
                 .filter(order -> order.getMetadata().metadata().get("order_id").toString().equals(orderId))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<MenuItem> getOrderItemsById(String orderId) {
+        Order order = getOrderById(orderId);
+        if (order == null) {
+            return null;
+        }
+        return dataStore.getMenuItems().stream()
+                .filter(menuItem -> order.getMetadata().metadata().get("order_items").toString().contains(menuItem.getMetadata().metadata().get("id").toString())).toList();
     }
 
     /**
@@ -176,6 +186,52 @@ public class OrderAPI {
             return StatusCode.MENU_ITEM_NOT_FOUND;
         }
         order.addMenuItem(menuItem, quantity);
+        return StatusCode.SUCCESS;
+    }
+
+    public static StatusCode deleteOrderByItem(int ORDER_NUMBER, String itemName, int quantity) {
+        String orderId = getOrderByNumber(String.valueOf(ORDER_NUMBER));
+        if (orderId == null) {
+            return StatusCode.ORDER_NOT_FOUND;
+        }
+        Order order = getOrderById(orderId);
+        if (order == null) {
+            return StatusCode.ORDER_NOT_FOUND;
+        }
+
+        String id = MenuAPI.getInstance().getMenuItemByName(itemName);
+        if (id == null) {
+            return StatusCode.MENU_ITEM_NOT_FOUND;
+        }
+        MenuItem menuItem = MenuAPI.getInstance().getMenuItemById(id);
+        if (menuItem == null) {
+            return StatusCode.MENU_ITEM_NOT_FOUND;
+        }
+
+        Map<String, Object> menuItems = (Map<String, Object>) order.getMetadata().metadata().get("menuItems");
+        if (menuItems == null) {
+            return StatusCode.MENU_ITEM_NOT_FOUND;
+        }
+
+        Map<String, Object> orderItem = menuItems.values().stream()
+                .map(item -> (Map<String, Object>) item)
+                .filter(item -> item.get("id").toString().equals(menuItem.getMetadata().metadata().get("id").toString()))
+                .findFirst()
+                .orElse(null);
+        if (orderItem == null) {
+            return StatusCode.MENU_ITEM_NOT_FOUND;
+        }
+
+        int currentQuantity = (int) orderItem.get("quantity");
+        if (quantity > currentQuantity) {
+            return StatusCode.QUANTITY_EXCEEDS_ORDER;
+        }
+        if (quantity == currentQuantity) {
+            menuItems.remove(orderItem.get("id").toString());
+        } else {
+            orderItem.put("quantity", currentQuantity - quantity);
+        }
+        order.updateMetadata("menuItems", menuItems);
         return StatusCode.SUCCESS;
     }
 

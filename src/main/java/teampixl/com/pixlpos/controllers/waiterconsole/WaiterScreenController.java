@@ -8,8 +8,8 @@ import javafx.scene.text.Text;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.api.userapi.UserStack;
-import teampixl.com.pixlpos.database.api.userapi.UsersAPI;
+import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.database.api.UsersAPI;
 
 import java.util.HashMap;
 import java.util.Map;

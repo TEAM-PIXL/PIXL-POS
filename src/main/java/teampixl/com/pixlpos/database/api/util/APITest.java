@@ -1,9 +1,13 @@
 package teampixl.com.pixlpos.database.api.util;
 
+import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.database.api.OrderAPI;
 import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.OrderAPI;
+import teampixl.com.pixlpos.models.Order;
 
 import java.util.List;
 import java.util.Scanner;
@@ -11,12 +15,7 @@ import java.util.Scanner;
 public class APITest {
     public static void main(String[] args) {
         UserStack userStack = UserStack.getInstance();
-        DataStore dataStore = DataStore.getInstance();
         userStack.setCurrentUser("admin");
-
-        System.out.println("Current user: " + userStack.getCurrentUser());
-
-        userStack.clearCurrentUser();
 
         System.out.println("Current user: " + userStack.getCurrentUser());
 
