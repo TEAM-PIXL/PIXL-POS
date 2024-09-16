@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
+import teampixl.com.pixlpos.database.api.UsersAPI;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.Users;
@@ -75,63 +76,63 @@ public class CookScreenController extends GuiCommon {
     private void updateOrderListView() {
         orderview.getItems().clear();
         for (Order order : orders) {
-            VBox orderVBox = new VBox();
-            orderVBox.setPadding(new Insets(10));
-            orderVBox.setSpacing(10);
-            orderVBox.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
+            if (order.getMetadata().metadata().get("order_status") != Order.OrderStatus.COMPLETED) {
+                VBox orderVBox = new VBox();
+                orderVBox.setPadding(new Insets(10));
+                orderVBox.setSpacing(10);
+                orderVBox.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
 
-            Label orderNumLabel = new Label("Order#");
-            Text orderNumText = new Text(String.valueOf(order.getMetadata().metadata().get("order_number")));
-            orderNumText.setFont(new Font(25));
-            orderNumLabel.setGraphic(orderNumText);
-            orderNumLabel.setFont(new Font(30));
+                Label orderNumLabel = new Label();
+                String orderNumber = String.valueOf(order.getMetadata().metadata().get("order_number"));
+                orderNumLabel.setText("Order#: " + orderNumber);
+                orderNumLabel.setFont(new Font(30));
 
-            Label timeOrderedLabel = new Label("Time Ordered");
-            long unixTime = (long) order.getMetadata().metadata().get("created_at");
-            String humanReadableTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(unixTime));
-            Text timeOrderedText = new Text(humanReadableTime);
-            timeOrderedLabel.setGraphic(timeOrderedText);
+                Label userIdLabel = new Label();
+                String userId = order.getMetadata().metadata().get("user_id").toString();
+                try {
+                    Users user = UsersAPI.getInstance().getUserById(userId);
+                    String username = user.getMetadata().metadata().get("username").toString();
+                    userIdLabel.setText("User: " + username);
+                } catch (Exception e) {
+                    userIdLabel.setText("User: Unknown");
+                }
 
-            Label userIdLabel = new Label("User");
-            String userId = order.getMetadata().metadata().get("user_id").toString();
-            try {
-                Users user = datastore.getUser(userId);
-                String username = user.getMetadata().metadata().get("username").toString();
-                Text userIdText = new Text(username);
-                userIdLabel.setGraphic(userIdText);
-            } catch (Exception e) {
-                Text userIdText = new Text("Unknown");
-                userIdLabel.setGraphic(userIdText);
-            }
+                Label timeOrderedLabel = new Label();
+                long unixTime = (long) order.getMetadata().metadata().get("created_at");
+                String humanReadableTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(unixTime));
+                timeOrderedLabel.setText("Time Ordered: " + humanReadableTime);
 
-            Label itemsLabel = new Label("Items");
-            VBox itemsVBox = new VBox();
-            Map<String, Object> orderItems = datastore.getOrderItems(order);
-            try {
-                for (Map.Entry<String, Object> entry : orderItems.entrySet()) {
-                    String itemKey = entry.getKey();
-                    String itemName = datastore.getMenuItemById(itemKey).getMetadata().metadata().get("itemName").toString();
-                    int quantity = (int) entry.getValue();
-                    Label itemLabel = new Label(itemName + " x" + quantity);
+                Label itemsLabel = new Label("Items");
+                VBox itemsVBox = new VBox();
+                Map<String, Object> orderItems = datastore.getOrderItems(order);
+                try {
+                    for (Map.Entry<String, Object> entry : orderItems.entrySet()) {
+                        String itemKey = entry.getKey();
+                        String itemName = datastore.getMenuItemById(itemKey).getMetadata().metadata().get("itemName").toString();
+                        int quantity = (int) entry.getValue();
+                        Label itemLabel = new Label(itemName + " x" + quantity);
+                        itemsVBox.getChildren().add(itemLabel);
+                    }
+                } catch (Exception e) {
+                    Label itemLabel = new Label("No items");
                     itemsVBox.getChildren().add(itemLabel);
                 }
-            } catch (Exception e) {
-                Label itemLabel = new Label("No items");
-                itemsVBox.getChildren().add(itemLabel);
+                Label totalLabel = new Label("Total: " + order.getData().get("total"));
+
+                orderVBox.getChildren().addAll(orderNumLabel, userIdLabel, timeOrderedLabel, itemsLabel, itemsVBox, totalLabel);
+
+                orderview.getItems().add(orderVBox);
             }
-            Label totalLabel = new Label("Total: " + order.getData().get("total"));
-
-            orderVBox.getChildren().addAll(orderNumLabel, timeOrderedLabel, userIdLabel, itemsLabel, itemsVBox, totalLabel);
-
-            orderview.getItems().add(orderVBox);
         }
+
     }
 
     private Order getSelectedOrder() {
         VBox selectedVBox = orderview.getSelectionModel().getSelectedItem();
         if (selectedVBox != null) {
-            Text orderNumText = (Text) ((Label) selectedVBox.getChildren().getFirst()).getGraphic();
-            int orderNumber = Integer.parseInt(orderNumText.getText());
+            Label orderNumLabel = (Label) selectedVBox.getChildren().get(0);
+            String orderNumText = orderNumLabel.getText().replace("Order#: ", "");
+            int orderNumber = Integer.parseInt(orderNumText);
             for (Order order : orders) {
                 if (order.getMetadata().metadata().get("order_number").equals(orderNumber)) {
                     return order;
