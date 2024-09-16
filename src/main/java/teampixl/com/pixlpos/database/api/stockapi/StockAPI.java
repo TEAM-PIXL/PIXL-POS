@@ -13,13 +13,17 @@ import java.util.stream.Collectors;
  * API for managing stock in the database.
  */
 public class StockAPI {
-    private static DataStore dataStore = DataStore.getInstance();
+    private static StockAPI instance;
+    private static final DataStore dataStore = DataStore.getInstance();
 
-    /**
-     * Constructor for StockAPI object.
-     * @param dataStore DataStore object.
-     */
-    public StockAPI(DataStore dataStore) { StockAPI.dataStore = dataStore; }
+    private StockAPI() { }
+
+    public static synchronized StockAPI getInstance() {
+        if (instance == null) {
+            instance = new StockAPI();
+        }
+        return instance;
+    }
 
     /**
      * Validates the stock ID.
@@ -77,7 +81,7 @@ public class StockAPI {
      * @return Stock object.
      */
     public String getStockByIngredientName(String ingredientName) {
-        IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
+        IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
         try {
             String id = ingredientsAPI.getIngredientsByName(ingredientName);
             if (id == null) {
@@ -110,7 +114,7 @@ public class StockAPI {
                 }
             }
 
-            IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
+            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
             String id = ingredientsAPI.getIngredientsByName(ingredientName);
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
@@ -138,7 +142,7 @@ public class StockAPI {
      */
     public StatusCode putStockQuantity(String ingredientName, double quantity) {
         try {
-            IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
+            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
             String id = ingredientsAPI.getIngredientsByName(ingredientName);
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
@@ -166,7 +170,7 @@ public class StockAPI {
      */
     public StatusCode putStockUnit(String ingredientName, Stock.UnitType unit) {
         try {
-            IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
+            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
             String id = ingredientsAPI.getIngredientsByName(ingredientName);
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
@@ -194,7 +198,7 @@ public class StockAPI {
      */
     public StatusCode putStockOnOrder(String ingredientName, int onOrder) {
         try {
-            IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
+            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
             String id = ingredientsAPI.getIngredientsByName(ingredientName);
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
@@ -222,7 +226,7 @@ public class StockAPI {
      */
     public StatusCode putStockStatus(String ingredientName, Stock.StockStatus stockStatus) {
         try {
-            IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
+            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
             String id = ingredientsAPI.getIngredientsByName(ingredientName);
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
@@ -249,7 +253,7 @@ public class StockAPI {
      */
     public StatusCode deleteStock(String ingredientName) {
         try {
-            IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
+            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
             String id = ingredientsAPI.getIngredientsByName(ingredientName);
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
@@ -280,8 +284,8 @@ public class StockAPI {
             return List.of();
         }
 
-        IngredientsAPI ingredientsAPI = new IngredientsAPI(dataStore);
-        List<String> ingredientIds = ingredientsAPI.searchIngredients(query).stream()
+        IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
+        List<String> ingredientIds = IngredientsAPI.searchIngredients(query).stream()
                 .map(ingredient -> (String) ingredient.getMetadata().metadata().get("ingredient_id"))
                 .toList();
 
