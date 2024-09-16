@@ -24,7 +24,6 @@ module PIXL.POS {
     requires org.junit.jupiter;
 
     opens teampixl.com.pixlpos.database;
-    opens teampixl.com.pixlpos.constructs;
     opens teampixl.com.pixlpos.authentication;
     opens teampixl.com.pixlpos.application;
     opens teampixl.com.pixlpos.controllers.loginconsole;
@@ -34,6 +33,9 @@ module PIXL.POS {
     opens teampixl.com.pixlpos.database.api;
     opens teampixl.com.pixlpos.database.api.userapi;
     opens teampixl.com.pixlpos.database.api.ingredientsapi;
+    opens teampixl.com.pixlpos.database.api.stockapi;
+    opens teampixl.com.pixlpos.database.api.orderapi;
+    opens teampixl.com.pixlpos.database.api.menuapi;
 
     exports teampixl.com.pixlpos;
     exports teampixl.com.pixlpos.application;
@@ -42,9 +44,11 @@ module PIXL.POS {
     exports teampixl.com.pixlpos.controllers.cookconsole;
     exports teampixl.com.pixlpos.controllers.waiterconsole;
     exports teampixl.com.pixlpos.database;
-    exports teampixl.com.pixlpos.constructs;
     exports teampixl.com.pixlpos.authentication;
     exports teampixl.com.pixlpos.database.api;
     exports teampixl.com.pixlpos.database.api.userapi;
     exports teampixl.com.pixlpos.database.api.ingredientsapi;
+    exports teampixl.com.pixlpos.database.api.stockapi;
+    exports teampixl.com.pixlpos.database.api.orderapi;
+    exports teampixl.com.pixlpos.database.api.menuapi;
 }
