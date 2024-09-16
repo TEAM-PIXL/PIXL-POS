@@ -3,10 +3,10 @@ package teampixl.com.pixlpos.database;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import teampixl.com.pixlpos.constructs.Ingredients;
-import teampixl.com.pixlpos.constructs.MenuItem;
-import teampixl.com.pixlpos.constructs.Order;
-import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.models.Ingredients;
+import teampixl.com.pixlpos.models.MenuItem;
+import teampixl.com.pixlpos.models.Order;
+import teampixl.com.pixlpos.models.Users;
 
 import java.util.Map;
 

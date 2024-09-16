@@ -12,9 +12,17 @@ import java.util.Objects;
  ============================================================================================================================*/
 
 
-
+/**
+ * A wrapper class that encapsulates a map of metadata for a public record.
+ * The class is immutable and unmodifiable. It implements the Comparable interface to allow for sorting based on a unique identifier. The class also overrides the equals, hashCode, and toString methods.
+ * @param metadata the map of metadata for a public record
+ */
 public record MetadataWrapper(Map<String, Object> metadata) implements Comparable<MetadataWrapper> {
 
+    /**
+     * Constructs a new MetadataWrapper with the specified metadata.
+     * @param metadata the map of metadata for a public record
+     */
     public MetadataWrapper {
         metadata = Map.copyOf(metadata);
     }

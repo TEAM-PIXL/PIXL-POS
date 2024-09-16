@@ -7,7 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
-import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.DataStore;
 
@@ -41,8 +42,14 @@ public class LoginScreenController extends GuiCommon {
         alert.showAndWait();
     }
 
+    private void initialize() {
+
+    }
+
     private AuthenticationManager authManager = new AuthenticationManager();
     private DataStore dataStore = DataStore.getInstance();
+    private UserStack userStack = UserStack.getInstance();
+
 
     @FXML
     protected void onLoginButtonClick() {
@@ -51,7 +58,8 @@ public class LoginScreenController extends GuiCommon {
         boolean auth = authManager.login(username, password);
         System.out.println("Auth: " + auth);
         if (auth) {
-            Users user = dataStore.getUser(username);
+            userStack.setCurrentUser(username);
+            Users user = userStack.getCurrentUser();
             Users.UserRole role = (Users.UserRole) user.getMetadata().metadata().get("role");
             Stage stage = (Stage) loginButton.getScene().getWindow();
             switch (role) {

@@ -1,27 +1,22 @@
 package teampixl.com.pixlpos.authentication;
 
-import teampixl.com.pixlpos.constructs.Users;
+import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
 
+/**
+ * This class is responsible for authenticating the user's login credentials.
+ * It uses the DataStore class to retrieve user information and the PasswordUtils class to verify passwords.
+ */
 public class LoginService {
 
-    /*==============================================================================================================================================================================
-    Code Description:
-    The LoginService class is responsible for authenticating the user's login credentials.
+    private final DataStore dataStore = DataStore.getInstance();
 
-    Methods:
-    authenticate(String username, String plainPassword) - This method takes in the username and password entered by the user and checks if the user exists in the database.
-    If the user exists, the method verifies the password entered by the user with the password stored in the database. If the passwords match, the method returns true,
-    indicating successful authentication. Otherwise, the method returns false, indicating failed authentication.
-    ==============================================================================================================================================================================*/
-
-    private DataStore dataStore = DataStore.getInstance();
-
+    /**
+     * This class is responsible for managing the authentication of users. It is responsible for registering and logging in users.
+     * It uses the RegistrationService and LoginService classes to perform these operations.
+     */
     public boolean authenticate(String username, String plainPassword) {
         Users usercheck = dataStore.getUser(username);
-        if (usercheck != null && PasswordUtils.verifyPassword(plainPassword, (String) usercheck.getData().get("password"))) {
-            return true;
-        }
-        return false;
+        return usercheck != null && PasswordUtils.verifyPassword(plainPassword, (String) usercheck.getData().get("password"));
     }
 }

@@ -33,7 +33,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.8.2</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- JUnit Jupiter Engine for running tests -->
@@ -41,7 +41,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.8.2</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- JUnit Platform Commons, required by the JUnit Platform -->
@@ -49,7 +49,7 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-commons</artifactId>
             <version>1.8.2</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- SQLite JDBC -->
@@ -118,6 +118,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <argLine>--add-exports org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED --add-exports org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED</argLine>
+                </configuration>
             </plugin>
 
             <!-- Maven Javadoc Plugin to generate Javadocs -->
@@ -126,11 +129,13 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.10.0</version>
                 <configuration>
-                    <skip>true</skip> <!-- Only skip as a last resort -->
-                    <doclint>none</doclint> <!-- Optionally disable doclint if causing issues -->
-                    <!-- Try setting aggregate to true or false -->
-                    <!-- Specify which packages to include or exclude -->
-                    <excludePackageNames>*:unnamed</excludePackageNames> <!-- Exclude unnamed packages -->
+                    <doclint>none</doclint>
+                    <show>protected</show>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <sourcepath>${basedir}/src/main/java</sourcepath>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <additionalJOptions>${modulepath.option}</additionalJOptions>
+                    <outputDirectory>${project.build.directory}/site</outputDirectory>
                 </configuration>
             </plugin>
 
@@ -179,9 +184,38 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>default</id>
+            <properties>
+                <modulepath.option>--module-path ${basedir}/target/classes</modulepath.option>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>ci</id>
+            <activation>
+                <property>
+                    <name>env.CI</name>
+                </property>
+            </activation>
+            <properties>
+                <modulepath.option></modulepath.option>
+            </properties>
+        </profile>
+    </profiles>
+
     <repositories>
         <repository>
             <id>maven-central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>openjfx</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>codehaus</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>

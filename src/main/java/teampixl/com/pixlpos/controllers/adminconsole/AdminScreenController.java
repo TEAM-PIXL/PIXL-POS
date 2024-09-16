@@ -7,10 +7,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.constructs.Users;
-import teampixl.com.pixlpos.constructs.MenuItem;
+import teampixl.com.pixlpos.models.Users;
+import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
+import teampixl.com.pixlpos.database.api.UsersAPI;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import javafx.scene.layout.HBox;
 
@@ -198,16 +200,21 @@ Methods for user management from here.
             return;
         }
         try{
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
             String username = usernameField.getText();
             String password = passwordField.getText();
             String email = emailField.getText();
             Users.UserRole role = roleField.getSelectionModel().getSelectedItem();
-            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || firstName.isEmpty() ||
+                    lastName.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
             }else {
 
 
                 try {
+                    loadedUser.updateMetadata("first_name", firstName);
+                    loadedUser.updateMetadata("last_name", lastName);
                     loadedUser.updateMetadata("username", username);
                     loadedUser.updateMetadata("role", role);
                     loadedUser.setDataValue("password", password);
@@ -248,11 +255,16 @@ Methods for user management from here.
             showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a User");
         }else {
             try {
-                loadedUser = dataStore.getUser(searchInput);
-                if (loadedUser == null) {
+                List<Users> usersList = UsersAPI.searchUsers(searchInput);
+                if (usersList.isEmpty()) {
                     showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
                 }else {
-                    populateUserParam(loadedUser);
+                    if (usersList.size() > 1) {
+                        showAlert(Alert.AlertType.ERROR, "Failed", "Multiple users found. Please refine your search");
+                    } else {
+                        loadedUser = usersList.getFirst();
+                        populateUserParam(loadedUser);
+                    }
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -270,6 +282,8 @@ Methods for user management from here.
     @FXML
     protected void onCancelButtonClick() {
         // Handle clear button click
+        firstNameField.clear();
+        lastNameField.clear();
         usernameField.clear();
         passwordField.clear();
         emailField.clear();
@@ -284,15 +298,20 @@ Methods for user management from here.
         userTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (Users user : listOfUsers) {
-
+            // Uncomment when implementing first and last name columns:
+            // Label firstNameLabel = new Label(user.getMetadata().metadata().get("first_name").toString());
+            // Label lastNameLabel = new Label(user.getMetadata().metadata().get("last_name").toString());
             String readableDate = toReadableDate(user.getMetadata().metadata().get("created_at").toString());
             Label usernameLabel = new Label(user.getMetadata().metadata().get("username").toString());
             Label userSinceLabel = new Label(readableDate);
             Label roleLabel = new Label(user.getMetadata().metadata().get("role").toString());
+            String fullName = user.getMetadata().metadata().get("first_name").toString() + " " + user.getMetadata().metadata().get("last_name").toString();
+            Label fullNameLabel = new Label(fullName);
 
             HBox rowContainer = new HBox(10);
             rowContainer.setAlignment(Pos.CENTER_LEFT);
             rowContainer.setOnMouseClicked(event -> {loadedUser = user; rowHighlight(rowContainer);});
+            userTable.add(fullNameLabel, 0, row);
             userTable.add(usernameLabel,1, row);
             userTable.add(userSinceLabel,2, row);
             userTable.add(roleLabel,3, row);
@@ -319,7 +338,11 @@ Methods for user management from here.
         Object password = User.getData().get("password");
         Object email = User.getData().get("email");
         Object role = User.getMetadata().metadata().get("role");
+        Object fistName = User.getMetadata().metadata().get("first_name");
+        Object lastName = User.getMetadata().metadata().get("last_name");
 
+        firstNameField.setText(fistName.toString());
+        lastNameField.setText(lastName.toString());
         usernameField.setText(username.toString());
         passwordField.setText(password.toString());
         emailField.setText(email.toString());
@@ -340,7 +363,6 @@ Methods for user management from here.
         menuTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (MenuItem menuItem : listOfMenuItems) {
-
             Label priceLabel = new Label(menuItem.getMetadata().metadata().get("price").toString());
             Label menuItemNameLabel = new Label(menuItem.getMetadata().metadata().get("itemName").toString());
             Label itemTypeLabel = new Label(menuItem.getMetadata().metadata().get("itemType").toString());
