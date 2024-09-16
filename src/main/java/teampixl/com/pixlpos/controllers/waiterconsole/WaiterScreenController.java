@@ -86,7 +86,7 @@ public class WaiterScreenController extends GuiCommon {
     private Map<String, String> orderNotes = new HashMap<>();
     private DataStore dataStore;
     private MenuItem menuItem;
-    private Integer orderNumber = 0;
+    private Integer orderNumber = 1;
     private Double orderTotal = 0.00;
 
     public WaiterScreenController() {
