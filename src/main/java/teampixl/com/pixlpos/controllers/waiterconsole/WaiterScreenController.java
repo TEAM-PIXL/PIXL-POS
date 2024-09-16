@@ -8,6 +8,7 @@ import javafx.scene.text.Text;
 import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
 import teampixl.com.pixlpos.database.api.orderapi.Order;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.userapi.UserStack;
 import teampixl.com.pixlpos.database.api.userapi.UsersAPI;
 
 import java.util.HashMap;
@@ -87,11 +88,13 @@ public class WaiterScreenController extends GuiCommon {
     private Map<String, String> orderNotes = new HashMap<>();
     private DataStore dataStore;
     private MenuItem menuItem;
+    private UserStack userStack;
     private Integer orderNumber = 1;
     private Double orderTotal = 0.00;
 
     public WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
+        this.userStack = UserStack.getInstance();
     }
 
     private void saveOrder(Order order) {
