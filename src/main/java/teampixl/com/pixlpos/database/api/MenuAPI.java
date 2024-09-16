@@ -4,6 +4,9 @@ import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.Ingredients;
 import teampixl.com.pixlpos.models.MenuItem;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import java.util.List;
 
@@ -13,6 +16,10 @@ public class MenuAPI {
 
     private MenuAPI() { }
 
+    /**
+     * Get the instance of the MenuAPI.
+     * @return MenuAPI instance.
+     */
     public static synchronized MenuAPI getInstance() {
         if (instance == null) {
             instance = new MenuAPI();
@@ -20,6 +27,11 @@ public class MenuAPI {
         return instance;
     }
 
+    /**
+     * Validate the menu item name.
+     * @param menuItemName Name of the menu item.
+     * @return StatusCode.
+     */
     public static StatusCode validateMenuItemByName(String menuItemName) {
         if (menuItemName == null || menuItemName.isEmpty()) {
             return StatusCode.INVALID_MENU_ITEM_NAME;
@@ -27,6 +39,11 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validate the menu item price.
+     * @param menuItemPrice Price of the menu item.
+     * @return StatusCode.
+     */
     public StatusCode validateMenuItemByPrice(double menuItemPrice) {
         if (menuItemPrice < 0) {
             return StatusCode.INVALID_MENU_ITEM_PRICE;
@@ -34,6 +51,11 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validate the menu item category.
+     * @param menuItemCategory Category of the menu item.
+     * @return StatusCode.
+     */
     public StatusCode validateMenuItemByCategory(MenuItem.ItemType menuItemCategory) {
         if (menuItemCategory == null || menuItemCategory.toString().isEmpty()) {
             return StatusCode.INVALID_MENU_ITEM_CATEGORY;
@@ -41,6 +63,11 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validate the menu item ingredients.
+     * @param menuItemIngredients Ingredients of the menu item.
+     * @return StatusCode.
+     */
     public StatusCode validateMenuItemByIngredients(List<String> menuItemIngredients) {
         if (menuItemIngredients == null || menuItemIngredients.isEmpty()) {
             return StatusCode.INVALID_MENU_ITEM_INGREDIENTS;
@@ -48,6 +75,11 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validate the menu item stock status.
+     * @param menuItemStockStatus Stock status of the menu item.
+     * @return StatusCode.
+     */
     public StatusCode validateMenuItemByStockStatus(String menuItemStockStatus) {
         if (menuItemStockStatus == null || menuItemStockStatus.isEmpty()) {
             return StatusCode.INVALID_MENU_ITEM_STOCK_STATUS;
@@ -55,6 +87,11 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validate the menu item description.
+     * @param menuItemDescription Description of the menu item.
+     * @return StatusCode.
+     */
     public StatusCode validateMenuItemByDescription(String menuItemDescription) {
         if (menuItemDescription == null || menuItemDescription.isEmpty()) {
             return StatusCode.INVALID_MENU_ITEM_DESCRIPTION;
@@ -62,6 +99,11 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validate the menu item notes.
+     * @param menuItemNotes Notes of the menu item.
+     * @return StatusCode.
+     */
     public StatusCode validateMenuItemByNotes(String menuItemNotes) {
         if (menuItemNotes == null || menuItemNotes.isEmpty()) {
             return StatusCode.INVALID_MENU_ITEM_NOTES;
@@ -69,6 +111,11 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Get the menu item by name.
+     * @param menuItemName Name of the menu item.
+     * @return Menu item id.
+     */
     public String getMenuItemByName(String menuItemName) {
         return dataStore.getMenuItems().stream()
                 .filter(menuItem -> menuItem.getMetadata().metadata().get("itemName").equals(menuItemName))
@@ -77,6 +124,11 @@ public class MenuAPI {
                 .orElse(null);
     }
 
+    /**
+     * Get a menu item by id.
+     * @param menuItemId id of the menu item.
+     * @return Menu item.
+     */
     public MenuItem getMenuItemById(String menuItemId) {
         return dataStore.getMenuItems().stream()
                 .filter(menuItem -> menuItem.getMetadata().metadata().get("id").equals(menuItemId))
@@ -84,15 +136,23 @@ public class MenuAPI {
                 .orElse(null);
     }
 
-
-
-    public StatusCode postMenuItem(String menuItemName, double menuItemPrice, MenuItem.ItemType menuItemCategory, List<String> menuItemIngredients, String menuItemDescription, String menuItemNotes, MenuItem.DietaryRequirement dietaryRequirement, boolean activeItem) {
+    /**
+     * Post a menu item.
+     * @param menuItemName Name of the menu item.
+     * @param menuItemPrice Price of the menu item.
+     * @param menuItemCategory Category of the menu item.
+     * @param menuItemDescription Description of the menu item.
+     * @param menuItemNotes Notes of the menu item.
+     * @param dietaryRequirement Dietary requirement of the menu item.
+     * @param activeItem Active status of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode postMenuItem(String menuItemName, double menuItemPrice, boolean activeItem, MenuItem.ItemType menuItemCategory, String menuItemDescription, String menuItemNotes, MenuItem.DietaryRequirement dietaryRequirement) {
         try {
             List<StatusCode> statusCodes = List.of(
                     validateMenuItemByName(menuItemName),
                     validateMenuItemByPrice(menuItemPrice),
                     validateMenuItemByCategory(menuItemCategory),
-                    validateMenuItemByIngredients(menuItemIngredients),
                     validateMenuItemByDescription(menuItemDescription),
                     validateMenuItemByNotes(menuItemNotes)
             );
@@ -105,26 +165,44 @@ public class MenuAPI {
 
             MenuItem menuItem = new MenuItem(menuItemName, menuItemPrice, menuItemCategory, activeItem, menuItemDescription, dietaryRequirement);
             dataStore.addMenuItem(menuItem);
-            putMenuItemNotes(menuItem.getMetadata().metadata().get("id").toString(), menuItemNotes);
-            return StatusCode.SUCCESS;
+            return putMenuItemNotes(menuItemName, menuItemNotes);
         } catch (Exception e) {
             return StatusCode.MENU_ITEM_CREATION_FAILED;
         }
     }
 
-    public StatusCode putMenuItemName(String menuItemId, String menuItemName) {
+    /**
+     * Post a menu item.
+     * @param menuItemName Name of the menu item.
+     * @param menuItemPrice Price of the menu item.
+     * @param menuItemCategory Category of the menu item.
+     * @param menuItemDescription Description of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode postMenuItem(String menuItemName, double menuItemPrice, MenuItem.ItemType menuItemCategory, String menuItemDescription) {
+        return postMenuItem(menuItemName, menuItemPrice, true, menuItemCategory, menuItemDescription, null, MenuItem.DietaryRequirement.NONE);
+    }
+
+    /**
+     * Put a menu item name.
+     * @param menuItemName Name of the menu item.
+     * @param newMenuItemName New name of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode putMenuItemName(String menuItemName, String newMenuItemName) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
-            if (menuItem == null) {
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
 
-            StatusCode statusCode = validateMenuItemByName(menuItemName);
+            MenuItem menuItem = getMenuItemById(id);
+            StatusCode statusCode = validateMenuItemByName(newMenuItemName);
             if (statusCode != StatusCode.SUCCESS) {
                 return statusCode;
             }
 
-            menuItem.getMetadata().metadata().put("itemName", menuItemName);
+            menuItem.getMetadata().metadata().put("itemName", newMenuItemName);
             dataStore.updateMenuItem(menuItem);
             return StatusCode.SUCCESS;
         } catch (Exception e) {
@@ -132,13 +210,20 @@ public class MenuAPI {
         }
     }
 
-    public StatusCode putMenuItemPrice(String menuItemId, double menuItemPrice) {
+    /**
+     * Put a menu item price.
+     * @param menuItemName Name of the menu item.
+     * @param menuItemPrice Price of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode putMenuItemPrice(String menuItemName, double menuItemPrice) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
-            if (menuItem == null) {
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
 
+            MenuItem menuItem = getMenuItemById(id);
             StatusCode statusCode = validateMenuItemByPrice(menuItemPrice);
             if (statusCode != StatusCode.SUCCESS) {
                 return statusCode;
@@ -152,13 +237,20 @@ public class MenuAPI {
         }
     }
 
-    public StatusCode putMenuItemCategory(String menuItemId, MenuItem.ItemType menuItemCategory) {
+    /**
+     * Put a menu item category.
+     * @param menuItemName Name of the menu item.
+     * @param menuItemCategory Category of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode putMenuItemCategory(String menuItemName, MenuItem.ItemType menuItemCategory) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
-            if (menuItem == null) {
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
 
+            MenuItem menuItem = getMenuItemById(id);
             StatusCode statusCode = validateMenuItemByCategory(menuItemCategory);
             if (statusCode != StatusCode.SUCCESS) {
                 return statusCode;
@@ -172,6 +264,13 @@ public class MenuAPI {
         }
     }
 
+    /**
+     * Put a menu item ingredients.
+     * @param menuItemName Name of the menu item.
+     * @param menuItemIngredients Ingredients of the menu item.
+     * @param numeral Numeral of the menu item.
+     * @return StatusCode.
+     */
     public StatusCode putMenuItemIngredients(String menuItemName, List<String> menuItemIngredients, double numeral) {
         try {
             String id = getMenuItemByName(menuItemName);
@@ -201,19 +300,26 @@ public class MenuAPI {
         }
     }
 
-    public StatusCode putMenuItemStockStatus(String menuItemId, String menuItemStockStatus) {
+    /**
+     * Put a menu item stock status.
+     * @param menuItemName Name of the menu item.
+     * @param menuItemStockStatus Stock status of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode putMenuItemStockStatus(String menuItemName, String menuItemStockStatus) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
-            if (menuItem == null) {
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
 
+            MenuItem menuItem = getMenuItemById(id);
             StatusCode statusCode = validateMenuItemByStockStatus(menuItemStockStatus);
             if (statusCode != StatusCode.SUCCESS) {
                 return statusCode;
             }
 
-            menuItem.getMetadata().metadata().put("itemStockStatus", menuItemStockStatus);
+            menuItem.getMetadata().metadata().put("stockStatus", menuItemStockStatus);
             dataStore.updateMenuItem(menuItem);
             return StatusCode.SUCCESS;
         } catch (Exception e) {
@@ -221,13 +327,20 @@ public class MenuAPI {
         }
     }
 
-    public StatusCode putMenuItemDescription(String menuItemId, String menuItemDescription) {
+    /**
+     * Put a menu item description.
+     * @param menuItemName Name of the menu item.
+     * @param menuItemDescription Description of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode putMenuItemDescription(String menuItemName, String menuItemDescription) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
-            if (menuItem == null) {
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
 
+            MenuItem menuItem = getMenuItemById(id);
             StatusCode statusCode = validateMenuItemByDescription(menuItemDescription);
             if (statusCode != StatusCode.SUCCESS) {
                 return statusCode;
@@ -241,13 +354,20 @@ public class MenuAPI {
         }
     }
 
-    public StatusCode putMenuItemNotes(String menuItemId, String menuItemNotes) {
+    /**
+     * Put a menu item notes.
+     * @param menuItemName Name of the menu item.
+     * @param menuItemNotes Notes of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode putMenuItemNotes(String menuItemName, String menuItemNotes) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
-            if (menuItem == null) {
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
 
+            MenuItem menuItem = getMenuItemById(id);
             StatusCode statusCode = validateMenuItemByNotes(menuItemNotes);
             if (statusCode != StatusCode.SUCCESS) {
                 return statusCode;
@@ -261,9 +381,20 @@ public class MenuAPI {
         }
     }
 
-    public StatusCode putMenuItemDietaryRequirement(String menuItemId, MenuItem.DietaryRequirement dietaryRequirement) {
+    /**
+     * Put a menu item dietary requirement.
+     * @param menuItemName Name of the menu item.
+     * @param dietaryRequirement Dietary requirement of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode putMenuItemDietaryRequirement(String menuItemName, MenuItem.DietaryRequirement dietaryRequirement) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
+                return StatusCode.MENU_ITEM_NOT_FOUND;
+            }
+
+            MenuItem menuItem = getMenuItemById(id);
             if (menuItem == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
@@ -276,9 +407,20 @@ public class MenuAPI {
         }
     }
 
-    public StatusCode putMenuItemActiveStatus(String menuItemId, boolean activeItem) {
+    /**
+     * Put a menu item active status.
+     * @param menuItemName Name of the menu item.
+     * @param activeItem Active status of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode putMenuItemActiveStatus(String menuItemName, boolean activeItem) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
+                return StatusCode.MENU_ITEM_NOT_FOUND;
+            }
+
+            MenuItem menuItem = getMenuItemById(id);
             if (menuItem == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
@@ -291,10 +433,19 @@ public class MenuAPI {
         }
     }
 
-
-    public StatusCode deleteMenuItem(String menuItemId) {
+    /**
+     * Delete a menu item.
+     * @param menuItemName Name of the menu item.
+     * @return StatusCode.
+     */
+    public StatusCode deleteMenuItem(String menuItemName) {
         try {
-            MenuItem menuItem = getMenuItemById(menuItemId);
+            String id = getMenuItemByName(menuItemName);
+            if (id == null) {
+                return StatusCode.MENU_ITEM_NOT_FOUND;
+            }
+
+            MenuItem menuItem = getMenuItemById(id);
             if (menuItem == null) {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
@@ -304,6 +455,27 @@ public class MenuAPI {
         } catch (Exception e) {
             return StatusCode.MENU_ITEM_DELETION_FAILED;
         }
+    }
+
+    /**
+     * Search for menu items.
+     * @param query Search query.
+     * @return List of menu items.
+     */
+    public List<MenuItem> searchMenuItem(String query) {
+        String[] parts = query.trim().split("\\s+");
+
+        return dataStore.getMenuItems().parallelStream()
+                .filter(menuItem -> Arrays.stream(parts).allMatch(part -> {
+                    String lowerCasePart = part.toLowerCase();
+                    return menuItem.getMetadata().metadata().values().stream()
+                            .filter(Objects::nonNull)
+                            .anyMatch(value -> value.toString().toLowerCase().contains(lowerCasePart)) ||
+                            menuItem.getData().values().stream()
+                                    .filter(Objects::nonNull)
+                                    .anyMatch(value -> value.toString().toLowerCase().contains(lowerCasePart));
+                }))
+                .collect(Collectors.toList());
     }
 
 }
