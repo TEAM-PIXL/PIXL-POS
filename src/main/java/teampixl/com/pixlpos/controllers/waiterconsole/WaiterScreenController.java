@@ -8,6 +8,7 @@ import javafx.scene.text.Text;
 import teampixl.com.pixlpos.constructs.MenuItem;
 import teampixl.com.pixlpos.constructs.Order;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.userapi.UsersAPI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -258,9 +259,9 @@ public class WaiterScreenController extends GuiCommon {
     private void sendOrder() {
         if (orderItems.isEmpty()) {
             System.out.println("No items in order");
-            return;
         } else {
-            Order order = new Order(orderNumber, "test");
+            String userID = UsersAPI.searchUsers("waiter").get(0).getMetadata().metadata().get("id").toString(); // Must be changed once instance is implemented
+            Order order = new Order(orderNumber, userID);
             orderNumber++;
             ordernum.setText(orderNumber.toString());
             for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
