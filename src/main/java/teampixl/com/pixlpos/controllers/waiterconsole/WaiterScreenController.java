@@ -8,6 +8,8 @@ import javafx.scene.text.Text;
 import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
 import teampixl.com.pixlpos.database.api.orderapi.Order;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.userapi.UserStack;
+import teampixl.com.pixlpos.database.api.userapi.UsersAPI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,11 +88,13 @@ public class WaiterScreenController extends GuiCommon {
     private Map<String, String> orderNotes = new HashMap<>();
     private DataStore dataStore;
     private MenuItem menuItem;
-    private Integer orderNumber = 0;
+    private UserStack userStack;
+    private Integer orderNumber = 1;
     private Double orderTotal = 0.00;
 
     public WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
+        this.userStack = UserStack.getInstance();
     }
 
     private void saveOrder(Order order) {
@@ -158,6 +162,7 @@ public class WaiterScreenController extends GuiCommon {
     private void updateOrderSummary() {
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
+        orderTotal = 0.00; // Reset total before recalculation
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
             String itemNameID = entry.getKey();
             int quantity = entry.getValue();
@@ -166,11 +171,12 @@ public class WaiterScreenController extends GuiCommon {
             Label itemLabel = new Label("x" + quantity + " " + itemName + (note.isEmpty() ? "" : " - Note: " + note));
             itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
             orderSummaryGrid.add(itemLabel, 0, currentRow);
-            orderTotal = orderTotal + (Double)dataStore.getMenuItemById(itemNameID).getMetadata().metadata().get("price");
-            totalprice.setText("$" + String.format("%.2f", orderTotal));
+            orderTotal += (Double)dataStore.getMenuItemById(itemNameID).getMetadata().metadata().get("price") * quantity;
             currentRow++;
         }
+        totalprice.setText("$" + String.format("%.2f", orderTotal));
     }
+
 
     private void selectItem(Label itemLabel) {
         if (selectedItem != null) {
@@ -256,9 +262,9 @@ public class WaiterScreenController extends GuiCommon {
     private void sendOrder() {
         if (orderItems.isEmpty()) {
             System.out.println("No items in order");
-            return;
         } else {
-            Order order = new Order(orderNumber, "test");
+            String userID = userStack.getCurrentUserId();
+            Order order = new Order(orderNumber, userID);
             orderNumber++;
             ordernum.setText(orderNumber.toString());
             for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
