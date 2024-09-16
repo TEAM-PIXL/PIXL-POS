@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
@@ -44,23 +45,25 @@
    <bottom>
       <HBox prefHeight="103.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
          <children>
+            <Region HBox.hgrow="ALWAYS" />
             <FlowPane hgap="20.0" prefHeight="90.0" prefWidth="512.0" vgap="10.0">
                <children>
                   <Button fx:id="send" layoutX="140.0" layoutY="20.0" mnemonicParsing="false" onAction="#sendOrder" styleClass="send-button" text="Send" />
-                  <Button fx:id="itemcorrect" mnemonicParsing="false" onAction="#correctLastItem" prefHeight="35.0" prefWidth="128.0" styleClass="correct-buttons" text="Item Correct" />
-                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#voidSelectedItem" prefHeight="35.0" prefWidth="111.0" styleClass="void-button" text="Void Item" />
-                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#restartOrder" prefHeight="35.0" prefWidth="90.0" styleClass="restart-button" text="Restart" />
+                  <Button fx:id="itemcorrect" mnemonicParsing="false" onAction="#correctLastItem" prefHeight="45.0" prefWidth="130.0" styleClass="correct-buttons" text="Item Correct" />
+                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#voidSelectedItem" prefHeight="45.0" prefWidth="115.0" styleClass="void-button" text="Void Item" />
+                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#restartOrder" prefHeight="45.0" prefWidth="95.0" styleClass="restart-button" text="Restart" />
                </children>
                <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets bottom="10.0" right="10.0" top="10.0" />
                </HBox.margin>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </FlowPane>
+            <Region prefHeight="200.0" HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="495.0" spacing="10.0">
                <children>
-                  <Button fx:id="applynotes" mnemonicParsing="false" onAction="#applyNoteToSelectedItem" prefHeight="35.0" prefWidth="120.0" styleClass="apply-note-button" text="Apply Note" />
+                  <Button fx:id="applynotes" mnemonicParsing="false" onAction="#applyNoteToSelectedItem" prefHeight="45.0" prefWidth="126.0" styleClass="apply-note-button" text="Apply Note" />
                   <TextField fx:id="notes" prefHeight="50.0" prefWidth="334.0" promptText="Notes" />
                </children>
             </HBox>
@@ -85,7 +88,7 @@
                   <Insets top="5.0" />
                </VBox.margin>
             </Label>
-            <Line endX="450.0" stroke="#4a85f6" strokeWidth="0.5">
+            <Line endX="700.0" stroke="#4a85f6" strokeWidth="0.5">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
