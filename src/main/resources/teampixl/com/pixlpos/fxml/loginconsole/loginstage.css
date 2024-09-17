@@ -1,11 +1,11 @@
 /* Root styling */
 .root {
-    -fx-background-color: #f4f4f4;
+    -fx-background-color: #e8e8e8;
 }
 
 /* Header styling */
 .header {
-    -fx-background-color: #EFF4FA;
+    -fx-background-color: #dcdcdc;
     -fx-padding: 20px;
 }
 
@@ -24,7 +24,7 @@
 
 /* Login form container styling */
 .login-form_container {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: #dcdcdc;
     -fx-background-radius: 10px;
     -fx-alignment: center;
 }

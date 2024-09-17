@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.common.GuiCommon;
@@ -73,9 +72,9 @@ public class LoginScreenController extends GuiCommon {
         isPasswordVisible.set(!isPasswordVisible.get());
 
         if (isPasswordVisible.get()) {
-            eyeIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/EYE_OPEN_ICON.png")));
+            eyeIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/EYE_OPEN_ICON.png")));
         } else {
-            eyeIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/EYE_CLOSED_ICON.png")));
+            eyeIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/EYE_CLOSED_ICON.png")));
         }
     }
 
@@ -87,9 +86,9 @@ public class LoginScreenController extends GuiCommon {
 
         // Update the toggle button icon
         if (isDarkMode) {
-            themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/TOGGLE_ON.png")));
+            themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/TOGGLE_ON.png")));
         } else {
-            themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/TOGGLE_OFF.png")));
+            themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/TOGGLE_OFF.png")));
         }
     }
 

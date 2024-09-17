@@ -49,7 +49,7 @@
                                    maxWidth="20" maxHeight="20" prefWidth="20" prefHeight="20" opacity="0.7" StackPane.alignment="CENTER_RIGHT">
                               <graphic>
                                  <ImageView fx:id="eyeIcon" fitWidth="20" fitHeight="20">
-                                    <Image url="@EYE_CLOSED_ICON.png" />
+                                    <Image url="@icons/EYE_CLOSED_ICON.png" />
                                  </ImageView>
                               </graphic>
                               <StackPane.margin>
@@ -79,7 +79,7 @@
               AnchorPane.topAnchor="10" AnchorPane.rightAnchor="10">
          <graphic>
             <ImageView fx:id="themeToggleIcon">
-               <Image url="@TOGGLE_OFF.png" />
+               <Image url="@icons/TOGGLE_OFF.png" />
             </ImageView>
          </graphic>
       </Button>
