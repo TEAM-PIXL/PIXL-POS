@@ -20,7 +20,7 @@ In order to manage the volume of and complexity of operations required to intera
 #### Users Module
 ```
 Superclass: UsersAPI
-Subclasses: UsersCRUD, StatusCode, UsersValidation
+Subclasses: UsersStack
 
 UsersCRUD:
 // Handle users validation operations for the database
