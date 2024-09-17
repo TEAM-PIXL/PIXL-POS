@@ -1,5 +1,7 @@
 package teampixl.com.pixlpos.controllers.loginconsole;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
@@ -12,27 +14,50 @@ import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.DataStore;
 
-
 public class LoginScreenController extends GuiCommon {
-
-    /*===================================================================================================================================================================================
-    Code Description:
-    This class is the controller for the login screen of the application. It handles the login functionality and navigation to different screens based on the user role.
-    At the moment, this is skeleton code and will be implemented further in the future.
-    ====================================================================================================================================================================================*/
-
 
     @FXML
     private TextField usernameField;
-
-    @FXML
-    private PasswordField passwordField;
 
     @FXML
     private Button loginButton;
 
     @FXML
     private Button exitButton;
+
+    @FXML
+    private PasswordField passwordField;
+
+    @FXML
+    private TextField passwordVisibleField;
+
+    @FXML
+    private Button eyeButton;
+
+    private boolean isPasswordVisible = false;
+
+    @FXML
+    private ImageView eyeIcon;
+
+    @FXML
+    private void togglePasswordVisibility() {
+        isPasswordVisible = !isPasswordVisible;
+        if (isPasswordVisible) {
+            passwordVisibleField.setText(passwordField.getText());
+            passwordVisibleField.setVisible(true);
+            passwordVisibleField.setManaged(true);
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            eyeIcon.setImage(new Image(getClass().getResourceAsStream("teampixl/com/pixlpos/images/loginscreen/EYE_OPEN_ICON.png")));
+        } else {
+            passwordField.setText(passwordVisibleField.getText());
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            passwordVisibleField.setVisible(false);
+            passwordVisibleField.setManaged(false);
+            eyeIcon.setImage(new Image(getClass().getResourceAsStream("teampixl/com/pixlpos/images/loginscreen/EYE_CLOSED_ICON.png")));
+        }
+    }
 
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -43,13 +68,11 @@ public class LoginScreenController extends GuiCommon {
     }
 
     private void initialize() {
-
     }
 
     private AuthenticationManager authManager = new AuthenticationManager();
     private DataStore dataStore = DataStore.getInstance();
     private UserStack userStack = UserStack.getInstance();
-
 
     @FXML
     protected void onLoginButtonClick() {

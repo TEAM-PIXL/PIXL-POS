@@ -84,3 +84,28 @@
     -fx-font-size: 18px;
     -fx-font-family: "Arial", sans-serif;
 }
+
+.eye-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 5px;
+    -fx-background-image: url('/teampixl/com/pixlpos/images/loginscreen/EYE_CLOSED_ICON.png');
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+}
+
+@keyframes eye-toggle {
+    from {
+        -fx-background-image: url('/teampixl/com/pixlpos/images/loginscreen/EYE_CLOSED_ICON.png');
+    }
+    to {
+        -fx-background-image: url('/teampixl/com/pixlpos/images/loginscreen/EYE_OPEN_ICON.png');
+    }
+}
+
+.eye-button:hover {
+    animation-name: eye-toggle;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+

@@ -4,6 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@loginstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.loginconsole.LoginScreenController">
    <top>
@@ -39,16 +41,28 @@
                            <Insets left="10.0" right="10.0" />
                         </VBox.margin>
                      </TextField>
-                     <Label alignment="CENTER" styleClass="login-label" text="Password">
-                        <VBox.margin>
-                           <Insets left="10.0" />
-                        </VBox.margin>
-                     </Label>
-                     <PasswordField fx:id="passwordField" alignment="BOTTOM_CENTER" styleClass="text-field">
-                        <VBox.margin>
-                           <Insets left="10.0" right="10.0" />
-                        </VBox.margin>
-                     </PasswordField>
+                     <HBox alignment="CENTER" spacing="10.0">
+                        <PasswordField fx:id="passwordField" alignment="BOTTOM_CENTER" styleClass="text-field" visible="true" managed="true">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </PasswordField>
+                        <TextField fx:id="passwordVisibleField" alignment="BOTTOM_CENTER" styleClass="text-field" visible="false" managed="false">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </TextField>
+                        <Button fx:id="eyeButton" onAction="#togglePasswordVisibility">
+                           <graphic>
+                              <ImageView fx:id="eyeIcon" fitWidth="20" fitHeight="20">
+                                 <image>
+                                    <Image url="@/teampixl/com/pixlpos/images/loginscreen/EYE_CLOSED_ICON.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </HBox>
+
                      <HBox alignment="CENTER" prefHeight="66.0" prefWidth="375.0" spacing="20.0">
                         <children>
                            <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExitButtonClick" prefHeight="30.0" prefWidth="70.0" text="Exit">
