@@ -70,7 +70,7 @@ public class CookScreenController extends GuiCommon {
     @FXML
     private void onLogoutButtonClick() {
         Stage stage = (Stage) logoutButton.getScene().getWindow();
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
     }
 
     private void updateOrderListView() {

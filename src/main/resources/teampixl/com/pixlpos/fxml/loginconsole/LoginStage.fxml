@@ -7,163 +7,81 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-         prefHeight="720.0" prefWidth="1280.0" type="BorderPane" xmlns="http://javafx.com/javafx/17.0.2-ea"
-         xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="teampixl.com.pixlpos.controllers.loginconsole.LoginScreenController">
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="teampixl.com.pixlpos.controllers.loginconsole.LoginScreenController">
 
-   <!-- Removed the <top> section to allow the left region to extend fully -->
-   <!-- Moved the theme toggle button inside the center region -->
-
-   <center>
-      <BorderPane BorderPane.alignment="CENTER">
-         <!-- Theme toggle button placed at the top-right corner -->
-         <top>
-            <HBox alignment="TOP_RIGHT" spacing="10.0">
-               <padding>
-                  <Insets top="10.0" right="10.0" bottom="0.0" left="0.0"/>
-               </padding>
+   <!-- Main content wrapped in a BorderPane -->
+   <children>
+      <BorderPane fx:id="mainBorderPane" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+         <!-- Left region with PIXL Services -->
+         <left>
+            <StackPane styleClass="header" BorderPane.alignment="CENTER">
                <children>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <Button fx:id="themeToggleButton" onAction="#toggleDarkMode" styleClass="theme-toggle-button">
-                     <graphic>
-                        <ImageView fx:id="themeToggleIcon">
-                           <image>
-                              <Image url="@TOGGLE_OFF.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                  <Label styleClass="header-label" text="PIXL Services" />
                </children>
-            </HBox>
-         </top>
+            </StackPane>
+         </left>
 
+         <!-- Center region with login form -->
          <center>
-            <HBox>
+            <StackPane BorderPane.alignment="CENTER">
                <children>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <VBox alignment="TOP_CENTER" prefWidth="480.0"
-                        styleClass="login-form_container">
+                  <!-- Login form container centered vertically and horizontally -->
+                  <VBox alignment="CENTER" styleClass="login-form_container" maxWidth="400.0" maxHeight="600.0">
                      <children>
                         <!-- Login Title -->
-                        <AnchorPane styleClass="login-title">
-                           <children>
-                              <Label alignment="CENTER"
-                                     styleClass="login-header-label" text="Staff Portal Login"
-                                     textAlignment="CENTER">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="25.0" />
-                           </VBox.margin>
-                        </AnchorPane>
-
+                        <Label styleClass="login-header-label" text="Staff Portal Login" textAlignment="CENTER">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
                         <!-- Username Label and Field -->
-                        <Label alignment="TOP_LEFT" styleClass="login-label" text="Staff Username"
-                               textOverrun="CLIP">
-                           <VBox.margin>
-                              <Insets left="10.0" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField fx:id="usernameField" styleClass="text-field">
-                           <VBox.margin>
-                              <Insets left="10.0" right="10.0" />
-                           </VBox.margin>
-                        </TextField>
-
+                        <Label styleClass="login-label" text="Staff Username" alignment="CENTER_LEFT" />
+                        <TextField fx:id="usernameField" styleClass="text-field" />
                         <!-- Password Label -->
-                        <Label alignment="CENTER" styleClass="login-label" text="Password">
-                           <VBox.margin>
-                              <Insets left="10.0" />
-                           </VBox.margin>
-                        </Label>
-
-                        <!-- Password Field with Eye Button -->
+                        <Label styleClass="login-label" text="Password" alignment="CENTER_LEFT" />
+                        <!-- Password Field and Eye Button -->
                         <StackPane>
-                           <children>
-                              <!-- PasswordField -->
-                              <PasswordField fx:id="passwordField" styleClass="text-field">
-                                 <StackPane.margin>
-                                    <Insets left="10.0" right="10.0" />
-                                 </StackPane.margin>
-                              </PasswordField>
-
-                              <!-- TextField for visible password -->
-                              <TextField fx:id="passwordVisibleField" styleClass="text-field"
-                                         visible="false" managed="false">
-                                 <StackPane.margin>
-                                    <Insets left="10.0" right="10.0" />
-                                 </StackPane.margin>
-                              </TextField>
-
-                              <!-- Eye Button -->
-                              <Button fx:id="eyeButton" styleClass="eye-button"
-                                      onAction="#togglePasswordVisibility" focusTraversable="false"
-                                      maxWidth="20" maxHeight="20" prefWidth="20" prefHeight="20"
-                                      opacity="0.7">
-                                 <graphic>
-                                    <ImageView fx:id="eyeIcon" fitWidth="20" fitHeight="20">
-                                       <image>
-                                          <Image url="@EYE_CLOSED_ICON.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                                 <StackPane.alignment>CENTER_RIGHT</StackPane.alignment>
-                                 <StackPane.margin>
-                                    <Insets right="30.0" />
-                                 </StackPane.margin>
-                              </Button>
-                           </children>
+                           <PasswordField fx:id="passwordField" styleClass="text-field" />
+                           <TextField fx:id="passwordVisibleField" styleClass="text-field" visible="false" managed="false" />
+                           <Button fx:id="eyeButton" styleClass="eye-button" onAction="#togglePasswordVisibility" focusTraversable="false"
+                                   maxWidth="20" maxHeight="20" prefWidth="20" prefHeight="20" opacity="0.7" StackPane.alignment="CENTER_RIGHT">
+                              <graphic>
+                                 <ImageView fx:id="eyeIcon" fitWidth="20" fitHeight="20">
+                                    <Image url="@EYE_CLOSED_ICON.png" />
+                                 </ImageView>
+                              </graphic>
+                              <StackPane.margin>
+                                 <!-- Adjust the right margin to move the button slightly to the left -->
+                                 <Insets right="15.0" />
+                              </StackPane.margin>
+                           </Button>
                         </StackPane>
-
                         <!-- Buttons for Exit and Login -->
-                        <HBox alignment="CENTER" prefHeight="66.0" prefWidth="375.0" spacing="20.0">
-                           <children>
-                              <Button fx:id="exitButton" onAction="#onExitButtonClick"
-                                      prefHeight="30.0" prefWidth="70.0" text="Exit">
-                                 <HBox.margin>
-                                    <Insets top="30.0" />
-                                 </HBox.margin>
-                              </Button>
-                              <Button fx:id="loginButton" onAction="#onLoginButtonClick"
-                                      prefHeight="30.0" prefWidth="70.0" text="Login">
-                                 <HBox.margin>
-                                    <Insets top="30.0" />
-                                 </HBox.margin>
-                              </Button>
-                           </children>
-                           <padding>
-                              <Insets left="10.0" right="10.0" />
-                           </padding>
+                        <HBox alignment="CENTER" spacing="20">
+                           <Button fx:id="exitButton" onAction="#onExitButtonClick" text="Exit" styleClass="form-button" />
+                           <Button fx:id="loginButton" onAction="#onLoginButtonClick" text="Login" styleClass="form-button" />
                         </HBox>
                      </children>
+                     <padding>
+                        <Insets top="20" bottom="20" left="20" right="20" />
+                     </padding>
+                     <spacing>15</spacing>
                   </VBox>
-                  <Region HBox.hgrow="ALWAYS" />
                </children>
-            </HBox>
+            </StackPane>
          </center>
       </BorderPane>
-   </center>
 
-   <left>
-      <!-- Changed AnchorPane to StackPane and removed fixed sizes -->
-      <StackPane styleClass="header" BorderPane.alignment="CENTER">
-         <children>
-            <Label styleClass="header-label" text="PIXL Services" />
-         </children>
-      </StackPane>
-   </left>
-
-   <right>
-      <AnchorPane styleClass="anchor-pane" BorderPane.alignment="CENTER" />
-   </right>
-
-   <bottom>
-      <AnchorPane styleClass="anchor-pane" BorderPane.alignment="CENTER" />
-   </bottom>
-</fx:root>
-
-
+      <!-- Theme toggle button anchored to the top right corner -->
+      <Button fx:id="themeToggleButton" onAction="#toggleDarkMode" styleClass="theme-toggle-button"
+              AnchorPane.topAnchor="10" AnchorPane.rightAnchor="10">
+         <graphic>
+            <ImageView fx:id="themeToggleIcon">
+               <Image url="@TOGGLE_OFF.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+</AnchorPane>

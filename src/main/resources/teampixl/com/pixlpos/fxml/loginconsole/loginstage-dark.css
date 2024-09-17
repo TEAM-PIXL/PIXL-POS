@@ -7,7 +7,6 @@
 .header {
     -fx-background-color: #3a3a3a;
     -fx-padding: 20px;
-    -fx-alignment: center;
 }
 
 /* AnchorPane styling (if needed) */
@@ -27,14 +26,7 @@
 .login-form_container {
     -fx-background-color: #3a3a3a;
     -fx-background-radius: 10px;
-    -fx-padding: 30px;
-    -fx-spacing: 20px;
     -fx-alignment: center;
-}
-
-/* Center container styling */
-.center-container {
-    -fx-background-color: #2e2e2e;
 }
 
 /* Label styling within login form */
@@ -42,6 +34,7 @@
     -fx-font-size: 16px;
     -fx-font-weight: normal;
     -fx-text-fill: #ffffff;
+    -fx-alignment: center;
 }
 
 /* Styling for text field with shadow */
@@ -52,10 +45,9 @@
     -fx-border-radius: 5px;
     -fx-border-width: 1px;
     -fx-padding: 10px;
-    -fx-pref-height: 40px;
-    -fx-pref-width: 280px;
     -fx-font-size: 18px;
     -fx-text-fill: #ffffff;
+    -fx-alignment: center;
 }
 
 /* Shadow effect on focus */
@@ -64,35 +56,37 @@
     -fx-effect: dropshadow(three-pass-box, rgba(255,255,255,0.3), 5, 0, 0, 3);
 }
 
-/* Button styling */
-.login-form_container Button {
+/* Form button styling */
+.form-button {
     -fx-background-color: #5a5a5a;
     -fx-background-radius: 5px;
     -fx-font-size: 19px;
-    -fx-pref-height: 40px;
-    -fx-pref-width: 200px;
     -fx-text-fill: #ffffff;
     -fx-cursor: hand;
+    -fx-pref-width: 100px;
+    -fx-pref-height: 40px;
 }
 
-/* Button hover state */
-.login-form_container Button:hover {
+/* Form button hover state */
+.form-button:hover {
     -fx-background-color: #6b6b6b;
 }
 
-/* Label for login form */
+/* Login header label */
 .login-header-label {
     -fx-text-fill: #ffffff;
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-font-family: "Arial", sans-serif;
+    -fx-alignment: center;
 }
 
-/* Label for login form */
+/* Login labels */
 .login-label {
     -fx-text-fill: #ffffff;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
     -fx-font-family: "Arial", sans-serif;
+    -fx-alignment: center-left;
 }
 
 /* Eye button styling */
@@ -119,4 +113,3 @@
 .theme-toggle-button:hover {
     -fx-opacity: 0.8;
 }
-
