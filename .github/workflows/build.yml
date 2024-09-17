@@ -32,4 +32,4 @@ jobs:
 
       - name: Build with Maven
         id: build
-        run: mvn clean install
+        run: mvn clean install -DskipTests

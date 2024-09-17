@@ -232,8 +232,15 @@ public class UsersAPI {
                 .orElse(null);
     }
 
+    public Users getUserById(String id) {
+        return dataStore.getUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("id").toString().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
-     * Gets a user from the database.
+     * Updates a user from the database.
      *
      * @param username the query to search for the user
      * @param newUsername the new username to update
@@ -261,7 +268,7 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Updates a user from the database.
      *
      * @param username the query to search for the user
      * @param newEmail the new email to update
@@ -289,7 +296,7 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Updates a user from the database.
      *
      * @param username the query to search for the user
      * @param newFirstName the new first name to update
@@ -317,7 +324,7 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Updates a user from the database.
      *
      * @param username the query to search for the user
      * @param newLastName the new last name to update
@@ -345,7 +352,7 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Updates a user from the database.
      *
      * @param username the query to search for the user
      * @param newPassword the new password to update
@@ -372,7 +379,7 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Updates a user from the database.
      *
      * @param username the query to search for the user
      * @param newRole the new role to update
@@ -400,7 +407,7 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Updates a user from the database.
      *
      * @param username the query to search for the user
      * @param newStatus the new status to update
@@ -428,7 +435,7 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Updates a user from the database.
      *
      * @param username the query to search for the user
      * @param newAdditionalInfo the new additional information to update
@@ -456,7 +463,7 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Deletes a user from the database.
      *
      * @param query the query to search for the user
      * @return status code indicating the result of the operation
