@@ -11,10 +11,10 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="teampixl.com.pixlpos.controllers.loginconsole.LoginScreenController">
 
-   <!-- Main content wrapped in a BorderPane -->
+   <!-- Main content wrapped in a BorderPane in the interest of simplicity. You should never need to access it -->
    <children>
       <BorderPane fx:id="mainBorderPane" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-         <!-- Left region with PIXL Services -->
+         <!-- Left region with PIXL Services i.e. the left hand bar -->
          <left>
             <StackPane styleClass="header" BorderPane.alignment="CENTER">
                <children>
@@ -23,11 +23,11 @@
             </StackPane>
          </left>
 
-         <!-- Center region with login form -->
+         <!-- Central region login-form containing main bulk of fx -->
          <center>
             <StackPane BorderPane.alignment="CENTER">
                <children>
-                  <!-- Login form container centered vertically and horizontally -->
+                  <!-- Login form container centered vertically and horizontally in order to apply active scaling -->
                   <VBox alignment="CENTER" styleClass="login-form_container" maxWidth="400.0" maxHeight="600.0">
                      <children>
                         <!-- Login Title -->
@@ -42,6 +42,7 @@
                         <!-- Password Label -->
                         <Label styleClass="login-label" text="Password" alignment="CENTER_LEFT" />
                         <!-- Password Field and Eye Button -->
+                        <!-- StackPane to store overlapping features i.e. eye-button -->
                         <StackPane>
                            <PasswordField fx:id="passwordField" styleClass="text-field" />
                            <TextField fx:id="passwordVisibleField" styleClass="text-field" visible="false" managed="false" />
@@ -53,7 +54,7 @@
                                  </ImageView>
                               </graphic>
                               <StackPane.margin>
-                                 <!-- Adjust the right margin to move the button slightly to the left -->
+                                 <!-- Margins to change the location insert of the eye button -->
                                  <Insets right="15.0" />
                               </StackPane.margin>
                            </Button>
@@ -67,14 +68,14 @@
                      <padding>
                         <Insets top="20" bottom="20" left="20" right="20" />
                      </padding>
-                     <spacing>15</spacing>
+                     <spacing>20</spacing>
                   </VBox>
                </children>
             </StackPane>
          </center>
       </BorderPane>
 
-      <!-- Theme toggle button anchored to the top right corner -->
+      <!-- Theme toggle button anchored to the top right corner (Good idea for all scenes maybe?)-->
       <Button fx:id="themeToggleButton" onAction="#toggleDarkMode" styleClass="theme-toggle-button"
               AnchorPane.topAnchor="10" AnchorPane.rightAnchor="10">
          <graphic>

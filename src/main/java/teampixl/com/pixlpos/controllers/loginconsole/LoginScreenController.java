@@ -48,18 +48,18 @@ public class LoginScreenController extends GuiCommon {
 
     @FXML
     private void initialize() {
-        // Bind the visibility of passwordField to the inverse of isPasswordVisible
+        // Bind the visibility of passwordField to the inverse of isPasswordVisible ->> passwordField is visible when isPasswordVisible is false
         passwordField.visibleProperty().bind(isPasswordVisible.not());
         passwordField.managedProperty().bind(passwordField.visibleProperty());
 
-        // Bind the visibility of passwordVisibleField to isPasswordVisible
+        // Bind the visibility of passwordVisibleField to isPasswordVisible ->> passwordVisibleField is visible when isPasswordVisible is true
         passwordVisibleField.visibleProperty().bind(isPasswordVisible);
         passwordVisibleField.managedProperty().bind(passwordVisibleField.visibleProperty());
 
-        // Synchronize text between passwordField and passwordVisibleField
+        // Synchronize text between passwordField and passwordVisibleField ->> When the text in one field changes, the other field is updated
         passwordVisibleField.textProperty().bindBidirectional(passwordField.textProperty());
 
-        // Apply initial theme when the scene is ready
+        // Apply initial theme when the scene is ready ->> This is necessary because the scene is not ready when the controller is initialized i.e. when the controller is created
         loginButton.sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (newScene != null) {
                 applyTheme(newScene);
@@ -84,7 +84,7 @@ public class LoginScreenController extends GuiCommon {
         Scene scene = loginButton.getScene();
         applyTheme(scene);
 
-        // Update the toggle button icon
+        // Change the icon of the theme toggle button based on the current theme ->> Dark mode is on when the icon is TOGGLE_ON.png
         if (isDarkMode) {
             themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/TOGGLE_ON.png")));
         } else {
@@ -95,9 +95,9 @@ public class LoginScreenController extends GuiCommon {
     private void applyTheme(Scene scene) {
         scene.getStylesheets().clear();
         if (isDarkMode) {
-            scene.getStylesheets().add(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/loginstage-dark.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/stylesheets/loginstage-dark.css").toExternalForm());
         } else {
-            scene.getStylesheets().add(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/loginstage.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/stylesheets/loginstage.css").toExternalForm());
         }
     }
 
