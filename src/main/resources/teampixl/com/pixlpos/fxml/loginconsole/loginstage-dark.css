@@ -1,11 +1,11 @@
 /* Root styling */
 .root {
-    -fx-background-color: #f4f4f4;
+    -fx-background-color: #2e2e2e;
 }
 
 /* Header styling */
 .header {
-    -fx-background-color: #EFF4FA;
+    -fx-background-color: #3a3a3a;
     -fx-padding: 20px;
     -fx-alignment: center;
 }
@@ -17,7 +17,7 @@
 
 /* Header label styling */
 .header-label {
-    -fx-text-fill: #4A85F6;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 30px;
     -fx-font-weight: bold;
     -fx-font-family: "Arial", sans-serif;
@@ -25,7 +25,7 @@
 
 /* Login form container styling */
 .login-form_container {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: #3a3a3a;
     -fx-background-radius: 10px;
     -fx-padding: 30px;
     -fx-spacing: 20px;
@@ -34,54 +34,55 @@
 
 /* Center container styling */
 .center-container {
-    -fx-background-color: #f4f4f4;
+    -fx-background-color: #2e2e2e;
 }
 
 /* Label styling within login form */
 .login-form_container Label {
     -fx-font-size: 16px;
     -fx-font-weight: normal;
-    -fx-text-fill: #333333;
+    -fx-text-fill: #ffffff;
 }
 
 /* Styling for text field with shadow */
 .text-field {
-    -fx-background-color: #F9F9F9;
+    -fx-background-color: #4a4a4a;
     -fx-background-radius: 5px;
-    -fx-border-color: #CCCCCC;
+    -fx-border-color: #666666;
     -fx-border-radius: 5px;
     -fx-border-width: 1px;
     -fx-padding: 10px;
     -fx-pref-height: 40px;
     -fx-pref-width: 280px;
     -fx-font-size: 18px;
+    -fx-text-fill: #ffffff;
 }
 
 /* Shadow effect on focus */
 .text-field:focused {
-    -fx-border-color: #222b45;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 3);
+    -fx-border-color: #888888;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,255,255,0.3), 5, 0, 0, 3);
 }
 
 /* Button styling */
 .login-form_container Button {
-    -fx-background-color: #4A85F6;
+    -fx-background-color: #5a5a5a;
     -fx-background-radius: 5px;
     -fx-font-size: 19px;
     -fx-pref-height: 40px;
     -fx-pref-width: 200px;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #ffffff;
     -fx-cursor: hand;
 }
 
 /* Button hover state */
 .login-form_container Button:hover {
-    -fx-background-color: #3B6FD1;
+    -fx-background-color: #6b6b6b;
 }
 
 /* Label for login form */
 .login-header-label {
-    -fx-text-fill: #333333;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-font-family: "Arial", sans-serif;
@@ -89,7 +90,7 @@
 
 /* Label for login form */
 .login-label {
-    -fx-text-fill: #333333;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 18px;
     -fx-font-family: "Arial", sans-serif;
 }
@@ -118,3 +119,4 @@
 .theme-toggle-button:hover {
     -fx-opacity: 0.8;
 }
+

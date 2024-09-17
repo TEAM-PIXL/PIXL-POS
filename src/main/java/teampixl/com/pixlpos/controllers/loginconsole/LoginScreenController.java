@@ -1,18 +1,19 @@
 package teampixl.com.pixlpos.controllers.loginconsole;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.common.GuiCommon;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
+import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.models.Users;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
-import teampixl.com.pixlpos.database.DataStore;
 
 public class LoginScreenController extends GuiCommon {
 
@@ -26,36 +27,78 @@ public class LoginScreenController extends GuiCommon {
     private Button exitButton;
 
     @FXML
-    private PasswordField passwordField;
-
-    @FXML
     private TextField passwordVisibleField;
 
     @FXML
-    private Button eyeButton;
-
-    private boolean isPasswordVisible = false;
+    private PasswordField passwordField;
 
     @FXML
     private ImageView eyeIcon;
 
     @FXML
+    private Button eyeButton;
+
+    @FXML
+    private Button themeToggleButton;
+
+    @FXML
+    private ImageView themeToggleIcon;
+
+    private final BooleanProperty isPasswordVisible = new SimpleBooleanProperty(false);
+    private boolean isDarkMode = false;
+
+    @FXML
+    private void initialize() {
+        // Bind the visibility of passwordField to the inverse of isPasswordVisible
+        passwordField.visibleProperty().bind(isPasswordVisible.not());
+        passwordField.managedProperty().bind(passwordField.visibleProperty());
+
+        // Bind the visibility of passwordVisibleField to isPasswordVisible
+        passwordVisibleField.visibleProperty().bind(isPasswordVisible);
+        passwordVisibleField.managedProperty().bind(passwordVisibleField.visibleProperty());
+
+        // Synchronize text between passwordField and passwordVisibleField
+        passwordVisibleField.textProperty().bindBidirectional(passwordField.textProperty());
+
+        // Apply initial theme when the scene is ready
+        loginButton.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                applyTheme(newScene);
+            }
+        });
+    }
+
+    @FXML
     private void togglePasswordVisibility() {
-        isPasswordVisible = !isPasswordVisible;
-        if (isPasswordVisible) {
-            passwordVisibleField.setText(passwordField.getText());
-            passwordVisibleField.setVisible(true);
-            passwordVisibleField.setManaged(true);
-            passwordField.setVisible(false);
-            passwordField.setManaged(false);
-            eyeIcon.setImage(new Image(getClass().getResourceAsStream("teampixl/com/pixlpos/images/loginscreen/EYE_OPEN_ICON.png")));
+        isPasswordVisible.set(!isPasswordVisible.get());
+
+        if (isPasswordVisible.get()) {
+            eyeIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/EYE_OPEN_ICON.png")));
         } else {
-            passwordField.setText(passwordVisibleField.getText());
-            passwordField.setVisible(true);
-            passwordField.setManaged(true);
-            passwordVisibleField.setVisible(false);
-            passwordVisibleField.setManaged(false);
-            eyeIcon.setImage(new Image(getClass().getResourceAsStream("teampixl/com/pixlpos/images/loginscreen/EYE_CLOSED_ICON.png")));
+            eyeIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/EYE_CLOSED_ICON.png")));
+        }
+    }
+
+    @FXML
+    private void toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        Scene scene = loginButton.getScene();
+        applyTheme(scene);
+
+        // Update the toggle button icon
+        if (isDarkMode) {
+            themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/TOGGLE_ON.png")));
+        } else {
+            themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/TOGGLE_OFF.png")));
+        }
+    }
+
+    private void applyTheme(Scene scene) {
+        scene.getStylesheets().clear();
+        if (isDarkMode) {
+            scene.getStylesheets().add(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/loginstage-dark.css").toExternalForm());
+        } else {
+            scene.getStylesheets().add(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/loginstage.css").toExternalForm());
         }
     }
 
@@ -67,24 +110,20 @@ public class LoginScreenController extends GuiCommon {
         alert.showAndWait();
     }
 
-    private void initialize() {
-    }
-
-    private AuthenticationManager authManager = new AuthenticationManager();
-    private DataStore dataStore = DataStore.getInstance();
-    private UserStack userStack = UserStack.getInstance();
+    private final AuthenticationManager authManager = new AuthenticationManager();
+    private final DataStore dataStore = DataStore.getInstance();
+    private final UserStack userStack = UserStack.getInstance();
 
     @FXML
     protected void onLoginButtonClick() {
         String username = usernameField.getText();
-        String password = passwordField.getText();
+        String password = passwordField.isVisible() ? passwordField.getText() : passwordVisibleField.getText();
         boolean auth = authManager.login(username, password);
         System.out.println("Auth: " + auth);
         if (auth) {
             userStack.setCurrentUser(username);
             Users user = userStack.getCurrentUser();
             Users.UserRole role = (Users.UserRole) user.getMetadata().metadata().get("role");
-            Stage stage = (Stage) loginButton.getScene().getWindow();
             switch (role) {
                 case ADMIN:
                     System.out.println("Loading Admin Page");
