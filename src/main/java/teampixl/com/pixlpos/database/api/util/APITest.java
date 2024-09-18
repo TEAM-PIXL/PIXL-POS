@@ -82,12 +82,12 @@ public class APITest {
 //            System.out.println(returnStatus("User could not be created with the following errors:", STATUS));
 //        }
 
-//        List<StatusCode> STATUS2 = usersAPI.putUsersAdditionalInfo("NewUser", "My new INFO");
-//        if (isSuccessful(STATUS2)) {
-//            System.out.println("User status updated successfully.");
-//        } else {
-//            System.out.println(returnStatus("User status could not be updated with the following errors:", STATUS2));
-//        }
+        List<StatusCode> STATUS2 = usersAPI.deleteUser("admin");
+        if (isSuccessful(STATUS2)) {
+            System.out.println("User deleted successfully.");
+        } else {
+            System.out.println(returnStatus("User could not be deleted with the following errors:", STATUS2));
+        }
 
     }
 }

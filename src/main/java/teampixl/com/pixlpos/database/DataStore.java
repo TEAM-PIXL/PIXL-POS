@@ -1117,14 +1117,44 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 Users.UserRole role = Users.UserRole.valueOf(roleStr);
                 String email = rs.getString("email");
                 String password = rs.getString("password");
+                String additionalInfo = rs.getString("additional_info");
                 Users user = new Users(firstName, lastName,username, password, email, role);
                 user.updateMetadata("id", id);
+                user.setDataValue("additional_info", additionalInfo);
                 users.add(user);
             }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public Map<String, Object> getUserByIdFromDatabase(String userId) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        Map<String, Object> userMap = new HashMap<>();
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                userMap.put("id", rs.getString("id"));
+                userMap.put("first_name", rs.getString("first_name"));
+                userMap.put("last_name", rs.getString("last_name"));
+                userMap.put("username", rs.getString("username"));
+                userMap.put("role", rs.getString("role"));
+                userMap.put("email", rs.getString("email"));
+                userMap.put("password", rs.getString("password"));
+                userMap.put("additional_info", rs.getString("additional_info"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return userMap;
     }
 
     /**
@@ -1190,8 +1220,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setString(6, user.getMetadata().metadata().get("role").toString());
             pstmt.setLong(7, (Long) user.getMetadata().metadata().get("updated_at"));
             pstmt.setBoolean(8, (Boolean) user.getMetadata().metadata().get("is_active"));
-            pstmt.setString(9, (String) user.getMetadata().metadata().get("id"));
-            pstmt.setString(10, (String) user.getData().get("additional_info"));
+            pstmt.setString(9, (String) user.getData().get("additional_info"));
+            pstmt.setString(10, (String) user.getMetadata().metadata().get("id"));
 
             pstmt.executeUpdate();
             System.out.println("User updated in database.");

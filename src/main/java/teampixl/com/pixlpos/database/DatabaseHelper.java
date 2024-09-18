@@ -74,7 +74,7 @@ public class DatabaseHelper {
             role TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            is_active BOOLEAN NOT NULL,
+            is_active INT NOT NULL,
             additional_info TEXT
         );
     """;

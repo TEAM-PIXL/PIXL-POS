@@ -164,7 +164,11 @@ public class UsersAPI {
     private Pair<List<StatusCode>, Users> validateAndGetUser(String field, Object value, String username) {
         List<StatusCode> validations = new ArrayList<>();
         try {
-            Method validationMethod = this.getClass().getMethod("validateUsersBy" + field, value.getClass());
+            Class<?> valueType = value.getClass();
+            if (valueType == Boolean.class) {
+                valueType = boolean.class;
+            }
+            Method validationMethod = this.getClass().getMethod("validateUsersBy" + field, valueType);
             StatusCode validationResult = (StatusCode) validationMethod.invoke(this, value);
             validations.add(validationResult);
             if (!Exceptions.isSuccessful(validations)) {
@@ -477,14 +481,15 @@ public class UsersAPI {
      */
     public List<StatusCode> deleteUser(String USERNAME) {
         try {
-            String id = getUsersByUsername(USERNAME);
-            if (id == null) { return List.of(StatusCode.USER_NOT_FOUND); }
+            Pair<List<StatusCode>, Users> RESULT = validateAndGetUser("AdditionalInfo", USERNAME, USERNAME);
+            List<StatusCode> VALIDATIONS = RESULT.getKey();
+            if (!Exceptions.isSuccessful(VALIDATIONS)) { return VALIDATIONS; }
 
-            Users user = getUserById(id);
-            if (user == null) { return List.of(StatusCode.USER_NOT_FOUND); }
+            Users USER = RESULT.getValue();
 
-            dataStore.removeUser(user);
-            return List.of(StatusCode.SUCCESS);
+
+            dataStore.removeUser(USER);
+            return VALIDATIONS;
         } catch (Exception e) {
             return List.of(StatusCode.USER_DELETION_FAILED);
         }
