@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.database.api.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Exceptions {
@@ -27,6 +28,12 @@ public class Exceptions {
      * @return string with message and status codes
      */
     public static String returnStatus(String MESSAGE, List<StatusCode> STATUS_CODES) {
-        return MESSAGE + " " + STATUS_CODES;
+        ArrayList<StatusCode> ERROR_CODES = new ArrayList<>();
+        STATUS_CODES.forEach(StatusCode -> {
+            if (StatusCode != teampixl.com.pixlpos.database.api.util.StatusCode.SUCCESS) {
+                ERROR_CODES.add(StatusCode);
+            }
+        });
+        return MESSAGE + " " + ERROR_CODES;
     }
 }
