@@ -32,57 +32,58 @@ public class OrderAPI {
     /**
      * Validates the order number.
      * @param ORDER_NUMBER the order number to validate
-     * @return the status code
+     * @return the appropriate StatusCode from the enumeration class StatusCode
      */
-    public StatusCode validateOrderByNumber(int ORDER_NUMBER) {
-        if (ORDER_NUMBER < 0) {
-            return StatusCode.INVALID_ORDER_NUMBER;
-        }
+    public static StatusCode validateOrderByNumber(int ORDER_NUMBER) {
+        if (ORDER_NUMBER < 0) { return StatusCode.INVALID_ORDER_NUMBER; }
         return StatusCode.SUCCESS;
     }
 
     /**
      * Validates the order by user.
      * @param USERNAME the username to validate
-     * @return the status code
+     * @return the appropriate StatusCode from the enumeration class StatusCode
      */
-    public StatusCode validateOrderByUser(String USERNAME) {
-        if (USERNAME == null) {
-            return StatusCode.INVALID_USER_ID;
-        }
-        else if (UsersAPI.getUsersByUsername(USERNAME) == null) {
-            return StatusCode.USER_NOT_FOUND;
-        }
+    public static StatusCode validateOrderByUser(String USERNAME) {
+        if (USERNAME == null) { return StatusCode.INVALID_USERNAME; }
+        else if (UsersAPI.getUsersByUsername(USERNAME) == null) { return StatusCode.USER_NOT_FOUND; }
         return StatusCode.SUCCESS;
     }
 
     /**
-     * Validates the order.
-     * @param order the order to validate
-     * @return the status code
+     * Validates the order by id.
+     * @param ORDER_ID the order id to validate
+     * @return the appropriate StatusCode from the enumeration class StatusCode
      */
-    public List<StatusCode> validateOrder(Order order) {
-        List<StatusCode> statusCodes = new ArrayList<>();
-        if (order == null) {
-            statusCodes.add(StatusCode.INVALID_ORDER);
+    public static StatusCode validateOrderById(String ORDER_ID) {
+        if (ORDER_ID == null) { return StatusCode.INVALID_ORDER_ID; }
+        return StatusCode.SUCCESS;
+    }
+
+    /**
+     * Validates the order at the time of creation in the database.
+     * @param ORDER the order to validate
+     * @return the appropriate StatusCode from the enumeration class StatusCode
+     */
+    public List<StatusCode> validateOrder(Order ORDER) {
+        List<StatusCode> STATUS_CODES = new ArrayList<>();
+        if (ORDER == null) { STATUS_CODES.add(StatusCode.INVALID_ORDER); }
+        else {
+            if (ORDER.getMetadata().metadata().get("order_id") == null) { STATUS_CODES.add(StatusCode.INVALID_ORDER_ID); }
+            if (ORDER.getMetadata().metadata().get("order_status") == null) { STATUS_CODES.add(StatusCode.INVALID_ORDER_STATUS); } else {
+                try { Order.OrderStatus.valueOf(ORDER.getMetadata().metadata().get("order_status").toString()); } catch (IllegalArgumentException e) { STATUS_CODES.add(StatusCode.INVALID_ORDER_STATUS); } }
+            if (ORDER.getMetadata().metadata().get("created_at") == null) { STATUS_CODES.add(StatusCode.INVALID_ORDER_TIME);}
+            if (ORDER.getData().get("total") == null) { STATUS_CODES.add(StatusCode.INVALID_ORDER_TOTAL); }
+            Object MENU_ITEMS = ORDER.getData().get("menuItems");
+            if (!(MENU_ITEMS instanceof Map<?, ?> menuItemsMap)) {
+                STATUS_CODES.add(StatusCode.INVALID_ORDER_ITEMS);
+            } else {
+                if (menuItemsMap.isEmpty()) {
+                    STATUS_CODES.add(StatusCode.INVALID_ORDER_ITEMS);
+                }
+            }
         }
-        assert order != null;
-        if (order.getMetadata().metadata().get("order_id") == null) {
-            statusCodes.add(StatusCode.INVALID_ORDER_ID);
-        }
-        if (order.getMetadata().metadata().get("order_status") == null) {
-            statusCodes.add(StatusCode.INVALID_ORDER_STATUS);
-        }
-        if (order.getMetadata().metadata().get("created_at") == null) {
-            statusCodes.add(StatusCode.INVALID_ORDER_TIME);
-        }
-        if (order.getData().get("total") == null) {
-            statusCodes.add(StatusCode.INVALID_ORDER_TOTAL);
-        }
-        if (order.getData().get("menuItems") == null) {
-            statusCodes.add(StatusCode.INVALID_ORDER_ITEMS);
-        }
-        return statusCodes;
+        return STATUS_CODES;
     }
 
     /**
@@ -91,9 +92,14 @@ public class OrderAPI {
      * @param ORDER_NUMBER the order number
      * @return the order id
      */
-    public static String getOrderByNumber(String ORDER_NUMBER) {
+    public static String getOrderByNumber(int ORDER_NUMBER) {
+        StatusCode STATUS_CODE = OrderAPI.validateOrderByNumber(ORDER_NUMBER);
+        if (STATUS_CODE != StatusCode.SUCCESS) {
+            return null;
+        }
+        String ORDER_NUMBER_STRING = String.valueOf(ORDER_NUMBER);
         return dataStore.getOrders().stream()
-                .filter(order -> order.getMetadata().metadata().get("order_number").toString().equals(ORDER_NUMBER))
+                .filter(order -> order.getMetadata().metadata().get("order_number").toString().equals(ORDER_NUMBER_STRING))
                 .findFirst()
                 .map(order -> order.getMetadata().metadata().get("order_id").toString())
                 .orElse(null);
@@ -106,6 +112,7 @@ public class OrderAPI {
      * @return the order
      */
     public static Order getOrderById(String ORDER_ID) {
+        StatusCode STATUS_CODE = OrderAPI.validateOrderById(ORDER_ID);
         return dataStore.getOrders().stream()
                 .filter(order -> order.getMetadata().metadata().get("order_id").toString().equals(ORDER_ID))
                 .findFirst()
@@ -113,12 +120,10 @@ public class OrderAPI {
     }
 
     public List<MenuItem> getOrderItemsById(String ORDER_ID) {
-        Order order = getOrderById(ORDER_ID);
-        if (order == null) {
-            return null;
-        }
+        Order ORDER = getOrderById(ORDER_ID);
+        if (ORDER == null) { return null; }
         return dataStore.getMenuItems().stream()
-                .filter(menuItem -> order.getMetadata().metadata().get("order_items").toString().contains(menuItem.getMetadata().metadata().get("id").toString())).toList();
+                .filter(menuItem -> ORDER.getMetadata().metadata().get("order_items").toString().contains(menuItem.getMetadata().metadata().get("id").toString())).toList();
     }
 
     /**
@@ -129,15 +134,15 @@ public class OrderAPI {
     public Order initializeOrder() {
         int ORDER_NUMBER = 0;
         String USER_ID = null;
-        List<Order> orders = dataStore.getOrders();
-        if (!orders.isEmpty()) {
-            ORDER_NUMBER = (int) orders.getLast().getMetadata().metadata().get("order_number") + 1;
+        List<Order> ORDERS = dataStore.getOrders();
+        if (!ORDERS.isEmpty()) {
+            ORDER_NUMBER = (int) ORDERS.getLast().getMetadata().metadata().get("order_number") + 1;
             USER_ID = UserStack.getInstance().getCurrentUserId();
         }
         try {
-            Order order = new Order(ORDER_NUMBER, USER_ID);
-            dataStore.addOrder(order);
-            return order;
+            Order ORDER = new Order(ORDER_NUMBER, USER_ID);
+            dataStore.addOrder(ORDER);
+            return ORDER;
         } catch (Exception e) {
             return null;
         }
@@ -146,16 +151,16 @@ public class OrderAPI {
     /**
      * Posts the order.
      *
-     * @param order the order to post
+     * @param ORDER the order to post
      * @return the status code
      */
-    public List<StatusCode> postOrder(Order order) {
-        List<StatusCode> statusCodes = validateOrder(order);
-        if (statusCodes.isEmpty()) {
-            dataStore.updateOrder(order);
-            statusCodes.add(StatusCode.SUCCESS);
+    public List<StatusCode> postOrder(Order ORDER) {
+        List<StatusCode> STATUS_CODES = validateOrder(ORDER);
+        if (STATUS_CODES.isEmpty()) {
+            dataStore.updateOrder(ORDER);
+            STATUS_CODES.add(StatusCode.SUCCESS);
         }
-        return statusCodes;
+        return STATUS_CODES;
     }
 
     /**
@@ -168,7 +173,8 @@ public class OrderAPI {
      */
     public List<StatusCode> putOrderByItem(int ORDER_NUMBER, String ITEM_NAME, int QUANTITY) {
         List<StatusCode> statusCodes = new ArrayList<>();
-        String orderId = getOrderByNumber(String.valueOf(ORDER_NUMBER));
+        String orderId = getOrderByNumber(ORDER_NUMBER);
+        DataStore dataStore = DataStore.getInstance();
         System.out.println("Order ID: " + orderId);
         if (orderId == null) {
             statusCodes.add(StatusCode.ORDER_NOT_FOUND);
@@ -192,7 +198,7 @@ public class OrderAPI {
             return statusCodes;
         }
 
-        Map<String, Object> menuItems = DataStore.getInstance().getOrderItems(order);
+        Map<String, Object> menuItems = dataStore.getOrderItems(order);
         if (menuItems == null) {
             statusCodes.add(StatusCode.MENU_ITEM_NOT_FOUND);
             return statusCodes;
@@ -200,14 +206,18 @@ public class OrderAPI {
 
         System.out.println("Menu Items: " + menuItems);
 
-        Map<String, Object> orderItem = DataStore.getInstance().getOrderItem(order, ITEM_NAME);
+        Map<String, Object> orderItem = dataStore.getOrderItem(order, id);
 
         if (orderItem == null) {
-            DataStore.getInstance().addOrderItem(order, menuItem, QUANTITY);
-        } else {
-            int currentQuantity = (int) orderItem.get("quantity");
-            int newQuantity = currentQuantity + QUANTITY;
-            dataStore.updateOrderItem(order, menuItem, newQuantity);
+            order.addMenuItem(menuItem, QUANTITY);
+            dataStore.updateOrder(order);
+        }
+        else {
+            dataStore.loadOrderItems(orderId, order);
+            int currentQuantity = (int) orderItem.get("Quantity");
+            int NEW_QUANTITY = currentQuantity + QUANTITY;
+            System.out.println("Order Item: " + orderItem);
+            dataStore.updateOrderItem(order, menuItem, NEW_QUANTITY);
         }
 
         if (statusCodes.isEmpty()) {

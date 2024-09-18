@@ -1,5 +1,7 @@
 package teampixl.com.pixlpos.database;
 
+import teampixl.com.pixlpos.database.api.MenuAPI;
+import teampixl.com.pixlpos.database.api.OrderAPI;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
@@ -338,6 +340,10 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         restoreIngredientsToStock(item, quantity);
     }
 
+    public void syncOrder(Order order) {
+        updateOrderInDatabase(order);
+        updateOrderItemsInDatabase(order);
+    }
 
 
     /*====================================================================================================================================================================
@@ -828,8 +834,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 order.updateMetadata("is_completed", isCompleted);
                 order.setDataValue("total", total);
 
-                loadOrderItems((String) order.getMetadata().metadata().get("order_id"));
-
                 orders.add(order);
             }
 
@@ -838,7 +842,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         }
     }
 
-    private void loadOrderItems(String orderId) {
+    public void loadOrderItems(String orderId, Order order) {
         ObservableList<Map<String, Object>> orderItemsList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM order_items WHERE order_id = ?";
 
@@ -853,16 +857,50 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 int quantity = rs.getInt("quantity");
 
                 Map<String, Object> orderItemMap = new HashMap<>();
-                orderItemMap.put("menu_item_id", menuItemId);
-                orderItemMap.put("quantity", quantity);
+                orderItemMap.put("Item", menuItemId);
+                orderItemMap.put("Quantity", quantity);
 
                 orderItemsList.add(orderItemMap);
+            }
+
+            // Update the order's menuItems map with the loaded items
+            if (order != null) {
+                @SuppressWarnings("unchecked")
+                Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
+                if (menuItems == null) {
+                    menuItems = new HashMap<>();
+                    order.setDataValue("menuItems", menuItems);
+                }
+                for (Map<String, Object> orderItem : orderItemsList) {
+                    String menuItemId = (String) orderItem.get("Item");
+                    int quantity = (int) orderItem.get("Quantity");
+                    menuItems.put(menuItemId, quantity);
+                }
+            } else {
+                System.out.println("Order not found for orderId: " + orderId);
             }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
 
+    public void updateOrderItem(Order order, String itemId, int newQuantity) {
+        String sql = "UPDATE order_items SET quantity = ? WHERE order_id = ? AND menu_item_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, newQuantity);
+            pstmt.setString(2, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setString(3, itemId);
+
+            pstmt.executeUpdate();
+            System.out.println("Order item updated in the database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private Map<String, Object> getOrderItemsFromDatabase(String orderId) {

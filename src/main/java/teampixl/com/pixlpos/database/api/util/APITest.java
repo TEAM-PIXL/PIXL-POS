@@ -39,18 +39,32 @@ public class APITest {
         int ORDER_NUM = (int) order.getMetadata().metadata().get("order_number");
         System.out.println("Order Number: " + ORDER_NUM);
 
-        List<StatusCode> RESULT = orderAPI.putOrderByItem(8, "Pizza", 2);
+        /* ---> PUT ORDER BY ITEM WORKS <---- */
+        List<StatusCode> RESULT = orderAPI.putOrderByItem(8, "Pizza", 4);
         if (isSuccessful(RESULT)) {
             System.out.println("Order placed successfully.");
         } else {
             System.out.println(returnStatus("Order items could not be added with the following errors:", RESULT));
         }
 
-        List<StatusCode> RESULT2 = orderAPI.postOrder(order);
-        if (isSuccessful(RESULT2)) {
-            System.out.println("Order placed successfully.");
+//        List<StatusCode> RESULT2 = orderAPI.postOrder(order);
+//        if (isSuccessful(RESULT2)) {
+//            System.out.println("Order placed successfully.");
+//        } else {
+//            System.out.println(returnStatus("Order could not be placed with the following errors:", RESULT2));
+//        }
+
+        int ORDER_NUMBER = 8;
+
+        Order ORDER = OrderAPI.getOrderById(OrderAPI.getOrderByNumber(ORDER_NUMBER));
+        System.out.println("The order ORDER has the metadata contents: " + ORDER.getMetadata().metadata());
+        System.out.println("The order ORDER has the data contents: " + ORDER.getData());
+
+        List<StatusCode> RESULT3 = orderAPI.validateOrder(ORDER);
+        if (isSuccessful(RESULT3)) {
+            System.out.println("Order validated successfully.");
         } else {
-            System.out.println(returnStatus("Order could not be placed with the following errors:", RESULT2));
+            System.out.println(returnStatus("Order could not be validated with the following errors:", RESULT3));
         }
 
     }
