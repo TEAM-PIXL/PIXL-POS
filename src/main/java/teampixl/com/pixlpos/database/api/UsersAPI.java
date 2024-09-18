@@ -33,6 +33,7 @@ public class UsersAPI {
         }
         return instance;
     }
+
     /**
      * Constructor for the UsersAPI class.
      *
@@ -161,6 +162,7 @@ public class UsersAPI {
         if (ADDITIONAL_INFO == null) { return StatusCode.INVALID_USER_ADDITIONAL_INFO; } return StatusCode.SUCCESS;
     }
 
+    /* ---> IMPORTANT INTERNAL FUNCTION FOR SAFELY MANAGING AND VALIDATING A USER UPDATE <---- */
     private Pair<List<StatusCode>, Users> validateAndGetUser(String field, Object value, String username) {
         List<StatusCode> validations = new ArrayList<>();
         try {
@@ -175,7 +177,7 @@ public class UsersAPI {
                 return new Pair<>(validations, null);
             }
         } catch (Exception e) {
-            validations.add(StatusCode.FAILURE);
+            validations.add(StatusCode.INTERNAL_FAILURE);
             return new Pair<>(validations, null);
         }
 
@@ -274,6 +276,34 @@ public class UsersAPI {
                 .filter(user -> user.getData().get("email").toString().equals(EMAIL))
                 .findFirst()
                 .map(user -> user.getMetadata().metadata().get("id").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's first name from the database.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersFirstName(String USERNAME) {
+        return dataStore.getUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("first_name").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's last name from the database.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersLastName(String USERNAME) {
+        return dataStore.getUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("last_name").toString())
                 .orElse(null);
     }
 

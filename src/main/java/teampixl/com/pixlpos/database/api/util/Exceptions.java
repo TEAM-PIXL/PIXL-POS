@@ -3,6 +3,9 @@ package teampixl.com.pixlpos.database.api.util;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class to handle exceptions and status codes for the API
+ */
 public class Exceptions {
     public static void throwException(String MESSAGE) {
         throw new RuntimeException(MESSAGE);
