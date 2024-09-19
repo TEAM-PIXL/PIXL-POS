@@ -1,7 +1,5 @@
 package teampixl.com.pixlpos.database;
 
-import teampixl.com.pixlpos.database.api.MenuAPI;
-import teampixl.com.pixlpos.database.api.OrderAPI;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
@@ -338,11 +336,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         order.removeMenuItem(item, quantity);
         deleteOrderItemFromDatabase(order, item, quantity);
         restoreIngredientsToStock(item, quantity);
-    }
-
-    public void syncOrder(Order order) {
-        updateOrderInDatabase(order);
-        updateOrderItemsInDatabase(order);
     }
 
 

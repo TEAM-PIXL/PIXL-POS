@@ -19,8 +19,8 @@ import java.net.URL;
 public class GuiCommon {
 
     // Constants for default dimensions
-    public static final int WIDTH = 1280;
-    public static final int HEIGHT = 720;
+    public static final int WIDTH = 1920;
+    public static final int HEIGHT = 1028;
 
     // Default icon path (if needed)
     public static final String ICON_PATH = "/images/icon.JPG";
