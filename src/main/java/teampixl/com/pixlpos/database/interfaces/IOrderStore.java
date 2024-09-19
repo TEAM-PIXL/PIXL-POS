@@ -1,8 +1,8 @@
 package teampixl.com.pixlpos.database.interfaces;
 
 import javafx.collections.ObservableList;
-import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
-import teampixl.com.pixlpos.database.api.orderapi.Order;
+import teampixl.com.pixlpos.models.MenuItem;
+import teampixl.com.pixlpos.models.Order;
 
 import java.util.Map;
 

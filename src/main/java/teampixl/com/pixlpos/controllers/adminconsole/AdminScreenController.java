@@ -7,11 +7,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.database.api.userapi.Users;
-import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
+import teampixl.com.pixlpos.models.Users;
+import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
-import teampixl.com.pixlpos.database.api.userapi.UsersAPI;
+import teampixl.com.pixlpos.database.api.UsersAPI;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -139,9 +139,8 @@ Methods for user management from here.
 
     @FXML
     protected void onExitButtonClick() {
-        // Handle exit button click
         Stage stage = (Stage) exitButton.getScene().getWindow();
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitButton);
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitButton);
     }
 
     @FXML
@@ -569,7 +568,7 @@ Methods for user management from here.
     protected void onExitMenuItemButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) exitMenuItemButton.getScene().getWindow();
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitMenuItemButton);
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitMenuItemButton);
     }
 /*===================================================================================================================================================================================
     Methods for both User and Menu Item management:

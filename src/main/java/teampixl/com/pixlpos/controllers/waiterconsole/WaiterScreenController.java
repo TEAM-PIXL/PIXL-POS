@@ -2,14 +2,15 @@ package teampixl.com.pixlpos.controllers.waiterconsole;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
-import teampixl.com.pixlpos.database.api.menuapi.MenuItem;
-import teampixl.com.pixlpos.database.api.orderapi.Order;
+import teampixl.com.pixlpos.models.MenuItem;
+import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.api.userapi.UserStack;
-import teampixl.com.pixlpos.database.api.userapi.UsersAPI;
+import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.database.api.UsersAPI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -255,7 +256,8 @@ public class WaiterScreenController extends GuiCommon {
 
     @FXML
     private void onLogoutButtonClick() {
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
     }
 
     @FXML
