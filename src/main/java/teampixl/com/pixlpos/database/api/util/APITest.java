@@ -66,28 +66,24 @@ public class APITest {
 //        } else {
 //            System.out.println(returnStatus("Order could not be validated with the following errors:", RESULT3));
 //        }
+        String[] roles = {"COOK", "WAITER"};
 
-//        String FIRST_NAME = "First";
-//        String LAST_NAME = "Last";
-//        String USERNAME = "NewUser";
-//        String PASSWORD = "GobldyG00p!";
-//        String EMAIL = "examplar@example.ezy.com";
-//        Users.UserRole ROLE = Users.UserRole.ADMIN;
-//        String ADDITIONAL_INFO = "My INFO";
-//
-//        List<StatusCode> STATUS = usersAPI.postUsers(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD, EMAIL, ROLE, ADDITIONAL_INFO);
-//        if (isSuccessful(STATUS)) {
-//            System.out.println("User created successfully.");
-//        } else {
-//            System.out.println(returnStatus("User could not be created with the following errors:", STATUS));
-//        }
+        for (int i = 1; i <= 10; i++) {
+            String FIRST_NAME = "First" + i;
+            String LAST_NAME = "Last" + i;
+            String USERNAME = "NewUser" + i;
+            String PASSWORD = "GobldyG00p!" + i;
+            String EMAIL = "examplar" + i + "@example.ezy.com";
+            Users.UserRole ROLE = Users.UserRole.valueOf(roles[i % 2]);
 
-        List<StatusCode> STATUS2 = usersAPI.deleteUser("admin");
-        if (isSuccessful(STATUS2)) {
-            System.out.println("User deleted successfully.");
-        } else {
-            System.out.println(returnStatus("User could not be deleted with the following errors:", STATUS2));
+            List<StatusCode> STATUS = usersAPI.deleteUser(USERNAME);
+            if (isSuccessful(STATUS)) {
+                System.out.println("User " + USERNAME + " created successfully.");
+            } else {
+                System.out.println(returnStatus("User " + USERNAME + " could not be created with the following errors:", STATUS));
+            }
         }
+
 
     }
 }

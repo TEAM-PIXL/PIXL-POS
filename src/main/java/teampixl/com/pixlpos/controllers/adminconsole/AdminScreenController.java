@@ -139,9 +139,8 @@ Methods for user management from here.
 
     @FXML
     protected void onExitButtonClick() {
-        // Handle exit button click
         Stage stage = (Stage) exitButton.getScene().getWindow();
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitButton);
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitButton);
     }
 
     @FXML
@@ -569,7 +568,7 @@ Methods for user management from here.
     protected void onExitMenuItemButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) exitMenuItemButton.getScene().getWindow();
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitMenuItemButton);
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitMenuItemButton);
     }
 /*===================================================================================================================================================================================
     Methods for both User and Menu Item management:

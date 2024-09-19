@@ -3,6 +3,7 @@ package teampixl.com.pixlpos.models;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.MetadataWrapper;
@@ -119,6 +120,9 @@ public class Order implements IDataManager {
      * @param quantity The quantity of the menu item to add.
      */
     public void addMenuItem(MenuItem item, int quantity) {
+        String orderId = (String) this.getMetadata().metadata().get("order_id");
+        DataStore.getInstance().loadOrderItems(orderId, this); // Pass the order object to update its menuItems
+
         Object menuItemsObj = data.get("menuItems");
 
         if (menuItemsObj instanceof Map) {
@@ -126,19 +130,22 @@ public class Order implements IDataManager {
             Map<String, Integer> menuItems = (Map<String, Integer>) menuItemsObj;
             String itemId = (String) item.getMetadata().metadata().get("id");
 
-            if (menuItems.containsKey(itemId)) {
-                menuItems.put(itemId, menuItems.get(itemId) + quantity);
-            } else {
-                menuItems.put(itemId, quantity);
-            }
+            int currentQuantity = menuItems.getOrDefault(itemId, 0);
+            int newQuantity = currentQuantity + quantity;
 
-            updateTotal(item, quantity);
-            deductIngredientsFromStock(item, quantity);
+            menuItems.put(itemId, newQuantity);
+
+            updateTotal(item, newQuantity - currentQuantity);
+            deductIngredientsFromStock(item, newQuantity - currentQuantity);
             updateTimestamp();
+
+            // Update the order item in the database
+            DataStore.getInstance().updateOrderItem(this, itemId, newQuantity);
         } else {
             throw new IllegalStateException("Expected menuItems to be a Map<String, Integer>");
         }
     }
+
 
     /**
      * Removes a menu item from the order.
@@ -178,16 +185,27 @@ public class Order implements IDataManager {
     @SuppressWarnings("unchecked")
     public void updateMenuItem(MenuItem menuItem, int newQuantity) {
         Map<String, Integer> menuItems = (Map<String, Integer>) data.get("menuItems");
-        String itemId = (String) menuItem.getMetadata().metadata().get("id");
+
+        // Normalize the item ID when fetching from menuItem
+        String itemId = ((String) menuItem.getMetadata().metadata().get("id")).trim().toLowerCase();
+
+        // Debug: Output current state of the menuItems map
+        System.out.println("Attempting to update item with ID: " + itemId);
+        System.out.println("Current items in order: " + menuItems.keySet().stream().map(String::toLowerCase).collect(Collectors.toList()));
 
         if (menuItems.containsKey(itemId)) {
+            int currentQuantity = menuItems.get(itemId);
+            updateTotal(menuItem, newQuantity - currentQuantity); // Update total before changing quantity
             menuItems.put(itemId, newQuantity);
-            updateTotal(menuItem, newQuantity - menuItems.get(itemId));
             updateTimestamp();
+            System.out.println("Item updated successfully.");
         } else {
+            System.out.println("Menu item not found in the order. Item ID: " + itemId);
+            System.out.println("Current menu items: " + menuItems);
             throw new IllegalArgumentException("Menu item not found in the order.");
         }
     }
+
 
     private void updateTotal(MenuItem item, int quantity) {
         double currentTotal = (double) data.get("total");

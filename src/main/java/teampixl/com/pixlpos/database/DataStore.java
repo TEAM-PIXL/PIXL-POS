@@ -339,7 +339,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
 
-
     /*====================================================================================================================================================================
     Code Description:
     This section of code handles the implementation of the IUserStore interface. It provides methods for adding, updating, and removing users.
@@ -828,8 +827,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 order.updateMetadata("is_completed", isCompleted);
                 order.setDataValue("total", total);
 
-                loadOrderItems((String) order.getMetadata().metadata().get("order_id"));
-
                 orders.add(order);
             }
 
@@ -838,7 +835,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         }
     }
 
-    private void loadOrderItems(String orderId) {
+    public void loadOrderItems(String orderId, Order order) {
         ObservableList<Map<String, Object>> orderItemsList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM order_items WHERE order_id = ?";
 
@@ -853,16 +850,50 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 int quantity = rs.getInt("quantity");
 
                 Map<String, Object> orderItemMap = new HashMap<>();
-                orderItemMap.put("menu_item_id", menuItemId);
-                orderItemMap.put("quantity", quantity);
+                orderItemMap.put("Item", menuItemId);
+                orderItemMap.put("Quantity", quantity);
 
                 orderItemsList.add(orderItemMap);
+            }
+
+            // Update the order's menuItems map with the loaded items
+            if (order != null) {
+                @SuppressWarnings("unchecked")
+                Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
+                if (menuItems == null) {
+                    menuItems = new HashMap<>();
+                    order.setDataValue("menuItems", menuItems);
+                }
+                for (Map<String, Object> orderItem : orderItemsList) {
+                    String menuItemId = (String) orderItem.get("Item");
+                    int quantity = (int) orderItem.get("Quantity");
+                    menuItems.put(menuItemId, quantity);
+                }
+            } else {
+                System.out.println("Order not found for orderId: " + orderId);
             }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
 
+    public void updateOrderItem(Order order, String itemId, int newQuantity) {
+        String sql = "UPDATE order_items SET quantity = ? WHERE order_id = ? AND menu_item_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, newQuantity);
+            pstmt.setString(2, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setString(3, itemId);
+
+            pstmt.executeUpdate();
+            System.out.println("Order item updated in the database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private Map<String, Object> getOrderItemsFromDatabase(String orderId) {
@@ -1079,15 +1110,44 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 Users.UserRole role = Users.UserRole.valueOf(roleStr);
                 String email = rs.getString("email");
                 String password = rs.getString("password");
-
+                String additionalInfo = rs.getString("additional_info");
                 Users user = new Users(firstName, lastName,username, password, email, role);
                 user.updateMetadata("id", id);
+                user.setDataValue("additional_info", additionalInfo);
                 users.add(user);
             }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public Map<String, Object> getUserByIdFromDatabase(String userId) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        Map<String, Object> userMap = new HashMap<>();
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                userMap.put("id", rs.getString("id"));
+                userMap.put("first_name", rs.getString("first_name"));
+                userMap.put("last_name", rs.getString("last_name"));
+                userMap.put("username", rs.getString("username"));
+                userMap.put("role", rs.getString("role"));
+                userMap.put("email", rs.getString("email"));
+                userMap.put("password", rs.getString("password"));
+                userMap.put("additional_info", rs.getString("additional_info"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return userMap;
     }
 
     /**
@@ -1105,7 +1165,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt(1) > 0; // If count > 0, the username exists
+                return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -1114,7 +1174,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void saveUserToDatabase(Users user) {
-        String sql = "INSERT INTO users(id, first_name, last_name, username, password, email, role, created_at, updated_at, is_active) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users(id, first_name, last_name, username, password, email, role, created_at, updated_at, is_active, additional_info) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -1129,6 +1189,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setLong(8, (Long) user.getMetadata().metadata().get("created_at"));
             pstmt.setLong(9, (Long) user.getMetadata().metadata().get("updated_at"));
             pstmt.setBoolean(10, (Boolean) user.getMetadata().metadata().get("is_active"));
+            pstmt.setString(11, (String) user.getData().get("additional_info"));
 
             pstmt.executeUpdate();
             System.out.println("User saved to database.");
@@ -1139,7 +1200,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void updateUserInDatabase(Users user) {
-        String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, password = ?, email = ?, role = ?, updated_at = ?, is_active = ? WHERE id = ?";
+        String sql = "UPDATE users SET first_name = ?, last_name = ?, username = ?, password = ?, email = ?, role = ?, updated_at = ?, is_active = ?, additional_info = ? WHERE id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -1152,7 +1213,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setString(6, user.getMetadata().metadata().get("role").toString());
             pstmt.setLong(7, (Long) user.getMetadata().metadata().get("updated_at"));
             pstmt.setBoolean(8, (Boolean) user.getMetadata().metadata().get("is_active"));
-            pstmt.setString(9, (String) user.getMetadata().metadata().get("id"));
+            pstmt.setString(9, (String) user.getData().get("additional_info"));
+            pstmt.setString(10, (String) user.getMetadata().metadata().get("id"));
 
             pstmt.executeUpdate();
             System.out.println("User updated in database.");
