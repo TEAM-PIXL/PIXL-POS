@@ -37,7 +37,6 @@ public class CookScreenController extends GuiCommon {
 
     @FXML
     private void initialize() {
-
         datastore = DataStore.getInstance();
         orders = FXCollections.observableArrayList(datastore.getOrders());
         updateOrderListView();
@@ -47,6 +46,19 @@ public class CookScreenController extends GuiCommon {
             System.out.println("Current User: " + currentUser.getMetadata().metadata().get("username"));
         } else {
             System.err.println("Error: Current user is not set.");
+        }
+
+        for (Order order : orders) {
+            if (order.getMetadata().metadata().get("order_status") != Order.OrderStatus.COMPLETED && order.getMetadata().metadata().get("order_status") != Order.OrderStatus.PENDING) {
+                Object totalObj = order.getData().get("total");
+                if (totalObj != null) {
+                    double total = (double) totalObj;
+                    System.out.println("Order total: " + total);
+                    order.getData().put("total", total);
+                } else {
+                    System.err.println("Order total is null for order ID: " + order.getMetadata().metadata().get("order_number"));
+                }
+            }
         }
     }
 
@@ -61,9 +73,14 @@ public class CookScreenController extends GuiCommon {
         Order selectedOrder = getSelectedOrder();
         if (selectedOrder != null) {
             selectedOrder.updateOrderStatus(Order.OrderStatus.COMPLETED);
-            datastore.updateOrder(selectedOrder);
-            orders.setAll(datastore.getOrders());
-            updateOrderListView();
+            Map<String, Object> orderData = selectedOrder.getData();
+            if (orderData.get("total") != null) {
+                datastore.updateOrder(selectedOrder);
+                orders.setAll(datastore.getOrders());
+                updateOrderListView();
+            } else {
+                System.err.println("Order total is null. Cannot complete order.");
+            }
         }
     }
 
@@ -76,7 +93,7 @@ public class CookScreenController extends GuiCommon {
     private void updateOrderListView() {
         orderview.getItems().clear();
         for (Order order : orders) {
-            if (order.getMetadata().metadata().get("order_status") != Order.OrderStatus.COMPLETED) {
+            if (order.getMetadata().metadata().get("order_status") != Order.OrderStatus.COMPLETED && order.getMetadata().metadata().get("order_status") != Order.OrderStatus.PENDING) {
                 VBox orderVBox = new VBox();
                 orderVBox.setPadding(new Insets(10));
                 orderVBox.setSpacing(10);
@@ -117,14 +134,13 @@ public class CookScreenController extends GuiCommon {
                     Label itemLabel = new Label("No items");
                     itemsVBox.getChildren().add(itemLabel);
                 }
-                Label totalLabel = new Label("Total: " + order.getData().get("total"));
+                Label totalLabel = new Label("Total: $" + String.format("%.2f", order.getData().get("total")));
 
                 orderVBox.getChildren().addAll(orderNumLabel, userIdLabel, timeOrderedLabel, itemsLabel, itemsVBox, totalLabel);
 
                 orderview.getItems().add(orderVBox);
             }
         }
-
     }
 
     private Order getSelectedOrder() {

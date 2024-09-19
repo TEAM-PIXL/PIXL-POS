@@ -440,107 +440,107 @@ public class Main {
             - getOrderItems()
         ===================================================================================================================================================================================================================================*/
 
-        assert user1 != null;
-        Order order1 = new Order(1, user1.getMetadata().metadata().get("id").toString());
-        assert user2 != null;
-        Order order2 = new Order(2, user2.getMetadata().metadata().get("id").toString());
-        assert user3 != null;
-        Order order3 = new Order(3, user3.getMetadata().metadata().get("id").toString());
-
-        dataStore.addOrder(order1);
-        dataStore.addOrder(order2);
-        dataStore.addOrder(order3);
-        System.out.println("Orders added to the database:");
-
-        ObservableList<Order> checkOrders = dataStore.getOrders();
-        if (checkOrders.size() == 3) {
-            System.out.println("Orders added successfully.");
-        } else {
-            System.out.println("Orders addition failed.");
-        }
-
-        order1.setDataValue("status", Order.OrderStatus.PENDING);
-        dataStore.updateOrder(order1);
-        if (dataStore.getOrder(1).getData().get("status").equals(Order.OrderStatus.PENDING)) {
-            System.out.println("Order 1 updated successfully.");
-        } else {
-            System.out.println("Order 1 update failed.");
-        }
-
-        order2.updateMetadata("tableNumber", 3);
-        dataStore.updateOrder(order2);
-        if (dataStore.getOrder(2).getMetadata().metadata().get("tableNumber").equals(3)) {
-            System.out.println("Order 2 updated successfully.");
-        } else {
-            System.out.println("Order 2 update failed.");
-        }
-
-        order3.setDataValue("status", Order.OrderStatus.COMPLETED);
-        dataStore.updateOrder(order3);
-        if (dataStore.getOrder(3).getData().get("status").equals(Order.OrderStatus.COMPLETED)) {
-            System.out.println("Order 3 updated successfully.");
-        } else {
-            System.out.println("Order 3 update failed.");
-        }
-
-        dataStore.removeOrder(dataStore.getOrder(3));
-        if (dataStore.getOrder(3) == null) {
-            System.out.println("Order 3 removed successfully.");
-        } else {
-            System.out.println("Order 3 removal failed.");
-        }
-
-        dataStore.addOrderItem(order1, item1, 1);
-        dataStore.updateOrder(order1);
-        dataStore.addOrderItem(order1, item3, 2);
-        dataStore.updateOrder(order1);
-
-        System.out.println(dataStore.getOrderItems(order1));
-        DataStore finalDataStore = dataStore;
-        dataStore.getOrderItems(order1).forEach((key, value) -> {
-            System.out.println("Key: " + key + " Value: " + value);
-            System.out.println(finalDataStore.getMenuItemById(key));
-        });
-
-        if (dataStore.getOrderItems(order1).size() == 2) {
-            System.out.println("Order 1 items added successfully.");
-        } else {
-            System.out.println("Order 1 items addition failed.");
-        }
-
-        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")).equals(1) && dataStore.getOrderItems(order1).get(item3.getMetadata().metadata().get("id")).equals(2)) {
-            System.out.println("Order 1 items added successfully.");
-        } else {
-            System.out.println("Order 1 items addition failed.");
-        }
-
-
-
-        dataStore.updateOrderItem(order1, item1, 2);
-        dataStore.updateOrder(order1);
-        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")).equals(2)) {
-            System.out.println("Order 1 item updated successfully.");
-            System.out.println(dataStore.getOrderItem(order1, item1.getMetadata().metadata().get("id").toString()));
-        } else {
-            System.out.println("Order 1 item update failed.");
-        }
-
-        dataStore.removeOrderItem(order1, item1, 2);
-        dataStore.updateOrder(order1);
-        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")) == null) {
-            System.out.println("Order 1 item removed successfully.");
-        } else {
-            System.out.println("Order 1 item removal failed.");
-        }
-
-        System.out.println(dataStore.getOrderItems(order1));
-        DataStore tempDatastore = dataStore;
-        dataStore.getOrderItems(order1).forEach((key, value) -> {
-            System.out.println("Key: " + key + " Value: " + value);
-            System.out.println(tempDatastore.getMenuItemById(key));
-        });
-
-        dataStore.getOrders().forEach(System.out::println);
+//        assert user1 != null;
+//        Order order1 = new Order(1, user1.getMetadata().metadata().get("id").toString());
+//        assert user2 != null;
+//        Order order2 = new Order(2, user2.getMetadata().metadata().get("id").toString());
+//        assert user3 != null;
+//        Order order3 = new Order(3, user3.getMetadata().metadata().get("id").toString());
+//
+//        dataStore.addOrder(order1);
+//        dataStore.addOrder(order2);
+//        dataStore.addOrder(order3);
+//        System.out.println("Orders added to the database:");
+//
+//        ObservableList<Order> checkOrders = dataStore.getOrders();
+//        if (checkOrders.size() == 3) {
+//            System.out.println("Orders added successfully.");
+//        } else {
+//            System.out.println("Orders addition failed.");
+//        }
+//
+//        order1.setDataValue("status", Order.OrderStatus.PENDING);
+//        dataStore.updateOrder(order1);
+//        if (dataStore.getOrder(1).getData().get("status").equals(Order.OrderStatus.PENDING)) {
+//            System.out.println("Order 1 updated successfully.");
+//        } else {
+//            System.out.println("Order 1 update failed.");
+//        }
+//
+//        order2.updateMetadata("tableNumber", 3);
+//        dataStore.updateOrder(order2);
+//        if (dataStore.getOrder(2).getMetadata().metadata().get("tableNumber").equals(3)) {
+//            System.out.println("Order 2 updated successfully.");
+//        } else {
+//            System.out.println("Order 2 update failed.");
+//        }
+//
+//        order3.setDataValue("status", Order.OrderStatus.COMPLETED);
+//        dataStore.updateOrder(order3);
+//        if (dataStore.getOrder(3).getData().get("status").equals(Order.OrderStatus.COMPLETED)) {
+//            System.out.println("Order 3 updated successfully.");
+//        } else {
+//            System.out.println("Order 3 update failed.");
+//        }
+//
+//        dataStore.removeOrder(dataStore.getOrder(3));
+//        if (dataStore.getOrder(3) == null) {
+//            System.out.println("Order 3 removed successfully.");
+//        } else {
+//            System.out.println("Order 3 removal failed.");
+//        }
+//
+//        dataStore.addOrderItem(order1, item1, 1);
+//        dataStore.updateOrder(order1);
+//        dataStore.addOrderItem(order1, item3, 2);
+//        dataStore.updateOrder(order1);
+//
+//        System.out.println(dataStore.getOrderItems(order1));
+//        DataStore finalDataStore = dataStore;
+//        dataStore.getOrderItems(order1).forEach((key, value) -> {
+//            System.out.println("Key: " + key + " Value: " + value);
+//            System.out.println(finalDataStore.getMenuItemById(key));
+//        });
+//
+//        if (dataStore.getOrderItems(order1).size() == 2) {
+//            System.out.println("Order 1 items added successfully.");
+//        } else {
+//            System.out.println("Order 1 items addition failed.");
+//        }
+//
+//        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")).equals(1) && dataStore.getOrderItems(order1).get(item3.getMetadata().metadata().get("id")).equals(2)) {
+//            System.out.println("Order 1 items added successfully.");
+//        } else {
+//            System.out.println("Order 1 items addition failed.");
+//        }
+//
+//
+//
+//        dataStore.updateOrderItem(order1, item1, 2);
+//        dataStore.updateOrder(order1);
+//        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")).equals(2)) {
+//            System.out.println("Order 1 item updated successfully.");
+//            System.out.println(dataStore.getOrderItem(order1, item1.getMetadata().metadata().get("id").toString()));
+//        } else {
+//            System.out.println("Order 1 item update failed.");
+//        }
+//
+//        dataStore.removeOrderItem(order1, item1, 2);
+//        dataStore.updateOrder(order1);
+//        if (dataStore.getOrderItems(order1).get(item1.getMetadata().metadata().get("id")) == null) {
+//            System.out.println("Order 1 item removed successfully.");
+//        } else {
+//            System.out.println("Order 1 item removal failed.");
+//        }
+//
+//        System.out.println(dataStore.getOrderItems(order1));
+//        DataStore tempDatastore = dataStore;
+//        dataStore.getOrderItems(order1).forEach((key, value) -> {
+//            System.out.println("Key: " + key + " Value: " + value);
+//            System.out.println(tempDatastore.getMenuItemById(key));
+//        });
+//
+//        dataStore.getOrders().forEach(System.out::println);
 
         /*===================================================================================================================================================================================================================================
         Code Description:
