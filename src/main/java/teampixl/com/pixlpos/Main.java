@@ -107,6 +107,10 @@ public class Main {
             }
         }
 
+        assert user1 != null;
+        user1.setDataValue("additional_info", "Test User");
+        dataStore.updateUser(user1);
+
         if (user4 != null) {
             dataStore.updateUser(user4);
 
@@ -118,6 +122,7 @@ public class Main {
             } else {
                 System.out.println("User 4 email update failed.");
             }
+            user4.setDataValue("additional_info", "Test User");
 
             user4.updateMetadata("role", Users.UserRole.ADMIN);
             dataStore.updateUser(user4);
