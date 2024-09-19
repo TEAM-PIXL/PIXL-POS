@@ -6,13 +6,18 @@ import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
+import teampixl.com.pixlpos.database.api.OrderAPI;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.database.api.UsersAPI;
+import teampixl.com.pixlpos.database.api.OrderAPI;
+import teampixl.com.pixlpos.database.api.util.Exceptions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -90,31 +95,19 @@ public class WaiterScreenController extends GuiCommon {
     private DataStore dataStore;
     private MenuItem menuItem;
     private UserStack userStack;
-    private Integer orderNumber = 1;
+    private OrderAPI orderAPI;
+    private Integer orderNumber = 0;
     private Double orderTotal = 0.00;
 
     public WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
+        this.orderAPI = OrderAPI.getInstance();
         this.userStack = UserStack.getInstance();
-    }
-
-    private void saveOrder(Order order) {
-        try {
-            dataStore.addOrder(order);
-            System.out.println("Order saved to database");
-            System.out.println("Order items:");
-            Map<String, Integer> testOrder = (Map<String, Integer>) order.getData().get("menuItems");
-            testOrder.forEach((key, value) -> System.out.println(dataStore.getMenuItemById(key).getMetadata().metadata().get("itemName") + " : " + value));
-            System.out.println("Order total: $" + order.getData().get("total"));
-        } catch (Exception e) {
-            System.out.println("Error saving order to database");
-        }
     }
 
     @FXML
     private void initialize() {
-        // Set the order number
-        ordernum.setText(orderNumber.toString());
+        initializeOrder();
         totalprice.setText("$" + String.format("%.2f", orderTotal));
         classic.setOnAction(event -> addItemToOrder("Classic Cheeseburger"));
         bbqbacon.setOnAction(event -> addItemToOrder("BBQ Bacon Cheeseburger"));
@@ -137,6 +130,16 @@ public class WaiterScreenController extends GuiCommon {
         logoutButton.setOnAction(event -> onLogoutButtonClick());
     }
 
+    private void initializeOrder() {
+        Order ORDER = orderAPI.initializeOrder();
+        if (ORDER == null) {
+            System.out.println("Failed to initialize order");
+            return;
+        }
+        orderNumber = ORDER.getMetadata().metadata().get("order_number") != null ? (Integer) ORDER.getMetadata().metadata().get("order_number") : 0;
+        ordernum.setText(orderNumber.toString());
+    }
+
     private void addItemToOrder(String itemName) {
         String itemNameID = (String)dataStore.getMenuItem(itemName).getMetadata().metadata().get("id");
         if (itemNameID != null) {
@@ -144,13 +147,13 @@ public class WaiterScreenController extends GuiCommon {
                 orderItems.put(itemNameID, orderItems.get(itemNameID) + 1);
             } else {
                 orderItems.put(itemNameID, 1);
-                orderNotes.put(itemNameID, ""); // Initialize note for new item
+                orderNotes.put(itemNameID, "");
             }
 
             actionStack.push(() -> {
                 if (orderItems.get(itemNameID) == 1) {
                     orderItems.remove(itemNameID);
-                    orderNotes.remove(itemNameID); // Remove note for removed item
+                    orderNotes.remove(itemNameID);
                 } else {
                     orderItems.put(itemNameID, orderItems.get(itemNameID) - 1);
                 }
@@ -163,7 +166,7 @@ public class WaiterScreenController extends GuiCommon {
     private void updateOrderSummary() {
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
-        orderTotal = 0.00; // Reset total before recalculation
+        orderTotal = 0.00;
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
             String itemNameID = entry.getKey();
             int quantity = entry.getValue();
@@ -178,18 +181,16 @@ public class WaiterScreenController extends GuiCommon {
         totalprice.setText("$" + String.format("%.2f", orderTotal));
     }
 
-
     private void selectItem(Label itemLabel) {
         if (selectedItem != null) {
-            selectedItem.setStyle(""); // Reset previous selection style
+            selectedItem.setStyle("");
         }
         selectedItem = itemLabel;
-        selectedItem.setStyle("-fx-background-color: lightblue;"); // Highlight selected item
+        selectedItem.setStyle("-fx-background-color: lightblue;");
 
-        // Extract item name and display the associated note in the TextField
         String itemText = selectedItem.getText();
-        String itemName = itemText.substring(itemText.indexOf(" ") + 1).split(" - Note:")[0]; // Extract item name correctly
-        String note = orderNotes.getOrDefault(itemName, ""); // Get the note or an empty string if no note exists
+        String itemName = itemText.substring(itemText.indexOf(" ") + 1).split(" - Note:")[0];
+        String note = orderNotes.getOrDefault(itemName, "");
         notes.setText(note);
     }
 
@@ -197,18 +198,17 @@ public class WaiterScreenController extends GuiCommon {
     private void applyNoteToSelectedItem() {
         if (selectedItem != null) {
             String itemText = selectedItem.getText();
-            String itemName = itemText.substring(itemText.indexOf(" ") + 1).split(" - Note:")[0]; // Extract item name correctly
+            String itemName = itemText.substring(itemText.indexOf(" ") + 1).split(" - Note:")[0];
             String itemNameID = (String)dataStore.getMenuItem(itemName).getMetadata().metadata().get("id");
-            String currentNote = orderNotes.getOrDefault(itemNameID, ""); // Get the current note or an empty string if no note exists
+            String currentNote = orderNotes.getOrDefault(itemNameID, "");
             String newNote = notes.getText();
 
-            // Save the current state before updating the note
             actionStack.push(() -> {
-                orderNotes.put(itemNameID, currentNote); // Restore the previous note
+                orderNotes.put(itemNameID, currentNote);
                 updateOrderSummary();
             });
 
-            orderNotes.put(itemNameID, newNote); // Update the note in the map
+            orderNotes.put(itemNameID, newNote);
             updateOrderSummary();
         }
     }
@@ -231,7 +231,6 @@ public class WaiterScreenController extends GuiCommon {
 
     @FXML
     private void restartOrder() {
-        // Save the current state before clearing
         Map<String, Integer> currentOrderItems = new HashMap<>(orderItems);
         actionStack.push(() -> {
             orderItems.clear();
@@ -239,12 +238,15 @@ public class WaiterScreenController extends GuiCommon {
             updateOrderSummary();
         });
 
-        // Clear the order
         orderItems.clear();
+        String ORDER_ID = orderAPI.getOrderByNumber(orderNumber);
+        Order ORDER = orderAPI.getOrderById(ORDER_ID);
+        ORDER.getData().clear();
+        ORDER.setDataValue("total", 0.00);
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
         orderTotal = 0.00;
-        totalprice.setText("$" + String.format("%.2f", orderTotal));
+        updateOrderSummary();
     }
 
     @FXML
@@ -264,17 +266,46 @@ public class WaiterScreenController extends GuiCommon {
     private void sendOrder() {
         if (orderItems.isEmpty()) {
             System.out.println("No items in order");
-        } else {
-            String userID = userStack.getCurrentUserId();
-            Order order = new Order(orderNumber, userID);
-            orderNumber++;
-            ordernum.setText(orderNumber.toString());
-            for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
-                menuItem = dataStore.getMenuItemById(entry.getKey());
-                order.addMenuItem(menuItem, entry.getValue());
-            }
-            saveOrder(order);
-            restartOrder();
+            return;
         }
+
+        String ORDER_ID = orderAPI.getOrderByNumber(orderNumber);
+        Order ORDER;
+
+        if (ORDER_ID == null) {
+            ORDER = orderAPI.initializeOrder();
+            orderNumber = ORDER.getMetadata().metadata().get("order_number") != null ? (Integer) ORDER.getMetadata().metadata().get("order_number") : 0;
+            ordernum.setText(String.valueOf(orderNumber));
+        } else {
+            ORDER = orderAPI.getOrderById(ORDER_ID);
+        }
+
+        for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
+            String menuItemID = entry.getKey();
+            MenuItem menuItem = dataStore.getMenuItemById(menuItemID);
+            if (menuItem != null) {
+                String ITEM_NAME = menuItem.getMetadata().metadata().get("itemName").toString();
+                int QUANTITY = entry.getValue();
+                orderAPI.putOrderByItem(orderNumber, ITEM_NAME, QUANTITY);
+            } else {
+                System.err.println("Menu item not found for ID: " + menuItemID);
+            }
+        }
+
+        List<StatusCode> STATUS = orderAPI.postOrder(ORDER);
+        if (Exceptions.isSuccessful(STATUS)) {
+            System.out.println("Order placed successfully.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Order Creation Failed", Exceptions.returnStatus("Order could not be placed with the following errors:", STATUS));
+        }
+        restartOrder();
+        initializeOrder();
+    }
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

@@ -45,6 +45,8 @@ public class Order implements IDataManager {
      */
     public enum OrderStatus {
         PENDING,
+        SENT,
+        RECEIVED,
         IN_PROGRESS,
         COMPLETED,
         CANCELED

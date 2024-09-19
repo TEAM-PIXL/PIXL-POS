@@ -603,7 +603,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String description = rs.getString("description");
 
                 MenuItem item = new MenuItem(itemName, price, itemType, activeItem, description, dietaryRequirement);
-                item.updateMetadata("id", id);  // Set the ID from the database
+                item.updateMetadata("id", id);
                 menuItems.add(item);
             }
 

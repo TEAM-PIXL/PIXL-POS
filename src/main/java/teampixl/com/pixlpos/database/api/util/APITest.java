@@ -30,15 +30,15 @@ public class APITest {
 //
 //        results.forEach(order -> System.out.println("Order Number: " + order.getMetadata().metadata().get("order_number")));
         /* ---> CONSTRUCTOR WORKS <---- */
-//        OrderAPI orderAPI = OrderAPI.getInstance();
+        OrderAPI orderAPI = OrderAPI.getInstance();
 //
-//        /* ---> INIT WORKS <---- */
-//        Order order = orderAPI.initializeOrder();
-//        //print contents of order
-//        System.out.println("Order Contents: " + order.getMetadata().metadata());
-//        int ORDER_NUM = (int) order.getMetadata().metadata().get("order_number");
-//        System.out.println("Order Number: " + ORDER_NUM);
-//
+        /* ---> INIT WORKS <---- */
+        Order order = orderAPI.initializeOrder();
+        //print contents of order
+        System.out.println("Order Contents: " + order.getMetadata().metadata());
+        int ORDER_NUM = (int) order.getMetadata().metadata().get("order_number");
+        System.out.println("Order Number: " + ORDER_NUM);
+
 //        /* ---> PUT ORDER BY ITEM WORKS <---- */
 //        List<StatusCode> RESULT = orderAPI.putOrderByItem(8, "Pizza", 4);
 //        if (isSuccessful(RESULT)) {

@@ -132,11 +132,14 @@ public class OrderAPI {
      * @return the order
      */
     public Order initializeOrder() {
-        int ORDER_NUMBER = 0;
+        int ORDER_NUMBER = 1;
         String USER_ID = null;
         List<Order> ORDERS = dataStore.getOrders();
         if (!ORDERS.isEmpty()) {
             ORDER_NUMBER = (int) ORDERS.getLast().getMetadata().metadata().get("order_number") + 1;
+            USER_ID = UserStack.getInstance().getCurrentUserId();
+        }
+        else {
             USER_ID = UserStack.getInstance().getCurrentUserId();
         }
         try {
@@ -157,6 +160,7 @@ public class OrderAPI {
     public List<StatusCode> postOrder(Order ORDER) {
         List<StatusCode> STATUS_CODES = validateOrder(ORDER);
         if (STATUS_CODES.isEmpty()) {
+            ORDER.updateMetadata("order_status", Order.OrderStatus.SENT);
             dataStore.updateOrder(ORDER);
             STATUS_CODES.add(StatusCode.SUCCESS);
         }
@@ -174,7 +178,6 @@ public class OrderAPI {
     public List<StatusCode> putOrderByItem(int ORDER_NUMBER, String ITEM_NAME, int QUANTITY) {
         List<StatusCode> statusCodes = new ArrayList<>();
         String orderId = getOrderByNumber(ORDER_NUMBER);
-        DataStore dataStore = DataStore.getInstance();
         System.out.println("Order ID: " + orderId);
         if (orderId == null) {
             statusCodes.add(StatusCode.ORDER_NOT_FOUND);
