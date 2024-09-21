@@ -17,18 +17,31 @@ jobs:
           java-version: '21'
           distribution: 'corretto'
 
-      - name: Build with Maven (Linux)
-        run: mvn clean install
-
-      - name: Download and Setup JavaFX (Linux)
+      - name: Download and Setup JavaFX
         run: |
           wget https://download2.gluonhq.com/openjfx/21.0.4/openjfx-21.0.4_linux-x64_bin-sdk.zip -O javafx-sdk.zip
-          unzip javafx-sdk.zip -d /opt/javafx-sdk
-          echo "JAVA_FX_HOME=/opt/javafx-sdk" >> $GITHUB_ENV
+          unzip javafx-sdk.zip -d /opt
+          echo "JAVA_FX_HOME=/opt/javafx-sdk-21.0.4" >> $GITHUB_ENV
+          echo "$JAVA_FX_HOME/lib" >> $GITHUB_PATH
 
-      - name: Create Runtime Image with jlink (Linux)
+      - name: List contents of JavaFX lib directory
+        run: |
+          ls -l $JAVA_FX_HOME/lib
+
+      - name: List available modules
+        run: |
+          java --module-path $JAVA_FX_HOME/lib --list-modules
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Create Runtime Image with jlink
         run: |
           jlink --module-path $JAVA_HOME/jmods:$JAVA_FX_HOME/lib --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
+
+      - name: Package Application with jpackage (Optional)
+        run: |
+          jpackage --input target/ --name PIXL-POS --main-jar PIXL-POS-1.0.jar --main-class teampixl.com.pixlpos.application.POSApplication --type exe --runtime-image ./runtime
 
   package-windows:
     needs: build-linux
@@ -80,3 +93,4 @@ jobs:
           asset_path: ./packages/PIXL-POS.exe
           asset_name: PIXL-POS.exe
           asset_content_type: application/octet-stream
+
