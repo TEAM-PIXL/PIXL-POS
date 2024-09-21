@@ -59,11 +59,27 @@ jobs:
         run: |
           curl -L "https://download2.gluonhq.com/openjfx/21.0.4/openjfx-21.0.4_windows-x64_bin-sdk.zip" -o javafx-sdk.zip
           Expand-Archive javafx-sdk.zip -DestinationPath C:\javafx-sdk
-          echo "JAVA_FX_HOME=C:\javafx-sdk" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
 
       - name: Verify JavaFX SDK extraction (Windows)
         run: |
+          echo "Listing extracted files in C:\javafx-sdk"
           Get-ChildItem -Path "C:\javafx-sdk" -Name
+
+      - name: Set JAVA_FX_HOME based on extracted folder (Windows)
+        run: |
+          if (Test-Path "C:\javafx-sdk\lib") {
+            echo "Setting JAVA_FX_HOME to C:\javafx-sdk"
+            echo "JAVA_FX_HOME=C:\javafx-sdk" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
+          } else {
+            $subfolder = Get-ChildItem -Path "C:\javafx-sdk" | Where-Object { $_.PSIsContainer } | Select-Object -First 1
+            if ($subfolder) {
+              $newPath = "C:\javafx-sdk\$($subfolder.Name)"
+              echo "Setting JAVA_FX_HOME to $newPath"
+              echo "JAVA_FX_HOME=$newPath" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
+            } else {
+              throw "Could not find JavaFX lib folder"
+            }
+          }
 
       - name: List contents of JavaFX lib directory (Windows)
         run: |
@@ -102,4 +118,3 @@ jobs:
           asset_path: ./packages/PIXL-POS.exe
           asset_name: PIXL-POS.exe
           asset_content_type: application/octet-stream
-
