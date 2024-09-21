@@ -112,4 +112,13 @@ class UserTest {
         dataStore.updateUserPassword(user, "newPassword");
         assertTrue(AuthenticationManager.login("newPassword", user.getData().get("password").toString()), "User password update failed");
     }
+
+    @Test
+    public void testRemoveUser() {
+        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        Users user = dataStore.getUser("testUser");
+        assertNotNull(user, "User retrieval failed");
+        dataStore.removeUser(user);
+        assertNull(dataStore.getUser("testUser"), "User removal failed");
+    }
 }
