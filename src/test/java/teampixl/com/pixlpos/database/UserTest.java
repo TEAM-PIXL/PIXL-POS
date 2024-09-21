@@ -32,7 +32,7 @@ class UserTest {
         AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
-        assertTrue(passwordUtils.verifyPassword("username", user.getData().get("password").toString()), "Password verification failed");
+        assertTrue(passwordUtils.verifyPassword("password", user.getData().get("password").toString()), "Password verification failed");
     }
 
     @Test
@@ -43,18 +43,18 @@ class UserTest {
 
     @Test
     public void testGetData() {
-        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
-        assertEquals("firstName", user.getData().get("firstName"), "User data retrieval failed");
-        assertEquals("lastName", user.getData().get("lastName"), "User data retrieval failed");
-        assertEquals("username", user.getData().get("username"), "User data retrieval failed");
+        assertEquals("firstName", user.getMetadata().metadata().get("first_name"), "User data retrieval failed");
+        assertEquals("lastName", user.getMetadata().metadata().get("last_name"), "User data retrieval failed");
+        assertEquals("testUser", user.getMetadata().metadata().get("username"), "User data retrieval failed");
         assertEquals("email@example.com", user.getData().get("email"), "User data retrieval failed");
     }
 
     @Test
     public void testGetMetadata() {
-        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
         assertEquals(Users.UserRole.WAITER, user.getMetadata().metadata().get("role"), "User metadata retrieval failed");
@@ -62,21 +62,21 @@ class UserTest {
 
     @Test
     public void testGetUsers() {
-        AuthenticationManager.register("testUser1", "firstName1", "lastName1", "username1", "email1@example.com", Users.UserRole.WAITER);
-        AuthenticationManager.register("testUser2", "firstName2", "lastName2", "username2", "email2@example.com", Users.UserRole.COOK);
+        AuthenticationManager.register("firstName1", "lastName1", "testUser1", "password1", "email1@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName2", "lastName2", "testUser2", "password2", "email2@example.com", Users.UserRole.COOK);
         assertEquals(2, dataStore.getUsers().size(), "User list retrieval failed");
     }
 
     @Test
     public void testGetUser() {
-        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
     }
 
     @Test
     public void testSetDataValue() {
-        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
         user.setDataValue("additional_info", "Test Info");
@@ -86,7 +86,7 @@ class UserTest {
 
     @Test
     public void testUpdateMetadata() {
-        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
         user.updateMetadata("role", Users.UserRole.ADMIN);
@@ -96,7 +96,7 @@ class UserTest {
 
     @Test
     public void testUpdateUser() {
-        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
         user.setDataValue("email", "newemail@example.com");
@@ -106,16 +106,16 @@ class UserTest {
 
     @Test
     public void testUpdateUserPassword() {
-        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
         dataStore.updateUserPassword(user, "newPassword");
-        assertTrue(AuthenticationManager.login("newPassword", user.getData().get("password").toString()), "User password update failed");
+        assertTrue(passwordUtils.verifyPassword("newPassword", user.getData().get("password").toString()), "User password update failed");
     }
 
     @Test
     public void testRemoveUser() {
-        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("firstName", "lastName", "testUser", "password", "email@example.com", Users.UserRole.WAITER);
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
         dataStore.removeUser(user);
