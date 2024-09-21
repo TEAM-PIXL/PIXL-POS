@@ -59,4 +59,11 @@ class UserTest {
         assertNotNull(user, "User retrieval failed");
         assertEquals(Users.UserRole.WAITER, user.getMetadata().metadata().get("role"), "User metadata retrieval failed");
     }
+
+    @Test
+    public void testGetUsers() {
+        AuthenticationManager.register("testUser1", "firstName1", "lastName1", "username1", "email1@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("testUser2", "firstName2", "lastName2", "username2", "email2@example.com", Users.UserRole.COOK);
+        assertEquals(2, dataStore.getUsers().size(), "User list retrieval failed");
+    }
 }
