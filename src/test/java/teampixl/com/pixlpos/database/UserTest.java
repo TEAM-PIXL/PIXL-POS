@@ -20,4 +20,10 @@ class UserTest {
         dataStore.clearData();
         passwordUtils = new PasswordUtils();
     }
+
+    @Test
+    public void testRegisterUser() {
+        boolean result = AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        assertTrue(result, "User registration failed");
+    }
 }
