@@ -20,9 +20,9 @@ jobs:
 
     - name: Download and Setup JavaFX
       run: |
-        wget https://gluonhq.com/download/javafx-21-sdk-linux/ -O javafx-sdk-21.zip
-        unzip javafx-sdk-21.zip -d /opt
-        echo "JAVA_FX_HOME=/opt/javafx-sdk-21" >> $GITHUB_ENV
+        wget https://download2.gluonhq.com/openjfx/21.0.4/openjfx-21.0.4_linux-x64_bin-sdk.zip -O javafx-sdk.zip
+        unzip javafx-sdk.zip -d /opt
+        echo "JAVA_FX_HOME=/opt/openjfx-21.0.4_linux-x64_bin-sdk" >> $GITHUB_ENV
         echo "$JAVA_FX_HOME/lib" >> $GITHUB_PATH
 
     - name: Build with Maven
