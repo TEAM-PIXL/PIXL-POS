@@ -63,7 +63,7 @@ jobs:
 
       - name: Create Runtime Image with jlink (Windows)
         run: |
-          jlink --module-path $JAVA_HOME/jmods;$env:JAVA_FX_HOME\lib --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
+          jlink --module-path "${env:JAVA_HOME}\jmods;${env:JAVA_FX_HOME}\lib" --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
 
       - name: Package Application as exe with jpackage
         run: |
