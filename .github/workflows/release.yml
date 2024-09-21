@@ -109,10 +109,11 @@ jobs:
 
       - name: Create Dynamic Tag
         id: create_tag
+        shell: pwsh
         run: |
-          BRANCH_NAME=${GITHUB_REF##*/}
-          COMMIT_HASH=$(git rev-parse --short HEAD)
-          echo "TAG_NAME=release-${BRANCH_NAME}-${COMMIT_HASH}" >> $GITHUB_ENV
+          $BRANCH_NAME = $env:GITHUB_REF -replace '^refs/heads/', ''
+          $COMMIT_HASH = (git rev-parse --short HEAD).Trim()
+          echo "TAG_NAME=release-$BRANCH_NAME-$COMMIT_HASH" >> $env:GITHUB_ENV
 
       - name: Create Release with Dynamic Tag
         env:
