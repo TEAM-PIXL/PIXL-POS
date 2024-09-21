@@ -5,9 +5,8 @@ on:
   pull_request:
 
 jobs:
-  build-and-package:
+  build-linux:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -18,36 +17,66 @@ jobs:
           java-version: '21'
           distribution: 'corretto'
 
-      - name: Download and Setup JavaFX
-        run: |
-          wget https://download2.gluonhq.com/openjfx/21.0.4/openjfx-21.0.4_linux-x64_bin-sdk.zip -O javafx-sdk.zip
-          unzip javafx-sdk.zip -d /opt
-          echo "JAVA_FX_HOME=/opt/javafx-sdk-21.0.4" >> $GITHUB_ENV
-          echo "$JAVA_FX_HOME/lib" >> $GITHUB_PATH
-
-      - name: List contents of JavaFX lib directory
-        run: |
-          ls -l $JAVA_FX_HOME/lib
-
-      - name: List available modules
-        run: |
-          java --module-path $JAVA_FX_HOME/lib --list-modules
-
-      - name: Build with Maven
+      - name: Build with Maven (Linux)
         run: mvn clean install
 
-      - name: Create Runtime Image with jlink
+      - name: Download and Setup JavaFX (Linux)
+        run: |
+          wget https://download2.gluonhq.com/openjfx/21.0.4/openjfx-21.0.4_linux-x64_bin-sdk.zip -O javafx-sdk.zip
+          unzip javafx-sdk.zip -d /opt/javafx-sdk
+          echo "JAVA_FX_HOME=/opt/javafx-sdk" >> $GITHUB_ENV
+
+      - name: Create Runtime Image with jlink (Linux)
         run: |
           jlink --module-path $JAVA_HOME/jmods:$JAVA_FX_HOME/lib --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
 
-      - name: Package Application with jpackage (Optional)
-        run: |
-          jpackage --input target/ --name PIXL-POS --main-jar PIXL-POS-1.0.jar --main-class teampixl.com.pixlpos.application.POSApplication --type exe --runtime-image ./runtime
+  package-windows:
+    needs: build-linux
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Set up JDK 21 with Amazon Corretto
+        uses: actions/setup-java@v4
         with:
-          name: pixl-pos-application
-          path: |
-            ./runtime
-            *.exe
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Build with Maven (Windows)
+        run: mvn clean install
+
+      - name: Download and Setup JavaFX (Windows)
+        run: |
+          curl -L "https://download2.gluonhq.com/openjfx/21.0.4/openjfx-21.0.4_windows-x64_bin-sdk.zip" -o javafx-sdk.zip
+          Expand-Archive javafx-sdk.zip -DestinationPath C:\javafx-sdk
+          echo "JAVA_FX_HOME=C:\javafx-sdk" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
+
+      - name: Create Runtime Image with jlink (Windows)
+        run: |
+          jlink --module-path $JAVA_HOME/jmods;$env:JAVA_FX_HOME\lib --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
+
+      - name: Package Application as exe with jpackage
+        run: |
+          jpackage --input target/ --name PIXL-POS --main-jar PIXL-POS-1.0.jar --main-class teampixl.com.pixlpos.application.POSApplication --type exe --dest ./packages --runtime-image ./runtime
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Windows Executable to Release
+        uses: actions/upload-release-asset@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./packages/PIXL-POS.exe
+          asset_name: PIXL-POS.exe
+          asset_content_type: application/octet-stream
