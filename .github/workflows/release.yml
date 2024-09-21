@@ -2,48 +2,44 @@ name: Build and Package JavaFX Application
 
 on:
   push:
-    branches:
-      - "*"
   pull_request:
-    branches:
-      - "*"
 
 jobs:
   build-and-package:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v2
 
-      - name: Set up JDK 21 with Amazon Corretto
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'corretto'
+    - name: Set up JDK 21 with Amazon Corretto
+      uses: actions/setup-java@v2
+      with:
+        java-version: '21'
+        distribution: 'corretto'
 
-      - name: Download and Setup JavaFX
-        run: |
-          wget https://gluonhq.com/download/javafx-21-sdk-linux/ -O javafx-sdk-21.zip
-          unzip javafx-sdk-21.zip -d /opt
-          echo "JAVA_FX_HOME=/opt/javafx-sdk-21" >> $GITHUB_ENV
-          echo "$JAVA_FX_HOME/lib" >> $GITHUB_PATH
+    - name: Download and Setup JavaFX
+      run: |
+        wget https://gluonhq.com/download/javafx-21-sdk-linux/ -O javafx-sdk-21.zip
+        unzip javafx-sdk-21.zip -d /opt
+        echo "JAVA_FX_HOME=/opt/javafx-sdk-21" >> $GITHUB_ENV
+        echo "$JAVA_FX_HOME/lib" >> $GITHUB_PATH
 
-      - name: Build with Maven
-        run: mvn clean install
+    - name: Build with Maven
+      run: mvn clean install
 
-      - name: Create Runtime Image with jlink
-        run: |
-          jlink --module-path $JAVA_HOME/jmods:$JAVA_FX_HOME/lib --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
+    - name: Create Runtime Image with jlink
+      run: |
+        jlink --module-path $JAVA_HOME/jmods:$JAVA_FX_HOME/lib --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
 
-      - name: Package Application with jpackage (Optional)
-        run: |
-          jpackage --input target/ --name PIXL-POS --main-jar PIXL-POS-1.0.jar --main-class teampixl.com.pixlpos.application.POSApplication --type exe --runtime-image ./runtime
+    - name: Package Application with jpackage (Optional)
+      run: |
+        jpackage --input target/ --name PIXL-POS --main-jar PIXL-POS-1.0.jar --main-class teampixl.com.pixlpos.application.POSApplication --type exe --runtime-image ./runtime
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: pixl-pos-application
-          path: |
-            ./runtime
-            *.exe
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: pixl-pos-application
+        path: |
+          ./runtime
+          *.exe
