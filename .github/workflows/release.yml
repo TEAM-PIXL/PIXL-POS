@@ -61,6 +61,10 @@ jobs:
           Expand-Archive javafx-sdk.zip -DestinationPath C:\javafx-sdk
           echo "JAVA_FX_HOME=C:\javafx-sdk" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
 
+      - name: Verify JavaFX SDK extraction (Windows)
+        run: |
+          Get-ChildItem -Path "C:\javafx-sdk" -Name
+
       - name: List contents of JavaFX lib directory (Windows)
         run: |
           Get-ChildItem -Path "${env:JAVA_FX_HOME}\lib" -Name
