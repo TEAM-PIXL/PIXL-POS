@@ -94,10 +94,9 @@ jobs:
           $env:MODULE_PATH="${env:JAVA_HOME}\jmods;${env:JAVA_FX_HOME}\lib"
           jlink --module-path $env:MODULE_PATH --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
 
-      - name: Verify where the executable is created
+      - name: Ensure the packages directory exists
         run: |
-          echo "Checking for generated executable in packages folder"
-          Get-ChildItem -Path ./packages
+          mkdir packages
 
       - name: Package Application as exe with jpackage
         run: |
