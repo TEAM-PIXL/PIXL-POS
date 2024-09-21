@@ -83,4 +83,14 @@ class UserTest {
         dataStore.updateUser(user);
         assertEquals("Test Info", dataStore.getUser("testUser").getData().get("additional_info"), "User data update failed");
     }
+
+    @Test
+    public void testUpdateMetadata() {
+        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        Users user = dataStore.getUser("testUser");
+        assertNotNull(user, "User retrieval failed");
+        user.updateMetadata("role", Users.UserRole.ADMIN);
+        dataStore.updateUser(user);
+        assertEquals(Users.UserRole.ADMIN, dataStore.getUser("testUser").getMetadata().metadata().get("role"), "User metadata update failed");
+    }
 }
