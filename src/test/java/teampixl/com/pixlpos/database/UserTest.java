@@ -66,4 +66,11 @@ class UserTest {
         AuthenticationManager.register("testUser2", "firstName2", "lastName2", "username2", "email2@example.com", Users.UserRole.COOK);
         assertEquals(2, dataStore.getUsers().size(), "User list retrieval failed");
     }
+
+    @Test
+    public void testGetUser() {
+        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        Users user = dataStore.getUser("testUser");
+        assertNotNull(user, "User retrieval failed");
+    }
 }
