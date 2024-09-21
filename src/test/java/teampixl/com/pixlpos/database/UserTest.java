@@ -103,4 +103,13 @@ class UserTest {
         dataStore.updateUser(user);
         assertEquals("newemail@example.com", dataStore.getUser("testUser").getData().get("email"), "User update failed");
     }
+
+    @Test
+    public void testUpdateUserPassword() {
+        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        Users user = dataStore.getUser("testUser");
+        assertNotNull(user, "User retrieval failed");
+        dataStore.updateUserPassword(user, "newPassword");
+        assertTrue(AuthenticationManager.login("newPassword", user.getData().get("password").toString()), "User password update failed");
+    }
 }
