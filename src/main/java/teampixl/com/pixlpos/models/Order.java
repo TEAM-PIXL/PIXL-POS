@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.models;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -120,9 +121,6 @@ public class Order implements IDataManager {
      * @param quantity The quantity of the menu item to add.
      */
     public void addMenuItem(MenuItem item, int quantity) {
-        String orderId = (String) this.getMetadata().metadata().get("order_id");
-        DataStore.getInstance().loadOrderItems(orderId, this); // Pass the order object to update its menuItems
-
         Object menuItemsObj = data.get("menuItems");
 
         if (menuItemsObj instanceof Map) {
@@ -139,12 +137,12 @@ public class Order implements IDataManager {
             deductIngredientsFromStock(item, newQuantity - currentQuantity);
             updateTimestamp();
 
-            // Update the order item in the database
             DataStore.getInstance().updateOrderItem(this, itemId, newQuantity);
         } else {
             throw new IllegalStateException("Expected menuItems to be a Map<String, Integer>");
         }
     }
+
 
 
     /**
@@ -186,31 +184,26 @@ public class Order implements IDataManager {
     public void updateMenuItem(MenuItem menuItem, int newQuantity) {
         Map<String, Integer> menuItems = (Map<String, Integer>) data.get("menuItems");
 
-        // Normalize the item ID when fetching from menuItem
         String itemId = ((String) menuItem.getMetadata().metadata().get("id")).trim().toLowerCase();
-
-        // Debug: Output current state of the menuItems map
-        System.out.println("Attempting to update item with ID: " + itemId);
-        System.out.println("Current items in order: " + menuItems.keySet().stream().map(String::toLowerCase).collect(Collectors.toList()));
 
         if (menuItems.containsKey(itemId)) {
             int currentQuantity = menuItems.get(itemId);
-            updateTotal(menuItem, newQuantity - currentQuantity); // Update total before changing quantity
+            updateTotal(menuItem, newQuantity - currentQuantity);
             menuItems.put(itemId, newQuantity);
             updateTimestamp();
             System.out.println("Item updated successfully.");
         } else {
-            System.out.println("Menu item not found in the order. Item ID: " + itemId);
-            System.out.println("Current menu items: " + menuItems);
             throw new IllegalArgumentException("Menu item not found in the order.");
         }
     }
+
 
 
     private void updateTotal(MenuItem item, int quantity) {
         double currentTotal = (double) data.get("total");
         double itemPrice = (double) item.getMetadata().metadata().get("price");
         data.put("total", currentTotal + (itemPrice * quantity));
+        DataStore.getInstance().updateOrder(this);
     }
 
     /**
@@ -278,7 +271,6 @@ public class Order implements IDataManager {
                 Object requiredAmount = ingredientAmount.numeral();
                 Object currentStockAmount = stockItem.getData().get("numeral");
 
-                // Restore based on the type of unit
                 if (requiredAmount instanceof Integer && currentStockAmount instanceof Integer) {
                     int totalRestoration = (Integer) requiredAmount * quantity;
                     int updatedStockAmount = (Integer) currentStockAmount + totalRestoration;
@@ -307,6 +299,14 @@ public class Order implements IDataManager {
         - setDataValue(String key, Object value): sets data value in the data map
     ============================================================================================================================================================*/
 
+    public MetadataWrapper getMetadata() {
+        return metadata;
+    }
+
+    public Map<String, Object> getData() {
+        return data;
+    }
+
     public void updateMetadata(String key, Object value) {
         Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
         if (value != null) {
@@ -321,13 +321,20 @@ public class Order implements IDataManager {
         data.put(key, value);
     }
 
-    public MetadataWrapper getMetadata() {
-        return metadata;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Order other = (Order) obj;
+        return Objects.equals(this.getMetadata().metadata().get("order_id"), other.getMetadata().metadata().get("order_id"));
     }
 
-    public Map<String, Object> getData() {
-        return data;
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getMetadata().metadata().get("order_id"));
     }
+
+
 }
 
 

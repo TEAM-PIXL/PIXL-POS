@@ -234,6 +234,12 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         return orders;
     }
 
+    public void reloadOrdersFromDatabase() {
+        orders.clear();
+        loadOrdersFromDatabase();
+    }
+
+
     /**
      * Returns an order with the specified order number.
      * @param orderNumber int - The order number to get.
@@ -263,7 +269,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      */
     public void updateOrder(Order order) {
         updateOrderInDatabase(order);
+        int index = orders.indexOf(order);
+        if (index != -1) {
+            orders.set(index, order);
+        } else {
+            orders.add(order);
+        }
     }
+
 
     /**
      * Removes an existing order from the list of orders.
@@ -681,8 +694,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
-                double numeral = rs.getDouble("numeral");  // Assuming that numeral is stored as REAL in SQLite
-                Ingredients ingredient = getIngredientById(ingredientId);  // You'll need a method to fetch ingredient by ID
+                double numeral = rs.getDouble("numeral");
+                Ingredients ingredient = getIngredientById(ingredientId);
 
                 menuItem.addIngredient(ingredient, numeral);
             }
@@ -819,12 +832,16 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String userId = rs.getString("user_id");
                 Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
                 boolean isCompleted = rs.getInt("is_completed") == 1;
+                long createdAt = rs.getLong("created_at");
+                long updatedAt = rs.getLong("updated_at");
                 double total = rs.getDouble("total");
 
                 Order order = new Order(orderNumber, userId);
                 order.updateMetadata("order_id", orderId);
                 order.updateMetadata("order_status", orderStatus);
                 order.updateMetadata("is_completed", isCompleted);
+                order.updateMetadata("created_at", createdAt);
+                order.updateMetadata("updated_at", updatedAt);
                 order.setDataValue("total", total);
 
                 orders.add(order);
@@ -856,7 +873,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 orderItemsList.add(orderItemMap);
             }
 
-            // Update the order's menuItems map with the loaded items
             if (order != null) {
                 @SuppressWarnings("unchecked")
                 Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");

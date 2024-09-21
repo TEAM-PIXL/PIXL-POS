@@ -12,8 +12,6 @@ import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
-import teampixl.com.pixlpos.database.api.UsersAPI;
-import teampixl.com.pixlpos.database.api.OrderAPI;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 
 import java.util.HashMap;
@@ -88,21 +86,19 @@ public class WaiterScreenController extends GuiCommon {
     /* End of hardcoded buttons */
 
     private int currentRow = 0;
-    private Map<String, Integer> orderItems = new HashMap<>();
+    private final Map<String, Integer> orderItems = new HashMap<>();
     private Label selectedItem = null;
-    private Stack<Runnable> actionStack = new Stack<>();
-    private Map<String, String> orderNotes = new HashMap<>();
-    private DataStore dataStore;
+    private final Stack<Runnable> actionStack = new Stack<>();
+    private final Map<String, String> orderNotes = new HashMap<>();
+    private final DataStore dataStore;
     private MenuItem menuItem;
-    private UserStack userStack;
-    private OrderAPI orderAPI;
     private Integer orderNumber = 0;
     private Double orderTotal = 0.00;
 
     public WaiterScreenController() {
         this.dataStore = DataStore.getInstance();
-        this.orderAPI = OrderAPI.getInstance();
-        this.userStack = UserStack.getInstance();
+        OrderAPI orderAPI = OrderAPI.getInstance();
+        UserStack userStack = UserStack.getInstance();
     }
 
     @FXML
@@ -131,7 +127,7 @@ public class WaiterScreenController extends GuiCommon {
     }
 
     private void initializeOrder() {
-        Order ORDER = orderAPI.initializeOrder();
+        Order ORDER = OrderAPI.initializeOrder();
         if (ORDER == null) {
             System.out.println("Failed to initialize order");
             return;
@@ -239,10 +235,14 @@ public class WaiterScreenController extends GuiCommon {
         });
 
         orderItems.clear();
-        String ORDER_ID = orderAPI.getOrderByNumber(orderNumber);
-        Order ORDER = orderAPI.getOrderById(ORDER_ID);
-        ORDER.getData().clear();
-        ORDER.setDataValue("total", 0.00);
+        String ORDER_ID = OrderAPI.getOrderByNumber(orderNumber);
+        Order ORDER = OrderAPI.getOrderById(ORDER_ID);
+        if (ORDER != null) {
+            ORDER.getData().clear();
+        }
+        if (ORDER != null) {
+            ORDER.setDataValue("total", 0.00);
+        }
         orderSummaryGrid.getChildren().clear();
         currentRow = 0;
         orderTotal = 0.00;
@@ -269,15 +269,17 @@ public class WaiterScreenController extends GuiCommon {
             return;
         }
 
-        String ORDER_ID = orderAPI.getOrderByNumber(orderNumber);
+        String ORDER_ID = OrderAPI.getOrderByNumber(orderNumber);
         Order ORDER;
 
         if (ORDER_ID == null) {
-            ORDER = orderAPI.initializeOrder();
-            orderNumber = ORDER.getMetadata().metadata().get("order_number") != null ? (Integer) ORDER.getMetadata().metadata().get("order_number") : 0;
+            ORDER = OrderAPI.initializeOrder();
+            if (ORDER != null) {
+                orderNumber = ORDER.getMetadata().metadata().get("order_number") != null ? (Integer) ORDER.getMetadata().metadata().get("order_number") : 0;
+            }
             ordernum.setText(String.valueOf(orderNumber));
         } else {
-            ORDER = orderAPI.getOrderById(ORDER_ID);
+            ORDER = OrderAPI.getOrderById(ORDER_ID);
         }
 
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
@@ -285,25 +287,30 @@ public class WaiterScreenController extends GuiCommon {
             MenuItem menuItem = dataStore.getMenuItemById(menuItemID);
             if (menuItem != null) {
                 String ITEM_NAME = menuItem.getMetadata().metadata().get("itemName").toString();
+                System.out.println("Adding " + ITEM_NAME + " to order");
                 int QUANTITY = entry.getValue();
-                orderAPI.putOrderByItem(orderNumber, ITEM_NAME, QUANTITY);
+                List<StatusCode> STATUS_CODES = OrderAPI.putOrderByItem(orderNumber, ITEM_NAME, QUANTITY);
+                System.out.println("Added " + QUANTITY + " " + ITEM_NAME + " to order with status : " + STATUS_CODES);
             } else {
                 System.err.println("Menu item not found for ID: " + menuItemID);
             }
         }
 
-        List<StatusCode> STATUS = orderAPI.postOrder(ORDER);
+        List<StatusCode> STATUS = OrderAPI.postOrder(ORDER);
+        double TOTAL = (double) ORDER.getData().get("total");
+        System.out.println("Order total: " + TOTAL);
         if (Exceptions.isSuccessful(STATUS)) {
             System.out.println("Order placed successfully.");
         } else {
-            showAlert(Alert.AlertType.ERROR, "Order Creation Failed", Exceptions.returnStatus("Order could not be placed with the following errors:", STATUS));
+            showAlert(Exceptions.returnStatus("Order could not be placed with the following errors:", STATUS));
         }
         restartOrder();
         initializeOrder();
     }
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
+
+    private void showAlert(String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Order Creation Failed");
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();

@@ -1,5 +1,7 @@
 package teampixl.com.pixlpos.database.api.util;
 
+import javafx.collections.ObservableList;
+import javafx.scene.chart.PieChart;
 import teampixl.com.pixlpos.database.api.*;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
@@ -8,6 +10,7 @@ import teampixl.com.pixlpos.database.api.OrderAPI;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
 
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,9 +19,17 @@ import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) {
+        DataStore dataStore = DataStore.getInstance();
         UserStack userStack = UserStack.getInstance();
         UsersAPI usersAPI = UsersAPI.getInstance();
+        OrderAPI orderAPI = OrderAPI.getInstance();
         userStack.setCurrentUser("admin");
+
+        ObservableList<Order> ORDERS;
+
+
+        ORDERS = dataStore.getOrders();
+
 //
 //        System.out.println("Current user: " + userStack.getCurrentUser());
 //
@@ -30,14 +41,14 @@ public class APITest {
 //
 //        results.forEach(order -> System.out.println("Order Number: " + order.getMetadata().metadata().get("order_number")));
         /* ---> CONSTRUCTOR WORKS <---- */
-        OrderAPI orderAPI = OrderAPI.getInstance();
+//        OrderAPI orderAPI = OrderAPI.getInstance();
 //
-        /* ---> INIT WORKS <---- */
-        Order order = orderAPI.initializeOrder();
-        //print contents of order
-        System.out.println("Order Contents: " + order.getMetadata().metadata());
-        int ORDER_NUM = (int) order.getMetadata().metadata().get("order_number");
-        System.out.println("Order Number: " + ORDER_NUM);
+//        /* ---> INIT WORKS <---- */
+//        Order order = orderAPI.initializeOrder();
+//        //print contents of order
+//        System.out.println("Order Contents: " + order.getMetadata().metadata());
+//        int ORDER_NUM = (int) order.getMetadata().metadata().get("order_number");
+//        System.out.println("Order Number: " + ORDER_NUM);
 
 //        /* ---> PUT ORDER BY ITEM WORKS <---- */
 //        List<StatusCode> RESULT = orderAPI.putOrderByItem(8, "Pizza", 4);
@@ -66,24 +77,6 @@ public class APITest {
 //        } else {
 //            System.out.println(returnStatus("Order could not be validated with the following errors:", RESULT3));
 //        }
-        String[] roles = {"COOK", "WAITER"};
-
-        for (int i = 1; i <= 10; i++) {
-            String FIRST_NAME = "First" + i;
-            String LAST_NAME = "Last" + i;
-            String USERNAME = "NewUser" + i;
-            String PASSWORD = "GobldyG00p!" + i;
-            String EMAIL = "examplar" + i + "@example.ezy.com";
-            Users.UserRole ROLE = Users.UserRole.valueOf(roles[i % 2]);
-
-            List<StatusCode> STATUS = usersAPI.deleteUser(USERNAME);
-            if (isSuccessful(STATUS)) {
-                System.out.println("User " + USERNAME + " created successfully.");
-            } else {
-                System.out.println(returnStatus("User " + USERNAME + " could not be created with the following errors:", STATUS));
-            }
-        }
-
 
     }
 }

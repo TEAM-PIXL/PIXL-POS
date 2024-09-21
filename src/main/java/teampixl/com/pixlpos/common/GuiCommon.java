@@ -19,10 +19,10 @@ import java.net.URL;
 public class GuiCommon {
 
     // Constants for default dimensions
-    public static final int WIDTH = 1920;
-    public static final int HEIGHT = 1028;
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
 
-    // Default icon path (if needed)
+    // Default icon path (if needed later on)
     public static final String ICON_PATH = "/images/icon.JPG";
 
     // Paths to FXML files and their titles
@@ -148,17 +148,15 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 
-            // Load the root; handle the case where root is already set in FXML
             Parent root = null;
             try {
-                root = fxmlLoader.load(); // Try loading without setting a root
+                root = fxmlLoader.load();
             } catch (IllegalStateException ex) {
                 if (ex.getMessage().contains("Root value already specified")) {
-                    // Root is already specified inside FXML, we should not set it
-                    fxmlLoader = new FXMLLoader(fxmlURL); // Reset loader as previous state is invalid
-                    root = fxmlLoader.load(); // This should work as root is pre-defined in FXML
+                    fxmlLoader = new FXMLLoader(fxmlURL);
+                    root = fxmlLoader.load();
                 } else {
-                    throw ex; // Some other issue, re-throw it
+                    throw ex;
                 }
             }
 
@@ -192,11 +190,10 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 
-            // Here you need to set the root, because the FXML file uses <fx:root>
-            Parent root = new BorderPane();  // Assuming BorderPane is the root type required
+            Parent root = new BorderPane();
             fxmlLoader.setRoot(root);
 
-            root = fxmlLoader.load();  // This load should now proceed without the root error
+            root = fxmlLoader.load();
 
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);

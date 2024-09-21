@@ -163,39 +163,39 @@ public class UsersAPI {
     }
 
     /* ---> IMPORTANT INTERNAL FUNCTION FOR SAFELY MANAGING AND VALIDATING A USER UPDATE <---- */
-    private Pair<List<StatusCode>, Users> validateAndGetUser(String field, Object value, String username) {
-        List<StatusCode> validations = new ArrayList<>();
+    private Pair<List<StatusCode>, Users> validateAndGetUser(String FIELD, Object VALUE, String USERNAME) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            Class<?> valueType = value.getClass();
-            if (valueType == Boolean.class) {
-                valueType = boolean.class;
+            Class<?> VALUE_TYPE = VALUE.getClass();
+            if (VALUE_TYPE == Boolean.class) {
+                VALUE_TYPE = boolean.class;
             }
-            Method validationMethod = this.getClass().getMethod("validateUsersBy" + field, valueType);
-            StatusCode validationResult = (StatusCode) validationMethod.invoke(this, value);
-            validations.add(validationResult);
-            if (!Exceptions.isSuccessful(validations)) {
-                return new Pair<>(validations, null);
+            Method VALIDATION_METHOD = this.getClass().getMethod("validateUsersBy" + FIELD, VALUE_TYPE);
+            StatusCode VALIDATION_RESULT = (StatusCode) VALIDATION_METHOD.invoke(this, VALUE);
+            VALIDATIONS.add(VALIDATION_RESULT);
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return new Pair<>(VALIDATIONS, null);
             }
         } catch (Exception e) {
-            validations.add(StatusCode.INTERNAL_FAILURE);
-            return new Pair<>(validations, null);
+            VALIDATIONS.add(StatusCode.INTERNAL_FAILURE);
+            return new Pair<>(VALIDATIONS, null);
         }
 
-        String id = getUsersByUsername(username);
-        if (getUserById(id) == null) {
+        String ID = getUsersByUsername(USERNAME);
+        if (getUserById(ID) == null) {
             return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
         }
 
-        Users user = dataStore.getUsers().stream()
-                .filter(u -> u.getMetadata().metadata().get("id").toString().equals(id))
+        Users USER = dataStore.getUsers().stream()
+                .filter(u -> u.getMetadata().metadata().get("id").toString().equals(ID))
                 .findFirst()
                 .orElse(null);
-        if (user == null) {
+        if (USER == null) {
             return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
         }
 
-        validations.add(StatusCode.SUCCESS);
-        return new Pair<>(validations, user);
+        VALIDATIONS.add(StatusCode.SUCCESS);
+        return new Pair<>(VALIDATIONS, USER);
     }
 
     /**
