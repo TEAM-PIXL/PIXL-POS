@@ -73,4 +73,14 @@ class UserTest {
         Users user = dataStore.getUser("testUser");
         assertNotNull(user, "User retrieval failed");
     }
+
+    @Test
+    public void testSetDataValue() {
+        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        Users user = dataStore.getUser("testUser");
+        assertNotNull(user, "User retrieval failed");
+        user.setDataValue("additional_info", "Test Info");
+        dataStore.updateUser(user);
+        assertEquals("Test Info", dataStore.getUser("testUser").getData().get("additional_info"), "User data update failed");
+    }
 }
