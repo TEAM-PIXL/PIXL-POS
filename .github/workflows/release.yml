@@ -61,9 +61,18 @@ jobs:
           Expand-Archive javafx-sdk.zip -DestinationPath C:\javafx-sdk
           echo "JAVA_FX_HOME=C:\javafx-sdk" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
 
+      - name: List contents of JavaFX lib directory (Windows)
+        run: |
+          Get-ChildItem -Path "${env:JAVA_FX_HOME}\lib" -Name
+
+      - name: List available modules (Windows)
+        run: |
+          java --module-path "${env:JAVA_FX_HOME}\lib" --list-modules
+
       - name: Create Runtime Image with jlink (Windows)
         run: |
-          jlink --module-path "${env:JAVA_HOME}\jmods;${env:JAVA_FX_HOME}\lib" --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
+          $env:MODULE_PATH="${env:JAVA_HOME}\jmods;${env:JAVA_FX_HOME}\lib"
+          jlink --module-path $env:MODULE_PATH --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
 
       - name: Package Application as exe with jpackage
         run: |
