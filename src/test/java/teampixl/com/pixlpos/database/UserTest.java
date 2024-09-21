@@ -51,4 +51,12 @@ class UserTest {
         assertEquals("username", user.getData().get("username"), "User data retrieval failed");
         assertEquals("email@example.com", user.getData().get("email"), "User data retrieval failed");
     }
+
+    @Test
+    public void testGetMetadata() {
+        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        Users user = dataStore.getUser("testUser");
+        assertNotNull(user, "User retrieval failed");
+        assertEquals(Users.UserRole.WAITER, user.getMetadata().metadata().get("role"), "User metadata retrieval failed");
+    }
 }
