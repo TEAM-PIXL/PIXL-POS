@@ -13,4 +13,11 @@ class UserTest {
 
     private DataStore dataStore;
     private PasswordUtils passwordUtils;
+
+    @BeforeEach
+    public void setUp() {
+        dataStore = DataStore.getInstance();
+        dataStore.clearData();
+        passwordUtils = new PasswordUtils();
+    }
 }
