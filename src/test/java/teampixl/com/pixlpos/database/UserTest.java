@@ -34,4 +34,10 @@ class UserTest {
         assertNotNull(user, "User retrieval failed");
         assertTrue(AuthenticationManager.login("username", user.getData().get("password").toString()), "Password verification failed");
     }
+
+    @Test
+    public void testHashPassword() {
+        String hashedPassword = ("password");
+        assertNotNull(passwordUtils.hashPassword(hashedPassword), "Password hashing failed");
+    }
 }
