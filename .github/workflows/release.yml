@@ -111,7 +111,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ github.ref_name }} ./packages/PIXL-POS.exe --title "Release ${{ github.ref_name }}" --notes "Automated release of PIXL-POS.exe"
+          gh release create ${{ github.ref_name }} ./packages/PIXL-POS-1.0.exe --title "Release ${{ github.ref_name }}" --notes "Automated release of PIXL-POS.exe"
 
       - name: Upload Windows Executable to Release
         uses: actions/upload-release-asset@v1
