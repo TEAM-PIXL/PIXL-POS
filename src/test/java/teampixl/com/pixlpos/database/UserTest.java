@@ -40,4 +40,15 @@ class UserTest {
         String hashedPassword = ("password");
         assertNotNull(passwordUtils.hashPassword(hashedPassword), "Password hashing failed");
     }
+
+    @Test
+    public void testGetData() {
+        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        Users user = dataStore.getUser("testUser");
+        assertNotNull(user, "User retrieval failed");
+        assertEquals("firstName", user.getData().get("firstName"), "User data retrieval failed");
+        assertEquals("lastName", user.getData().get("lastName"), "User data retrieval failed");
+        assertEquals("username", user.getData().get("username"), "User data retrieval failed");
+        assertEquals("email@example.com", user.getData().get("email"), "User data retrieval failed");
+    }
 }
