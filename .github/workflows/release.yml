@@ -39,10 +39,6 @@ jobs:
         run: |
           jlink --module-path $JAVA_HOME/jmods:$JAVA_FX_HOME/lib --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
 
-      - name: Package Application with jpackage (Optional)
-        run: |
-          jpackage --input target/ --name PIXL-POS --main-jar PIXL-POS-1.0.jar --main-class teampixl.com.pixlpos.application.POSApplication --type exe --runtime-image ./runtime
-
   package-windows:
     needs: build-linux
     runs-on: windows-latest
