@@ -26,4 +26,12 @@ class UserTest {
         boolean result = AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
         assertTrue(result, "User registration failed");
     }
+
+    @Test
+    public void testLogin() {
+        AuthenticationManager.register("testUser", "firstName", "lastName", "username", "email@example.com", Users.UserRole.WAITER);
+        Users user = dataStore.getUser("testUser");
+        assertNotNull(user, "User retrieval failed");
+        assertTrue(AuthenticationManager.login("username", user.getData().get("password").toString()), "Password verification failed");
+    }
 }
