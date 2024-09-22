@@ -401,10 +401,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * @param user Users - The user to add.
      */
     public void createUser(Users user) {
-        if (usernameExists(user.getMetadata().metadata().get("username").toString())) {
-            throw new IllegalArgumentException("Username already exists.");
-        }
-
         users.add(user);
         saveUserToDatabase(user);
     }
@@ -435,42 +431,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     /* ---------------->   METHODS WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY USERS API   <------------------------- */
-
-    /**
-     * Updates a user's password.
-     * METHOD WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY USERS API
-     * @param user Users - The user to update the password for.
-     * @param newPassword String - The new password.
-     */
-    public void updateUserPassword(Users user, String newPassword) {
-        String hashedPassword = PasswordUtils.hashPassword(newPassword);
-        user.setDataValue("password", hashedPassword);
-        updateUserInDatabase(user);
-    }
-
-    /**
-     * Checks if a username already exists in the database.
-     * METHOD WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY USERS API
-     * @param username String - The username to check.
-     * @return boolean - True if the username exists, false otherwise.
-     */
-    public boolean usernameExists(String username) {
-        String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
-
-        try (Connection conn = DatabaseHelper.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, username);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return false;
-    }
 
     /**
      * Returns a user with the specified username.

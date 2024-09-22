@@ -97,6 +97,8 @@ public class AdminScreenController {
 
     private DataStore dataStore;
 
+    private UsersAPI usersAPI;
+
     private Users loadedUser;
 
     private MenuItem loadedMenuItem;
@@ -115,6 +117,7 @@ public class AdminScreenController {
     public void initialize() {
         // Initialization code here
         dataStore = DataStore.getInstance();
+        usersAPI = UsersAPI.getInstance();
         //User Management Side
         onCancelButtonClick();
         populateUserGrid();
@@ -254,7 +257,7 @@ Methods for user management from here.
             showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a User");
         }else {
             try {
-                List<Users> usersList = UsersAPI.searchUsers(searchInput);
+                List<Users> usersList = usersAPI.searchUsers(searchInput);
                 if (usersList.isEmpty()) {
                     showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
                 }else {

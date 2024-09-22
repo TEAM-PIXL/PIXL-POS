@@ -118,7 +118,7 @@ public class CookScreenController extends GuiCommon {
                 Label USER_ID_LABEL = new Label();
                 String USER_ID = ORDER.getMetadata().metadata().get("user_id").toString();
                 try {
-                    Users USER = USERS_API.getUserById(USER_ID);
+                    Users USER = USERS_API.getUsersById(USER_ID);
                     String USERNAME = USER.getMetadata().metadata().get("username").toString();
                     USER_ID_LABEL.setText("User: " + USERNAME);
                 } catch (Exception e) {

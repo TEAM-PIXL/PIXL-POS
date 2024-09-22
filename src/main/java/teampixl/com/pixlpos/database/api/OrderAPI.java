@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class OrderAPI {
     private static final DataStore dataStore = DataStore.getInstance();
+    private static final UsersAPI usersAPI = UsersAPI.getInstance();
     private static OrderAPI instance;
 
     private OrderAPI() { }
@@ -47,7 +48,7 @@ public class OrderAPI {
      */
     public static StatusCode validateOrderByUser(String USERNAME) {
         if (USERNAME == null) { return StatusCode.INVALID_USERNAME; }
-        else if (UsersAPI.getUsersByUsername(USERNAME) == null) { return StatusCode.USER_NOT_FOUND; }
+        else if (usersAPI.getUsersIdByUsername(USERNAME) == null) { return StatusCode.USER_NOT_FOUND; }
         return StatusCode.SUCCESS;
     }
 
@@ -357,7 +358,7 @@ public class OrderAPI {
 
     private static boolean matchesUserName(Order order, String token) {
         String userId = order.getMetadata().metadata().get("user_id").toString();
-        List<Users> users = UsersAPI.searchUsers(token);
+        List<Users> users = usersAPI.searchUsers(token);
         return users.stream().anyMatch(user -> user.getMetadata().metadata().get("id").toString().equals(userId));
     }
 

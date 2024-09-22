@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.database.api;
 
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
+import teampixl.com.pixlpos.authentication.PasswordUtils;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.Users;
@@ -181,8 +182,8 @@ public class UsersAPI {
             return new Pair<>(VALIDATIONS, null);
         }
 
-        String ID = getUsersByUsername(USERNAME);
-        if (getUserById(ID) == null) {
+        String ID = getUsersIdByUsername(USERNAME);
+        if (getUsersById(ID) == null) {
             return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
         }
 
@@ -227,7 +228,7 @@ public class UsersAPI {
 
             boolean REGISTERED = AuthenticationManager.register(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD, EMAIL, ROLE);
             if (!REGISTERED) { VALIDATIONS.add(StatusCode.USER_REGISTRATION_FAILED); return VALIDATIONS; }
-            Users USER = getUserById(getUsersByUsername(USERNAME));
+            Users USER = getUsersById(getUsersIdByUsername(USERNAME));
             USER.setDataValue("additional_info", ADDITIONAL_INFO);
             dataStore.updateUser(USER);
             return VALIDATIONS;
@@ -257,7 +258,7 @@ public class UsersAPI {
      * @param USERNAME the query to search for the user
      * @return the user matching the query
      */
-    public static String getUsersByUsername(String USERNAME) {
+    public String getUsersIdByUsername(String USERNAME) {
         return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
                 .findFirst()
@@ -271,7 +272,7 @@ public class UsersAPI {
      * @param EMAIL the query to search for the user
      * @return the user matching the query
      */
-    public String getUsersByEmailAddress(String EMAIL) {
+    public String getUsersByIdEmailAddress(String EMAIL) {
         return dataStore.readUsers().stream()
                 .filter(user -> user.getData().get("email").toString().equals(EMAIL))
                 .findFirst()
@@ -285,7 +286,7 @@ public class UsersAPI {
      * @param USERNAME the query to search for the user
      * @return the user matching the query
      */
-    public String getUsersFirstName(String USERNAME) {
+    public String getUsersFirstNameByUsername(String USERNAME) {
         return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
                 .findFirst()
@@ -299,7 +300,7 @@ public class UsersAPI {
      * @param USERNAME the query to search for the user
      * @return the user matching the query
      */
-    public String getUsersLastName(String USERNAME) {
+    public String getUsersLastNameByUsername(String USERNAME) {
         return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
                 .findFirst()
@@ -313,9 +314,22 @@ public class UsersAPI {
      * @param ID the query to search for the user
      * @return the user matching the query
      */
-    public Users getUserById(String ID) {
+    public Users getUsersById(String ID) {
         return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public Users getUsersByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
                 .findFirst()
                 .orElse(null);
     }
@@ -426,8 +440,10 @@ public class UsersAPI {
             if (!Exceptions.isSuccessful(VALIDATIONS)) { return VALIDATIONS; }
 
             Users USER = RESULT.getValue();
+            String PASSWORD_HASH = PasswordUtils.hashPassword(NEW_PASSWORD);
+            USER.setDataValue("password", PASSWORD_HASH);
 
-            dataStore.updateUserPassword(USER, NEW_PASSWORD);
+            dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
             return List.of(StatusCode.USER_UPDATE_FAILED);
@@ -531,7 +547,7 @@ public class UsersAPI {
      * @param query the query to search for the user
      * @return list of users matching the query
      */
-    public static List<Users> searchUsers(String query) {
+    public List<Users> searchUsers(String query) {
         String[] parts = query.trim().split("\\s+");
 
         if (parts.length > 2) {

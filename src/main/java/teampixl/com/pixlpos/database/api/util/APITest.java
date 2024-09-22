@@ -1,10 +1,17 @@
 package teampixl.com.pixlpos.database.api.util;
 
 import javafx.collections.ObservableList;
+import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.*;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.OrderAPI;
+import teampixl.com.pixlpos.models.Users;
+
+import java.util.List;
+
+import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
+import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) {
@@ -16,8 +23,26 @@ public class APITest {
 
         ObservableList<Order> ORDERS;
 
+//        List<StatusCode> STATUS = usersAPI.postUsers("john", "doe", "johnnyboy", "Goo7yLu%%y", "example@example.com", Users.UserRole.WAITER);
+//        if (isSuccessful(STATUS)) {
+//            System.out.println("User created successfully.");
+//        } else {
+//            System.out.println(returnStatus("User could not be created with the following errors:", STATUS));
+//        }
+//
+//        String ID = usersAPI.getUsersByUsername("johnnyboy");
+//        System.out.println("The user with the username johnnyboy has the ID: " + ID);
+//
+//        List<StatusCode> STATUS2 = usersAPI.putUsersPassword("johnnyboy", "Goo7yLu%%y2");
+//        if (isSuccessful(STATUS2)) {
+//            System.out.println("User password updated successfully.");
+//        } else {
+//            System.out.println(returnStatus("User password could not be updated with the following errors:", STATUS2));
+//        }
 
-        ORDERS = dataStore.readOrders();
+
+//        ORDERS = dataStore.readOrders();
+
 
 //
 //        System.out.println("Current user: " + userStack.getCurrentUser());

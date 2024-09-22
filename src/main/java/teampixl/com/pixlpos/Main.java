@@ -94,18 +94,6 @@ public class Main {
             System.out.println("Test user retrieval failed.");
         }
 
-        if (user4 != null) {
-            System.out.println("User 4 has the following hashed-password: " + user4.getData().get("password"));
-            dataStore.updateUserPassword(user4, "test123");
-
-            if (PasswordUtils.verifyPassword("test123", user4.getData().get("password").toString())) {
-                System.out.println("User 4 has the following hashed-password after update: " + user4.getData().get("password"));
-                System.out.println("User 4 password updated successfully.");
-            } else {
-                System.out.println("User 4 password update failed.");
-            }
-        }
-
         assert user1 != null;
         user1.setDataValue("additional_info", "Test User");
         dataStore.updateUser(user1);

@@ -9,7 +9,6 @@ public interface IUserStore {
     void deleteUser(Users user);
     Users getUser(String username);
     void updateUser(Users user);
-    void updateUserPassword(Users user, String newPassword);
 }
 
 

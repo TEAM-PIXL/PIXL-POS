@@ -5,6 +5,7 @@ import teampixl.com.pixlpos.models.Users;
 
 public class UserStack extends UsersAPI {
     private static final DataStore dataStore = DataStore.getInstance();
+    private static final UsersAPI usersAPI = UsersAPI.getInstance();
     private static UserStack instance;
 
     private UserStack() {
@@ -43,7 +44,7 @@ public class UserStack extends UsersAPI {
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(username))
                 .findFirst()
                 .orElse(null);
-        currentUserId = UsersAPI.getUsersByUsername(username);
+        currentUserId = usersAPI.getUsersIdByUsername(username);
     }
 
     /**
