@@ -160,7 +160,7 @@ Methods for user management from here.
             if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
             } else {
-            if (dataStore.getUser(username) == null) {
+            if (usersAPI.getUsersByUsername(username) == null) {
                 boolean registerUser = AuthenticationManager.register(firstName, lastName, username, password, email, role);
                 if (registerUser) {
                     initialize();

@@ -76,13 +76,6 @@ class DataStoreTest {
     }
 
     @Test
-    void testGetUser() {
-        Users user = dataStore.getUser("sample_user");
-        assertNotNull(user, "User should not be null");
-        assertEquals("sample_user", user.getMetadata().metadata().get("username"));
-    }
-
-    @Test
     void testUpdateUser() {
         sampleUser.setDataValue("email", "updated_email@example.com");
         dataStore.updateUser(sampleUser);

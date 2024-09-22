@@ -7,7 +7,6 @@ public interface IUserStore {
     ObservableList<Users> readUsers();
     void createUser(Users user);
     void deleteUser(Users user);
-    Users getUser(String username);
     void updateUser(Users user);
 }
 

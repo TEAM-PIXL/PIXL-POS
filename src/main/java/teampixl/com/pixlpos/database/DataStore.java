@@ -430,24 +430,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         deleteUserFromDatabase(user);
     }
 
-    /* ---------------->   METHODS WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY USERS API   <------------------------- */
-
-    /**
-     * Returns a user with the specified username.
-     * METHOD WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY USERS API
-     * @param username String - The username of the user to get.
-     * @return Users - The user with the specified username.
-     */
-    @Override
-    public Users getUser(String username) {
-        for (Users user : users) {
-            if (user.getMetadata().metadata().get("username").equals(username)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
 
 
     /*====================================================================================================================================================================

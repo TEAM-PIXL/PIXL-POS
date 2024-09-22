@@ -48,7 +48,7 @@ public class OrderAPI {
      */
     public static StatusCode validateOrderByUser(String USERNAME) {
         if (USERNAME == null) { return StatusCode.INVALID_USERNAME; }
-        else if (usersAPI.getUsersIdByUsername(USERNAME) == null) { return StatusCode.USER_NOT_FOUND; }
+        else if (usersAPI.keySearch(USERNAME) == null) { return StatusCode.USER_NOT_FOUND; }
         return StatusCode.SUCCESS;
     }
 

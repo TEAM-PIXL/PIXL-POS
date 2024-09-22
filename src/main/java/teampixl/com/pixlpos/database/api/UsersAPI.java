@@ -146,10 +146,13 @@ public class UsersAPI {
     /**
      * Validates the status of a user.
      *
-     * @param STATUS the status to validate
+     * @param USERNAME the status to validate
      * @return the status code indicating the result of the validation
      */
-    public StatusCode validateUsersByStatus(boolean STATUS) {
+    public StatusCode validateUsersByStatus(String USERNAME) {
+        Users USER = getUsersByUsername(USERNAME);
+        if (USER == null) { return StatusCode.USER_NOT_FOUND; }
+        if (!(boolean) USER.getMetadata().metadata().get("is_active")) { return StatusCode.USER_INACTIVE; }
         return StatusCode.SUCCESS;
     }
 
@@ -182,21 +185,124 @@ public class UsersAPI {
             return new Pair<>(VALIDATIONS, null);
         }
 
-        String ID = getUsersIdByUsername(USERNAME);
-        if (getUsersById(ID) == null) {
-            return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
-        }
+        Users USER = getUsersByUsername(USERNAME);
 
-        Users USER = dataStore.readUsers().stream()
-                .filter(u -> u.getMetadata().metadata().get("id").toString().equals(ID))
-                .findFirst()
-                .orElse(null);
         if (USER == null) {
             return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
         }
 
         VALIDATIONS.add(StatusCode.SUCCESS);
         return new Pair<>(VALIDATIONS, USER);
+    }
+
+    /**
+     * Gets a user ID from memory. Core method for user retrieval and key search.
+     * This method is useful when dealing with metadata references in other models. It helps transform user input into a user ID.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String keySearch(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("id").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user from memory by ID. Core method for user retrieval and reverse key search.
+     * This method is useful when dealing with metadata references in other models.
+     *
+     * @param ID the query to search for the user
+     * @return the user matching the query
+     */
+    public Users reverseKeySearch(String ID) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public Users getUsersByUsername(String USERNAME) {
+        String ID = keySearch(USERNAME);
+        return reverseKeySearch(ID);
+    }
+
+    /**
+     * Gets a user's first name from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersFirstNameByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("first_name").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's last name from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersLastNameByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("last_name").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's role from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public Users.UserRole getUsersRoleByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> (Users.UserRole) user.getMetadata().metadata().get("role"))
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's email from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersEmailByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getData().get("email").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's additional info from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersAdditionalInfoByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getData().get("additional_info").toString())
+                .orElse(null);
     }
 
     /**
@@ -228,7 +334,7 @@ public class UsersAPI {
 
             boolean REGISTERED = AuthenticationManager.register(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD, EMAIL, ROLE);
             if (!REGISTERED) { VALIDATIONS.add(StatusCode.USER_REGISTRATION_FAILED); return VALIDATIONS; }
-            Users USER = getUsersById(getUsersIdByUsername(USERNAME));
+            Users USER = getUsersByUsername(USERNAME);
             USER.setDataValue("additional_info", ADDITIONAL_INFO);
             dataStore.updateUser(USER);
             return VALIDATIONS;
@@ -250,88 +356,6 @@ public class UsersAPI {
      */
     public List<StatusCode> postUsers(String FIRST_NAME, String LAST_NAME, String USERNAME, String PASSWORD, String EMAIL, Users.UserRole ROLE) {
         return postUsers(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD, EMAIL, ROLE, "");
-    }
-
-    /**
-     * Gets a user ID from the database.
-     *
-     * @param USERNAME the query to search for the user
-     * @return the user matching the query
-     */
-    public String getUsersIdByUsername(String USERNAME) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("id").toString())
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user ID from the database.
-     *
-     * @param EMAIL the query to search for the user
-     * @return the user matching the query
-     */
-    public String getUsersByIdEmailAddress(String EMAIL) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getData().get("email").toString().equals(EMAIL))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("id").toString())
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user's first name from the database.
-     *
-     * @param USERNAME the query to search for the user
-     * @return the user matching the query
-     */
-    public String getUsersFirstNameByUsername(String USERNAME) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("first_name").toString())
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user's last name from the database.
-     *
-     * @param USERNAME the query to search for the user
-     * @return the user matching the query
-     */
-    public String getUsersLastNameByUsername(String USERNAME) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("last_name").toString())
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user from the database.
-     *
-     * @param ID the query to search for the user
-     * @return the user matching the query
-     */
-    public Users getUsersById(String ID) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user from memory.
-     *
-     * @param USERNAME the query to search for the user
-     * @return the user matching the query
-     */
-    public Users getUsersByUsername(String USERNAME) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
-                .findFirst()
-                .orElse(null);
     }
 
     /**
@@ -542,27 +566,27 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Gets all users from memory that match the query input based on the user's metadata.
      *
      * @param query the query to search for the user
      * @return list of users matching the query
      */
     public List<Users> searchUsers(String query) {
-        String[] parts = query.trim().split("\\s+");
+        String[] TOKENS = query.trim().split("\\s+");
 
-        if (parts.length > 2) {
+        if (TOKENS.length > 2) {
             return List.of();
         }
 
         return dataStore.readUsers().parallelStream()
                 .filter(user -> {
-                    if (parts.length == 2) {
-                        String firstName = parts[0].toLowerCase();
-                        String lastName = parts[1].toLowerCase();
+                    if (TOKENS.length == 2) {
+                        String firstName = TOKENS[0].toLowerCase();
+                        String lastName = TOKENS[1].toLowerCase();
                         return user.getMetadata().metadata().get("first_name").toString().toLowerCase().contains(firstName) &&
                                 user.getMetadata().metadata().get("last_name").toString().toLowerCase().contains(lastName);
                     } else {
-                        String singleQuery = parts[0].toLowerCase();
+                        String singleQuery = TOKENS[0].toLowerCase();
                         return user.getMetadata().metadata().values().stream()
                                 .filter(Objects::nonNull)
                                 .anyMatch(value -> value.toString().toLowerCase().contains(singleQuery)) ||
