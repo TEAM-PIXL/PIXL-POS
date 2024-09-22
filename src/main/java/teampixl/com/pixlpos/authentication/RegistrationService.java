@@ -28,7 +28,7 @@ public class RegistrationService {
         }
         String hashedPassword = PasswordUtils.hashPassword(plainPassword);
         Users newUser = new Users(firstName, lastName, username, hashedPassword, email, role);
-        dataStore.addUser(newUser);
+        dataStore.createUser(newUser);
         return true;
     }
 }

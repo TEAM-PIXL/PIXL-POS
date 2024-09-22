@@ -117,7 +117,7 @@ public class MenuAPI {
      * @return Menu item id.
      */
     public String getMenuItemByName(String menuItemName) {
-        return dataStore.getMenuItems().stream()
+        return dataStore.readMenuItems().stream()
                 .filter(menuItem -> menuItem.getMetadata().metadata().get("itemName").equals(menuItemName))
                 .findFirst()
                 .map(menuItem -> menuItem.getMetadata().metadata().get("id").toString())
@@ -130,7 +130,7 @@ public class MenuAPI {
      * @return Menu item.
      */
     public MenuItem getMenuItemById(String menuItemId) {
-        return dataStore.getMenuItems().stream()
+        return dataStore.readMenuItems().stream()
                 .filter(menuItem -> menuItem.getMetadata().metadata().get("id").equals(menuItemId))
                 .findFirst()
                 .orElse(null);
@@ -163,7 +163,7 @@ public class MenuAPI {
             }
 
             MenuItem menuItem = new MenuItem(menuItemName, menuItemPrice, menuItemCategory, activeItem, menuItemDescription, dietaryRequirement);
-            dataStore.addMenuItem(menuItem);
+            dataStore.createMenuItem(menuItem);
             return putMenuItemNotes(menuItemName, menuItemNotes);
         } catch (Exception e) {
             return StatusCode.MENU_ITEM_CREATION_FAILED;
@@ -449,7 +449,7 @@ public class MenuAPI {
                 return StatusCode.MENU_ITEM_NOT_FOUND;
             }
 
-            dataStore.removeMenuItem(menuItem);
+            dataStore.deleteMenuItem(menuItem);
             return StatusCode.SUCCESS;
         } catch (Exception e) {
             return StatusCode.MENU_ITEM_DELETION_FAILED;
@@ -464,7 +464,7 @@ public class MenuAPI {
     public List<MenuItem> searchMenuItem(String query) {
         String[] parts = query.trim().split("\\s+");
 
-        return dataStore.getMenuItems().parallelStream()
+        return dataStore.readMenuItems().parallelStream()
                 .filter(menuItem -> Arrays.stream(parts).allMatch(part -> {
                     String lowerCasePart = part.toLowerCase();
                     return menuItem.getMetadata().metadata().values().stream()

@@ -179,7 +179,7 @@ Methods for user management from here.
         // Handle delete user button click
         try{
             if (loadedUser != null) {
-                dataStore.removeUser(loadedUser);
+                dataStore.deleteUser(loadedUser);
                 initialize();
                 showAlert(Alert.AlertType.CONFIRMATION, "Deleted User", "User has been deleted");
             }
@@ -293,7 +293,7 @@ Methods for user management from here.
     private void populateUserGrid() {
         int row = 0;
 
-        ObservableList<Users> listOfUsers = dataStore.getUsers();
+        ObservableList<Users> listOfUsers = dataStore.readUsers();
         userTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (Users user : listOfUsers) {
@@ -358,7 +358,7 @@ Methods for user management from here.
     private void populateMenuGrid() {
         int row = 0;
 
-        ObservableList<MenuItem> listOfMenuItems = dataStore.getMenuItems();
+        ObservableList<MenuItem> listOfMenuItems = dataStore.readMenuItems();
         menuTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (MenuItem menuItem : listOfMenuItems) {
@@ -472,7 +472,7 @@ Methods for user management from here.
                 }
                 if (dataStore.getMenuItem(itemName) == null) {
                     MenuItem newMenuItem = new MenuItem(itemName, price, MenuItem.ItemType.MAIN, true, description, null);
-                    dataStore.addMenuItem(newMenuItem);
+                    dataStore.createMenuItem(newMenuItem);
                     if (dataStore.getMenuItem(itemName) != null) {
                         initialize();
                         showAlert(Alert.AlertType.CONFIRMATION, "New Menu Item", "New Menu Item has been created");
@@ -493,7 +493,7 @@ Methods for user management from here.
         // Handle delete user button click
         try{
             if (loadedMenuItem != null) {
-                dataStore.removeMenuItem(loadedMenuItem);
+                dataStore.deleteMenuItem(loadedMenuItem);
                 initialize();
                 showAlert(Alert.AlertType.CONFIRMATION, "Deleted Menu Item", "Menu Item has been deleted");
             }

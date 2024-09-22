@@ -114,7 +114,7 @@ public class OrderAPI {
             return null;
         }
         String ORDER_NUMBER_STRING = String.valueOf(ORDER_NUMBER);
-        return dataStore.getOrders().stream()
+        return dataStore.readOrders().stream()
                 .filter(order -> order.getMetadata().metadata().get("order_number").toString().equals(ORDER_NUMBER_STRING))
                 .findFirst()
                 .map(order -> order.getMetadata().metadata().get("order_id").toString())
@@ -130,7 +130,7 @@ public class OrderAPI {
     public static Order getOrderById(String ORDER_ID) {
         StatusCode STATUS_CODE = OrderAPI.validateOrderById(ORDER_ID);
         if (STATUS_CODE != StatusCode.SUCCESS) { return null; }
-        return dataStore.getOrders().stream()
+        return dataStore.readOrders().stream()
                 .filter(order -> order.getMetadata().metadata().get("order_id").toString().equals(ORDER_ID))
                 .findFirst()
                 .orElse(null);
@@ -140,7 +140,7 @@ public class OrderAPI {
         Order ORDER = getOrderById(ORDER_ID);
         if (ORDER == null) { return null; }
         try {
-            return dataStore.getOrderItems(ORDER).values().stream()
+            return dataStore.readOrderItems(ORDER).values().stream()
                     .map(item -> (MenuItem) item)
                     .collect(Collectors.toList());
         }
@@ -151,7 +151,7 @@ public class OrderAPI {
     }
 
     public static ObservableList<Order> getOrders() {
-        return dataStore.getOrders();
+        return dataStore.readOrders();
     }
 
     /**
@@ -162,14 +162,14 @@ public class OrderAPI {
     public static Order initializeOrder() {
         int ORDER_NUMBER = 1;
         String USER_ID;
-        List<Order> ORDERS = dataStore.getOrders();
+        List<Order> ORDERS = dataStore.readOrders();
         if (!ORDERS.isEmpty()) {
             ORDER_NUMBER = (int) ORDERS.getLast().getMetadata().metadata().get("order_number") + 1;
         }
         USER_ID = UserStack.getInstance().getCurrentUserId();
         try {
             Order ORDER = new Order(ORDER_NUMBER, USER_ID);
-            dataStore.addOrder(ORDER);
+            dataStore.createOrder(ORDER);
             return ORDER;
         } catch (Exception e) {
             return null;
@@ -319,7 +319,7 @@ public class OrderAPI {
      */
     public static List<Order> searchOrders(String query) {
         String[] tokens = query.trim().toLowerCase().split("\\s+");
-        List<Order> orders = dataStore.getOrders();
+        List<Order> orders = dataStore.readOrders();
 
         return orders.stream()
                 .filter(order -> matchesOrder(order, tokens))

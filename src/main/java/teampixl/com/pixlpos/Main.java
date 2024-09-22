@@ -3,7 +3,6 @@ package teampixl.com.pixlpos;
 import javafx.collections.ObservableList;
 import teampixl.com.pixlpos.models.Ingredients;
 import teampixl.com.pixlpos.models.MenuItem;
-import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.database.DataStore;
@@ -139,7 +138,7 @@ public class Main {
         }
 
         if (user4 != null) {
-            dataStore.removeUser(user4);
+            dataStore.deleteUser(user4);
             if (dataStore.getUser("test") == null) {
                 System.out.println("User 4 removed successfully.");
             } else {
@@ -148,7 +147,7 @@ public class Main {
         }
 
         System.out.println("Retrieving all users from the database:");
-        dataStore.getUsers().forEach(System.out::println);
+        dataStore.readUsers().forEach(System.out::println);
 
         /*===================================================================================================================================================================================================================================
         Code Description:
@@ -171,13 +170,13 @@ public class Main {
         Ingredients ingredient3 = new Ingredients("Fish", "Fresh fish fillet");
         Ingredients ingredient4 = new Ingredients("Basil", null);
 
-        dataStore.addIngredient(ingredient1);
-        dataStore.addIngredient(ingredient2);
-        dataStore.addIngredient(ingredient3);
-        dataStore.addIngredient(ingredient4);
+        dataStore.createIngredient(ingredient1);
+        dataStore.createIngredient(ingredient2);
+        dataStore.createIngredient(ingredient3);
+        dataStore.createIngredient(ingredient4);
         System.out.println("Ingredients added to the database:");
 
-        ObservableList<Ingredients> checkIngredients = dataStore.getIngredients();
+        ObservableList<Ingredients> checkIngredients = dataStore.readIngredients();
         if (checkIngredients.size() == 4) {
             System.out.println("Ingredients added successfully.");
         } else {
@@ -206,14 +205,14 @@ public class Main {
             System.out.println("Basil notes update failed.");
         }
 
-        dataStore.removeIngredient(dataStore.getIngredient("Fresh Basil"));
+        dataStore.deleteIngredient(dataStore.getIngredient("Fresh Basil"));
         if (dataStore.getIngredient("Fresh Basil") == null) {
             System.out.println("Basil removed successfully.");
         } else {
             System.out.println("Basil removal failed.");
         }
 
-        dataStore.getIngredients().forEach(System.out::println);
+        dataStore.readIngredients().forEach(System.out::println);
 
         /*===================================================================================================================================================================================================================================
         Code Description:
@@ -234,12 +233,12 @@ public class Main {
         Stock stock1 = new Stock(ingredient1, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, 2.0, false);
         Stock stock2 = new Stock(ingredient2, Stock.StockStatus.LOWSTOCK, Stock.UnitType.KG, 1.5, true);
         Stock stock3 = new Stock(ingredient3, Stock.StockStatus.NOSTOCK, Stock.UnitType.KG, 0.0, false);
-        dataStore.addStock(stock1);
-        dataStore.addStock(stock2);
-        dataStore.addStock(stock3);
+        dataStore.createStock(stock1);
+        dataStore.createStock(stock2);
+        dataStore.createStock(stock3);
         System.out.println("Stock added to the database:");
 
-        ObservableList<Stock> checkStock = dataStore.getStockItems();
+        ObservableList<Stock> checkStock = dataStore.readStock();
         if (checkStock.size() == 3) {
             System.out.println("Stock added successfully.");
         } else {
@@ -276,14 +275,14 @@ public class Main {
             System.out.println("Cheese update failed.");
         }
 
-        dataStore.removeStock(dataStore.getStockItem("Fish"));
+        dataStore.deleteStock(dataStore.getStockItem("Fish"));
         if (dataStore.getStockItem("Fish") == null) {
             System.out.println("Fish removed successfully.");
         } else {
             System.out.println("Fish removal failed.");
         }
 
-        dataStore.getStockItems().forEach(System.out::println);
+        dataStore.readStock().forEach(System.out::println);
 
         /*===================================================================================================================================================================================================================================
         Code Description:
@@ -331,29 +330,29 @@ public class Main {
 
         /* Finish Hardcoded items to menu items */
 
-        dataStore.addMenuItem(item1);
-        dataStore.addMenuItem(item2);
-        dataStore.addMenuItem(item3);
-        dataStore.addMenuItem(item4);
-        dataStore.addMenuItem(item5);
-        dataStore.addMenuItem(item6);
-        dataStore.addMenuItem(item7);
-        dataStore.addMenuItem(item8);
-        dataStore.addMenuItem(item9);
-        dataStore.addMenuItem(item10);
-        dataStore.addMenuItem(item11);
-        dataStore.addMenuItem(item12);
-        dataStore.addMenuItem(item13);
-        dataStore.addMenuItem(item14);
-        dataStore.addMenuItem(item15);
-        dataStore.addMenuItem(item16);
-        dataStore.addMenuItem(item17);
-        dataStore.addMenuItem(item18);
-        dataStore.addMenuItem(item19);
+        dataStore.createMenuItem(item1);
+        dataStore.createMenuItem(item2);
+        dataStore.createMenuItem(item3);
+        dataStore.createMenuItem(item4);
+        dataStore.createMenuItem(item5);
+        dataStore.createMenuItem(item6);
+        dataStore.createMenuItem(item7);
+        dataStore.createMenuItem(item8);
+        dataStore.createMenuItem(item9);
+        dataStore.createMenuItem(item10);
+        dataStore.createMenuItem(item11);
+        dataStore.createMenuItem(item12);
+        dataStore.createMenuItem(item13);
+        dataStore.createMenuItem(item14);
+        dataStore.createMenuItem(item15);
+        dataStore.createMenuItem(item16);
+        dataStore.createMenuItem(item17);
+        dataStore.createMenuItem(item18);
+        dataStore.createMenuItem(item19);
 
         System.out.println("Menu items added to the database:");
 
-        ObservableList<MenuItem> checkMenuItems = dataStore.getMenuItems();
+        ObservableList<MenuItem> checkMenuItems = dataStore.readMenuItems();
         if (checkMenuItems.size() == 19) {
             System.out.println("Menu items added successfully.");
         } else {
@@ -390,15 +389,15 @@ public class Main {
             System.out.println("Vegan Caesar Salad dietary requirement update failed.");
         }
 
-        dataStore.removeMenuItem(dataStore.getMenuItem("Vegan Caesar Salad"));
+        dataStore.deleteMenuItem(dataStore.getMenuItem("Vegan Caesar Salad"));
         if (dataStore.getMenuItem("Vegan Caesar Salad") == null) {
             System.out.println("Vegan Caesar Salad removed successfully.");
         } else {
             System.out.println("Vegan Caesar Salad removal failed.");
         }
 
-        dataStore.addMenuItemIngredient(item1, ingredient1, 1.0);
-        dataStore.addMenuItemIngredient(item1, ingredient2, 0.5);
+        dataStore.createMenuItemIngredient(item1, ingredient1, 1.0);
+        dataStore.createMenuItemIngredient(item1, ingredient2, 0.5);
         dataStore.updateMenuItem(item1);
         if (dataStore.getMenuItem("Pizza").hasIngredient(ingredient1.getMetadata().metadata().get("ingredient_id").toString()) && dataStore.getMenuItem("Pizza").hasIngredient(ingredient2.getMetadata().metadata().get("ingredient_id").toString())) {
             System.out.println("Pizza ingredients added successfully.");
@@ -408,14 +407,14 @@ public class Main {
 
         dataStore.updateMenuItemIngredient(item1, ingredient1, 2.0);
         dataStore.updateMenuItem(item1);
-        System.out.println(dataStore.getMenuItemIngredients(item1));
-        if (dataStore.getMenuItemIngredients(item1).get(ingredient1.getMetadata().metadata().get("itemName")).equals(2.0)) {
+        System.out.println(dataStore.readMenuItemIngredients(item1));
+        if (dataStore.readMenuItemIngredients(item1).get(ingredient1.getMetadata().metadata().get("itemName")).equals(2.0)) {
             System.out.println("Pizza ingredient updated successfully.");
         } else {
             System.out.println("Pizza ingredient update failed.");
         }
 
-        dataStore.removeMenuItemIngredient(item1, ingredient1);
+        dataStore.deleteMenuItemIngredient(item1, ingredient1);
         dataStore.updateMenuItem(item1);
         if (dataStore.getMenuItem("Pizza").hasIngredient(ingredient1.getMetadata().metadata().get("ingredient_id").toString())) {
             System.out.println("Pizza ingredient removal failed.");
@@ -423,7 +422,7 @@ public class Main {
             System.out.println("Pizza ingredient removed successfully.");
         }
 
-        dataStore.getMenuItems().forEach(System.out::println);
+        dataStore.readMenuItems().forEach(System.out::println);
 
         /*===================================================================================================================================================================================================================================
         Code Description:
@@ -596,13 +595,13 @@ public class Main {
         dataStore = DataStore.getInstance();
 
         System.out.println("Retrieving all users from the database after re-initialization:");
-        dataStore.getUsers().forEach(System.out::println);
+        dataStore.readUsers().forEach(System.out::println);
 
         System.out.println("Retrieving all menu items from the database after re-initialization:");
-        dataStore.getMenuItems().forEach(System.out::println);
+        dataStore.readMenuItems().forEach(System.out::println);
 
         System.out.println("Retrieving all orders from the database after re-initialization:");
-        dataStore.getOrders().forEach(System.out::println);
+        dataStore.readOrders().forEach(System.out::println);
     }
 }
 

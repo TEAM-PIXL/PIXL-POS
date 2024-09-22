@@ -4,9 +4,9 @@ import javafx.collections.ObservableList;
 import teampixl.com.pixlpos.models.Stock;
 
 public interface IStockStore {
-    ObservableList<Stock> getStockItems();
+    ObservableList<Stock> readStock();
     Stock getStockItem(String itemName);
-    void addStock(Stock stock);
+    void createStock(Stock stock);
     void updateStock(Stock stock);
-    void removeStock(Stock stock);
+    void deleteStock(Stock stock);
 }

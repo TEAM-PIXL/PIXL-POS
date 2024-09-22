@@ -56,7 +56,7 @@ public class UsersAPI {
         if (USERNAME.chars().anyMatch(Character::isSpaceChar)) { return StatusCode.USERNAME_CONTAINS_SPACES; }
         if (!USERNAME.matches("^[a-zA-Z0-9]*$")) { return StatusCode.USERNAME_INVALID_CHARACTERS; }
         if (USERNAME.chars().allMatch(Character::isDigit)) { return StatusCode.USERNAME_ONLY_DIGITS; }
-        boolean USER_EXISTS = dataStore.getUsers().stream()
+        boolean USER_EXISTS = dataStore.readUsers().stream()
                 .anyMatch(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME));
         return USER_EXISTS ? StatusCode.USERNAME_TAKEN : StatusCode.SUCCESS;
     }
@@ -71,7 +71,7 @@ public class UsersAPI {
         if (EMAIL == null) { return StatusCode.EMAIL_NULL; }
         if (EMAIL.chars().filter(ch -> ch == '@').count() != 1) { return StatusCode.EMAIL_INVALID_FORMAT; }
         if (EMAIL.chars().anyMatch(Character::isSpaceChar)) { return StatusCode.EMAIL_CONTAINS_SPACES; }
-        boolean USER_EXISTS = dataStore.getUsers().stream()
+        boolean USER_EXISTS = dataStore.readUsers().stream()
                 .anyMatch(user -> user.getData().get("email").toString().equals(EMAIL));
         return USER_EXISTS ? StatusCode.EMAIL_TAKEN : StatusCode.SUCCESS;
     }
@@ -109,7 +109,7 @@ public class UsersAPI {
     public StatusCode validateUsersByName(String FIRST_NAME, String LAST_NAME) {
         if (FIRST_NAME == null || LAST_NAME == null) { return StatusCode.INVALID_NAME; }
         if (FIRST_NAME.trim().isEmpty() || LAST_NAME.trim().isEmpty()) { return StatusCode.INVALID_NAME; }
-        boolean USER_EXISTS = dataStore.getUsers().stream()
+        boolean USER_EXISTS = dataStore.readUsers().stream()
                 .anyMatch(user -> user.getMetadata().metadata().get("first_name").toString().equals(FIRST_NAME) &&
                         user.getMetadata().metadata().get("last_name").toString().equals(LAST_NAME));
         return USER_EXISTS ? StatusCode.USER_ALREADY_EXISTS : StatusCode.SUCCESS;
@@ -186,7 +186,7 @@ public class UsersAPI {
             return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
         }
 
-        Users USER = dataStore.getUsers().stream()
+        Users USER = dataStore.readUsers().stream()
                 .filter(u -> u.getMetadata().metadata().get("id").toString().equals(ID))
                 .findFirst()
                 .orElse(null);
@@ -258,7 +258,7 @@ public class UsersAPI {
      * @return the user matching the query
      */
     public static String getUsersByUsername(String USERNAME) {
-        return dataStore.getUsers().stream()
+        return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
                 .findFirst()
                 .map(user -> user.getMetadata().metadata().get("id").toString())
@@ -272,7 +272,7 @@ public class UsersAPI {
      * @return the user matching the query
      */
     public String getUsersByEmailAddress(String EMAIL) {
-        return dataStore.getUsers().stream()
+        return dataStore.readUsers().stream()
                 .filter(user -> user.getData().get("email").toString().equals(EMAIL))
                 .findFirst()
                 .map(user -> user.getMetadata().metadata().get("id").toString())
@@ -286,7 +286,7 @@ public class UsersAPI {
      * @return the user matching the query
      */
     public String getUsersFirstName(String USERNAME) {
-        return dataStore.getUsers().stream()
+        return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
                 .findFirst()
                 .map(user -> user.getMetadata().metadata().get("first_name").toString())
@@ -300,7 +300,7 @@ public class UsersAPI {
      * @return the user matching the query
      */
     public String getUsersLastName(String USERNAME) {
-        return dataStore.getUsers().stream()
+        return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
                 .findFirst()
                 .map(user -> user.getMetadata().metadata().get("last_name").toString())
@@ -314,7 +314,7 @@ public class UsersAPI {
      * @return the user matching the query
      */
     public Users getUserById(String ID) {
-        return dataStore.getUsers().stream()
+        return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
                 .findFirst()
                 .orElse(null);
@@ -518,7 +518,7 @@ public class UsersAPI {
             Users USER = RESULT.getValue();
 
 
-            dataStore.removeUser(USER);
+            dataStore.deleteUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
             return List.of(StatusCode.USER_DELETION_FAILED);
@@ -538,7 +538,7 @@ public class UsersAPI {
             return List.of();
         }
 
-        return dataStore.getUsers().parallelStream()
+        return dataStore.readUsers().parallelStream()
                 .filter(user -> {
                     if (parts.length == 2) {
                         String firstName = parts[0].toLowerCase();

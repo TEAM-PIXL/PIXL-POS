@@ -76,7 +76,7 @@ public class CookScreenController extends GuiCommon {
     @FXML
     private void onRefreshButtonClick() {
         DATASTORE.reloadOrdersFromDatabase();
-        ORDERS.setAll(DATASTORE.getOrders());
+        ORDERS.setAll(DATASTORE.readOrders());
         updateOrderListView();
     }
 
@@ -89,7 +89,7 @@ public class CookScreenController extends GuiCommon {
             Map<String, Object> ORDER_DATA = SELECTED_ORDER.getData();
             if (ORDER_DATA.get("total") != null) {
                 DATASTORE.updateOrder(SELECTED_ORDER);
-                ORDERS.setAll(DATASTORE.getOrders());
+                ORDERS.setAll(DATASTORE.readOrders());
                 updateOrderListView();
             } else {
                 System.err.println("Order total is null. Cannot complete order.");
@@ -137,7 +137,7 @@ public class CookScreenController extends GuiCommon {
 
                 VBox ITEMS_VBOX = new VBox();
                 ITEMS_VBOX.getStyleClass().add("vbox-items");
-                Map<String, Object> ORDER_ITEMS = DATASTORE.getOrderItems(ORDER);
+                Map<String, Object> ORDER_ITEMS = DATASTORE.readOrderItems(ORDER);
                 try {
                     for (Map.Entry<String, Object> ENTRY : ORDER_ITEMS.entrySet()) {
                         String ITEM_KEY = ENTRY.getKey();

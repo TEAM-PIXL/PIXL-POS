@@ -39,7 +39,7 @@ public class UserStack extends UsersAPI {
      * @param username the username of the user
      */
     public void setCurrentUser(String username) {
-        currentUser = dataStore.getUsers().stream()
+        currentUser = dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("username").toString().equals(username))
                 .findFirst()
                 .orElse(null);

@@ -1,21 +1,10 @@
 package teampixl.com.pixlpos.database.api.util;
 
 import javafx.collections.ObservableList;
-import javafx.scene.chart.PieChart;
 import teampixl.com.pixlpos.database.api.*;
-import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.OrderAPI;
-import teampixl.com.pixlpos.models.Order;
-import teampixl.com.pixlpos.models.Users;
-
-import javax.print.attribute.standard.DateTimeAtCompleted;
-import java.util.List;
-import java.util.Scanner;
-
-import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
-import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) {
@@ -28,7 +17,7 @@ public class APITest {
         ObservableList<Order> ORDERS;
 
 
-        ORDERS = dataStore.getOrders();
+        ORDERS = dataStore.readOrders();
 
 //
 //        System.out.println("Current user: " + userStack.getCurrentUser());

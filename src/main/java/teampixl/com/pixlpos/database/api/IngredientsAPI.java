@@ -51,7 +51,7 @@ public class IngredientsAPI {
                 return status;
             }
             Ingredients ingredient = new Ingredients(ingredientName, notes);
-            dataStore.addIngredient(ingredient);
+            dataStore.createIngredient(ingredient);
             return StatusCode.SUCCESS;
         } catch (Exception e) {
             return StatusCode.INGREDIENT_CREATION_FAILED;
@@ -73,7 +73,7 @@ public class IngredientsAPI {
      * @return Id of the ingredient.
      */
     public String getIngredientsByName(String ingredientName) {
-        return dataStore.getIngredients().stream()
+        return dataStore.readIngredients().stream()
                 .filter(ingredient -> ingredient.getMetadata().metadata().get("itemName").equals(ingredientName))
                 .findFirst()
                 .map(Ingredients::toString)
@@ -81,7 +81,7 @@ public class IngredientsAPI {
     }
 
     public Ingredients getIngredientById(String ingredientId) {
-        return dataStore.getIngredients().stream()
+        return dataStore.readIngredients().stream()
                 .filter(ingredient -> ingredient.getMetadata().metadata().get("ingredient_id").equals(ingredientId))
                 .findFirst()
                 .orElse(null);
@@ -98,7 +98,7 @@ public class IngredientsAPI {
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
-            Ingredients ingredient = dataStore.getIngredients().stream()
+            Ingredients ingredient = dataStore.readIngredients().stream()
                     .filter(ing -> ing.getMetadata().metadata().get("ingredient_id").equals(id))
                     .findFirst()
                     .orElse(null);
@@ -125,7 +125,7 @@ public class IngredientsAPI {
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
-            Ingredients ingredient = dataStore.getIngredients().stream()
+            Ingredients ingredient = dataStore.readIngredients().stream()
                     .filter(ing -> ing.getMetadata().metadata().get("ingredient_id").equals(id))
                     .findFirst()
                     .orElse(null);
@@ -151,14 +151,14 @@ public class IngredientsAPI {
             if (id == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
-            Ingredients ingredient = dataStore.getIngredients().stream()
+            Ingredients ingredient = dataStore.readIngredients().stream()
                     .filter(ing -> ing.getMetadata().metadata().get("ingredient_id").equals(id))
                     .findFirst()
                     .orElse(null);
             if (ingredient == null) {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
-            dataStore.removeIngredient(ingredient);
+            dataStore.deleteIngredient(ingredient);
             return StatusCode.SUCCESS;
         } catch (Exception e) {
             return StatusCode.INGREDIENT_DELETION_FAILED;
@@ -176,7 +176,7 @@ public class IngredientsAPI {
         if (parts.length > 2) {
             return List.of();
         }
-        return dataStore.getIngredients().stream()
+        return dataStore.readIngredients().stream()
                 .filter(ingredient -> {
                     String name = (String) ingredient.getMetadata().metadata().get("itemName");
                     return name.contains(parts[0]) && (parts.length == 1 || name.contains(parts[1]));

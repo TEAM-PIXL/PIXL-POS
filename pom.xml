@@ -242,13 +242,6 @@
                                     <mainClass>teampixl.com.pixlpos.application.POSApplication</mainClass>
                                 </transformer>
                             </transformers>
-                            <relocations>
-                                <!-- Relocate JavaFX to prevent any possible conflicts during runtime -->
-                                <relocation>
-                                    <pattern>javafx</pattern>
-                                    <shadedPattern>shaded.javafx</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -256,6 +249,9 @@
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
+                                        <!-- Exclude JavaFX classes from being shaded -->
+                                        <exclude>javafx/**</exclude>
+                                        <exclude>com/sun/javafx/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

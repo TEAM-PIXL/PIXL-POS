@@ -88,7 +88,7 @@ public class StockAPI {
             if (id == null) {
                 return null;
             }
-            return dataStore.getStockItems().stream().filter(stock -> stock.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get().getMetadata().metadata().get("stock_id").toString();
+            return dataStore.readStock().stream().filter(stock -> stock.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get().getMetadata().metadata().get("stock_id").toString();
         } catch (Exception e) {
             return null;
         }
@@ -128,7 +128,7 @@ public class StockAPI {
 
             boolean onOrderStatus = onOrder == 1;
             Stock stock = new Stock(ingredient, stockStatus, unitType, numeral, onOrderStatus);
-            dataStore.addStock(stock);
+            dataStore.createStock(stock);
             return StatusCode.SUCCESS;
         } catch (Exception e) {
             return StatusCode.STOCK_CREATION_FAILED;
@@ -154,7 +154,7 @@ public class StockAPI {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
+            Stock stock = dataStore.readStock().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
             stock.setDataValue("numeral", quantity);
             stock.updateMetadata("lastUpdated", stock.getMetadata().metadata().get("lastUpdated"));
             return StatusCode.SUCCESS;
@@ -182,7 +182,7 @@ public class StockAPI {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
+            Stock stock = dataStore.readStock().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
             stock.setDataValue("unit", unit);
             stock.updateMetadata("lastUpdated", stock.getMetadata().metadata().get("lastUpdated"));
             return StatusCode.SUCCESS;
@@ -210,7 +210,7 @@ public class StockAPI {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
+            Stock stock = dataStore.readStock().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
             stock.updateMetadata("onOrder", onOrder);
             stock.updateMetadata("lastUpdated", stock.getMetadata().metadata().get("lastUpdated"));
             return StatusCode.SUCCESS;
@@ -238,7 +238,7 @@ public class StockAPI {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
+            Stock stock = dataStore.readStock().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
             stock.updateMetadata("stockStatus", stockStatus);
             stock.updateMetadata("lastUpdated", stock.getMetadata().metadata().get("lastUpdated"));
             return StatusCode.SUCCESS;
@@ -265,8 +265,8 @@ public class StockAPI {
                 return StatusCode.INGREDIENT_NOT_FOUND;
             }
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
-            dataStore.removeStock(stock);
+            Stock stock = dataStore.readStock().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
+            dataStore.deleteStock(stock);
             return StatusCode.SUCCESS;
         } catch (Exception e) {
             return StatusCode.STOCK_DELETION_FAILED;
@@ -290,7 +290,7 @@ public class StockAPI {
                 .map(ingredient -> (String) ingredient.getMetadata().metadata().get("ingredient_id"))
                 .toList();
 
-        return dataStore.getStockItems().parallelStream()
+        return dataStore.readStock().parallelStream()
                 .filter(stock -> ingredientIds.contains(stock.getMetadata().metadata().get("ingredient_id")))
                 .collect(Collectors.toList());
     }
