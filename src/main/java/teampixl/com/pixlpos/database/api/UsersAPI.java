@@ -1,21 +1,21 @@
 package teampixl.com.pixlpos.database.api;
 
+import teampixl.com.pixlpos.database.api.util.*;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.authentication.PasswordUtils;
-import teampixl.com.pixlpos.database.api.util.Exceptions;
-import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.Users;
 
 import java.util.List;
-import java.util.Objects;
-import javafx.util.Pair;
 import java.util.ArrayList;
-import java.lang.reflect.Method;
+import javafx.util.Pair;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.lang.reflect.Method;
 
 /**
- * This class is responsible for managing the users in the database. It is responsible for getting, posting, putting, and deleting users.
+ * The UsersAPI class is a singleton class that is responsible for managing the users in memory. It is responsible for getting, posting, putting, and deleting users. It also validates transactions and ensures that the data is consistent and correct.
+ * It employs key search and reverse key search to manage user data and metadata. It also provides search functionality to search for users based on their metadata.
  */
 public class UsersAPI {
     private static UsersAPI instance;
@@ -40,9 +40,7 @@ public class UsersAPI {
      *
      * @param dataStore the data store to use
      */
-    public UsersAPI(DataStore dataStore) {
-        UsersAPI.dataStore = dataStore;
-    }
+    public UsersAPI(DataStore dataStore) { UsersAPI.dataStore = dataStore; }
 
     /**
      * Validates the username of a user.
@@ -150,7 +148,7 @@ public class UsersAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateUsersByStatus(String USERNAME) {
-        Users USER = getUsersByUsername(USERNAME);
+        Users USER = getUser(USERNAME);
         if (USER == null) { return StatusCode.USER_NOT_FOUND; }
         if (!(boolean) USER.getMetadata().metadata().get("is_active")) { return StatusCode.USER_INACTIVE; }
         return StatusCode.SUCCESS;
@@ -185,7 +183,7 @@ public class UsersAPI {
             return new Pair<>(VALIDATIONS, null);
         }
 
-        Users USER = getUsersByUsername(USERNAME);
+        Users USER = getUser(USERNAME);
 
         if (USER == null) {
             return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
@@ -200,7 +198,7 @@ public class UsersAPI {
      * This method is useful when dealing with metadata references in other models. It helps transform user input into a user ID.
      *
      * @param USERNAME the query to search for the user
-     * @return the user matching the query
+     * @return the user id matching the query
      */
     public String keySearch(String USERNAME) {
         return dataStore.readUsers().stream()
@@ -211,13 +209,28 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from memory by ID. Core method for user retrieval and reverse key search.
+     * Gets a username from memory. Core method for user retrieval and reverse key search.
+     * This method is useful when dealing with metadata references in other models. It helps transform user ID into a username.
+     *
+     * @param ID the query to search for the user
+     * @return the username matching the query
+     */
+    public String reverseKeySearch(String ID) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("username").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Transforms a ID into a Users object in memory. Core method for user retrieval.
      * This method is useful when dealing with metadata references in other models.
      *
      * @param ID the query to search for the user
      * @return the user matching the query
      */
-    public Users reverseKeySearch(String ID) {
+    public Users keyTransform(String ID) {
         return dataStore.readUsers().stream()
                 .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
                 .findFirst()
@@ -230,9 +243,9 @@ public class UsersAPI {
      * @param USERNAME the query to search for the user
      * @return the user matching the query
      */
-    public Users getUsersByUsername(String USERNAME) {
+    public Users getUser(String USERNAME) {
         String ID = keySearch(USERNAME);
-        return reverseKeySearch(ID);
+        return keyTransform(ID);
     }
 
     /**
@@ -334,12 +347,12 @@ public class UsersAPI {
 
             boolean REGISTERED = AuthenticationManager.register(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD, EMAIL, ROLE);
             if (!REGISTERED) { VALIDATIONS.add(StatusCode.USER_REGISTRATION_FAILED); return VALIDATIONS; }
-            Users USER = getUsersByUsername(USERNAME);
+            Users USER = getUser(USERNAME);
             USER.setDataValue("additional_info", ADDITIONAL_INFO);
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_CREATION_FAILED);
+            return List.of(StatusCode.USER_POST_FAILED);
         }
     }
 
@@ -377,7 +390,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -400,7 +413,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -423,7 +436,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -446,7 +459,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -470,7 +483,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -493,7 +506,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -516,7 +529,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -539,7 +552,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 

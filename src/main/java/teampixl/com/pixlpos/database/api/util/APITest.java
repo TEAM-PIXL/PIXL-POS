@@ -8,20 +8,38 @@ import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.OrderAPI;
 import teampixl.com.pixlpos.models.Users;
 
+
 import java.util.List;
 
 import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
 import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
-    public static void main(String[] args) {
-        DataStore dataStore = DataStore.getInstance();
-        UserStack userStack = UserStack.getInstance();
-        UsersAPI usersAPI = UsersAPI.getInstance();
-        OrderAPI orderAPI = OrderAPI.getInstance();
-        userStack.setCurrentUser("admin");
+//    public static void main(String[] args) {
+//        DataStore dataStore = DataStore.getInstance();
+//        UserStack userStack = UserStack.getInstance();
+//        UsersAPI usersAPI = UsersAPI.getInstance();
+//        OrderAPI orderAPI = OrderAPI.getInstance();
+//
+//// Example query
+//        String query = "What was today's vs yesterday's revenue";
+//
+//        OrderAPI.QueryResult result = orderAPI.searchOrders(query);
+//
+//        if (result.getRevenueComparison() != null) {
+//            OrderAPI.RevenueComparison comparison = result.getRevenueComparison();
+//            System.out.println("Revenue for " + comparison.getRange1().getStartDate() + ": $" + comparison.getRevenue1());
+//            System.out.println("Revenue for " + comparison.getRange2().getStartDate() + ": $" + comparison.getRevenue2());
+//            System.out.println("Difference: $" + comparison.getDifference());
+//        } else if (result.getTotalRevenue() != null) {
+//            System.out.println("Total Revenue: $" + result.getTotalRevenue());
+//        } else if (result.getOrders() != null) {
+//            System.out.println("Orders:");
+//            for (Order order : result.getOrders()) {
+//                System.out.println("Order #" + order.getOrderNumber() + ", Total: $" + order.getTotal());
+//            }
+//        }
 
-        ObservableList<Order> ORDERS;
 
 //        List<StatusCode> STATUS = usersAPI.postUsers("john", "doe", "johnnyboy", "Goo7yLu%%y", "example@example.com", Users.UserRole.WAITER);
 //        if (isSuccessful(STATUS)) {
@@ -92,5 +110,4 @@ public class APITest {
 //            System.out.println(returnStatus("Order could not be validated with the following errors:", RESULT3));
 //        }
 
-    }
 }

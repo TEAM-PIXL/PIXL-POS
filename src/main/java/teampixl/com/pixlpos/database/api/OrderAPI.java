@@ -1,26 +1,53 @@
 package teampixl.com.pixlpos.database.api;
 
-import javafx.collections.ObservableList;
+//import edu.stanford.nlp.ling.CoreAnnotations;
+//import edu.stanford.nlp.ling.CoreLabel;
+//import edu.stanford.nlp.util.CoreMap;
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.util.Exceptions;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
-import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.Users;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+//import edu.stanford.nlp.pipeline.*;
+//import edu.stanford.nlp.time.TimeAnnotations;
+//import edu.stanford.nlp.util.PropertiesUtils;
+//import teampixl.com.pixlpos.database.DataStore;
+//import teampixl.com.pixlpos.models.Order;
+//import teampixl.com.pixlpos.models.Users;
+//
+//import java.time.*;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.*;
 
+
+/**
+ * The OrderAPI class is responsible for managing orders.
+ * It provides methods to create, read, update, and delete orders,
+ * with robust validation and error handling.
+ */
 public class OrderAPI {
+    private static OrderAPI instance;
     private static final DataStore dataStore = DataStore.getInstance();
     private static final UsersAPI usersAPI = UsersAPI.getInstance();
-    private static OrderAPI instance;
+    private static final MenuAPI menuAPI = MenuAPI.getInstance();
 
-    private OrderAPI() { }
+//    private StanfordCoreNLP pipeline;
+
+    private OrderAPI() {
+//        Properties props = PropertiesUtils.asProperties(
+//                "annotators", "tokenize,ssplit,pos,lemma,ner",
+//                "ner.applyNumericClassifiers", "true",
+//                "ner.useSUTime", "true"
+//        );
+//        pipeline = new StanfordCoreNLP(props);
+    }
 
     /**
-     * Gets the instance of the OrderAPI.
+     * Gets the singleton instance of the OrderAPI.
      *
      * @return the instance of the OrderAPI
      */
@@ -33,409 +60,706 @@ public class OrderAPI {
 
     /**
      * Validates the order number.
-     * @param ORDER_NUMBER the order number to validate
-     * @return the appropriate StatusCode from the enumeration class StatusCode
-     */
-    public static StatusCode validateOrderByNumber(int ORDER_NUMBER) {
-        if (ORDER_NUMBER < 0) { return StatusCode.INVALID_ORDER_NUMBER; }
-        return StatusCode.SUCCESS;
-    }
-
-    /**
-     * Validates the order by user.
-     * @param USERNAME the username to validate
-     * @return the appropriate StatusCode from the enumeration class StatusCode
-     */
-    public static StatusCode validateOrderByUser(String USERNAME) {
-        if (USERNAME == null) { return StatusCode.INVALID_USERNAME; }
-        else if (usersAPI.keySearch(USERNAME) == null) { return StatusCode.USER_NOT_FOUND; }
-        return StatusCode.SUCCESS;
-    }
-
-    /**
-     * Validates the order by id.
-     * @param ORDER_ID the order id to validate
-     * @return the appropriate StatusCode from the enumeration class StatusCode
-     */
-    public static StatusCode validateOrderById(String ORDER_ID) {
-        if (ORDER_ID == null) { return StatusCode.INVALID_ORDER_ID; }
-        return StatusCode.SUCCESS;
-    }
-
-    /**
-     * Validates the order at the time of creation in the database.
-     * @param ORDER the order to validate
-     * @return the appropriate StatusCode from the enumeration class StatusCode
-     */
-    public static List<StatusCode> validateOrder(Order ORDER) {
-        List<StatusCode> STATUS_CODES = new ArrayList<>();
-        if (ORDER == null) {
-            STATUS_CODES.add(StatusCode.INVALID_ORDER);
-        } else {
-            if (ORDER.getMetadata().metadata().get("order_id") == null) {
-                STATUS_CODES.add(StatusCode.INVALID_ORDER_ID);
-            }
-            if (ORDER.getMetadata().metadata().get("order_status") == null) {
-                STATUS_CODES.add(StatusCode.INVALID_ORDER_STATUS);
-            } else {
-                try {
-                    Order.OrderStatus.valueOf(ORDER.getMetadata().metadata().get("order_status").toString());
-                } catch (IllegalArgumentException e) {
-                    STATUS_CODES.add(StatusCode.INVALID_ORDER_STATUS);
-                }
-            }
-            if (ORDER.getMetadata().metadata().get("created_at") == null) {
-                STATUS_CODES.add(StatusCode.INVALID_ORDER_TIME);
-            }
-            if (ORDER.getData().get("total") == null || (double) ORDER.getData().get("total") == 0.0) {
-                STATUS_CODES.add(StatusCode.INVALID_ORDER_TOTAL);
-            }
-            Object MENU_ITEMS = ORDER.getData().get("menuItems");
-            if (!(MENU_ITEMS instanceof Map<?, ?> menuItemsMap)) {
-                STATUS_CODES.add(StatusCode.INVALID_ORDER_ITEMS);
-            } else {
-                if (menuItemsMap.isEmpty()) {
-                    STATUS_CODES.add(StatusCode.INVALID_ORDER_ITEMS);
-                }
-            }
-        }
-        return STATUS_CODES;
-    }
-
-
-    /**
-     * Gets the order by order number.
      *
-     * @param ORDER_NUMBER the order number
-     * @return the order id
+     * @param orderNumber the order number to validate
+     * @return the appropriate StatusCode
      */
-    public static String getOrderByNumber(int ORDER_NUMBER) {
-        StatusCode STATUS_CODE = OrderAPI.validateOrderByNumber(ORDER_NUMBER);
-        if (STATUS_CODE != StatusCode.SUCCESS) {
+    public StatusCode validateOrderByNumber(Integer orderNumber) {
+        if (orderNumber == null || orderNumber <= 0) {
+            return StatusCode.INVALID_ORDER_NUMBER;
+        }
+        return StatusCode.SUCCESS;
+    }
+
+    /**
+     * Validates the user ID associated with the order.
+     *
+     * @param userId the user ID to validate
+     * @return the appropriate StatusCode
+     */
+    public StatusCode validateOrderByUserId(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            return StatusCode.INVALID_USER_ID;
+        }
+        Users user = usersAPI.keyTransform(userId);
+        return user != null ? StatusCode.SUCCESS : StatusCode.USER_NOT_FOUND;
+    }
+
+    /**
+     * Validates the order ID.
+     *
+     * @param orderId the order ID to validate
+     * @return the appropriate StatusCode
+     */
+    public StatusCode validateOrderById(String orderId) {
+        if (orderId == null || orderId.trim().isEmpty()) {
+            return StatusCode.INVALID_ORDER_ID;
+        }
+        Order order = keyTransform(orderId);
+        return order != null ? StatusCode.SUCCESS : StatusCode.ORDER_NOT_FOUND;
+    }
+
+    /**
+     * Validates the order status.
+     *
+     * @param orderStatus the order status to validate
+     * @return the appropriate StatusCode
+     */
+    public StatusCode validateOrderByStatus(Order.OrderStatus orderStatus) {
+        if (orderStatus == null) {
+            return StatusCode.INVALID_ORDER_STATUS;
+        }
+        return StatusCode.SUCCESS;
+    }
+
+    /**
+     * Validates the entire Order object.
+     *
+     * @param order the Order object to validate
+     * @return a list of StatusCodes indicating the validation results
+     */
+    public List<StatusCode> validateOrder(Order order) {
+        List<StatusCode> statusCodes = new ArrayList<>();
+        if (order == null) {
+            statusCodes.add(StatusCode.INVALID_ORDER);
+            return statusCodes;
+        }
+
+        String orderId = (String) order.getMetadata().metadata().get("order_id");
+        Integer orderNumber = (Integer) order.getMetadata().metadata().get("order_number");
+        String userId = (String) order.getMetadata().metadata().get("user_id");
+        String orderStatus = (String) order.getMetadata().metadata().get("order_status");
+
+        statusCodes.add(validateOrderById(orderId));
+        statusCodes.add(validateOrderByNumber(orderNumber));
+        statusCodes.add(validateOrderByUserId(userId));
+
+        try {
+            Order.OrderStatus.valueOf(orderStatus);
+        } catch (IllegalArgumentException e) {
+            statusCodes.add(StatusCode.INVALID_ORDER_STATUS);
+        }
+
+        Object totalObj = order.getData().get("total");
+        if (!(totalObj instanceof Double) || (Double) totalObj < 0) {
+            statusCodes.add(StatusCode.INVALID_ORDER_TOTAL);
+        }
+
+        Object menuItemsObj = order.getData().get("menuItems");
+        if (!(menuItemsObj instanceof Map<?, ?> menuItemsMap) || menuItemsMap.isEmpty()) {
+            statusCodes.add(StatusCode.INVALID_ORDER_ITEMS);
+        }
+
+        return statusCodes.stream()
+                .filter(statusCode -> statusCode != StatusCode.SUCCESS)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves the order ID based on the order number.
+     *
+     * @param orderNumber the order number
+     * @return the order ID
+     */
+    public String keySearch(Integer orderNumber) {
+        if (orderNumber == null) {
             return null;
         }
-        String ORDER_NUMBER_STRING = String.valueOf(ORDER_NUMBER);
         return dataStore.readOrders().stream()
-                .filter(order -> order.getMetadata().metadata().get("order_number").toString().equals(ORDER_NUMBER_STRING))
+                .filter(order -> Objects.equals(order.getMetadata().metadata().get("order_number"), orderNumber))
                 .findFirst()
-                .map(order -> order.getMetadata().metadata().get("order_id").toString())
+                .map(order -> (String) order.getMetadata().metadata().get("order_id"))
                 .orElse(null);
     }
 
     /**
-     * Gets the order by order id.
+     * Transforms an order ID into an Order object.
      *
-     * @param ORDER_ID the order id
-     * @return the order
+     * @param orderId the order ID
+     * @return the Order object
      */
-    public static Order getOrderById(String ORDER_ID) {
-        StatusCode STATUS_CODE = OrderAPI.validateOrderById(ORDER_ID);
-        if (STATUS_CODE != StatusCode.SUCCESS) { return null; }
+    public Order keyTransform(String orderId) {
+        if (orderId == null) {
+            return null;
+        }
         return dataStore.readOrders().stream()
-                .filter(order -> order.getMetadata().metadata().get("order_id").toString().equals(ORDER_ID))
+                .filter(order -> orderId.equals(order.getMetadata().metadata().get("order_id")))
                 .findFirst()
                 .orElse(null);
     }
 
-    public static List<MenuItem> getOrderItemsById(String ORDER_ID) {
-        Order ORDER = getOrderById(ORDER_ID);
-        if (ORDER == null) { return null; }
-        try {
-            return dataStore.readOrderItems(ORDER).values().stream()
-                    .map(item -> (MenuItem) item)
-                    .collect(Collectors.toList());
-        }
-        catch (Exception e) {
-            return List.of();
-        }
-
+    /**
+     * Retrieves an Order object based on its order number.
+     *
+     * @param orderNumber the order number
+     * @return the Order object
+     */
+    public Order getOrderByNumber(Integer orderNumber) {
+        String orderId = keySearch(orderNumber);
+        return keyTransform(orderId);
     }
 
-    public static ObservableList<Order> getOrders() {
+    /**
+     * Retrieves all orders from the data store.
+     *
+     * @return a list of all orders
+     */
+    public List<Order> getOrders() {
         return dataStore.readOrders();
     }
 
     /**
-     * Initializes the order.
+     * Retrieves menu items associated with an order ID.
      *
-     * @return the order
+     * @param orderId the order ID
+     * @return a map of MenuItem objects and their quantities
      */
-    public static Order initializeOrder() {
-        int ORDER_NUMBER = 1;
-        String USER_ID;
-        List<Order> ORDERS = dataStore.readOrders();
-        if (!ORDERS.isEmpty()) {
-            ORDER_NUMBER = (int) ORDERS.getLast().getMetadata().metadata().get("order_number") + 1;
-        }
-        USER_ID = UserStack.getInstance().getCurrentUserId();
-        try {
-            Order ORDER = new Order(ORDER_NUMBER, USER_ID);
-            dataStore.createOrder(ORDER);
-            return ORDER;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Posts the order.
-     *
-     * @param ORDER the order to post
-     * @return the status code
-     */
-    public static List<StatusCode> postOrder(Order ORDER) {
-        List<StatusCode> STATUS_CODES = validateOrder(ORDER);
-        if (STATUS_CODES.isEmpty()) {
-            ORDER.updateMetadata("order_status", Order.OrderStatus.SENT);
-
-            // Check and calculate the total using the data map
-            if (ORDER.getData().get("total") == null || (double) ORDER.getData().get("total") == 0.0) {
-                @SuppressWarnings("unchecked")
-                Map<String, Integer> menuItems = (Map<String, Integer>) ORDER.getData().get("menuItems");
-                double total = 0.0;
-                for (Map.Entry<String, Integer> entry : menuItems.entrySet()) {
-                    String itemId = entry.getKey();
-                    int quantity = entry.getValue();
-                    MenuItem menuItem = dataStore.getMenuItemById(itemId);
-                    if (menuItem != null) {
-                        double price = (double) menuItem.getMetadata().metadata().get("price");
-                        total += price * quantity;
-                    }
-                }
-                ORDER.setDataValue("total", total);
-            }
-
-            dataStore.updateOrder(ORDER);
-            STATUS_CODES.add(StatusCode.SUCCESS);
-        }
-        return STATUS_CODES;
-    }
-
-
-    /**
-     * Puts the order by item.
-     *
-     * @param ORDER_NUMBER the order number
-     * @param ITEM_NAME the item name
-     * @param QUANTITY the quantity
-     * @return the status code
-     */
-    public static List<StatusCode> putOrderByItem(int ORDER_NUMBER, String ITEM_NAME, int QUANTITY) {
-        List<StatusCode> statusCodes = new ArrayList<>();
-        String orderId = getOrderByNumber(ORDER_NUMBER);
-        if (orderId == null) {
-            statusCodes.add(StatusCode.ORDER_NOT_FOUND);
-            return statusCodes;
-        }
-        Order order = getOrderById(orderId);
+    public Map<MenuItem, Integer> getOrderItemsById(String orderId) {
+        Order order = keyTransform(orderId);
         if (order == null) {
-            statusCodes.add(StatusCode.ORDER_NOT_FOUND);
-            return statusCodes;
-        }
-
-        String id = MenuAPI.getInstance().getMenuItemByName(ITEM_NAME);
-        if (id == null) {
-            statusCodes.add(StatusCode.MENU_ITEM_NOT_FOUND);
-            return statusCodes;
-        }
-        MenuItem menuItem = MenuAPI.getInstance().getMenuItemById(id);
-        if (menuItem == null) {
-            statusCodes.add(StatusCode.MENU_ITEM_NOT_FOUND);
-            return statusCodes;
+            return Collections.emptyMap();
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
-        if (menuItems == null) {
-            statusCodes.add(StatusCode.MENU_ITEM_NOT_FOUND);
-            return statusCodes;
+        Map<String, Integer> menuItemsMap = (Map<String, Integer>) order.getData().get("menuItems");
+        Map<MenuItem, Integer> menuItemsWithQuantity = new HashMap<>();
+
+        for (Map.Entry<String, Integer> entry : menuItemsMap.entrySet()) {
+            MenuItem menuItem = menuAPI.keyTransform(entry.getKey());
+            if (menuItem != null) {
+                menuItemsWithQuantity.put(menuItem, entry.getValue());
+            }
         }
 
-        if (!menuItems.containsKey(id)) {
-            order.addMenuItem(menuItem, QUANTITY);
-            dataStore.updateOrder(order);
-        } else {
-            int currentQuantity = menuItems.get(id);
-            int NEW_QUANTITY = currentQuantity + QUANTITY;
-            order.updateMenuItem(menuItem, NEW_QUANTITY);
-            dataStore.updateOrder(order);
-        }
-
-        statusCodes.add(StatusCode.SUCCESS);
-        return statusCodes;
+        return menuItemsWithQuantity;
     }
-
-
-//    public static StatusCode deleteOrderByItem(int ORDER_NUMBER, String itemName, int quantity) {
-//        String orderId = getOrderByNumber(String.valueOf(ORDER_NUMBER));
-//        if (orderId == null) {
-//            return StatusCode.ORDER_NOT_FOUND;
-//        }
-//        Order order = getOrderById(orderId);
-//        if (order == null) {
-//            return StatusCode.ORDER_NOT_FOUND;
-//        }
-//
-//        String id = MenuAPI.getInstance().getMenuItemByName(itemName);
-//        if (id == null) {
-//            return StatusCode.MENU_ITEM_NOT_FOUND;
-//        }
-//        MenuItem menuItem = MenuAPI.getInstance().getMenuItemById(id);
-//        if (menuItem == null) {
-//            return StatusCode.MENU_ITEM_NOT_FOUND;
-//        }
-//
-//        Map<String, Object> menuItems = (Map<String, Object>) order.getMetadata().metadata().get("menuItems");
-//        if (menuItems == null) {
-//            return StatusCode.MENU_ITEM_NOT_FOUND;
-//        }
-//
-//        Map<String, Object> orderItem = menuItems.values().stream()
-//                .map(item -> (Map<String, Object>) item)
-//                .filter(item -> item.get("id").toString().equals(menuItem.getMetadata().metadata().get("id").toString()))
-//                .findFirst()
-//                .orElse(null);
-//        if (orderItem == null) {
-//            return StatusCode.MENU_ITEM_NOT_FOUND;
-//        }
-//
-//        int currentQuantity = (int) orderItem.get("quantity");
-//        if (quantity > currentQuantity) {
-//            return StatusCode.QUANTITY_EXCEEDS_ORDER;
-//        }
-//        if (quantity == currentQuantity) {
-//            menuItems.remove(orderItem.get("id").toString());
-//        } else {
-//            orderItem.put("quantity", currentQuantity - quantity);
-//        }
-//        order.updateMetadata("menuItems", menuItems);
-//        return StatusCode.SUCCESS;
-//    }
 
     /**
-     * Searches for orders based on the query. This is experimental and may not work as expected. It uses a medium complexity search algorithm in the form of NLQ (Natural Language Query).
+     * Initializes a new order for a user. If the user already has a pending order, it returns that order.
      *
-     * @param query the search query
-     * @return the list of orders that match the query
+     * @param userId the user ID
+     * @return the initialized Order object
      */
-    public static List<Order> searchOrders(String query) {
-        String[] tokens = query.trim().toLowerCase().split("\\s+");
+    public Order initializeOrder(String userId) {
         List<Order> orders = dataStore.readOrders();
+        Optional<Order> pendingOrder = orders.stream()
+                .filter(order -> userId.equals(order.getMetadata().metadata().get("user_id")))
+                .filter(order -> Order.OrderStatus.PENDING.equals(order.getMetadata().metadata().get("order_status")))
+                .findFirst();
 
-        return orders.stream()
-                .filter(order -> matchesOrder(order, tokens))
-                .collect(Collectors.toList());
-    }
-
-    private static boolean matchesOrder(Order order, String[] tokens) {
-        for (String token : tokens) {
-            if (!matchesToken(order, token)) {
-                return false;
+        if (pendingOrder.isPresent()) {
+            return pendingOrder.get();
+        } else {
+            int orderNumber = 1;
+            if (!orders.isEmpty()) {
+                orderNumber = orders.stream()
+                        .mapToInt(Order::getOrderNumber)
+                        .max()
+                        .orElse(0) + 1;
             }
-        }
-        return true;
-    }
 
-    private static boolean matchesToken(Order order, String token) {
-        return matchesOrderStatus(order, token) ||
-                matchesOrderNumber(order, token) ||
-                matchesUserName(order, token) ||
-                matchesTime(order, token);
-    }
-
-    private static boolean matchesOrderStatus(Order order, String token) {
-        try {
-            Order.OrderStatus status = Order.OrderStatus.valueOf(token.toUpperCase());
-            return order.getMetadata().metadata().get("order_status") == status;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    private static boolean matchesOrderNumber(Order order, String token) {
-        return order.getMetadata().metadata().get("order_number").toString().contains(token);
-    }
-
-    private static boolean matchesUserName(Order order, String token) {
-        String userId = order.getMetadata().metadata().get("user_id").toString();
-        List<Users> users = usersAPI.searchUsers(token);
-        return users.stream().anyMatch(user -> user.getMetadata().metadata().get("id").toString().equals(userId));
-    }
-
-    private static boolean matchesTime(Order order, String token) {
-        try {
-            long timestamp = Long.parseLong(token);
-            return order.getMetadata().metadata().get("created_at").equals(timestamp);
-        } catch (NumberFormatException e) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = sdf.parse(token);
-                long orderTime = (long) order.getMetadata().metadata().get("created_at");
-                Date orderDate = new Date(orderTime);
-                return sdf.format(orderDate).equals(sdf.format(date));
-            } catch (ParseException pe) {
-                return matchesOtherDateFormats(order, token);
+                Order order = new Order(orderNumber, userId);
+                dataStore.createOrder(order);
+                return order;
+            } catch (Exception e) {
+                return null;
             }
         }
     }
 
-    private static boolean matchesOtherDateFormats(Order order, String token) {
-        List<String> dateFormats = Arrays.asList(
-                "dd/MM/yy", "dd/MM/yyyy", "dd/MMM", "dd/MMM/yyyy", "MMMM", "MMMM yyyy", "yyyy", "dd"
-        );
-        for (String format : dateFormats) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat(format);
-                Date date = sdf.parse(token);
-                long orderTime = (long) order.getMetadata().metadata().get("created_at");
-                Date orderDate = new Date(orderTime);
-                if (sdf.format(orderDate).equals(sdf.format(date))) {
-                    return true;
-                }
-            } catch (ParseException ignored) {
-            }
+    /**
+     * Creates a new order and adds it to the database.
+     *
+     * @param orderNumber the order number
+     * @param userId      the user ID
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> postOrder(Integer orderNumber, String userId) {
+        List<StatusCode> validations = new ArrayList<>();
+
+        StatusCode numberValidation = validateOrderByNumber(orderNumber);
+        StatusCode userValidation = validateOrderByUserId(userId);
+        validations.add(numberValidation);
+        validations.add(userValidation);
+
+        if (!Exceptions.isSuccessful(validations)) {
+            return validations;
         }
 
-        Calendar calendar = Calendar.getInstance();
-        long orderTime = (long) order.getMetadata().metadata().get("created_at");
-        Date orderDate = new Date(orderTime);
+        if (getOrderByNumber(orderNumber) != null) {
+            validations.add(StatusCode.ORDER_ALREADY_EXISTS);
+            return validations;
+        }
 
-        return switch (token.toLowerCase()) {
-            case "today" -> {
-                calendar.setTime(new Date());
-                yield isSameDay(calendar.getTime(), orderDate);
-            }
-            case "yesterday" -> {
-                calendar.add(Calendar.DATE, -1);
-                yield isSameDay(calendar.getTime(), orderDate);
-            }
-            case "this year" -> {
-                calendar.setTime(new Date());
-                yield isSameYear(calendar.getTime(), orderDate);
-            }
-            case "last year" -> {
-                calendar.add(Calendar.YEAR, -1);
-                yield isSameYear(calendar.getTime(), orderDate);
-            }
-            default -> false;
-        };
+        try {
+            Order order = new Order(orderNumber, userId);
+            dataStore.createOrder(order);
+            validations.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            validations.add(StatusCode.ORDER_CREATION_FAILED);
+        }
+        return validations;
     }
 
-    private static boolean isSameDay(Date date1, Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(date1);
-        cal2.setTime(date2);
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    /**
+     * Adds a menu item to an existing order.
+     *
+     * @param orderId    the order ID
+     * @param menuItemId the menu item ID
+     * @param quantity   the quantity to add
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> putOrderItem(String orderId, String menuItemId, Integer quantity) {
+        List<StatusCode> validations = new ArrayList<>();
+
+        StatusCode orderValidation = validateOrderById(orderId);
+        validations.add(orderValidation);
+        if (orderValidation != StatusCode.SUCCESS) {
+            return validations;
+        }
+
+        MenuItem menuItem = menuAPI.keyTransform(menuItemId);
+        if (menuItem == null) {
+            validations.add(StatusCode.MENU_ITEM_NOT_FOUND);
+            return validations;
+        }
+
+        if (quantity == null || quantity <= 0) {
+            validations.add(StatusCode.INVALID_QUANTITY);
+            return validations;
+        }
+
+        Order order = keyTransform(orderId);
+        if (order == null) {
+            validations.add(StatusCode.ORDER_NOT_FOUND);
+            return validations;
+        }
+
+        try {
+            order.addMenuItem(menuItem, quantity);
+            dataStore.updateOrder(order);
+            validations.add(StatusCode.SUCCESS);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            validations.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return validations;
     }
 
-    private static boolean isSameYear(Date date1, Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(date1);
-        cal2.setTime(date2);
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+    /**
+     * Updates the status of an existing order.
+     *
+     * @param orderId     the order ID
+     * @param orderStatus the new order status
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> putOrderStatus(String orderId, Order.OrderStatus orderStatus) {
+        List<StatusCode> validations = new ArrayList<>();
+
+        validations.add(validateOrderById(orderId));
+        validations.add(validateOrderByStatus(orderStatus));
+
+        if (!Exceptions.isSuccessful(validations)) {
+            return validations;
+        }
+
+        Order order = keyTransform(orderId);
+        if (order == null) {
+            validations.add(StatusCode.ORDER_NOT_FOUND);
+            return validations;
+        }
+
+        try {
+            order.updateOrderStatus(orderStatus);
+            dataStore.updateOrder(order);
+            validations.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            validations.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return validations;
     }
+
+    /**
+     * Removes a menu item from an existing order.
+     *
+     * @param orderId    the order ID
+     * @param menuItemId the menu item ID
+     * @param quantity   the quantity to remove
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> deleteOrderItem(String orderId, String menuItemId, Integer quantity) {
+        List<StatusCode> validations = new ArrayList<>();
+
+        StatusCode orderValidation = validateOrderById(orderId);
+        validations.add(orderValidation);
+        if (orderValidation != StatusCode.SUCCESS) {
+            return validations;
+        }
+        MenuItem menuItem = menuAPI.keyTransform(menuItemId);
+        if (menuItem == null) {
+            validations.add(StatusCode.MENU_ITEM_NOT_FOUND);
+            return validations;
+        }
+
+        if (quantity == null || quantity <= 0) {
+            validations.add(StatusCode.INVALID_QUANTITY);
+            return validations;
+        }
+
+        Order order = keyTransform(orderId);
+        if (order == null) {
+            validations.add(StatusCode.ORDER_NOT_FOUND);
+            return validations;
+        }
+
+        try {
+            order.removeMenuItem(menuItem, quantity);
+            dataStore.updateOrder(order);
+            validations.add(StatusCode.SUCCESS);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            validations.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return validations;
+    }
+
+    /**
+     * Deletes an order from the database.
+     *
+     * @param orderId the order ID
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> deleteOrder(String orderId) {
+        List<StatusCode> validations = new ArrayList<>();
+
+        StatusCode validation = validateOrderById(orderId);
+        validations.add(validation);
+        if (validation != StatusCode.SUCCESS) {
+            return validations;
+        }
+
+        Order order = keyTransform(orderId);
+        if (order == null) {
+            validations.add(StatusCode.ORDER_NOT_FOUND);
+            return validations;
+        }
+
+        try {
+            dataStore.deleteOrder(order);
+            validations.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            validations.add(StatusCode.ORDER_DELETION_FAILED);
+        }
+        return validations;
+    }
+
+//    private enum Intent {
+//        LIST_ORDERS,
+//        CALCULATE_REVENUE,
+//        COMPARE_REVENUE,
+//        UNKNOWN
+//    }
+
+//    /**
+//     * Searches for orders based on the query using NLP to parse natural language.
+//     *
+//     * @param query the search query
+//     * @return the QueryResult containing the search results
+//     */
+//    public QueryResult searchOrders(String query) {
+//        if (query == null || query.trim().isEmpty()) {
+//            return new QueryResult();
+//        }
+//
+//        SearchCriteria criteria = parseQueryWithNLP(query);
+//
+//        List<Order> orders = dataStore.readOrders();
+//
+//        List<Order> matchingOrders = orders.stream()
+//                .filter(order -> matchesCriteria(order, criteria))
+//                .collect(Collectors.toList());
+//
+//        QueryResult result = new QueryResult();
+//
+//        switch (criteria.getIntent()) {
+//            case LIST_ORDERS:
+//                result.setOrders(matchingOrders);
+//                break;
+//            case CALCULATE_REVENUE:
+//                double totalRevenue = matchingOrders.stream()
+//                        .mapToDouble(Order::getTotal)
+//                        .sum();
+//                result.setTotalRevenue(totalRevenue);
+//                break;
+//            case COMPARE_REVENUE:
+//                if (criteria.getDateRanges().size() >= 2) {
+//                    DateRange range1 = criteria.getDateRanges().get(0);
+//                    DateRange range2 = criteria.getDateRanges().get(1);
+//
+//                    double revenue1 = calculateRevenueForDateRange(range1);
+//                    double revenue2 = calculateRevenueForDateRange(range2);
+//                    double revenueDifference = revenue1 - revenue2;
+//
+//                    result.setRevenueComparison(new RevenueComparison(range1, revenue1, range2, revenue2, revenueDifference));
+//                }
+//                break;
+//            default:
+//                result.setOrders(matchingOrders);
+//                break;
+//        }
+//
+//        return result;
+//    }
+//
+//    private SearchCriteria parseQueryWithNLP(String query) {
+//        SearchCriteria criteria = new SearchCriteria();
+//        criteria.setIntent(Intent.UNKNOWN);
+//
+//        String lowerQuery = query.toLowerCase();
+//
+//        if (lowerQuery.contains("revenue") || lowerQuery.contains("order total") || lowerQuery.contains("total revenue")) {
+//            criteria.setIntent(Intent.CALCULATE_REVENUE);
+//        }
+//        if (lowerQuery.contains("compare") || lowerQuery.contains("vs") || lowerQuery.contains("versus")) {
+//            criteria.setIntent(Intent.COMPARE_REVENUE);
+//        }
+//        if (criteria.getIntent() == Intent.UNKNOWN) {
+//            criteria.setIntent(Intent.LIST_ORDERS);
+//        }
+//
+//        Annotation annotation = new Annotation(query);
+//        pipeline.annotate(annotation);
+//
+//        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+//
+//        for (CoreMap sentence : sentences) {
+//            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+//                String word = token.get(CoreAnnotations.TextAnnotation.class);
+//                String ner = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+//
+//                switch (ner) {
+//                    case "DATE":
+//                        extractDate(token, criteria);
+//                        break;
+//                    case "NUMBER":
+//                        extractNumber(word, criteria);
+//                        break;
+//                    case "ORDINAL":
+//                        extractOrdinal(word, criteria);
+//                        break;
+//                    case "DURATION":
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//
+//            List<CoreMap> timexAnnsAll = sentence.get(TimeAnnotations.TimexAnnotations.class);
+//            for (CoreMap timexAnn : timexAnnsAll) {
+//                String timeValue = timexAnn.get(TimeAnnotations.TimexAnnotation.class).value();
+//                parseTimeExpression(timeValue, criteria);
+//            }
+//        }
+//        parseDateRangeExpressions(query, criteria);
+//        parseOrderStatus(query, criteria);
+//
+//        return criteria;
+//    }
+//
+//    private void extractDate(CoreLabel token, SearchCriteria criteria) {
+//        String dateStr = token.get(CoreAnnotations.NormalizedNamedEntityTagAnnotation.class);
+//        parseTimeExpression(dateStr, criteria);
+//    }
+//
+//    private void extractNumber(String word, SearchCriteria criteria) {
+//        try {
+//            int number = Integer.parseInt(word);
+//            criteria.setOrderNumber(number);
+//        } catch (NumberFormatException ignored) {
+//        }
+//    }
+//
+//    private void extractOrdinal(String word, SearchCriteria criteria) {
+//        word = word.replaceAll("(?<=\\d)(st|nd|rd|th)", "");
+//        extractNumber(word, criteria);
+//    }
+//
+//    private void parseTimeExpression(String timeValue, SearchCriteria criteria) {
+//        if (timeValue == null) return;
+//
+//        try {
+//            if (timeValue.contains("/")) {
+//                String[] dates = timeValue.split("/");
+//                LocalDate startDate = LocalDate.parse(dates[0]);
+//                LocalDate endDate = LocalDate.parse(dates[1]);
+//                criteria.addDateRange(new DateRange(startDate, endDate));
+//            } else {
+//                LocalDate date;
+//                if (timeValue.contains("T")) {
+//                    date = LocalDateTime.parse(timeValue).toLocalDate();
+//                } else {
+//                    date = LocalDate.parse(timeValue);
+//                }
+//                criteria.addDateRange(new DateRange(date, date));
+//            }
+//        } catch (Exception e) {
+//            // Ignore parsing errors
+//        }
+//    }
+//
+//    private void parseDateRangeExpressions(String query, SearchCriteria criteria) {
+//        // Pattern to match date ranges like "from 17th to 21st"
+//        Pattern dateRangePattern = Pattern.compile("\\bfrom\\s+(.*?)\\s+to\\s+(.*?)\\b", Pattern.CASE_INSENSITIVE);
+//        Matcher matcher = dateRangePattern.matcher(query);
+//        if (matcher.find()) {
+//            String startStr = matcher.group(1);
+//            String endStr = matcher.group(2);
+//            LocalDate startDate = parseNaturalLanguageDate(startStr);
+//            LocalDate endDate = parseNaturalLanguageDate(endStr);
+//            if (startDate != null && endDate != null) {
+//                criteria.addDateRange(new DateRange(startDate, endDate));
+//            }
+//        }
+//    }
+//
+//    private LocalDate parseNaturalLanguageDate(String dateStr) {
+//        Annotation annotation = new Annotation(dateStr);
+//        pipeline.annotate(annotation);
+//        List<CoreMap> timexAnnsAll = annotation.get(TimeAnnotations.TimexAnnotations.class);
+//        for (CoreMap timexAnn : timexAnnsAll) {
+//            String timeValue = timexAnn.get(TimeAnnotations.TimexAnnotation.class).value();
+//            try {
+//                LocalDate date;
+//                if (timeValue.contains("T")) {
+//                    date = LocalDateTime.parse(timeValue).toLocalDate();
+//                } else {
+//                    date = LocalDate.parse(timeValue);
+//                }
+//                return date;
+//            } catch (Exception ignored) {
+//            }
+//        }
+//        return null;
+//    }
+//
+//    private void parseOrderStatus(String query, SearchCriteria criteria) {
+//        for (Order.OrderStatus status : Order.OrderStatus.values()) {
+//            if (query.toLowerCase().contains(status.toString().toLowerCase())) {
+//                criteria.setOrderStatus(status);
+//                break;
+//            }
+//        }
+//    }
+//
+//    private boolean matchesCriteria(Order order, SearchCriteria criteria) {
+//        if (criteria.getOrderNumber() != null) {
+//            if (order.getOrderNumber() != criteria.getOrderNumber()) {
+//                return false;
+//            }
+//        }
+//
+//        if (criteria.getOrderStatus() != null) {
+//            if (!order.getMetadata().metadata().get("order_status").equals(criteria.getOrderStatus())) {
+//                return false;
+//            }
+//        }
+//
+//        // Check date ranges
+//        if (!criteria.getDateRanges().isEmpty()) {
+//            boolean matchesDateRange = criteria.getDateRanges().stream().anyMatch(range -> {
+//                LocalDate orderDate = Instant.ofEpochMilli((int) order.getMetadata().metadata().get("created_at"))
+//                        .atZone(ZoneId.systemDefault())
+//                        .toLocalDate();
+//                return !orderDate.isBefore(range.getStartDate()) && !orderDate.isAfter(range.getEndDate());
+//            });
+//            if (!matchesDateRange) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
+//
+//    private double calculateRevenueForDateRange(DateRange range) {
+//        List<Order> orders = dataStore.readOrders();
+//
+//        return orders.stream()
+//                .filter(order -> {
+//                    LocalDate orderDate = Instant.ofEpochMilli((int) order.getMetadata().metadata().get("created_at"))
+//                            .atZone(ZoneId.systemDefault())
+//                            .toLocalDate();
+//                    return !orderDate.isBefore(range.getStartDate()) && !orderDate.isAfter(range.getEndDate());
+//                })
+//                .mapToDouble(Order::getTotal)
+//                .sum();
+//    }
+//
+//    private static class SearchCriteria {
+//        private Integer orderNumber;
+//        private Order.OrderStatus orderStatus;
+//        private Intent intent;
+//        private List<DateRange> dateRanges = new ArrayList<>();
+//
+//        public Integer getOrderNumber() { return orderNumber; }
+//        public void setOrderNumber(Integer orderNumber) { this.orderNumber = orderNumber; }
+//        public Order.OrderStatus getOrderStatus() { return orderStatus; }
+//        public void setOrderStatus(Order.OrderStatus orderStatus) { this.orderStatus = orderStatus; }
+//        public Intent getIntent() { return intent; }
+//        public void setIntent(Intent intent) { this.intent = intent; }
+//        public List<DateRange> getDateRanges() { return dateRanges; }
+//        public void addDateRange(DateRange range) { this.dateRanges.add(range); }
+//    }
+//
+//    public static class DateRange {
+//        private LocalDate startDate;
+//        private LocalDate endDate;
+//
+//        public DateRange(LocalDate startDate, LocalDate endDate) {
+//            if (startDate.isAfter(endDate)) {
+//                this.startDate = endDate;
+//                this.endDate = startDate;
+//            } else {
+//                this.startDate = startDate;
+//                this.endDate = endDate;
+//            }
+//        }
+//
+//        public LocalDate getStartDate() { return startDate; }
+//        public LocalDate getEndDate() { return endDate; }
+//    }
+//
+//
+//    public static class QueryResult {
+//        private List<Order> orders;
+//        private Double totalRevenue;
+//        private RevenueComparison revenueComparison;
+//
+//        public List<Order> getOrders() { return orders; }
+//        public void setOrders(List<Order> orders) { this.orders = orders; }
+//        public Double getTotalRevenue() { return totalRevenue; }
+//        public void setTotalRevenue(Double totalRevenue) { this.totalRevenue = totalRevenue; }
+//        public RevenueComparison getRevenueComparison() { return revenueComparison; }
+//        public void setRevenueComparison(RevenueComparison revenueComparison) { this.revenueComparison = revenueComparison; }
+//    }
+//
+//    public static class RevenueComparison {
+//        private DateRange range1;
+//        private double revenue1;
+//        private DateRange range2;
+//        private double revenue2;
+//        private double difference;
+//
+//        public RevenueComparison(DateRange range1, double revenue1, DateRange range2, double revenue2, double difference) {
+//            this.range1 = range1;
+//            this.revenue1 = revenue1;
+//            this.range2 = range2;
+//            this.revenue2 = revenue2;
+//            this.difference = difference;
+//        }
+//
+//        public DateRange getRange1() { return range1; }
+//        public double getRevenue1() { return revenue1; }
+//        public DateRange getRange2() { return range2; }
+//        public double getRevenue2() { return revenue2; }
+//        public double getDifference() { return difference; }
+//    }
 }
-

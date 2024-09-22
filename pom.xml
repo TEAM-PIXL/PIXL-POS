@@ -86,6 +86,36 @@
             <artifactId>spring-security-crypto</artifactId>
             <version>5.6.4</version>
         </dependency>
+
+<!--        &lt;!&ndash; Stanford CoreNLP Library &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>edu.stanford.nlp</groupId>-->
+<!--            <artifactId>stanford-corenlp</artifactId>-->
+<!--            <version>4.5.3</version>-->
+<!--        </dependency>-->
+
+<!--        &lt;!&ndash; Stanford CoreNLP Models (installed locally) &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>edu.stanford.nlp</groupId>-->
+<!--            <artifactId>stanford-corenlp</artifactId>-->
+<!--            <version>4.5.3</version>-->
+<!--            <classifier>models</classifier>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
+
+<!--        &lt;!&ndash; SLF4J Binding &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-classic</artifactId>-->
+<!--            <version>1.2.11</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>joda-time</groupId>-->
+<!--            <artifactId>joda-time</artifactId>-->
+<!--            <version>2.10.14</version>-->
+<!--        </dependency>-->
+
     </dependencies>
 
     <build>
@@ -179,6 +209,20 @@
                 </executions>
             </plugin>
 
+            <!-- Java jar executable plugin maven -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
             <!-- Maven Resources Plugin to manage resources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -203,12 +247,13 @@
                 </executions>
             </plugin>
 
+            <!-- Maven assembly for cross-platform compilation -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>teampixl.com.pixlpos.application.POSApplication</mainClass>
+                            <mainClass>teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -226,6 +271,7 @@
                 </executions>
             </plugin>
 
+            <!-- Maven shade plugin for dependency reduced runtime pom.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -239,7 +285,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>teampixl.com.pixlpos.application.POSApplication</mainClass>
+                                    <mainClass>teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>
@@ -260,6 +306,84 @@
                 </executions>
             </plugin>
 
+            <!-- Exec-plugin for easy java executable compilation -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>windows-executable</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cmd</executable>
+                            <arguments>
+                                <argument>/c</argument>
+                                <argument>echo Building Windows Executable</argument>
+                                <argument>&amp;&amp;</argument>
+                                <argument>mkdir</argument>
+                                <argument>target\windows</argument>
+                                <argument>&amp;&amp;</argument>
+                                <argument>copy</argument>
+                                <argument>target\${project.build.finalName}.jar</argument>
+                                <argument>target\windows\${project.build.finalName}.exe</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>linux-executable</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>sh</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>echo Building Linux Executable</argument>
+                                <argument>&amp;&amp;</argument>
+                                <argument>mkdir -p target/linux</argument>
+                                <argument>&amp;&amp;</argument>
+                                <argument>cp target/${project.build.finalName}.jar target/linux/${project.build.finalName}.sh</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>mac-executable</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>sh</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>echo Building Mac Executable</argument>
+                                <argument>&amp;&amp;</argument>
+                                <argument>mkdir -p target/mac</argument>
+                                <argument>&amp;&amp;</argument>
+                                <argument>cp target/${project.build.finalName}.jar target/mac/${project.build.finalName}.app</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>exec-maven-plugin</artifactId>-->
+<!--                <version>3.1.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>java</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
+<!--                    <mainClass>${exec.mainClass}</mainClass>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
         </plugins>
     </build>
@@ -297,6 +421,14 @@
         <repository>
             <id>codehaus</id>
             <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>apache-snapshots</id>
+            <url>https://repository.apache.org/snapshots</url>
+        </repository>
+        <repository>
+            <id>codehaus-mojo</id>
+            <url>https://repository.codehaus.org</url>
         </repository>
     </repositories>
 </project>

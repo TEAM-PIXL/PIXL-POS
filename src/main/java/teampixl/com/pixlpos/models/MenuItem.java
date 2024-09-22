@@ -220,6 +220,10 @@ public class MenuItem implements IDataManager {
         updateMetadata("updated_at", System.currentTimeMillis());
     }
 
+    public double getPrice() {
+        return (double) metadata.metadata().get("price");
+    }
+
     /*============================================================================================================================================================
     Code Description:
     - Method to get metadata, data, update metadata and set data value.
