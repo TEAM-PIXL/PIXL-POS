@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Utility class for common GUI operations in the application.
@@ -19,11 +20,11 @@ import java.net.URL;
 public class GuiCommon {
 
     // Constants for default dimensions
-    public static final int WIDTH = 1920;
-    public static final int HEIGHT = 1028;
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
 
-    // Default icon path (if needed)
-    public static final String ICON_PATH = "/images/icon.JPG";
+    // Default icon path (if needed later on)
+    public static final String ICON_PATH = "/teampixl/com/pixlpos/app-icon.ico";
 
     // Paths to FXML files and their titles
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
@@ -57,8 +58,8 @@ public class GuiCommon {
             Stage stage = new Stage();
             Scene scene = new Scene(root, WIDTH, HEIGHT);
 
-            // Optionally, set the application icon
-            // stage.getIcons().add(new Image(GuiCommon.class.getResourceAsStream(ICON_PATH)));
+
+            stage.getIcons().add(new Image(Objects.requireNonNull(GuiCommon.class.getResourceAsStream(ICON_PATH))));
 
             stage.setScene(scene);
             stage.setTitle(title);
@@ -102,6 +103,7 @@ public class GuiCommon {
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
+            stage.getIcons().add(new Image(Objects.<String>requireNonNull(String.valueOf(GuiCommon.class.getResource(ICON_PATH)))));
             stage.show();
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
@@ -148,17 +150,15 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 
-            // Load the root; handle the case where root is already set in FXML
             Parent root = null;
             try {
-                root = fxmlLoader.load(); // Try loading without setting a root
+                root = fxmlLoader.load();
             } catch (IllegalStateException ex) {
                 if (ex.getMessage().contains("Root value already specified")) {
-                    // Root is already specified inside FXML, we should not set it
-                    fxmlLoader = new FXMLLoader(fxmlURL); // Reset loader as previous state is invalid
-                    root = fxmlLoader.load(); // This should work as root is pre-defined in FXML
+                    fxmlLoader = new FXMLLoader(fxmlURL);
+                    root = fxmlLoader.load();
                 } else {
-                    throw ex; // Some other issue, re-throw it
+                    throw ex;
                 }
             }
 
@@ -192,11 +192,10 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 
-            // Here you need to set the root, because the FXML file uses <fx:root>
-            Parent root = new BorderPane();  // Assuming BorderPane is the root type required
+            Parent root = new BorderPane();
             fxmlLoader.setRoot(root);
 
-            root = fxmlLoader.load();  // This load should now proceed without the root error
+            root = fxmlLoader.load();
 
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);

@@ -1,24 +1,67 @@
 package teampixl.com.pixlpos.database.api.util;
 
+import javafx.collections.ObservableList;
+import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.*;
-import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.OrderAPI;
-import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
 
+
 import java.util.List;
-import java.util.Scanner;
 
 import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
 import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
-    public static void main(String[] args) {
-        UserStack userStack = UserStack.getInstance();
-        UsersAPI usersAPI = UsersAPI.getInstance();
-        userStack.setCurrentUser("admin");
+//    public static void main(String[] args) {
+//        DataStore dataStore = DataStore.getInstance();
+//        UserStack userStack = UserStack.getInstance();
+//        UsersAPI usersAPI = UsersAPI.getInstance();
+//        OrderAPI orderAPI = OrderAPI.getInstance();
+//
+//// Example query
+//        String query = "What was today's vs yesterday's revenue";
+//
+//        OrderAPI.QueryResult result = orderAPI.searchOrders(query);
+//
+//        if (result.getRevenueComparison() != null) {
+//            OrderAPI.RevenueComparison comparison = result.getRevenueComparison();
+//            System.out.println("Revenue for " + comparison.getRange1().getStartDate() + ": $" + comparison.getRevenue1());
+//            System.out.println("Revenue for " + comparison.getRange2().getStartDate() + ": $" + comparison.getRevenue2());
+//            System.out.println("Difference: $" + comparison.getDifference());
+//        } else if (result.getTotalRevenue() != null) {
+//            System.out.println("Total Revenue: $" + result.getTotalRevenue());
+//        } else if (result.getOrders() != null) {
+//            System.out.println("Orders:");
+//            for (Order order : result.getOrders()) {
+//                System.out.println("Order #" + order.getOrderNumber() + ", Total: $" + order.getTotal());
+//            }
+//        }
+
+
+//        List<StatusCode> STATUS = usersAPI.postUsers("john", "doe", "johnnyboy", "Goo7yLu%%y", "example@example.com", Users.UserRole.WAITER);
+//        if (isSuccessful(STATUS)) {
+//            System.out.println("User created successfully.");
+//        } else {
+//            System.out.println(returnStatus("User could not be created with the following errors:", STATUS));
+//        }
+//
+//        String ID = usersAPI.getUsersByUsername("johnnyboy");
+//        System.out.println("The user with the username johnnyboy has the ID: " + ID);
+//
+//        List<StatusCode> STATUS2 = usersAPI.putUsersPassword("johnnyboy", "Goo7yLu%%y2");
+//        if (isSuccessful(STATUS2)) {
+//            System.out.println("User password updated successfully.");
+//        } else {
+//            System.out.println(returnStatus("User password could not be updated with the following errors:", STATUS2));
+//        }
+
+
+//        ORDERS = dataStore.readOrders();
+
+
 //
 //        System.out.println("Current user: " + userStack.getCurrentUser());
 //
@@ -30,14 +73,14 @@ public class APITest {
 //
 //        results.forEach(order -> System.out.println("Order Number: " + order.getMetadata().metadata().get("order_number")));
         /* ---> CONSTRUCTOR WORKS <---- */
-        OrderAPI orderAPI = OrderAPI.getInstance();
+//        OrderAPI orderAPI = OrderAPI.getInstance();
 //
-        /* ---> INIT WORKS <---- */
-        Order order = orderAPI.initializeOrder();
-        //print contents of order
-        System.out.println("Order Contents: " + order.getMetadata().metadata());
-        int ORDER_NUM = (int) order.getMetadata().metadata().get("order_number");
-        System.out.println("Order Number: " + ORDER_NUM);
+//        /* ---> INIT WORKS <---- */
+//        Order order = orderAPI.initializeOrder();
+//        //print contents of order
+//        System.out.println("Order Contents: " + order.getMetadata().metadata());
+//        int ORDER_NUM = (int) order.getMetadata().metadata().get("order_number");
+//        System.out.println("Order Number: " + ORDER_NUM);
 
 //        /* ---> PUT ORDER BY ITEM WORKS <---- */
 //        List<StatusCode> RESULT = orderAPI.putOrderByItem(8, "Pizza", 4);
@@ -66,24 +109,5 @@ public class APITest {
 //        } else {
 //            System.out.println(returnStatus("Order could not be validated with the following errors:", RESULT3));
 //        }
-        String[] roles = {"COOK", "WAITER"};
 
-        for (int i = 1; i <= 10; i++) {
-            String FIRST_NAME = "First" + i;
-            String LAST_NAME = "Last" + i;
-            String USERNAME = "NewUser" + i;
-            String PASSWORD = "GobldyG00p!" + i;
-            String EMAIL = "examplar" + i + "@example.ezy.com";
-            Users.UserRole ROLE = Users.UserRole.valueOf(roles[i % 2]);
-
-            List<StatusCode> STATUS = usersAPI.deleteUser(USERNAME);
-            if (isSuccessful(STATUS)) {
-                System.out.println("User " + USERNAME + " created successfully.");
-            } else {
-                System.out.println(returnStatus("User " + USERNAME + " could not be created with the following errors:", STATUS));
-            }
-        }
-
-
-    }
 }

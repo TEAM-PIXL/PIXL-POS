@@ -1,28 +1,28 @@
 package teampixl.com.pixlpos.controllers.cookconsole;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.database.api.UsersAPI;
-import teampixl.com.pixlpos.models.Order;
-import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.models.Users;
+import teampixl.com.pixlpos.database.api.OrderAPI;
 import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.database.api.UsersAPI;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
+import teampixl.com.pixlpos.models.MenuItem;
+import teampixl.com.pixlpos.models.Order;
+import teampixl.com.pixlpos.models.Users;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 public class CookScreenController extends GuiCommon {
+    private static final String ORDER_ID_KEY = "order_id";
+    private static final String ORDER_NUMBER_KEY = "order_number";
+    private static final String USER_ID_KEY = "user_id";
+    private static final String ORDER_STATUS_KEY = "order_status";
+    private static final String CREATED_AT_KEY = "created_at";
+
     @FXML
     private Button refreshButton;
     @FXML
@@ -31,14 +31,16 @@ public class CookScreenController extends GuiCommon {
     private Button logoutButton;
     @FXML
     private ListView<VBox> orderview;
-    private ObservableList<Order> orders;
-    private DataStore datastore;
-    private UserStack userStack = UserStack.getInstance();
+
+    private final UserStack userStack = UserStack.getInstance();
+    private final UsersAPI usersAPI = UsersAPI.getInstance();
+    private final OrderAPI orderAPI = OrderAPI.getInstance();
+    private List<Order> orders;
 
     @FXML
     private void initialize() {
-        datastore = DataStore.getInstance();
-        orders = FXCollections.observableArrayList(datastore.getOrders());
+        orders = orderAPI.getOrders();
+        orderview.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/teampixl/com/pixlpos/fxml/cookconsole/stylesheets/dyanmics.css")).toExternalForm());
         updateOrderListView();
 
         Users currentUser = userStack.getCurrentUser();
@@ -48,23 +50,20 @@ public class CookScreenController extends GuiCommon {
             System.err.println("Error: Current user is not set.");
         }
 
-        for (Order order : orders) {
-            if (order.getMetadata().metadata().get("order_status") != Order.OrderStatus.COMPLETED && order.getMetadata().metadata().get("order_status") != Order.OrderStatus.PENDING) {
-                Object totalObj = order.getData().get("total");
-                if (totalObj != null) {
-                    double total = (double) totalObj;
-                    System.out.println("Order total: " + total);
-                    order.getData().put("total", total);
-                } else {
-                    System.err.println("Order total is null for order ID: " + order.getMetadata().metadata().get("order_number"));
+        orderview.setOnMouseClicked(event -> {
+            VBox selectedVBox = orderview.getSelectionModel().getSelectedItem();
+            if (selectedVBox != null) {
+                for (VBox vbox : orderview.getItems()) {
+                    vbox.getStyleClass().remove("vbox-order-selected");
                 }
+                selectedVBox.getStyleClass().add("vbox-order-selected");
             }
-        }
+        });
     }
 
     @FXML
     private void onRefreshButtonClick() {
-        orders.setAll(datastore.getOrders());
+        orders = orderAPI.getOrders();
         updateOrderListView();
     }
 
@@ -72,75 +71,79 @@ public class CookScreenController extends GuiCommon {
     private void onCompleteButtonClick() {
         Order selectedOrder = getSelectedOrder();
         if (selectedOrder != null) {
-            selectedOrder.updateOrderStatus(Order.OrderStatus.COMPLETED);
-            Map<String, Object> orderData = selectedOrder.getData();
-            if (orderData.get("total") != null) {
-                datastore.updateOrder(selectedOrder);
-                orders.setAll(datastore.getOrders());
+            List<StatusCode> statusCodes = orderAPI.putOrderStatus(selectedOrder.getMetadata().metadata().get(ORDER_ID_KEY).toString(), Order.OrderStatus.COMPLETED);
+            if (statusCodes.contains(StatusCode.SUCCESS)) {
+                System.out.println("Order marked as completed.");
+                orders.removeIf(order -> order.getOrderNumber() == selectedOrder.getOrderNumber());
                 updateOrderListView();
             } else {
-                System.err.println("Order total is null. Cannot complete order.");
+                showAlert("Failed to complete order. Status: " + statusCodes);
             }
+        } else {
+            showAlert("No order selected.");
         }
     }
 
     @FXML
     private void onLogoutButtonClick() {
-        Stage stage = (Stage) logoutButton.getScene().getWindow();
         GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
     }
 
     private void updateOrderListView() {
         orderview.getItems().clear();
         for (Order order : orders) {
-            if (order.getMetadata().metadata().get("order_status") != Order.OrderStatus.COMPLETED && order.getMetadata().metadata().get("order_status") != Order.OrderStatus.PENDING) {
-                VBox orderVBox = new VBox();
-                orderVBox.setPadding(new Insets(10));
-                orderVBox.setSpacing(10);
-                orderVBox.setStyle("-fx-border-color: black; -fx-border-width: 1px;");
-
-                Label orderNumLabel = new Label();
-                String orderNumber = String.valueOf(order.getMetadata().metadata().get("order_number"));
-                orderNumLabel.setText("Order#: " + orderNumber);
-                orderNumLabel.setFont(new Font(30));
-
-                Label userIdLabel = new Label();
-                String userId = order.getMetadata().metadata().get("user_id").toString();
-                try {
-                    Users user = UsersAPI.getInstance().getUserById(userId);
-                    String username = user.getMetadata().metadata().get("username").toString();
-                    userIdLabel.setText("User: " + username);
-                } catch (Exception e) {
-                    userIdLabel.setText("User: Unknown");
-                }
-
-                Label timeOrderedLabel = new Label();
-                long unixTime = (long) order.getMetadata().metadata().get("created_at");
-                String humanReadableTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(unixTime));
-                timeOrderedLabel.setText("Time Ordered: " + humanReadableTime);
-
-                Label itemsLabel = new Label("Items");
-                VBox itemsVBox = new VBox();
-                Map<String, Object> orderItems = datastore.getOrderItems(order);
-                try {
-                    for (Map.Entry<String, Object> entry : orderItems.entrySet()) {
-                        String itemKey = entry.getKey();
-                        String itemName = datastore.getMenuItemById(itemKey).getMetadata().metadata().get("itemName").toString();
-                        int quantity = (int) entry.getValue();
-                        Label itemLabel = new Label(itemName + " x" + quantity);
-                        itemsVBox.getChildren().add(itemLabel);
-                    }
-                } catch (Exception e) {
-                    Label itemLabel = new Label("No items");
-                    itemsVBox.getChildren().add(itemLabel);
-                }
-                Label totalLabel = new Label("Total: $" + String.format("%.2f", order.getData().get("total")));
-
-                orderVBox.getChildren().addAll(orderNumLabel, userIdLabel, timeOrderedLabel, itemsLabel, itemsVBox, totalLabel);
-
+            Order.OrderStatus status = Order.OrderStatus.valueOf(order.getMetadata().metadata().get(ORDER_STATUS_KEY).toString());
+            if (status == Order.OrderStatus.SENT) {
+                VBox orderVBox = createOrderVBox(order);
                 orderview.getItems().add(orderVBox);
             }
         }
+    }
+
+    private VBox createOrderVBox(Order order) {
+        VBox orderVBox = new VBox();
+        orderVBox.getStyleClass().add("vbox-order");
+
+        Label orderNumLabel = new Label("Order#: " + order.getOrderNumber());
+        orderNumLabel.getStyleClass().add("label-order-number");
+
+        Label userIdLabel = new Label();
+        String userId = order.getMetadata().metadata().get(USER_ID_KEY).toString();
+        Users user = usersAPI.keyTransform(userId);
+        if (user != null) {
+            userIdLabel.setText("User: " + user.getMetadata().metadata().get("username"));
+        } else {
+            userIdLabel.setText("User: Unknown");
+        }
+        userIdLabel.getStyleClass().add("label-user-id");
+
+        Label timeOrderedLabel = new Label();
+        long unixTime = (long) order.getMetadata().metadata().get(CREATED_AT_KEY);
+        String humanReadableTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(unixTime));
+        timeOrderedLabel.setText("Time Ordered: " + humanReadableTime);
+        timeOrderedLabel.getStyleClass().add("label-time-ordered");
+
+        Label itemsLabel = new Label("Items");
+        itemsLabel.getStyleClass().add("label-items");
+
+        VBox itemsVBox = new VBox();
+        itemsVBox.getStyleClass().add("vbox-items");
+        Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById(order.getMetadata().metadata().get(ORDER_ID_KEY).toString());
+        for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
+            String itemName = entry.getKey().getMetadata().metadata().get("itemName").toString();
+            int quantity = entry.getValue();
+            Label itemLabel = new Label(itemName + " x" + quantity);
+            itemLabel.getStyleClass().add("label-item");
+            itemsVBox.getChildren().add(itemLabel);
+        }
+
+        double total = order.getTotal();
+        Label totalLabel = new Label("Total: $" + String.format("%.2f", total));
+        totalLabel.getStyleClass().add("label-total");
+
+        orderVBox.getChildren().addAll(orderNumLabel, userIdLabel, timeOrderedLabel, itemsLabel, itemsVBox, totalLabel);
+
+        return orderVBox;
     }
 
     private Order getSelectedOrder() {
@@ -150,11 +153,20 @@ public class CookScreenController extends GuiCommon {
             String orderNumText = orderNumLabel.getText().replace("Order#: ", "");
             int orderNumber = Integer.parseInt(orderNumText);
             for (Order order : orders) {
-                if (order.getMetadata().metadata().get("order_number").equals(orderNumber)) {
+                if (order.getOrderNumber() == orderNumber) {
                     return order;
                 }
             }
         }
         return null;
     }
+
+    private void showAlert(String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Order Error");
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }
+
