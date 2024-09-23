@@ -17,10 +17,11 @@ import teampixl.com.pixlpos.models.Order;
 import java.util.*;
 
 public class WaiterScreenController extends GuiCommon {
-    /*===================================================================================================================================================================================
-    Code Description:
-    This class is the controller for the waiter screen of the application. It handles creating menu orders which can be sent to the cook screen.
-    ====================================================================================================================================================================================*/
+    private static final String ORDER_ID_KEY = "order_id";
+    private static final String ORDER_NUMBER_KEY = "order_number";
+    private static final String USER_ID_KEY = "user_id";
+    private static final String ORDER_STATUS_KEY = "order_status";
+    private static final String CREATED_AT_KEY = "created_at";
 
     @FXML
     private TextField notes;
@@ -48,7 +49,6 @@ public class WaiterScreenController extends GuiCommon {
     @FXML
     private GridPane orderSummaryGrid;
 
-    /* These buttons are hardcoded and connected to database items for the prototype*/
     /* Buttons for the different menu items */
     @FXML
     private Button classic;
@@ -80,7 +80,7 @@ public class WaiterScreenController extends GuiCommon {
     private Button icedtea;
     @FXML
     private Button icedcoffee;
-    /* End of hardcoded buttons */
+    /* End of menu item buttons */
 
     private int currentRow = 0;
     private final Map<String, Integer> orderItems = new HashMap<>();
@@ -128,13 +128,21 @@ public class WaiterScreenController extends GuiCommon {
 
     private void initializeOrder() {
         String userId = userStack.getCurrentUserId();
-        currentOrder = orderAPI.initializeOrder(userId);
+        currentOrder = orderAPI.initializeOrder();
         if (currentOrder == null) {
             System.out.println("Failed to initialize order");
             return;
         }
-        orderNumber = (int) currentOrder.getMetadata().metadata().get("order_number");
+        orderNumber = currentOrder.getOrderNumber();
         ordernum.setText(orderNumber.toString());
+
+        Map<MenuItem, Integer> existingItems = orderAPI.getOrderItemsById(currentOrder.getMetadata().metadata().get(ORDER_ID_KEY).toString());
+        for (Map.Entry<MenuItem, Integer> entry : existingItems.entrySet()) {
+            String menuItemId = menuAPI.keySearch(entry.getKey().getMetadata().metadata().get("itemName").toString());
+            orderItems.put(menuItemId, entry.getValue());
+            orderNotes.put(menuItemId, "");
+        }
+        updateOrderSummary();
     }
 
     private void addItemToOrder(String itemName) {
@@ -257,7 +265,6 @@ public class WaiterScreenController extends GuiCommon {
 
     @FXML
     private void onLogoutButtonClick() {
-        Stage stage = (Stage) logoutButton.getScene().getWindow();
         GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
     }
 
@@ -268,7 +275,10 @@ public class WaiterScreenController extends GuiCommon {
             return;
         }
 
-        String orderId = currentOrder.getMetadata().metadata().get("order_id").toString();
+        String orderId = currentOrder.getMetadata().metadata().get(ORDER_ID_KEY).toString();
+
+        // Remove existing items to avoid duplicates
+        orderAPI.clearOrderItems(orderId);
 
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
             String menuItemId = entry.getKey();
@@ -302,3 +312,4 @@ public class WaiterScreenController extends GuiCommon {
         alert.showAndWait();
     }
 }
+
