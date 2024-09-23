@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Utility class for common GUI operations in the application.
@@ -23,7 +24,7 @@ public class GuiCommon {
     public static final int HEIGHT = 720;
 
     // Default icon path (if needed later on)
-    public static final String ICON_PATH = "/images/icon.JPG";
+    public static final String ICON_PATH = "/teampixl/com/pixlpos/app-icon.ico";
 
     // Paths to FXML files and their titles
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
@@ -57,8 +58,8 @@ public class GuiCommon {
             Stage stage = new Stage();
             Scene scene = new Scene(root, WIDTH, HEIGHT);
 
-            // Optionally, set the application icon
-            // stage.getIcons().add(new Image(GuiCommon.class.getResourceAsStream(ICON_PATH)));
+
+            stage.getIcons().add(new Image(Objects.requireNonNull(GuiCommon.class.getResourceAsStream(ICON_PATH))));
 
             stage.setScene(scene);
             stage.setTitle(title);
@@ -102,6 +103,7 @@ public class GuiCommon {
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
+            stage.getIcons().add(new Image(Objects.<String>requireNonNull(String.valueOf(GuiCommon.class.getResource(ICON_PATH)))));
             stage.show();
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
