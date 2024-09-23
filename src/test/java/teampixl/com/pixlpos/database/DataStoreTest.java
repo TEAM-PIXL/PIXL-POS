@@ -108,7 +108,7 @@ class DataStoreTest {
         sampleOrder.updateOrderStatus(Order.OrderStatus.IN_PROGRESS);
         dataStore.updateOrder(sampleOrder);
         Order updatedOrder = dataStore.readOrders().get(0);
-        assertEquals(Order.OrderStatus.IN_PROGRESS, updatedOrder.getMetadata().metadata().get("order_status"));
+        assertEquals(Order.OrderStatus.IN_PROGRESS, Order.OrderStatus.valueOf(updatedOrder.getMetadata().metadata().get("order_status").toString()));
     }
 
     @Test
