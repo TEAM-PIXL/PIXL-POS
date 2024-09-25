@@ -28,14 +28,12 @@ public class POSApplication extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        // Perform any necessary initialization here
         System.out.println("Application initialization tasks are completed.");
     }
 
     @Override
     public void stop() throws Exception {
         super.stop();
-        // Perform any necessary cleanup here
         System.out.println("Application cleanup tasks are completed.");
     }
 

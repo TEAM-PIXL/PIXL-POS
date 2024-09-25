@@ -1,6 +1,5 @@
 package teampixl.com.pixlpos.authentication;
 
-import teampixl.com.pixlpos.database.api.UsersAPI;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
 
