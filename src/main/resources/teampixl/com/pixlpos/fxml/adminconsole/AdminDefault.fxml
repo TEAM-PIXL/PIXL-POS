@@ -15,89 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@admindefault.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <VBox prefHeight="654.0" prefWidth="210.0" BorderPane.alignment="CENTER">
-         <children>
-            <AnchorPane prefHeight="720.0" prefWidth="210.0" style="-fx-background-color: white;">
-               <children>
-                  <AnchorPane layoutY="-5.0" prefHeight="190.0" prefWidth="210.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <ImageView fitHeight="74.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="5.0">
-                           <image>
-                              <Image url="@../../images/account_user_icon.png" />
-                           </image>
-                        </ImageView>
-                        <Text layoutX="44.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="54.0" AnchorPane.topAnchor="90.0" />
-                        <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
-                        <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Have a nice day" AnchorPane.topAnchor="145.0" />
-                     </children>
-                  </AnchorPane>
-                  <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
-                  <VBox layoutX="-1.0" layoutY="215.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="215.0">
-                     <children>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Home">
-                           <graphic>
-                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/home_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin></Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users">
-                           <graphic>
-                              <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/users_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic></Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu">
-      <graphic>
-                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/menu_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic></Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Stock">
-<graphic>
-                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/box_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic></Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics">
-                           <graphic>
-                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/analytics_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic></Button>
-                     </children>
-                  </VBox>
-                  <VBox layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
-                     <children>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
-                           <graphic>
-                              <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/logout_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic></Button>
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-         </children>
-      </VBox>
-   </left>
+<BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@admindefault.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <HBox prefHeight="65.0" prefWidth="1280.0" styleClass="top-container" BorderPane.alignment="CENTER">
          <children>
@@ -149,4 +67,88 @@
          </children>
       </HBox>
    </top>
+   <left>
+      <AnchorPane prefWidth="210.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane layoutY="-5.0" prefHeight="190.0" prefWidth="210.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ImageView fitHeight="74.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="5.0">
+                     <image>
+                        <Image url="@../../images/account_user_icon.png" />
+                     </image>
+                  </ImageView>
+                  <Text layoutX="44.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="54.0" AnchorPane.topAnchor="90.0" />
+                  <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
+                  <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Have a nice day" AnchorPane.topAnchor="145.0" />
+               </children>
+            </AnchorPane>
+            <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
+            <VBox layoutX="-1.0" layoutY="215.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="215.0">
+               <children>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Home">
+                     <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/home_icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users">
+                     <graphic>
+                        <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/users_icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu">
+<graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/menu_icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Stock">
+<graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/box_icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics">
+                     <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/analytics_icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+               <children>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
+                     <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/logout_icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </left>
 </BorderPane>

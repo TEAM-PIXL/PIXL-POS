@@ -57,7 +57,7 @@ public class GuiCommon {
     /**
      * The path to the FXML file of the main screen.
      */
-    public static final String ADMIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/AdminStage.fxml";
+    public static final String ADMIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/AdminDefault.fxml";
     /**
      * The title of the cook screen.
      */
@@ -86,7 +86,7 @@ public class GuiCommon {
         try {
             BorderPane root = new BorderPane();
             FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
-            fxmlLoader.setRoot(root);
+            //fxmlLoader.setRoot(root);
             Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
             stage.setScene(scene);
             stage.setTitle(title);
@@ -135,6 +135,8 @@ public class GuiCommon {
             stage.setScene(scene);
             stage.setTitle(title);
             stage.show();
+
+
         } catch (IOException e) {
             System.err.println("Failed to load the FXML file: " + e.getMessage());
             e.printStackTrace();

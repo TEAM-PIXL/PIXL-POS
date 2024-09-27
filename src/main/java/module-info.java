@@ -18,7 +18,7 @@ module PIXL.POS {
     requires javafx.fxml;
     requires javafx.graphics;
     requires jbcrypt;
-    requires org.junit.jupiter.api;
+    //requires org.junit.jupiter.api;
     requires org.junit.jupiter.engine;
     requires org.junit.platform.commons;
     requires org.junit.jupiter;
