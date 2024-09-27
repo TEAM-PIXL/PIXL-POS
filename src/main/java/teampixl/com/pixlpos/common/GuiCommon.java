@@ -57,7 +57,7 @@ public class GuiCommon {
     /**
      * The path to the FXML file of the main screen.
      */
-    public static final String ADMIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/AdminDefault.fxml";
+    public static final String ADMIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/AdminHome.fxml";
     /**
      * The title of the cook screen.
      */
