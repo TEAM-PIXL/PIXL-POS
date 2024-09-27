@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@adminhome.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@adminmenu.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <HBox prefHeight="65.0" prefWidth="1280.0" styleClass="top-container" BorderPane.alignment="CENTER">
             <children>
@@ -30,7 +30,7 @@
                     <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../../images/search_icon.png" />
+                                <Image url="@../../../images/search_icon.png" />
                             </image>
                             <HBox.margin>
                                 <Insets left="15.0" top="7.0" />
@@ -74,7 +74,7 @@
                     <children>
                         <ImageView fitHeight="74.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="5.0">
                             <image>
-                                <Image url="@../../images/account_user_icon.png" />
+                                <Image url="@../../../images/account_user_icon.png" />
                             </image>
                         </ImageView>
                         <Text layoutX="44.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="54.0" AnchorPane.topAnchor="90.0" />
@@ -85,11 +85,11 @@
                 <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
                 <VBox layoutX="-1.0" layoutY="215.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="215.0">
                     <children>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Home">
+                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0"  text="Home">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../images/home_icon.png" />
+                                        <Image url="@../../../images/home_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -101,34 +101,34 @@
                             <graphic>
                                 <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../images/users_icon.png" />
+                                        <Image url="@../../../images/users_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu">
+                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="menu-button" text="Menu">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../images/menu_icon.png" />
+                                        <Image url="@../../../images/blue_menu_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Stock">
+                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0"  text="Stock">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../images/box_icon.png" />
+                                        <Image url="@../../../images/box_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics">
+                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0"  text="Analytics">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../images/analytics_icon.png" />
+                                        <Image url="@../../../images/analytics_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -141,7 +141,7 @@
                             <graphic>
                                 <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../images/logout_icon.png" />
+                                        <Image url="@../../../images/logout_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
