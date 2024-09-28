@@ -3,6 +3,7 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -57,6 +58,55 @@ public class AdminScreenAnalyticsController
     @FXML
     private Button logoutbutton;
 
+    /*
+    Analytics components
+     */
+    @FXML
+    private ScatterChart chart;
 
 
+
+
+
+
+
+
+
+
+    @FXML
+    protected void onUsersButtonClick() {
+        // Handle exit button click
+        Stage stage = (Stage) usersbutton.getScene().getWindow();
+        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_USERS_FXML, GuiCommon.ADMIN_SCREEN_USERS_TITLE, stage);
+    }
+    @FXML
+    protected void onMenuButtonClick() {
+        // Handle exit button click
+        Stage stage = (Stage) menubutton.getScene().getWindow();
+        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_MENU_FXML, GuiCommon.ADMIN_SCREEN_MENU_TITLE, stage);
+    }
+    @FXML
+    protected void onHomeButtonClick() {
+        // Handle exit button click
+        Stage stage = (Stage) homebutton.getScene().getWindow();
+        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_HOME_FXML, GuiCommon.ADMIN_SCREEN_HOME_TITLE, stage);
+    }
+    @FXML
+    protected void onStockButtonClick() {
+        // Handle exit button click
+        Stage stage = (Stage) stockbutton.getScene().getWindow();
+        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_STOCK_FXML, GuiCommon.ADMIN_SCREEN_STOCK_TITLE, stage);
+    }
+    @FXML
+    protected void onAnalyticsButtonClick() {
+        // Handle exit button click
+        Stage stage = (Stage) analyticsbutton.getScene().getWindow();
+        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_ANALYTICS_FXML, GuiCommon.ADMIN_SCREEN_ANALYTICS_TITLE, stage);
+    }
+    @FXML
+    protected void onLogoutButtonClick() {
+        // Handle exit button click
+        Stage stage = (Stage) logoutbutton.getScene().getWindow();
+        GuiCommon.loadStage(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);
+    }
 }

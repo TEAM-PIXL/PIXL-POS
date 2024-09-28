@@ -65,7 +65,7 @@ public class LoginScreenController extends GuiCommon {
             switch (role) {
                 case ADMIN:
                     System.out.println("Loading Admin Page");
-                    GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_FXML, GuiCommon.ADMIN_SCREEN_TITLE, loginButton);
+                    GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_HOME_FXML, GuiCommon.ADMIN_SCREEN_HOME_TITLE, loginButton);
                     break;
                 case COOK:
                     System.out.println("Loading Cook Page");

@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../Stock/adminstock.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../Stock/adminstock.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.adminconsole.AdminScreenStockController">
     <top>
         <HBox prefHeight="65.0" prefWidth="1280.0" styleClass="top-container" BorderPane.alignment="CENTER">
             <children>
@@ -39,7 +39,7 @@
                                 <Insets left="15.0" top="7.0" />
                             </HBox.margin>
                         </ImageView>
-                        <TextField fx:id="searchField" prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
+                        <TextField fx:id="searchbar" prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -55,12 +55,12 @@
                 <Region HBox.hgrow="ALWAYS" />
                 <HBox prefWidth="200.0">
                     <children>
-                        <Label text="27-09-2024" textAlignment="CENTER">
+                        <Label fx:id="date" text="27-09-2024" textAlignment="CENTER">
                             <padding>
                                 <Insets left="30.0" top="25.0" />
                             </padding>
                         </Label>
-                        <Label text="10:42 AM">
+                        <Label fx:id="time" text="10:42 AM">
                             <padding>
                                 <Insets left="20.0" top="25.0" />
                             </padding>
@@ -80,7 +80,7 @@
                                 <Image url="@../../../images/account_user_icon.png" />
                             </image>
                         </ImageView>
-                        <Text layoutX="44.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="54.0" AnchorPane.topAnchor="90.0" />
+                        <Text fx:id="greeting" layoutX="44.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="54.0" AnchorPane.topAnchor="90.0" />
                         <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
                         <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Have a nice day" AnchorPane.topAnchor="145.0" />
                     </children>
@@ -88,7 +88,7 @@
                 <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
                 <VBox layoutX="-1.0" layoutY="215.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="215.0">
                     <children>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Home">
+                        <Button fx:id="homebutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Home" onAction="#onHomeButtonClick">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -100,7 +100,7 @@
                                 <Insets />
                             </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users">
+                        <Button fx:id="usersbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users" onAction="#onUsersButtonClick">
                             <graphic>
                                 <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -109,7 +109,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu">
+                        <Button fx:id="menubutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -118,7 +118,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="stock-button" text="Stock">
+                        <Button fx:id="stockbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="stock-button" text="Stock">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -127,7 +127,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics">
+                        <Button fx:id="analyticsbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -140,7 +140,7 @@
                 </VBox>
                 <VBox layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                     <children>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
+                        <Button fx:id="logoutbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
                             <graphic>
                                 <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -234,7 +234,7 @@
                         </AnchorPane>
                      </children>
                   </HBox>
-                  <ListView style="-fx-border-color: white;" />
+                  <ListView fx:id="itemlist" style="-fx-border-color: white;" />
                </children>
                <padding>
                   <Insets top="10.0" />
@@ -255,8 +255,8 @@
                     <bottom>
                         <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
                             <children>
-                                <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Edit Item" />
-                                <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Remove Item" />
+                                <Button fx:id="editbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Edit Item" />
+                                <Button fx:id="removebutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Remove Item" />
                             </children>
                         </HBox>
                     </bottom>
@@ -274,12 +274,12 @@
                                  </font>
                               </Label>
                               <HBox prefHeight="0.0" prefWidth="0.0" style="-fx-border-color: #4a85f6;" />
-                              <TextField prefHeight="30.0" promptText="Item Name*" />
-                              <TextField layoutX="20.0" layoutY="98.0" prefHeight="30.0" promptText="Desired Quantity*" />
-                              <TextField layoutX="20.0" layoutY="139.0" prefHeight="30.0" promptText="Actual Quantity" />
-                              <TextField layoutX="20.0" layoutY="180.0" prefHeight="30.0" promptText="Item Price*" />
+                              <TextField fx:id="itemnamefield" prefHeight="30.0" promptText="Item Name*" />
+                              <TextField fx:id="desiredquantityfield" layoutX="20.0" layoutY="98.0" prefHeight="30.0" promptText="Desired Quantity*" />
+                              <TextField fx:id="actualquantityfield" layoutX="20.0" layoutY="139.0" prefHeight="30.0" promptText="Actual Quantity" />
+                              <TextField fx:id="itempricefield" layoutX="20.0" layoutY="180.0" prefHeight="30.0" promptText="Item Price*" />
                               <Label text="Item Description:" />
-                              <TextArea prefHeight="200.0" prefWidth="200.0" promptText="Description*" />
+                              <TextArea fx:id="itemdescriptionfield" prefHeight="200.0" prefWidth="200.0" promptText="Description*" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -289,9 +289,9 @@
                      <bottom>
                         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <buttons>
-                            <Button mnemonicParsing="false" text="Submit" />
-                              <Button layoutX="237.0" layoutY="15.0" mnemonicParsing="false" text="Add Item +" />
-                              <Button layoutX="237.0" layoutY="15.0" mnemonicParsing="false" text="Cancel" />
+                            <Button fx:id="submitbutton" mnemonicParsing="false" text="Submit" />
+                              <Button fx:id="additembutton" layoutX="237.0" layoutY="15.0" mnemonicParsing="false" text="Add Item +" />
+                              <Button fx:id="cancelbutton" layoutX="237.0" layoutY="15.0" mnemonicParsing="false" text="Cancel" />
                           </buttons>
                            <opaqueInsets>
                               <Insets />

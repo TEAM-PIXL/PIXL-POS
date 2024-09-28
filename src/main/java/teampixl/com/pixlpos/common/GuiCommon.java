@@ -50,14 +50,51 @@ public class GuiCommon {
      * The path to the FXML file of the login screen.
      */
     public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml";
+
     /**
      * The title of the main screen.
      */
-    public static final String ADMIN_SCREEN_TITLE = "Admin Screen";
+    public static final String ADMIN_SCREEN_HOME_TITLE = "Admin Home Screen";
     /**
      * The path to the FXML file of the main screen.
      */
-    public static final String ADMIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Users/AdminUsers.fxml";
+    public static final String ADMIN_SCREEN_HOME_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Home/AdminHome.fxml";
+    /**
+     * The title of the Users screen.
+     */
+    public static final String ADMIN_SCREEN_USERS_TITLE = "Admin Users Screen";
+    /**
+     * The path to the FXML file of the users screen.
+     */
+    public static final String ADMIN_SCREEN_USERS_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Users/AdminUsers.fxml";
+    /**
+     * The title of the menu screen.
+     */
+    public static final String ADMIN_SCREEN_MENU_TITLE = "Admin Menu Screen";
+    /**
+     * The path to the FXML file of the menu screen.
+     */
+    public static final String ADMIN_SCREEN_MENU_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Menu/AdminMenu.fxml";
+    /**
+     * The title of the stock screen.
+     */
+    public static final String ADMIN_SCREEN_STOCK_TITLE = "Admin Stock Screen";
+    /**
+     * The path to the FXML file of the stock screen.
+     */
+    public static final String ADMIN_SCREEN_STOCK_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Stock/AdminStock.fxml";
+    /**
+     * The title of the Analytics screen.
+     */
+    public static final String ADMIN_SCREEN_ANALYTICS_TITLE = "Admin Analytics Screen";
+    /**
+     * The path to the FXML file of the analytics screen.
+     */
+    public static final String ADMIN_SCREEN_ANALYTICS_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Analytics/AdminAnalytics.fxml";
+
+
+
+
     /**
      * The title of the cook screen.
      */
@@ -122,7 +159,7 @@ public class GuiCommon {
             System.out.println((String) fxmlLoader.getRoot());
 
             if (fxmlLoader.getRoot() == null) {
-                if (!ADMIN_SCREEN_FXML.equals(fxmlPath)){
+                if (!ADMIN_SCREEN_HOME_FXML.equals(fxmlPath)){
                     fxmlLoader.setRoot(new BorderPane());
                 }
             }
