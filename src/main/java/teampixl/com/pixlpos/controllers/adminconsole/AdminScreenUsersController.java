@@ -222,7 +222,7 @@ public class AdminScreenUsersController
     }
     @FXML
     protected void onAddUserButtonClick(){
-        addUserToListView(userslist,"josh","josh.he@gmail.com","joshe","20/20/2033","waiter");
+        addUserToListView(userslist,"steve","steve@gmail.com","Graycat45","20/20/2033","Waiter");
     }
     @FXML
     protected void onCancelButtonClick(){
