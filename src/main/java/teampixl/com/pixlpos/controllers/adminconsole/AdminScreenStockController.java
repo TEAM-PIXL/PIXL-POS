@@ -8,6 +8,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.ListView;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
@@ -91,6 +96,94 @@ public class AdminScreenStockController
 
 
 
+
+
+
+
+
+    public static void addItemToListView(ListView<HBox> listView, String name, String desiredNumber, String actualNumber, String itemPrice) {
+
+        // Create the main HBox
+        HBox hBox = new HBox();
+        hBox.setPrefHeight(50.0);
+        hBox.setPrefWidth(200.0);
+
+        // AnchorPane for Name
+        AnchorPane nameAnchorPane = new AnchorPane();
+        nameAnchorPane.setPrefHeight(50.0);
+        nameAnchorPane.setPrefWidth(212.0);
+
+        Label nameLabel = new Label(name);
+        nameLabel.setLayoutX(60.0);
+        nameLabel.setLayoutY(16.0);
+        nameLabel.setAlignment(Pos.CENTER); // Center text within the label
+
+        nameAnchorPane.getChildren().add(nameLabel);
+
+        // AnchorPane for Desired #
+        AnchorPane desiredAnchorPane = new AnchorPane();
+        desiredAnchorPane.setPrefHeight(200.0);
+        desiredAnchorPane.setPrefWidth(200.0);
+
+        Label desiredLabel = new Label(desiredNumber);
+        desiredLabel.setLayoutX(60.0);
+        desiredLabel.setLayoutY(16.0);
+        desiredLabel.setAlignment(Pos.CENTER); // Center text within the label
+
+        desiredAnchorPane.getChildren().add(desiredLabel);
+
+        // AnchorPane for Actual #
+        AnchorPane actualAnchorPane = new AnchorPane();
+        actualAnchorPane.setPrefHeight(200.0);
+        actualAnchorPane.setPrefWidth(200.0);
+
+        Label actualLabel = new Label(actualNumber);
+        actualLabel.setLayoutX(69.0);
+        actualLabel.setLayoutY(16.0);
+        actualLabel.setAlignment(Pos.CENTER); // Center text within the label
+
+        actualAnchorPane.getChildren().add(actualLabel);
+
+        // AnchorPane for Item Price
+        AnchorPane priceAnchorPane = new AnchorPane();
+        priceAnchorPane.setPrefHeight(200.0);
+        priceAnchorPane.setPrefWidth(200.0);
+
+        Label priceLabel = new Label(itemPrice);
+        priceLabel.setLayoutX(75.0);
+        priceLabel.setLayoutY(16.0);
+        priceLabel.setAlignment(Pos.CENTER); // Center text within the label
+
+        priceAnchorPane.getChildren().add(priceLabel);
+
+        // Add all anchor panes to the HBox
+        hBox.getChildren().addAll(nameAnchorPane, desiredAnchorPane, actualAnchorPane, priceAnchorPane);
+
+        // Add the HBox to the ListView
+        listView.getItems().add(hBox);
+    }
+
+
+    @FXML
+    protected void onSubmitButtonClick(){
+
+    }
+    @FXML
+    protected void onAddItemButtonClick(){
+        addItemToListView(itemlist,"lettuce","#54","23","$5.0");
+    }
+    @FXML
+    protected void onCancelButtonClick(){
+
+    }
+    @FXML
+    protected void onEditButtonClick(){
+
+    }
+    @FXML
+    protected void onRemoveButtonClick(){
+
+    }
 
 
     @FXML

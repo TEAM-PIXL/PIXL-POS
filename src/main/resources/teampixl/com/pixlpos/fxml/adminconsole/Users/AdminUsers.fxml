@@ -40,7 +40,7 @@
                                 <Insets left="15.0" top="7.0" />
                             </HBox.margin>
                         </ImageView>
-                        <TextField fx:id="searchbar"  prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
+                        <TextField fx:id="searchbar" prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -89,7 +89,7 @@
                 <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
                 <VBox layoutX="-1.0" layoutY="215.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="215.0">
                     <children>
-                        <Button fx:id="homebutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Home" onAction="#onHomeButtonClick">
+                        <Button fx:id="homebutton" mnemonicParsing="false" onAction="#onHomeButtonClick" prefHeight="40.0" prefWidth="210.0" text="Home">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -101,7 +101,7 @@
                                 <Insets />
                             </VBox.margin>
                         </Button>
-                        <Button fx:id="usersbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="user-button" text="Users" onAction="#onUsersButtonClick" >
+                        <Button fx:id="usersbutton" mnemonicParsing="false" onAction="#onUsersButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="user-button" text="Users">
                             <graphic>
                                 <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -110,7 +110,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="menubutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu" onAction="#onMenuButtonClick">
+                        <Button fx:id="menubutton" mnemonicParsing="false" onAction="#onMenuButtonClick" prefHeight="40.0" prefWidth="210.0" text="Menu">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -119,7 +119,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="stockbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Stock" onAction="#onStockButtonClick">
+                        <Button fx:id="stockbutton" mnemonicParsing="false" onAction="#onStockButtonClick" prefHeight="40.0" prefWidth="210.0" text="Stock">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -128,7 +128,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="analyticsbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics" onAction="#onAnalyticsButtonClick">
+                        <Button fx:id="analyticsbutton" mnemonicParsing="false" onAction="#onAnalyticsButtonClick" prefHeight="40.0" prefWidth="210.0" text="Analytics">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -141,7 +141,7 @@
                 </VBox>
                 <VBox layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                     <children>
-                        <Button fx:id="logoutbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" onAction="#onLogoutButtonClick" text="Logout">
+                        <Button fx:id="logoutbutton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
                             <graphic>
                                 <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -161,7 +161,7 @@
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
          <children>
-                <VBox prefHeight="654.4" prefWidth="600.0" style="-fx-background-color: white; -fx-background-radius: 20;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <VBox prefHeight="654.4" prefWidth="700.0" style="-fx-background-color: white; -fx-background-radius: 20;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label text="User Database">
                      <font>
@@ -175,7 +175,7 @@
                      <children>
                         <AnchorPane prefHeight="50.0" prefWidth="212.0">
                            <children>
-                              <Label layoutX="23.0" layoutY="12.0" text="Name" textFill="#8f9bb3">
+                              <Label layoutX="72.0" layoutY="5.0" text="Name" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -184,7 +184,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="27.0" layoutY="12.0" text="Username" textFill="#8f9bb3">
+                              <Label layoutX="28.0" layoutY="6.0" text="Username" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -193,7 +193,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="210.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="29.0" layoutY="12.0" text="Usersince" textFill="#8f9bb3">
+                              <Label layoutX="30.0" layoutY="6.0" text="Usersince" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -202,7 +202,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="396.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="52.0" layoutY="12.0" text="Role" textFill="#8f9bb3">
+                              <Label layoutX="52.0" layoutY="5.0" text="Role" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -211,35 +211,7 @@
                         </AnchorPane>
                      </children>
                   </HBox>
-                  <HBox layoutX="10.0" layoutY="56.0" prefHeight="50.0" prefWidth="200.0">
-                     <children>
-                        <AnchorPane prefHeight="50.0" prefWidth="212.0">
-                           <children>
-                              <Label contentDisplay="BOTTOM" layoutX="23.0" layoutY="6.0" text="Name">
-                                 <graphic>
-                                    <Label text="email" textFill="#918e8e" />
-                                 </graphic>
-                              </Label>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <Label layoutX="39.0" layoutY="16.0" text="Username" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="210.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <Label layoutX="57.0" layoutY="16.0" text="date" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="396.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <Label alignment="CENTER" layoutX="41.0" layoutY="10.0" prefHeight="30.0" prefWidth="60.0" style="-fx-background-color: #0095FF; -fx-background-radius: 10;" text="waiter" textFill="WHITE" />
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </HBox>
-                  <ListView fx:id="userslist" style="-fx-border-color: white;" />
+                  <ListView fx:id="userslist" prefHeight="1000.0" prefWidth="679.0" style="-fx-border-color: white;" />
                </children>
                <padding>
                   <Insets top="10.0" />
@@ -260,8 +232,8 @@
                     <bottom>
                         <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
                             <children>
-                                <Button fx:id="editbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Edit User" />
-                                <Button fx:id="removebutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Remove User" />
+                                <Button fx:id="editbutton" mnemonicParsing="false" onAction="#onEditButtonClick" prefHeight="40.0" prefWidth="150.0" text="Edit User" />
+                                <Button fx:id="removebutton" mnemonicParsing="false" onAction="#onRemoveButtonClick" prefHeight="40.0" prefWidth="150.0" text="Remove User" />
                             </children>
                         </HBox>
                     </bottom>
@@ -294,9 +266,9 @@
                      <bottom>
                         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <buttons>
-                            <Button fx:id="submitbutton" mnemonicParsing="false" text="Submit" />
-                              <Button fx:id="adduserbutton" layoutX="244.0" layoutY="15.0" mnemonicParsing="false" text="Add User +" />
-                              <Button fx:id="cancelbutton" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" text="Cancel" />
+                            <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" text="Submit" />
+                              <Button fx:id="adduserbutton" layoutX="244.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddUserButtonClick" text="Add User +" />
+                              <Button fx:id="cancelbutton" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" text="Cancel" />
                           </buttons>
                            <opaqueInsets>
                               <Insets />

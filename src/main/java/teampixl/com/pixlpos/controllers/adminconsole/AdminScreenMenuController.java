@@ -4,11 +4,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.ListView;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.models.Users;
+import javafx.geometry.Pos;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
@@ -88,11 +91,116 @@ public class AdminScreenMenuController
 
 
 
+    public static void addMenuItemToListView(ListView<HBox> listView, String name, String price, String type, String dietary) {
+
+        // Create the main HBox
+        HBox hBox = new HBox();
+        hBox.setPrefHeight(50.0);
+        hBox.setPrefWidth(200.0);
+
+        // AnchorPane for Name
+        AnchorPane nameAnchorPane = new AnchorPane();
+        nameAnchorPane.setPrefHeight(50.0);
+        nameAnchorPane.setPrefWidth(212.0);
+
+        Label nameLabel = new Label(name);
+        nameLabel.setAlignment(Pos.CENTER); // Center text within the label
+
+        // Center the label in the AnchorPane
+        AnchorPane.setTopAnchor(nameLabel, 0.0);
+        AnchorPane.setBottomAnchor(nameLabel, 0.0);
+        AnchorPane.setLeftAnchor(nameLabel, 0.0);
+        AnchorPane.setRightAnchor(nameLabel, 0.0);
+
+        nameAnchorPane.getChildren().add(nameLabel);
+
+        // AnchorPane for Price
+        AnchorPane priceAnchorPane = new AnchorPane();
+        priceAnchorPane.setPrefHeight(200.0);
+        priceAnchorPane.setPrefWidth(200.0);
+
+        Label priceLabel = new Label(price);
+        priceLabel.setAlignment(Pos.CENTER); // Center text within the label
+
+        // Center the label in the AnchorPane
+        AnchorPane.setTopAnchor(priceLabel, 0.0);
+        AnchorPane.setBottomAnchor(priceLabel, 0.0);
+        AnchorPane.setLeftAnchor(priceLabel, 0.0);
+        AnchorPane.setRightAnchor(priceLabel, 0.0);
+
+        priceAnchorPane.getChildren().add(priceLabel);
+
+        // AnchorPane for Type
+        AnchorPane typeAnchorPane = new AnchorPane();
+        typeAnchorPane.setPrefHeight(200.0);
+        typeAnchorPane.setPrefWidth(200.0);
+
+        Label typeLabel = new Label(type);
+        typeLabel.setAlignment(Pos.CENTER); // Center text within the label
+
+        // Center the label in the AnchorPane
+        AnchorPane.setTopAnchor(typeLabel, 0.0);
+        AnchorPane.setBottomAnchor(typeLabel, 0.0);
+        AnchorPane.setLeftAnchor(typeLabel, 0.0);
+        AnchorPane.setRightAnchor(typeLabel, 0.0);
+
+        typeAnchorPane.getChildren().add(typeLabel);
+
+        // AnchorPane for Dietary Info
+        AnchorPane dietaryAnchorPane = new AnchorPane();
+        dietaryAnchorPane.setPrefHeight(200.0);
+        dietaryAnchorPane.setPrefWidth(200.0);
+
+        Label dietaryLabel = new Label(dietary);
+        dietaryLabel.setAlignment(Pos.CENTER); // Center text within the label
+
+        // Center the label in the AnchorPane
+        AnchorPane.setTopAnchor(dietaryLabel, 0.0);
+        AnchorPane.setBottomAnchor(dietaryLabel, 0.0);
+        AnchorPane.setLeftAnchor(dietaryLabel, 0.0);
+        AnchorPane.setRightAnchor(dietaryLabel, 0.0);
+
+        dietaryAnchorPane.getChildren().add(dietaryLabel);
+
+        // Add all anchor panes to the HBox
+        hBox.getChildren().addAll(nameAnchorPane, priceAnchorPane, typeAnchorPane, dietaryAnchorPane);
+
+        // Add the HBox to the ListView
+        listView.getItems().add(hBox);
+    }
 
 
 
 
 
+
+
+
+
+
+
+
+
+    @FXML
+    protected void onSubmitButtonClick(){
+
+    }
+    @FXML
+    protected void onAddMenuItemButtonClick(){
+        addMenuItemToListView(menuitemlist,"A AMAXAIFDNBI","$20.98","Normal","VEGAN");
+    }
+    @FXML
+    protected void onCancelButtonClick(){
+
+    }
+    @FXML
+    protected void onEditButtonClick(){
+
+    }
+    @FXML
+    protected void onRemoveButtonClick(){
+
+    }
 
     @FXML
     protected void onUsersButtonClick() {
