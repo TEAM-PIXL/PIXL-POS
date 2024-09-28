@@ -100,7 +100,7 @@
                                 <Insets />
                             </VBox.margin>
                         </Button>
-                        <Button fx:id="userbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users" onAction="#onUsersButtonClick">
+                        <Button fx:id="usersbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users" onAction="#onUsersButtonClick">
                             <graphic>
                                 <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

@@ -109,7 +109,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="menubutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu">
+                        <Button fx:id="menubutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu" onAction="#onMenuButtonClick">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -118,7 +118,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="stockbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="stock-button" text="Stock">
+                        <Button fx:id="stockbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="stock-button" text="Stock" onAction="#onStockButtonClick">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -127,7 +127,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="analyticsbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics">
+                        <Button fx:id="analyticsbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics" onAction="#onAnalyticsButtonClick">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -140,7 +140,7 @@
                 </VBox>
                 <VBox layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                     <children>
-                        <Button fx:id="logoutbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
+                        <Button fx:id="logoutbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout" onAction="#onLogoutButtonClick">
                             <graphic>
                                 <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
