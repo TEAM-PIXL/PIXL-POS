@@ -90,7 +90,16 @@ public class AdminScreenMenuController
 
 
 
-
+    /**
+     * Adds a menu item to the specified ListView. The menu item is represented as an HBox containing four AnchorPanes
+     * that display the name, price, type, and dietary information of the item.
+     *
+     * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
+     * @param name the name of the menu item (e.g., the dish name), displayed in the first column of the HBox.
+     * @param price the price of the menu item, displayed in the second column of the HBox.
+     * @param type the type of the menu item (e.g., appetizer, main course), displayed in the third column of the HBox.
+     * @param dietary dietary information for the menu item (e.g., vegan, gluten-free), displayed in the fourth column of the HBox.
+     */
     public static void addMenuItemToListView(ListView<HBox> listView, String name, String price, String type, String dietary) {
 
         // Create the main HBox

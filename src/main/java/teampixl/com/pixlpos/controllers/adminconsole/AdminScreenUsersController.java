@@ -102,7 +102,16 @@ public class AdminScreenUsersController
 
 
 
-    // Function to create an HBox with specified details and add it to the ListView
+    /**
+     * Adds a user item to the specified ListView. The user is represented as an HBox containing four AnchorPanes
+     *
+     * @param listView the ListView to which the new menu item will be added. Each user item will be displayed as an HBox.
+     * @param name the name of the user item (e.g., the michael smith, displayed in the first column of the HBox.
+     * @param email the email of the user, displayed in the second column of the HBox.
+     * @param username the username of the user, displayed in the third column of the HBox.
+     * @param userSince time the account was made, displayed in the fourth column of the HBox.
+     * @param role the role of the user
+     */
     public static void addUserToListView(ListView<HBox> listView, String name, String email, String username, String userSince, String role) {
 
         // Create the main HBox

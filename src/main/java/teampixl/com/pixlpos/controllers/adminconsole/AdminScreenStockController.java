@@ -100,7 +100,16 @@ public class AdminScreenStockController
 
 
 
-
+    /**
+     * Adds an item to the specified ListView. The item is represented as an HBox containing four AnchorPanes
+     * that display the name, price, type, and dietary information of the item.
+     *
+     * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
+     * @param name the name of the item (e.g., the patty), displayed in the first column of the HBox.
+     * @param desiredNumber the desired number of stock
+     * @param actualNumber the actual number of items in stock
+     * @param itemPrice the price per item reported
+     */
     public static void addItemToListView(ListView<HBox> listView, String name, String desiredNumber, String actualNumber, String itemPrice) {
 
         // Create the main HBox
