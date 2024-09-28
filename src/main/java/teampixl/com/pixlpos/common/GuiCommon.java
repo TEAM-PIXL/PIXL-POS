@@ -86,7 +86,7 @@ public class GuiCommon {
         try {
             BorderPane root = new BorderPane();
             FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
-            //fxmlLoader.setRoot(root);
+            //fxmlLoader.setRoot(root); //<-------Change made to test different admin pages, Also changed admin fxml path string it should be the new home page
             Scene scene = new Scene(fxmlLoader.load(), WIDTH, HEIGHT);
             stage.setScene(scene);
             stage.setTitle(title);
