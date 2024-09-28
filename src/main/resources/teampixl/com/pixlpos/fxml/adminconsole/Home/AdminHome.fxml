@@ -36,7 +36,7 @@
                         <Insets left="15.0" top="7.0" />
                      </HBox.margin>
                   </ImageView>
-                  <TextField fx:id="searchField" prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
+                  <TextField id="searchbar" fx:id="searchField" prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -52,12 +52,12 @@
             <Region HBox.hgrow="ALWAYS" />
             <HBox prefWidth="200.0">
                <children>
-                  <Label text="27-09-2024" textAlignment="CENTER">
+                  <Label id="date" text="27-09-2024" textAlignment="CENTER">
                      <padding>
                         <Insets left="30.0" top="25.0" />
                      </padding>
                   </Label>
-                  <Label text="10:42 AM">
+                  <Label id="time" text="10:42 AM">
                      <padding>
                         <Insets left="20.0" top="25.0" />
                      </padding>
@@ -77,7 +77,7 @@
                         <Image url="@../../../images/account_user_icon.png" />
                      </image>
                   </ImageView>
-                  <Text layoutX="44.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="54.0" AnchorPane.topAnchor="90.0" />
+                  <Text id="greeting" layoutX="44.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="54.0" AnchorPane.topAnchor="90.0" />
                   <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
                   <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Have a nice day" AnchorPane.topAnchor="145.0" />
                </children>
@@ -85,7 +85,7 @@
             <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
             <VBox layoutX="-1.0" layoutY="215.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="215.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="home-button" text="Home">
+                  <Button id="homebutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="home-button" text="Home">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -97,7 +97,7 @@
                         <Insets />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users">
+                  <Button id="usersbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users">
                      <graphic>
                         <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -106,7 +106,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu">
+                  <Button id="menubutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -115,7 +115,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Stock">
+                  <Button id="stockbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Stock">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -124,7 +124,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics">
+                  <Button id="analyticsbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Analytics">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -137,7 +137,7 @@
             </VBox>
             <VBox layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
+                  <Button id="logoutbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
                      <graphic>
                         <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                            <image>
