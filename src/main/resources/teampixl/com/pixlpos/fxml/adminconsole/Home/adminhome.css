@@ -26,6 +26,13 @@
     -fx-font-family: "Arial", sans-serif;
 }
 
+.header-label, .logo {
+    -fx-text-fill: #4A85F6;
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Arial", sans-serif;
+}
+
 .button {
     -fx-background-color: white;
     -fx-text-fill: #4a4a4a;
