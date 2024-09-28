@@ -232,8 +232,8 @@
                     <bottom>
                         <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
                             <children>
-                                <Button fx:id="editbutton" mnemonicParsing="false" onAction="#onEditButtonClick" prefHeight="40.0" prefWidth="150.0" text="Edit Menu Item" />
-                                <Button fx:id="removebutton" mnemonicParsing="false" onAction="#onRemoveButtonClick" prefHeight="40.0" prefWidth="150.0" text="Remove Menu Item" />
+                                <Button fx:id="editbutton" mnemonicParsing="false" onAction="#onEditButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="edit-button" text="Edit Menu Item" />
+                                <Button fx:id="removebutton" mnemonicParsing="false" onAction="#onRemoveButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="remove-button" text="Remove Menu Item" />
                             </children>
                         </HBox>
                     </bottom>
@@ -267,9 +267,9 @@
                      <bottom>
                         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <buttons>
-                            <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" text="Submit" />
-                              <Button fx:id="addmenuitembutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddMenuItemButtonClick" text="Add Item +" />
-                              <Button fx:id="cancelbutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" text="Cancel" />
+                            <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" styleClass="submit-button" text="Submit" />
+                              <Button fx:id="addmenuitembutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddMenuItemButtonClick" styleClass="add-button" text="Add Item +" />
+                              <Button fx:id="cancelbutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" styleClass="cancel-button" text="Cancel" />
                           </buttons>
                            <opaqueInsets>
                               <Insets />

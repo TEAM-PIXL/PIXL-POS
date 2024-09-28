@@ -41,6 +41,36 @@
 .user-button {
     -fx-text-fill: #0000ff;
 }
+
+.edit-button {
+    -fx-background-color: #A4CC72;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.remove-button {
+    -fx-background-color: #F64A4A;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.submit-button{
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.add-button{
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.cancel-button {
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
 .logout-button {
     -fx-background-color: white;
     -fx-text-fill: #4a4a4a;

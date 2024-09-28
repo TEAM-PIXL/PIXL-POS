@@ -232,8 +232,8 @@
                     <bottom>
                         <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
                             <children>
-                                <Button fx:id="editbutton" mnemonicParsing="false" onAction="#onEditButtonClick" prefHeight="40.0" prefWidth="150.0" text="Edit User" />
-                                <Button fx:id="removebutton" mnemonicParsing="false" onAction="#onRemoveButtonClick" prefHeight="40.0" prefWidth="150.0" text="Remove User" />
+                                <Button fx:id="editbutton" mnemonicParsing="false" onAction="#onEditButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="edit-button" text="Edit User" />
+                                <Button fx:id="removebutton" mnemonicParsing="false" onAction="#onRemoveButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="remove-button" text="Remove User" />
                             </children>
                         </HBox>
                     </bottom>
@@ -266,9 +266,9 @@
                      <bottom>
                         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <buttons>
-                            <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" text="Submit" />
-                              <Button fx:id="adduserbutton" layoutX="244.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddUserButtonClick" text="Add User +" />
-                              <Button fx:id="cancelbutton" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" text="Cancel" />
+                            <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" styleClass="submit-button" text="Submit" />
+                              <Button fx:id="adduserbutton" layoutX="244.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddUserButtonClick" styleClass="add-button" text="Add User +" />
+                              <Button fx:id="cancelbutton" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" styleClass="cancel-button" text="Cancel" />
                           </buttons>
                            <opaqueInsets>
                               <Insets />
