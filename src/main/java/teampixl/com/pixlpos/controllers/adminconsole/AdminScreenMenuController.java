@@ -196,7 +196,7 @@ public class AdminScreenMenuController
     }
     @FXML
     protected void onAddMenuItemButtonClick(){
-        addMenuItemToListView(menuitemlist,"A AMAXAIFDNBI","$20.98","Normal","VEGAN");
+        addMenuItemToListView(menuitemlist,"Foo Burger","$20.98","MAIN","VEGAN");
     }
     @FXML
     protected void onCancelButtonClick(){
