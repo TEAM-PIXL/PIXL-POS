@@ -134,6 +134,29 @@ public class GuiCommon {
     }
 
     /**
+     * Loads a new stage in the application by setting the FXML file, title, and stage.
+     *
+     * @param fxmlPath the path to the FXML file
+     * @param title the title of the stage
+     * @param stage the stage to be loaded
+     * @param width the stages starting width
+     * @param height the stages starting height
+     */
+    public static void loadStage(String fxmlPath, String title, Stage stage, Double width, Double height) {
+        try {
+            BorderPane root = new BorderPane();
+            FXMLLoader fxmlLoader = new FXMLLoader(GuiCommon.class.getResource(fxmlPath));
+            //fxmlLoader.setRoot(root); //<-------Change made to test different admin pages, Also changed admin fxml path string it should be the new home page
+            Scene scene = new Scene(fxmlLoader.load(), width, height);
+            stage.setScene(scene);
+            stage.setTitle(title);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Loads a new scene in the application by setting the FXML file, title, and node.
      *
      * @param fxmlPath the path to the FXML file

@@ -60,8 +60,12 @@ public class AdminScreenHomeController
     @FXML
     protected void onUsersButtonClick() {
         // Handle exit button click
+
         Stage stage = (Stage) usersbutton.getScene().getWindow();
         GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_USERS_FXML, GuiCommon.ADMIN_SCREEN_USERS_TITLE, stage);
+//        double width = stage.getScene().getWindow().getWidth();
+//        double height = stage.getScene().getWindow().getHeight();
+//        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_USERS_FXML, GuiCommon.ADMIN_SCREEN_USERS_TITLE, stage,width,height);
     }
     @FXML
     protected void onMenuButtonClick() {
