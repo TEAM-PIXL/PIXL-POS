@@ -9,6 +9,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.geometry.Pos;
+import javafx.scene.layout.Priority;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -90,6 +92,7 @@ public class AdminScreenStockController
     @FXML
     private ListView<HBox> itemlist;
 
+    int adding_counter = 0;
 
 
 
@@ -100,77 +103,6 @@ public class AdminScreenStockController
 
 
 
-    /**
-     * Adds an item to the specified ListView. The item is represented as an HBox containing four AnchorPanes
-     * that display the name, price, type, and dietary information of the item.
-     *
-     * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
-     * @param name the name of the item (e.g., the patty), displayed in the first column of the HBox.
-     * @param desiredNumber the desired number of stock
-     * @param actualNumber the actual number of items in stock
-     * @param itemPrice the price per item reported
-     */
-    public static void addItemToListView(ListView<HBox> listView, String name, String desiredNumber, String actualNumber, String itemPrice) {
-
-        // Create the main HBox
-        HBox hBox = new HBox();
-        hBox.setPrefHeight(50.0);
-        hBox.setPrefWidth(200.0);
-
-        // AnchorPane for Name
-        AnchorPane nameAnchorPane = new AnchorPane();
-        nameAnchorPane.setPrefHeight(50.0);
-        nameAnchorPane.setPrefWidth(212.0);
-
-        Label nameLabel = new Label(name);
-        nameLabel.setLayoutX(60.0);
-        nameLabel.setLayoutY(16.0);
-        nameLabel.setAlignment(Pos.CENTER); // Center text within the label
-
-        nameAnchorPane.getChildren().add(nameLabel);
-
-        // AnchorPane for Desired #
-        AnchorPane desiredAnchorPane = new AnchorPane();
-        desiredAnchorPane.setPrefHeight(200.0);
-        desiredAnchorPane.setPrefWidth(200.0);
-
-        Label desiredLabel = new Label(desiredNumber);
-        desiredLabel.setLayoutX(60.0);
-        desiredLabel.setLayoutY(16.0);
-        desiredLabel.setAlignment(Pos.CENTER); // Center text within the label
-
-        desiredAnchorPane.getChildren().add(desiredLabel);
-
-        // AnchorPane for Actual #
-        AnchorPane actualAnchorPane = new AnchorPane();
-        actualAnchorPane.setPrefHeight(200.0);
-        actualAnchorPane.setPrefWidth(200.0);
-
-        Label actualLabel = new Label(actualNumber);
-        actualLabel.setLayoutX(69.0);
-        actualLabel.setLayoutY(16.0);
-        actualLabel.setAlignment(Pos.CENTER); // Center text within the label
-
-        actualAnchorPane.getChildren().add(actualLabel);
-
-        // AnchorPane for Item Price
-        AnchorPane priceAnchorPane = new AnchorPane();
-        priceAnchorPane.setPrefHeight(200.0);
-        priceAnchorPane.setPrefWidth(200.0);
-
-        Label priceLabel = new Label(itemPrice);
-        priceLabel.setLayoutX(75.0);
-        priceLabel.setLayoutY(16.0);
-        priceLabel.setAlignment(Pos.CENTER); // Center text within the label
-
-        priceAnchorPane.getChildren().add(priceLabel);
-
-        // Add all anchor panes to the HBox
-        hBox.getChildren().addAll(nameAnchorPane, desiredAnchorPane, actualAnchorPane, priceAnchorPane);
-
-        // Add the HBox to the ListView
-        listView.getItems().add(hBox);
-    }
 
 
     @FXML
@@ -179,7 +111,21 @@ public class AdminScreenStockController
     }
     @FXML
     protected void onAddItemButtonClick(){
-        addItemToListView(itemlist,"lettuce","#54","23","$5.0");
+
+
+        if(adding_counter == 0){
+            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"cheese","20","23","$10.0");
+        }
+        else if(adding_counter == 1){
+            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"lettuce","10","2","$5.0");
+        }
+        else if(adding_counter == 2){
+            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"buns","54","40","$2.5");
+        }
+        else{
+            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"you get it","999","999","fiddybucks");
+        }
+        adding_counter++;
     }
     @FXML
     protected void onCancelButtonClick(){
@@ -230,5 +176,126 @@ public class AdminScreenStockController
         // Handle exit button click
         Stage stage = (Stage) logoutbutton.getScene().getWindow();
         GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);
+    }
+
+    /**
+     * Adds an item to the specified ListView. The item is represented as an HBox containing four AnchorPanes
+     * that display the name, price, type, and dietary information of the item.
+     *
+     * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
+     * @param itemName the name of the item (e.g., the patty), displayed in the first column of the HBox.
+     * @param desiredQty the desired number of stock
+     * @param actualQty the actual number of items in stock
+     * @param price the price per item reported
+     */
+    public void addInventoryItemToListView(ListView<HBox> listView, String id, String itemName, String desiredQty, String actualQty, String price) {
+        HBox hbox = new HBox();
+        hbox.setPrefHeight(50.0);
+        hbox.setPrefWidth(200.0);
+
+        // Item Name
+        AnchorPane itemNamePane = new AnchorPane();
+        Label itemNameLabel = new Label(itemName);
+        itemNameLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        itemNameLabel.setPrefSize(88.0, 50.4);
+        AnchorPane.setTopAnchor(itemNameLabel, 0.0);
+        AnchorPane.setRightAnchor(itemNameLabel, 0.0);
+        AnchorPane.setBottomAnchor(itemNameLabel, 0.0);
+        AnchorPane.setLeftAnchor(itemNameLabel, 0.0);
+        itemNamePane.getChildren().add(itemNameLabel);
+        HBox.setHgrow(itemNamePane, Priority.ALWAYS);
+
+        // Desired Quantity
+        AnchorPane desiredQtyPane = new AnchorPane();
+        Label desiredQtyLabel = new Label(desiredQty);
+        desiredQtyLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        desiredQtyLabel.setPrefSize(127.2, 50.4);
+        AnchorPane.setTopAnchor(desiredQtyLabel, 0.0);
+        AnchorPane.setRightAnchor(desiredQtyLabel, 0.0);
+        AnchorPane.setBottomAnchor(desiredQtyLabel, 0.0);
+        AnchorPane.setLeftAnchor(desiredQtyLabel, 0.0);
+        desiredQtyPane.getChildren().add(desiredQtyLabel);
+        HBox.setHgrow(desiredQtyPane, Priority.ALWAYS);
+
+        // Actual Quantity
+        AnchorPane actualQtyPane = new AnchorPane();
+        Label actualQtyLabel = new Label(actualQty);
+        actualQtyLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        actualQtyLabel.setPrefSize(112.8, 50.4);
+        AnchorPane.setTopAnchor(actualQtyLabel, 0.0);
+        AnchorPane.setRightAnchor(actualQtyLabel, 0.0);
+        AnchorPane.setBottomAnchor(actualQtyLabel, 0.0);
+        AnchorPane.setLeftAnchor(actualQtyLabel, 0.0);
+        actualQtyPane.getChildren().add(actualQtyLabel);
+        HBox.setHgrow(actualQtyPane, Priority.ALWAYS);
+
+        // Price
+        AnchorPane pricePane = new AnchorPane();
+        Label priceLabel = new Label(price);
+        priceLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        priceLabel.setPrefSize(108.8, 50.4);
+        AnchorPane.setTopAnchor(priceLabel, 0.0);
+        AnchorPane.setRightAnchor(priceLabel, 0.0);
+        AnchorPane.setBottomAnchor(priceLabel, 0.0);
+        AnchorPane.setLeftAnchor(priceLabel, 0.0);
+        pricePane.getChildren().add(priceLabel);
+        HBox.setHgrow(pricePane, Priority.ALWAYS);
+
+        // Edit Button
+        AnchorPane editButtonPane = new AnchorPane();
+        editButtonPane.setMaxWidth(100.0);
+        editButtonPane.setMinWidth(100.0);
+        editButtonPane.setPrefWidth(100.0);
+        Button editButton = new Button("Edit");
+        editButton.setId("editbutton");
+        editButton.setLayoutX(25.0);
+        editButton.setLayoutY(9.0);
+        editButton.setMinWidth(50.0);
+        editButton.getStyleClass().add("edit-button");
+        editButton.setOnAction(event -> onEditButtonClick(event,id));
+        editButtonPane.getChildren().add(editButton);
+        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+
+        // Remove Button
+        AnchorPane removeButtonPane = new AnchorPane();
+        removeButtonPane.setMaxWidth(100.0);
+        removeButtonPane.setMinWidth(100.0);
+        removeButtonPane.setPrefWidth(100.0);
+        Button removeButton = new Button("Remove");
+        removeButton.setId("removebutton");
+        removeButton.setLayoutX(11.0);
+        removeButton.setLayoutY(9.0);
+        removeButton.setMinWidth(50.0);
+        removeButton.getStyleClass().add("remove-button");
+        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
+        removeButtonPane.getChildren().add(removeButton);
+        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
+
+        // Add all components to the HBox
+        hbox.getChildren().addAll(itemNamePane, desiredQtyPane, actualQtyPane, pricePane, editButtonPane, removeButtonPane);
+
+        // Add the HBox to the ListView
+        listView.getItems().add(hbox);
+    }
+
+    // Placeholder methods for button actions
+    private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
+        // Implement edit menu item logic here
+    }
+
+    private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
+        // Implement remove menu item logic here
+
+        ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
+
+        // Loop through the list to find the HBox with the matching ID
+        for (int i = 0; i < items.size(); i++) {
+            HBox hbox = items.get(i);
+
+            if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
+                items.remove(i);  // Remove the HBox at the found index
+                break;            // Exit the loop once the HBox is removed
+            }
+        }
     }
 }

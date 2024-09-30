@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
@@ -160,12 +161,71 @@
         </AnchorPane>
     </left>
     <right>
-        <AnchorPane prefWidth="700.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
+        <AnchorPane prefWidth="400.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="20.0" left="10.0" right="20.0" top="20.0" />
             </padding>
          <children>
-                <VBox prefHeight="654.4" prefWidth="700.0" styleClass="list-user-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <BorderPane prefHeight="654.4" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 10;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <center>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" styleClass="manage-user-container" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label prefHeight="34.0" prefWidth="198.0" styleClass="container-label" text="User Information">
+                           <padding>
+                              <Insets left="10.0" top="10.0" />
+                           </padding>
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                         <HBox prefHeight="0.0" prefWidth="0.0" styleClass="line" />
+                        <Label text="First Name:" />
+                        <TextField fx:id="firstnamefield" prefHeight="30.0" promptText="Firstname *" />
+                        <Label layoutX="21.0" layoutY="78.0" text="Last Name:" />
+                        <TextField fx:id="lastnamefield" layoutX="20.0" layoutY="98.0" prefHeight="30.0" promptText="Lastname*" />
+                        <Label layoutX="21.0" layoutY="148.0" text="Email:" />
+                        <TextField fx:id="emailfield" layoutX="20.0" layoutY="139.0" prefHeight="30.0" promptText="Email*" />
+                        <Label layoutX="21.0" layoutY="217.0" text="Password:" />
+                        <PasswordField fx:id="passwordfield" prefHeight="30.0" promptText="Password*" />
+                        <Label text="Selected Role:" />
+                        <ChoiceBox fx:id="roleselect" prefWidth="150.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </center>
+               <bottom>
+                  <ButtonBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 10;" BorderPane.alignment="CENTER">
+                    <buttons>
+                      <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" styleClass="submit-button" text="Submit" />
+                        <Button fx:id="adduserbutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddUserButtonClick" styleClass="add-button" text="Add Item +" />
+                        <Button fx:id="cancelbutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" styleClass="cancel-button" text="Cancel" />
+                    </buttons>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets right="30.0" />
+                     </padding>
+                  </ButtonBar>
+               </bottom>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </BorderPane>
+         </children></AnchorPane>
+    </right>
+    <bottom>
+        <AnchorPane maxHeight="0.0" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
+    </bottom>
+    <center>
+        <AnchorPane style="-fx-background-color: #f5f5f5;" BorderPane.alignment="TOP_LEFT">
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="10.0" top="20.0" />
+            </padding>
+         <children>
+                <VBox prefHeight="654.4" styleClass="list-user-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label styleClass="container-label" text="User Database">
                      <font>
@@ -178,121 +238,48 @@
                         <Insets bottom="10.0" left="20.0" top="10.0" />
                      </padding>
                   </Label>
-                  <HBox prefHeight="50.0" prefWidth="200.0" styleClass="table-header">
+                  <HBox layoutX="11.0" layoutY="66.0" prefHeight="50.0" styleClass="table-header">
                      <children>
-                        <AnchorPane prefHeight="50.0" prefWidth="212.0">
+                        <AnchorPane HBox.hgrow="ALWAYS">
                            <children>
-                              <Label layoutX="72.0" layoutY="15.0" styleClass="database-label" text="Name" textFill="#8f9bb3">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
+                              <Label alignment="CENTER" styleClass="database-label" text="Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
+                        <AnchorPane layoutX="10.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label layoutX="28.0" layoutY="14.0" styleClass="database-label" text="Username" textFill="#8f9bb3">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
+                              <Label alignment="CENTER" styleClass="database-label" text="Username" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="210.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
+                        <AnchorPane layoutX="648.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label layoutX="30.0" layoutY="14.0" styleClass="database-label" text="Usersince" textFill="#8f9bb3">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
+                              <Label alignment="CENTER" styleClass="database-label" text="Usersince" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="396.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
+                        <AnchorPane layoutX="436.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label layoutX="52.0" layoutY="5.0" styleClass="database-label" text="Role" textFill="#8f9bb3">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
+                              <Label alignment="CENTER" layoutX="-15.0" styleClass="database-label" text="Role" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="648.0" layoutY="10.0" maxWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Pane minWidth="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="648.0" layoutY="10.0" maxWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Pane minWidth="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                      </children>
                   </HBox>
+
                   <ListView fx:id="userslist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
                </children>
                <padding>
                   <Insets top="10.0" />
                </padding>
             </VBox>
-         </children></AnchorPane>
-    </right>
-    <bottom>
-        <AnchorPane maxHeight="0.0" maxWidth="0.0" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
-    </bottom>
-    <center>
-        <AnchorPane style="-fx-background-color: #f5f5f5;" BorderPane.alignment="TOP_LEFT">
-            <padding>
-                <Insets bottom="10.0" left="20.0" right="10.0" top="20.0" />
-            </padding>
-            <children>
-                <BorderPane prefHeight="655.0" prefWidth="370.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <bottom>
-                        <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
-                            <children>
-                                <Button fx:id="editbutton" mnemonicParsing="false" onAction="#onEditButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="edit-button" text="Edit User" />
-                                <Button fx:id="removebutton" mnemonicParsing="false" onAction="#onRemoveButtonClick" prefHeight="40.0" prefWidth="150.0" styleClass="remove-button" text="Remove User" />
-                            </children>
-                        </HBox>
-                    </bottom>
-               <center>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
-                     <center>
-                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" styleClass="manage-user-container" BorderPane.alignment="CENTER">
-                           <children>
-                              <Label prefHeight="34.0" prefWidth="198.0" styleClass="container-label" text="User Infomation">
-                                 <padding>
-                                    <Insets left="10.0" top="10.0" />
-                                 </padding>
-                                 <font>
-                                    <Font size="24.0" />
-                                 </font>
-                              </Label>
-                               <HBox prefHeight="0.0" prefWidth="0.0" styleClass="line" />
-                              <Label text="First Name:" />
-                              <TextField fx:id="firstnamefield" prefHeight="30.0" promptText="Firstname *" />
-                              <Label layoutX="21.0" layoutY="78.0" text="Last Name:" />
-                              <TextField fx:id="lastnamefield" layoutX="20.0" layoutY="98.0" prefHeight="30.0" promptText="Lastname*" />
-                              <Label layoutX="21.0" layoutY="148.0" text="Email:" />
-                              <TextField fx:id="emailfield" layoutX="20.0" layoutY="139.0" prefHeight="30.0" promptText="Email*" />
-                              <Label layoutX="21.0" layoutY="217.0" text="Password:" />
-                              <PasswordField fx:id="passwordfield" prefHeight="30.0" promptText="Password*" />
-                              <Label text="Selected Role:" />
-                              <ChoiceBox fx:id="roleselect" prefWidth="150.0" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </VBox>
-                     </center>
-                     <bottom>
-                        <ButtonBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 10;" BorderPane.alignment="CENTER">
-                          <buttons>
-                            <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" styleClass="submit-button" text="Submit" />
-                              <Button fx:id="adduserbutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddUserButtonClick" styleClass="add-button" text="Add Item +" />
-                              <Button fx:id="cancelbutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" styleClass="cancel-button" text="Cancel" />
-                          </buttons>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <padding>
-                              <Insets right="30.0" />
-                           </padding>
-                        </ButtonBar>
-                     </bottom>
-                  </BorderPane>
-               </center>
-                </BorderPane>
-            </children>
+         </children>
         </AnchorPane>
     </center>
 </BorderPane>

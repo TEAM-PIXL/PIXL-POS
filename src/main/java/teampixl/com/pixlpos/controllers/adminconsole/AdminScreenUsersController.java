@@ -12,6 +12,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
+
+import javafx.scene.layout.Priority;
+import javafx.scene.control.Button;
+import javafx.geometry.Insets;
+
 import javafx.scene.layout.VBox;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
@@ -89,6 +94,7 @@ public class AdminScreenUsersController
     @FXML
     private ListView<HBox> userslist;
 
+    int adding_counter = 0;
 
 
 
@@ -102,98 +108,6 @@ public class AdminScreenUsersController
 
 
 
-    /**
-     * Adds a user item to the specified ListView. The user is represented as an HBox containing four AnchorPanes
-     *
-     * @param listView the ListView to which the new menu item will be added. Each user item will be displayed as an HBox.
-     * @param name the name of the user item (e.g., the michael smith, displayed in the first column of the HBox.
-     * @param email the email of the user, displayed in the second column of the HBox.
-     * @param username the username of the user, displayed in the third column of the HBox.
-     * @param userSince time the account was made, displayed in the fourth column of the HBox.
-     * @param role the role of the user
-     */
-    public static void addUserToListView(ListView<HBox> listView, String name, String email, String username, String userSince, String role) {
-
-        // Create the main HBox
-        HBox hBox = new HBox();
-        hBox.setPrefHeight(50.0);
-        hBox.setPrefWidth(200.0);
-
-        // VBox to hold Name and Email (Email will be below Name)
-        VBox nameVBox = new VBox();
-        nameVBox.setAlignment(Pos.CENTER); // Center the text inside the VBox
-        nameVBox.setSpacing(5); // Space between name and email
-
-        // Name label
-        Label nameLabel = new Label(name);
-        nameLabel.setAlignment(Pos.CENTER); // Center text within the label
-
-        // Email label (below name)
-        Label emailLabel = new Label(email);
-        emailLabel.setTextFill(javafx.scene.paint.Color.valueOf("#918e8e"));
-        emailLabel.setAlignment(Pos.CENTER); // Center text within the label
-
-        // Add name and email labels to the VBox
-        nameVBox.getChildren().addAll(nameLabel, emailLabel);
-
-        // Wrap VBox in an AnchorPane (to match your FXML layout)
-        AnchorPane nameAnchorPane = new AnchorPane();
-        nameAnchorPane.setPrefHeight(50.0);
-        nameAnchorPane.setPrefWidth(212.0);
-        nameAnchorPane.getChildren().add(nameVBox);
-
-        // Position the VBox in the center of the AnchorPane
-        AnchorPane.setTopAnchor(nameVBox, 0.0);
-        AnchorPane.setBottomAnchor(nameVBox, 0.0);
-        AnchorPane.setLeftAnchor(nameVBox, 0.0);
-        AnchorPane.setRightAnchor(nameVBox, 0.0);
-
-        // AnchorPane for Username
-        AnchorPane usernameAnchorPane = new AnchorPane();
-        usernameAnchorPane.setPrefHeight(200.0);
-        usernameAnchorPane.setPrefWidth(200.0);
-
-        Label usernameLabel = new Label(username);
-        usernameLabel.setAlignment(Pos.CENTER); // Center text within the label
-        usernameLabel.setLayoutX(45.0);
-        usernameLabel.setLayoutY(16.0);
-
-        usernameAnchorPane.getChildren().add(usernameLabel);
-
-        // AnchorPane for User Since (Date)
-        AnchorPane userSinceAnchorPane = new AnchorPane();
-        userSinceAnchorPane.setPrefHeight(200.0);
-        userSinceAnchorPane.setPrefWidth(200.0);
-
-        Label userSinceLabel = new Label(userSince);
-        userSinceLabel.setAlignment(Pos.CENTER); // Center text within the label
-        userSinceLabel.setLayoutX(35.0); //57.0
-        userSinceLabel.setLayoutY(16.0);
-
-        userSinceAnchorPane.getChildren().add(userSinceLabel);
-
-        // AnchorPane for Role
-        AnchorPane roleAnchorPane = new AnchorPane();
-        roleAnchorPane.setPrefHeight(200.0);
-        roleAnchorPane.setPrefWidth(200.0);
-
-        Label roleLabel = new Label(role);
-        roleLabel.setAlignment(Pos.CENTER); // Center text within the label
-        roleLabel.setLayoutX(46.0);
-        roleLabel.setLayoutY(10.0);
-        roleLabel.setPrefHeight(30.0);
-        roleLabel.setPrefWidth(60.0);
-        roleLabel.setStyle("-fx-background-color: #0095FF; -fx-background-radius: 10;");
-        roleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        roleAnchorPane.getChildren().add(roleLabel);
-
-        // Add all anchor panes to the HBox
-        hBox.getChildren().addAll(nameAnchorPane, usernameAnchorPane, userSinceAnchorPane, roleAnchorPane);
-
-        // Add the HBox to the ListView
-        listView.getItems().add(hBox);
-    }
 
 
 
@@ -222,20 +136,37 @@ public class AdminScreenUsersController
     }
     @FXML
         protected void onAddUserButtonClick(){
-            addUserToListView(userslist,"steve","steve@gmail.com","Graycat45","20/20/2033","Waiter");
+
+        if(adding_counter == 0){
+            addUserToListView(userslist,String.valueOf(adding_counter),"steve steven","steve@gmail.com","Graycat45","20/20/2033","Waiter");
+        }
+        else if(adding_counter == 1){
+            addUserToListView(userslist,String.valueOf(adding_counter),"paul Allen","Paul@gmail.com","Blackcat45","20/30/2033","Cook");
+        }
+        else if(adding_counter == 2){
+            addUserToListView(userslist,String.valueOf(adding_counter),"Rachael Black","rachael@gmail.com","bird45","70/30/2033","Admin");
+        }
+        else{
+            addUserToListView(userslist,String.valueOf(adding_counter),"you get it","meow@gmail.com","meow","meow","meow");
+        }
+        adding_counter++;
+
     }
     @FXML
     protected void onCancelButtonClick(){
 
     }
+
     @FXML
     protected void onEditButtonClick(){
 
     }
+
     @FXML
     protected void onRemoveButtonClick(){
 
     }
+
 
 
 
@@ -276,4 +207,141 @@ public class AdminScreenUsersController
         Stage stage = (Stage) logoutbutton.getScene().getWindow();
         GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);
     }
+
+
+    // Placeholder methods for button actions
+    private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
+        // Implement edit menu item logic here
+    }
+
+    private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
+        // Implement remove menu item logic here
+
+        ObservableList<HBox> items = userslist.getItems(); // Get the items of the ListView
+
+        // Loop through the list to find the HBox with the matching ID
+        for (int i = 0; i < items.size(); i++) {
+            HBox hbox = items.get(i);
+
+            if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
+                items.remove(i);  // Remove the HBox at the found index
+                break;            // Exit the loop once the HBox is removed
+            }
+        }
+    }
+
+
+
+    /**
+     * Adds a user item to the specified ListView. The user is represented as an HBox containing four AnchorPanes
+     *
+     * @param id the way to identify the entry along with the listview index, recommend matching them up
+     * @param listView the ListView to which the new menu item will be added. Each user item will be displayed as an HBox.
+     * @param name the name of the user item (e.g., the michael smith, displayed in the first column of the HBox.
+     * @param email the email of the user, displayed in the second column of the HBox.
+     * @param username the username of the user, displayed in the third column of the HBox.
+     * @param userSince time the account was made, displayed in the fourth column of the HBox.
+     * @param role the role of the user
+     */
+    public void addUserToListView(ListView<HBox> listView, String id, String name, String email, String username, String userSince, String role) {
+        HBox hbox = new HBox();
+        hbox.setId(id);
+        hbox.setPrefHeight(50.0);
+
+        // Name and Email
+        AnchorPane nameEmailPane = new AnchorPane();
+        Label nameLabel = new Label(name);
+        nameLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        nameLabel.setContentDisplay(ContentDisplay.BOTTOM);
+        nameLabel.setPrefSize(83.2, 50.4);
+        Label emailLabel = new Label(email);
+        emailLabel.setTextFill(javafx.scene.paint.Color.web("#918e8e"));
+        nameLabel.setGraphic(emailLabel);
+        AnchorPane.setTopAnchor(nameLabel, 0.0);
+        AnchorPane.setRightAnchor(nameLabel, 0.0);
+        AnchorPane.setBottomAnchor(nameLabel, 0.0);
+        AnchorPane.setLeftAnchor(nameLabel, 0.0);
+        nameEmailPane.getChildren().add(nameLabel);
+        HBox.setHgrow(nameEmailPane, Priority.ALWAYS);
+
+        // Username
+        AnchorPane usernamePane = new AnchorPane();
+        Label usernameLabel = new Label(username);
+        usernameLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        usernameLabel.setContentDisplay(ContentDisplay.CENTER);
+        usernameLabel.setPrefSize(111.2, 50.4);
+        AnchorPane.setTopAnchor(usernameLabel, 0.0);
+        AnchorPane.setRightAnchor(usernameLabel, 0.0);
+        AnchorPane.setBottomAnchor(usernameLabel, 0.0);
+        AnchorPane.setLeftAnchor(usernameLabel, 0.0);
+        usernamePane.getChildren().add(usernameLabel);
+        HBox.setHgrow(usernamePane, Priority.ALWAYS);
+
+        // User Since Date
+        AnchorPane datePane = new AnchorPane();
+        Label dateLabel = new Label(userSince);
+        dateLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        dateLabel.setPrefSize(89.6, 50.4);
+        AnchorPane.setTopAnchor(dateLabel, 0.0);
+        AnchorPane.setRightAnchor(dateLabel, 0.0);
+        AnchorPane.setBottomAnchor(dateLabel, 0.0);
+        AnchorPane.setLeftAnchor(dateLabel, 0.0);
+        datePane.getChildren().add(dateLabel);
+        HBox.setHgrow(datePane, Priority.ALWAYS);
+
+        // Role
+        AnchorPane rolePane = new AnchorPane();
+        Label roleLabel = new Label(role);
+        roleLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        roleLabel.setPrefSize(83.2, 50.4);
+        roleLabel.setStyle("-fx-background-color: #0095FF; -fx-background-radius: 10;");
+        roleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+        AnchorPane.setTopAnchor(roleLabel, 0.0);
+        AnchorPane.setRightAnchor(roleLabel, 0.0);
+        AnchorPane.setBottomAnchor(roleLabel, 0.0);
+        AnchorPane.setLeftAnchor(roleLabel, 0.0);
+        rolePane.getChildren().add(roleLabel);
+        rolePane.setPadding(new Insets(10, 0, 10, 0));
+        HBox.setHgrow(rolePane, Priority.ALWAYS);
+
+        // Edit Button
+        AnchorPane editButtonPane = new AnchorPane();
+        editButtonPane.setMaxWidth(100.0);
+        editButtonPane.setMinWidth(100.0);
+        Button editButton = new Button("Edit");
+        editButton.setId("editbutton");
+        editButton.setLayoutX(35.0);
+        editButton.setLayoutY(12.0);
+        editButton.setMinHeight(26.4);
+        editButton.setMaxHeight(26.4);
+        editButton.setPrefHeight(26.4);
+        editButton.setMinWidth(50.0);
+        editButton.getStyleClass().add("edit-button");
+        editButton.setOnAction(event -> onEditButtonClick(event,id));
+        editButtonPane.getChildren().add(editButton);
+        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+
+        // Remove Button
+        AnchorPane removeButtonPane = new AnchorPane();
+        removeButtonPane.setMaxWidth(100.0);
+        removeButtonPane.setMinWidth(100.0);
+        Button removeButton = new Button("Remove");
+        removeButton.setId("removebutton");
+        removeButton.setLayoutX(11.0);
+        removeButton.setLayoutY(12.0);
+        removeButton.setMinHeight(26.4);
+        removeButton.setPrefHeight(26.4);
+        removeButton.setMinWidth(50.0);
+        removeButton.getStyleClass().add("remove-button");
+        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
+        removeButtonPane.getChildren().add(removeButton);
+        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
+
+        // Add all components to the HBox
+        hbox.getChildren().addAll(nameEmailPane, usernamePane, datePane, rolePane, editButtonPane, removeButtonPane);
+
+        // Add the HBox to the ListView
+        listView.getItems().add(hbox);
+    }
+
 }
