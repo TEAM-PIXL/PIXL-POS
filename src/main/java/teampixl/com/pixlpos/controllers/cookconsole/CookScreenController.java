@@ -39,10 +39,13 @@ public class CookScreenController extends GuiCommon {
 
     @FXML
     private void initialize() {
+        /* Get the orders (without items) */
         orders = orderAPI.getOrders();
+        /* Load the CSS file */
         orderview.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/teampixl/com/pixlpos/fxml/cookconsole/stylesheets/dyanmics.css")).toExternalForm());
         updateOrderListView();
 
+        /* Get the current user */
         Users currentUser = userStack.getCurrentUser();
         if (currentUser != null) {
             System.out.println("Current User: " + currentUser.getMetadata().metadata().get("username"));
@@ -50,7 +53,9 @@ public class CookScreenController extends GuiCommon {
             System.err.println("Error: Current user is not set.");
         }
 
+        /* Set the event handlers */
         orderview.setOnMouseClicked(event -> {
+            /* Highlight the selected order */
             VBox selectedVBox = orderview.getSelectionModel().getSelectedItem();
             if (selectedVBox != null) {
                 for (VBox vbox : orderview.getItems()) {
@@ -84,15 +89,12 @@ public class CookScreenController extends GuiCommon {
         }
     }
 
-    @FXML
-    private void onLogoutButtonClick() {
-        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
-    }
-
     private void updateOrderListView() {
+        /* Clear the list view */
         orderview.getItems().clear();
+        /* Add the orders to the list view */
         for (Order order : orders) {
-            Order.OrderStatus status = Order.OrderStatus.valueOf(order.getMetadata().metadata().get(ORDER_STATUS_KEY).toString());
+            Order.OrderStatus status = Order.OrderStatus.valueOf(order.getMetadata().metadata().get(ORDER_STATUS_KEY).toString()); //Clear and works
             if (status == Order.OrderStatus.SENT) {
                 VBox orderVBox = createOrderVBox(order);
                 orderview.getItems().add(orderVBox);
@@ -101,9 +103,11 @@ public class CookScreenController extends GuiCommon {
     }
 
     private VBox createOrderVBox(Order order) {
+        /* Create the order VBox */
         VBox orderVBox = new VBox();
         orderVBox.getStyleClass().add("vbox-order");
 
+        /* Create the order VBox children */
         Label orderNumLabel = new Label("Order#: " + order.getOrderNumber());
         orderNumLabel.getStyleClass().add("label-order-number");
 
@@ -129,6 +133,7 @@ public class CookScreenController extends GuiCommon {
         VBox itemsVBox = new VBox();
         itemsVBox.getStyleClass().add("vbox-items");
         Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById(order.getMetadata().metadata().get(ORDER_ID_KEY).toString());
+        System.out.println("Order Items: " + orderItems);
         for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
             String itemName = entry.getKey().getMetadata().metadata().get("itemName").toString();
             int quantity = entry.getValue();
@@ -161,12 +166,18 @@ public class CookScreenController extends GuiCommon {
         return null;
     }
 
+    /* ------->HELPER FUNCTIONS<--------- */
     private void showAlert(String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Order Error");
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void onLogoutButtonClick() {
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
     }
 }
 
