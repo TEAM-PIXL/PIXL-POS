@@ -178,7 +178,7 @@
                      <children>
                         <AnchorPane prefHeight="50.0" prefWidth="212.0">
                            <children>
-                              <Label layoutX="41.0" layoutY="15.0"  text=""styleClass="database-label" textFill="#8f9bb3">
+                              <Label layoutX="41.0" layoutY="15.0"  text="Item Name" styleClass="database-label" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -196,7 +196,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="210.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="22.0" layoutY="14.0" styleClass="database-label" textFill="#8f9bb3">
+                              <Label layoutX="22.0" layoutY="14.0" styleClass="database-label" text="Actual Quantity" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
