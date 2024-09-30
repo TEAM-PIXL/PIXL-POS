@@ -811,17 +811,24 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String userId = rs.getString("user_id");
                 Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
                 boolean isCompleted = rs.getInt("is_completed") == 1;
+                Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                int tableNumber = rs.getInt("table_number");
                 long createdAt = rs.getLong("created_at");
                 long updatedAt = rs.getLong("updated_at");
                 double total = rs.getDouble("total");
+                String specialRequests = rs.getString("special_requests");
 
                 Order order = new Order(orderNumber, userId);
                 order.updateMetadata("order_id", orderId);
                 order.updateMetadata("order_status", orderStatus);
                 order.updateMetadata("is_completed", isCompleted);
+                order.updateMetadata("order_type", orderType);
+                order.updateMetadata("table_number", tableNumber);
                 order.updateMetadata("created_at", createdAt);
                 order.updateMetadata("updated_at", updatedAt);
                 order.setDataValue("total", total);
+                order.setDataValue("specialRequests", specialRequests);
+                order.setDataValue("paymentMethod", rs.getString("payment_method"));
 
                 orders.add(order);
             }
@@ -916,7 +923,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void saveOrderToDatabase(Order order) {
-        String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, total, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, order_type, table_number, total, special_requests, payment_method, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -926,9 +933,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setString(3, (String) order.getMetadata().metadata().get("user_id"));
             pstmt.setString(4, order.getMetadata().metadata().get("order_status").toString());
             pstmt.setInt(5, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
-            pstmt.setDouble(6, (Double) order.getData().get("total"));
-            pstmt.setLong(7, (Long) order.getMetadata().metadata().get("created_at"));
-            pstmt.setLong(8, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(6, order.getMetadata().metadata().get("order_type").toString());
+            pstmt.setInt(7, (Integer) order.getMetadata().metadata().get("table_number"));
+            pstmt.setDouble(8, (Double) order.getData().get("total"));
+            pstmt.setString(9, (String) order.getData().get("specialRequests"));
+            pstmt.setString(10, (String) order.getData().get("paymentMethod"));
+            pstmt.setLong(11, (Long) order.getMetadata().metadata().get("created_at"));
+            pstmt.setLong(12, (Long) order.getMetadata().metadata().get("updated_at"));
 
             pstmt.executeUpdate();
             System.out.println("Order saved to database.");
@@ -998,14 +1009,18 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void updateOrderInDatabase(Order order) {
-        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, total = ?, updated_at = ? WHERE order_id = ?";
+        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, order_type = ?, table_number = ?, total = ?, special_requests = ?, payment_method = ?, updated_at = ? WHERE order_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, order.getMetadata().metadata().get("order_status").toString());
             pstmt.setInt(2, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
+            pstmt.setString(3, order.getMetadata().metadata().get("order_type").toString());
+            pstmt.setInt(4, (Integer) order.getMetadata().metadata().get("table_number"));
             pstmt.setDouble(3, (Double) order.getData().get("total"));
+            pstmt.setString(4, (String) order.getData().get("specialRequests"));
+            pstmt.setString(5, (String) order.getData().get("paymentMethod"));
             pstmt.setLong(4, (Long) order.getMetadata().metadata().get("updated_at"));
             pstmt.setString(5, (String) order.getMetadata().metadata().get("order_id"));
 

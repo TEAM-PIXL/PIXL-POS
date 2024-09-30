@@ -15,6 +15,7 @@ import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
 import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
+    public static void main(String[] args) {
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
 //        UserStack userStack = UserStack.getInstance();
@@ -109,5 +110,5 @@ public class APITest {
 //        } else {
 //            System.out.println(returnStatus("Order could not be validated with the following errors:", RESULT3));
 //        }
-
+    }
 }

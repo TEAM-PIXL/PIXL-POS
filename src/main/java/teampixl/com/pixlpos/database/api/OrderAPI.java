@@ -154,6 +154,23 @@ public class OrderAPI {
     }
 
     /**
+     * Retrieves the order number based on the order ID.
+     *
+     * @param orderId the order ID
+     * @return the order number
+     */
+    public Integer reverseKeySearch(String orderId) {
+        if (orderId == null) {
+            return null;
+        }
+        return dataStore.readOrders().stream()
+                .filter(order -> orderId.equals(order.getMetadata().metadata().get("order_id")))
+                .findFirst()
+                .map(order -> (Integer) order.getMetadata().metadata().get("order_number"))
+                .orElse(null);
+    }
+
+    /**
      * Transforms an order ID into an Order object.
      *
      * @param orderId the order ID
@@ -287,7 +304,7 @@ public class OrderAPI {
      * Creates a new order and adds it to the database.
      *
      * @param orderNumber the order number
-     * @param userId      the user ID
+     * @param userId the user ID
      * @return a list of StatusCodes indicating the result of the operation
      */
     public List<StatusCode> postOrder(Integer orderNumber, String userId) {
@@ -320,9 +337,9 @@ public class OrderAPI {
     /**
      * Adds a menu item to an existing order.
      *
-     * @param orderId    the order ID
+     * @param orderId the order ID
      * @param menuItemId the menu item ID
-     * @param quantity   the quantity to add
+     * @param quantity the quantity to add
      * @return a list of StatusCodes indicating the result of the operation
      */
     public List<StatusCode> putOrderItem(String orderId, String menuItemId, Integer quantity) {
@@ -364,7 +381,7 @@ public class OrderAPI {
     /**
      * Updates the status of an existing order.
      *
-     * @param orderId     the order ID
+     * @param orderId the order ID
      * @param orderStatus the new order status
      * @return a list of StatusCodes indicating the result of the operation
      */
@@ -397,9 +414,9 @@ public class OrderAPI {
     /**
      * Removes a menu item from an existing order.
      *
-     * @param orderId    the order ID
+     * @param orderId the order ID
      * @param menuItemId the menu item ID
-     * @param quantity   the quantity to remove
+     * @param quantity the quantity to remove
      * @return a list of StatusCodes indicating the result of the operation
      */
     public List<StatusCode> deleteOrderItem(String orderId, String menuItemId, Integer quantity) {

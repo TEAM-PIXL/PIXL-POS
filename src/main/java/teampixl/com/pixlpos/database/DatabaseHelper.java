@@ -102,7 +102,11 @@ public class DatabaseHelper {
             user_id TEXT NOT NULL,
             order_status TEXT NOT NULL,
             is_completed INTEGER NOT NULL DEFAULT 0,
+            order_type TEXT NOT NULL,
+            table_number INTEGER,
             total REAL NOT NULL,
+            special_requests TEXT,
+            payment_method TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
