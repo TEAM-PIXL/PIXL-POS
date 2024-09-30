@@ -39,23 +39,17 @@ public class CookScreenController extends GuiCommon {
 
     @FXML
     private void initialize() {
-        /* Get the orders (without items) */
         orders = orderAPI.getOrders();
-        /* Load the CSS file */
         orderview.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/teampixl/com/pixlpos/fxml/cookconsole/stylesheets/dyanmics.css")).toExternalForm());
         updateOrderListView();
 
-        /* Get the current user */
         Users currentUser = userStack.getCurrentUser();
         if (currentUser != null) {
             System.out.println("Current User: " + currentUser.getMetadata().metadata().get("username"));
         } else {
             System.err.println("Error: Current user is not set.");
         }
-
-        /* Set the event handlers */
         orderview.setOnMouseClicked(event -> {
-            /* Highlight the selected order */
             VBox selectedVBox = orderview.getSelectionModel().getSelectedItem();
             if (selectedVBox != null) {
                 for (VBox vbox : orderview.getItems()) {
@@ -90,9 +84,7 @@ public class CookScreenController extends GuiCommon {
     }
 
     private void updateOrderListView() {
-        /* Clear the list view */
         orderview.getItems().clear();
-        /* Add the orders to the list view */
         for (Order order : orders) {
             Order.OrderStatus status = Order.OrderStatus.valueOf(order.getMetadata().metadata().get(ORDER_STATUS_KEY).toString()); //Clear and works
             if (status == Order.OrderStatus.SENT) {
@@ -103,11 +95,9 @@ public class CookScreenController extends GuiCommon {
     }
 
     private VBox createOrderVBox(Order order) {
-        /* Create the order VBox */
         VBox orderVBox = new VBox();
         orderVBox.getStyleClass().add("vbox-order");
 
-        /* Create the order VBox children */
         Label orderNumLabel = new Label("Order#: " + order.getOrderNumber());
         orderNumLabel.getStyleClass().add("label-order-number");
 
