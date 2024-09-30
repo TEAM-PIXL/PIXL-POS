@@ -216,13 +216,13 @@ public class MenuAPI {
     /**
      * Creates a new menu item and adds it to the database.
      *
-     * @param MENU_ITEM_NAME        the name of the menu item
-     * @param MENU_ITEM_PRICE       the price of the menu item
-     * @param ACTIVE_ITEM           the active status of the menu item
-     * @param MENU_ITEM_TYPE        the type of the menu item (ItemType)
+     * @param MENU_ITEM_NAME the name of the menu item
+     * @param MENU_ITEM_PRICE the price of the menu item
+     * @param ACTIVE_ITEM the active status of the menu item
+     * @param MENU_ITEM_TYPE the type of the menu item (ItemType)
      * @param MENU_ITEM_DESCRIPTION the description of the menu item
-     * @param MENU_ITEM_NOTES       the notes for the menu item
-     * @param DIETARY_REQUIREMENT   the dietary requirement of the menu item
+     * @param MENU_ITEM_NOTES the notes for the menu item
+     * @param DIETARY_REQUIREMENT the dietary requirement of the menu item
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> postMenuItem(String MENU_ITEM_NAME, Double MENU_ITEM_PRICE, boolean ACTIVE_ITEM,
@@ -246,7 +246,6 @@ public class MenuAPI {
                 return VALIDATIONS;
             }
 
-            // Create the MenuItem using the provided constructor
             MenuItem MENU_ITEM = new MenuItem(MENU_ITEM_NAME, MENU_ITEM_PRICE, MENU_ITEM_TYPE, ACTIVE_ITEM,
                     MENU_ITEM_DESCRIPTION, DIETARY_REQUIREMENT);
 
@@ -266,9 +265,9 @@ public class MenuAPI {
     /**
      * Overloaded method to create a new menu item with minimal parameters.
      *
-     * @param MENU_ITEM_NAME        the name of the menu item
-     * @param MENU_ITEM_PRICE       the price of the menu item
-     * @param MENU_ITEM_TYPE        the type of the menu item
+     * @param MENU_ITEM_NAME the name of the menu item
+     * @param MENU_ITEM_PRICE the price of the menu item
+     * @param MENU_ITEM_TYPE the type of the menu item
      * @param MENU_ITEM_DESCRIPTION the description of the menu item
      * @return a list of status codes indicating the result of the operation
      */
@@ -280,7 +279,7 @@ public class MenuAPI {
     /**
      * Updates the name of an existing menu item.
      *
-     * @param MENU_ITEM_NAME     the current name of the menu item
+     * @param MENU_ITEM_NAME the current name of the menu item
      * @param NEW_MENU_ITEM_NAME the new name for the menu item
      * @return a list of status codes indicating the result of the operation
      */
@@ -305,12 +304,10 @@ public class MenuAPI {
         }
     }
 
-    // Similar updates are made to other methods to ensure consistency with the MenuItem class
-
     /**
      * Updates the price of an existing menu item.
      *
-     * @param MENU_ITEM_NAME      the name of the menu item
+     * @param MENU_ITEM_NAME the name of the menu item
      * @param NEW_MENU_ITEM_PRICE the new price for the menu item
      * @return a list of status codes indicating the result of the operation
      */
@@ -338,7 +335,7 @@ public class MenuAPI {
     /**
      * Updates the item type of an existing menu item.
      *
-     * @param MENU_ITEM_NAME    the name of the menu item
+     * @param MENU_ITEM_NAME the name of the menu item
      * @param NEW_MENU_ITEM_TYPE the new item type for the menu item
      * @return a list of status codes indicating the result of the operation
      */
@@ -366,7 +363,7 @@ public class MenuAPI {
     /**
      * Updates the description of an existing menu item.
      *
-     * @param MENU_ITEM_NAME           the name of the menu item
+     * @param MENU_ITEM_NAME the name of the menu item
      * @param NEW_MENU_ITEM_DESCRIPTION the new description for the menu item
      * @return a list of status codes indicating the result of the operation
      */
@@ -394,7 +391,7 @@ public class MenuAPI {
     /**
      * Updates the notes of an existing menu item.
      *
-     * @param MENU_ITEM_NAME    the name of the menu item
+     * @param MENU_ITEM_NAME the name of the menu item
      * @param NEW_MENU_ITEM_NOTES the new notes for the menu item
      * @return a list of status codes indicating the result of the operation
      */
@@ -418,8 +415,6 @@ public class MenuAPI {
             return VALIDATIONS;
         }
     }
-
-    // ... Other methods remain consistent with the MenuItem class
 
     /**
      * Searches for menu items in the database based on a query string.

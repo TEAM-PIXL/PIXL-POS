@@ -224,7 +224,7 @@ public class UsersAPI {
     }
 
     /**
-     * Transforms a ID into a Users object in memory. Core method for user retrieval.
+     * Transforms an ID into a Users object in memory. Core method for user retrieval.
      * This method is useful when dealing with metadata references in other models.
      *
      * @param ID the query to search for the user
