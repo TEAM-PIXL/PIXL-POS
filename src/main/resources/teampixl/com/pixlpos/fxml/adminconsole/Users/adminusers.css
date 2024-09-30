@@ -110,3 +110,30 @@
     -fx-background-radius: 15px;
     -fx-background-color: #F5F5F5;
 }
+
+/* Tab Content */
+.manage-user-container, .list-user-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10px;
+}
+
+/* ListPane styling */
+.list-pane {
+    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10px;
+}
+
+/* database labels colour*/
+.table-header {
+    -fx-background-color: #EFF4FA;
+}
+/* database label text styling */
+.database-label {
+    -fx-text-fill: #8f9bb3;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}

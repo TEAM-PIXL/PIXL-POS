@@ -164,7 +164,7 @@
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
          <children>
-                <VBox prefHeight="654.4" prefWidth="600.0" style="-fx-background-color: white; -fx-background-radius: 20;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <VBox prefHeight="654.4" prefWidth="600.0"  styleClass="list-menu-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label text="Stock Database">
                      <font>
@@ -174,11 +174,11 @@
                         <Insets left="20.0" />
                      </VBox.margin>
                   </Label>
-                  <HBox prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #EFF4F4;">
+                  <HBox prefHeight="50.0" prefWidth="200.0" styleClass="table-header">
                      <children>
                         <AnchorPane prefHeight="50.0" prefWidth="212.0">
                            <children>
-                              <Label layoutX="41.0" layoutY="6.0" text="Item Name" textFill="#8f9bb3">
+                              <Label layoutX="41.0" layoutY="15.0"  text=""styleClass="database-label" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -187,7 +187,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="12.0" layoutY="6.0" text="Desired Quantity" textFill="#8f9bb3">
+                              <Label layoutX="12.0" layoutY="14.0" styleClass="database-label" text="Desired Quantity" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -196,7 +196,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="210.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="22.0" layoutY="6.0" text="Actual Quanity" textFill="#8f9bb3">
+                              <Label layoutX="22.0" layoutY="14.0" styleClass="database-label" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -205,7 +205,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="396.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="62.0" layoutY="6.0" text="Price" textFill="#8f9bb3">
+                              <Label layoutX="62.0" layoutY="14.0" styleClass="database-label" text="Price" textFill="#8f9bb3">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -214,7 +214,7 @@
                         </AnchorPane>
                      </children>
                   </HBox>
-                  <ListView fx:id="itemlist" prefHeight="1000.0" style="-fx-border-color: white;" />
+                  <ListView fx:id="itemlist" VBox.vgrow="ALWAYS" styleClass="list-pane"  />
                </children>
                <padding>
                   <Insets top="10.0" />
@@ -243,7 +243,7 @@
                <center>
                   <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 20;" BorderPane.alignment="CENTER">
                      <center>
-                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
+                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" styleClass="manage-menu-container" BorderPane.alignment="CENTER">
                            <children>
                               <Label text="Item Infomation">
                                  <padding>

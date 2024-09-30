@@ -13,13 +13,13 @@
     -fx-stroke-width: 0.2;
 }
 
-.message-text {
+.message-label {
     -fx-text-fill: #757575;
     -fx-font-size: 12px;
     -fx-font-family: "Arial", sans-serif;
 }
 
-.header-label {
+.hello-label {
     -fx-text-fill: black;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
@@ -62,6 +62,8 @@
     -fx-text-fill: white;
     -fx-background-radius: 5;
 }
+
+
 
 .submit-button{
     -fx-background-color: #4A85F6;
@@ -111,4 +113,38 @@
 .search-bar {
     -fx-background-radius: 15px;
     -fx-background-color: #F5F5F5;
+}
+
+/* Tab Content */
+.manage-menu-container, .list-menu-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10px;
+}
+
+/* ListPane styling */
+.list-pane {
+    -fx-background-color: white;
+    -fx-border-color: #white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10px;
+}
+
+/* Database Labels colour */
+.table-header {
+    -fx-background-color: #EFF4FA;
+}
+/* Database Label text styling */
+.database-label {
+    -fx-text-fill: #8f9bb3;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+/* Title styling */
+.container-label {
+    -fx-text-fill: #222b45;
+    -fx-font-size: 19px;
+    -fx-font-family: "Arial", sans-serif;
 }
