@@ -244,36 +244,36 @@ public class AdminScreenUsersController
     protected void onUsersButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) usersbutton.getScene().getWindow();
-        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_USERS_FXML, GuiCommon.ADMIN_SCREEN_USERS_TITLE, stage);
+        GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_USERS_FXML, GuiCommon.ADMIN_SCREEN_USERS_TITLE, stage);
     }
     @FXML
     protected void onMenuButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) menubutton.getScene().getWindow();
-        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_MENU_FXML, GuiCommon.ADMIN_SCREEN_MENU_TITLE, stage);
+        GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_MENU_FXML, GuiCommon.ADMIN_SCREEN_MENU_TITLE, stage);
     }
     @FXML
     protected void onHomeButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) homebutton.getScene().getWindow();
-        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_HOME_FXML, GuiCommon.ADMIN_SCREEN_HOME_TITLE, stage);
+        GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_HOME_FXML, GuiCommon.ADMIN_SCREEN_HOME_TITLE, stage);
     }
     @FXML
     protected void onStockButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) stockbutton.getScene().getWindow();
-        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_STOCK_FXML, GuiCommon.ADMIN_SCREEN_STOCK_TITLE, stage);
+        GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_STOCK_FXML, GuiCommon.ADMIN_SCREEN_STOCK_TITLE, stage);
     }
     @FXML
     protected void onAnalyticsButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) analyticsbutton.getScene().getWindow();
-        GuiCommon.loadStage(GuiCommon.ADMIN_SCREEN_ANALYTICS_FXML, GuiCommon.ADMIN_SCREEN_ANALYTICS_TITLE, stage);
+        GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_ANALYTICS_FXML, GuiCommon.ADMIN_SCREEN_ANALYTICS_TITLE, stage);
     }
     @FXML
     protected void onLogoutButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) logoutbutton.getScene().getWindow();
-        GuiCommon.loadStage(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);
+        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);
     }
 }
