@@ -215,7 +215,7 @@
                         </AnchorPane>
                      </children>
                   </HBox>
-                  <ListView fx:id="userslist" prefHeight="1000.0" prefWidth="679.0" style="-fx-border-color: white;" />
+                  <ListView fx:id="userslist" prefWidth="100.0" style="-fx-border-color: white;" VBox.vgrow="ALWAYS" />
                </children>
                <padding>
                   <Insets top="10.0" />
