@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.authentication;
 
+import teampixl.com.pixlpos.database.api.UsersAPI;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
 
@@ -23,12 +24,14 @@ public class RegistrationService {
      * @return boolean indicating whether the registration was successful
      */
     public boolean registerUser(String firstName, String lastName, String username, String plainPassword, String email, Users.UserRole role) {
-        if (dataStore.usernameExists(username)) {
+        try {
+            String hashedPassword = PasswordUtils.hashPassword(plainPassword);
+            Users newUser = new Users(firstName, lastName, username, hashedPassword, email, role);
+            dataStore.createUser(newUser);
+            return true;
+        }
+        catch (Exception e) {
             return false;
         }
-        String hashedPassword = PasswordUtils.hashPassword(plainPassword);
-        Users newUser = new Users(firstName, lastName, username, hashedPassword, email, role);
-        dataStore.addUser(newUser);
-        return true;
     }
 }

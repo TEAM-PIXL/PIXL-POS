@@ -3,8 +3,12 @@ package teampixl.com.pixlpos.database.api;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.Users;
 
+/**
+ * UserStack class to store the current user and any related keys.
+ */
 public class UserStack extends UsersAPI {
     private static final DataStore dataStore = DataStore.getInstance();
+    private static final UsersAPI usersAPI = UsersAPI.getInstance();
     private static UserStack instance;
 
     private UserStack() {
@@ -36,14 +40,11 @@ public class UserStack extends UsersAPI {
     /**
      * Sets the current user.
      *
-     * @param username the username of the user
+     * @param USERNAME the username of the user
      */
-    public void setCurrentUser(String username) {
-        currentUser = dataStore.getUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(username))
-                .findFirst()
-                .orElse(null);
-        currentUserId = UsersAPI.getUsersByUsername(username);
+    public void setCurrentUser(String USERNAME) {
+        currentUser = usersAPI.getUser(USERNAME);
+        currentUserId = usersAPI.keySearch(USERNAME);
     }
 
     /**

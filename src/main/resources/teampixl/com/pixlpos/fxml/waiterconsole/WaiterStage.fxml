@@ -4,18 +4,18 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<?import javafx.scene.shape.Line?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@waiterstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">   <right>
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@waiterstage.css" type="BorderPane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.waiterconsole.WaiterScreenController">   <right>
       <FlowPane hgap="20.0" prefHeight="579.0" prefWidth="487.0" styleClass="menu-container" vgap="20.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="classic" mnemonicParsing="false" styleClass="menu-button" text="Classic" />
@@ -45,23 +45,25 @@
    <bottom>
       <HBox prefHeight="103.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
          <children>
-            <FlowPane hgap="20.0" prefHeight="90.0" prefWidth="512.0" vgap="10.0">
+            <Region HBox.hgrow="ALWAYS" />
+            <FlowPane hgap="20.0" prefHeight="71.0" prefWidth="515.0" vgap="10.0">
                <children>
-                  <Button fx:id="send" layoutX="140.0" layoutY="20.0" mnemonicParsing="false" styleClass="send-button" text="Send" onAction="#sendOrder"/>
-                  <Button fx:id="itemcorrect" mnemonicParsing="false" prefHeight="35.0" prefWidth="128.0" styleClass="correct-buttons" text="Item Correct" onAction="#correctLastItem"/>
-                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="111.0" styleClass="void-button" text="Void Item" onAction="#voidSelectedItem"/>
-                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="90.0" styleClass="restart-button" text="Restart" onAction="#restartOrder"/>
+                  <Button fx:id="send" layoutX="140.0" layoutY="20.0" mnemonicParsing="false" onAction="#sendOrder" prefHeight="45.0" prefWidth="95.0" styleClass="send-button" text="Send" />
+                  <Button fx:id="itemcorrect" mnemonicParsing="false" onAction="#correctLastItem" prefHeight="45.0" prefWidth="130.0" styleClass="correct-buttons" text="Item Correct" />
+                  <Button fx:id="voiditem" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#voidSelectedItem" prefHeight="45.0" prefWidth="115.0" styleClass="void-button" text="Void Item" />
+                  <Button fx:id="restart" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#restartOrder" prefHeight="45.0" prefWidth="95.0" styleClass="restart-button" text="Restart" />
                </children>
                <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets bottom="10.0" right="10.0" top="15.0" />
                </HBox.margin>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </FlowPane>
+            <Region prefHeight="200.0" HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="495.0" spacing="10.0">
                <children>
-                  <Button fx:id="applynotes" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="apply-note-button" text="Apply Note" onAction="#applyNoteToSelectedItem"/>
+                  <Button fx:id="applynotes" mnemonicParsing="false" onAction="#applyNoteToSelectedItem" prefHeight="45.0" prefWidth="126.0" styleClass="apply-note-button" text="Apply Note" />
                   <TextField fx:id="notes" prefHeight="50.0" prefWidth="334.0" promptText="Notes" />
                </children>
             </HBox>
@@ -86,7 +88,7 @@
                   <Insets top="5.0" />
                </VBox.margin>
             </Label>
-            <Line endX="450.0" stroke="#4a85f6" strokeWidth="0.5">
+            <Line endX="700.0" stroke="#4a85f6" strokeWidth="0.5">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
@@ -108,9 +110,9 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </HBox>
-            <GridPane styleClass="grid-pane" fx:id="orderSummaryGrid">
+            <GridPane fx:id="orderSummaryGrid" styleClass="grid-pane">
             </GridPane>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
                <children>
                   <HBox alignment="CENTER" prefHeight="45.0" prefWidth="524.0" spacing="30.0" styleClass="order-header">
                      <children>
@@ -130,38 +132,16 @@
       </VBox>
    </center>
    <top>
-      <VBox prefHeight="49.0" prefWidth="1025.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="58.0" prefWidth="1280.0" styleClass="header-container" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="83.0" prefWidth="1025.0" styleClass="header-container">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo" text="PIXL Services">
-                     <HBox.margin>
-                        <Insets left="45.0" top="10.0" />
-                     </HBox.margin>
-                  </Text>
-                  <Line endX="-0.6213661432266235" endY="39.872005462646484" startX="-0.6213654279708862" startY="74.14559936523438">
-                     <HBox.margin>
-                        <Insets left="45.0" top="8.0" />
-                     </HBox.margin>
-                  </Line>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message" text="Hello Admin" textAlignment="CENTER">
-                     <HBox.margin>
-                        <Insets left="50.0" top="15.0" />
-                     </HBox.margin>
-                  </Text>
-                  <Button fx:id="logoutButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="32.0" prefWidth="118.0" styleClass="logout-button" text="Logout">
-                     <font>
-                        <Font name="Monospaced Regular" size="13.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets left="490.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
-               </children>
-            </HBox>
-            <HBox prefHeight="30.0" prefWidth="1025.0" />
-            <Line endX="1024.0" stroke="#757575" />
+            <Text layoutX="83.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo" text="PIXL Services" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="16.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message" text="Hello Admin" textAlignment="CENTER" />
+            <Button fx:id="logoutButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1101.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" prefWidth="85.0" styleClass="logout-button" text="Logout" AnchorPane.rightAnchor="20.0">
+               <font>
+                  <Font name="Monospaced Regular" size="13.0" />
+               </font>
+            </Button>
          </children>
-      </VBox>
+      </AnchorPane>
    </top>
 </fx:root>

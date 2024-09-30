@@ -4,12 +4,10 @@ import teampixl.com.pixlpos.models.Users;
 import javafx.collections.ObservableList;
 
 public interface IUserStore {
-    ObservableList<Users> getUsers();
-    void addUser(Users user);
-    void removeUser(Users user);
-    Users getUser(String username);
+    ObservableList<Users> readUsers();
+    void createUser(Users user);
+    void deleteUser(Users user);
     void updateUser(Users user);
-    void updateUserPassword(Users user, String newPassword);
 }
 
 

@@ -6,13 +6,19 @@
 
     <groupId>team-pixl.com</groupId>
     <artifactId>PIXL-POS</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>PIXL-POS</name>
 
     <properties>
+        <junit.version>5.8.2</junit.version>
+        <!-- Set the Java version property -->
+        <java.version>21</java.version>
+        <!-- Set the JavaFX version property -->
+        <javafx.version>21</javafx.version>
+        <!-- Maven Source and Target Compiler Versions -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>5.10.0</junit.version>
-        <java.version>21</java.version> <!-- Set the Java version property -->
     </properties>
 
     <dependencies>
@@ -20,19 +26,27 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>22</version> <!-- Specify the version of JavaFX -->
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>22</version>
+            <version>${javafx.version}</version>
         </dependency>
 
         <!-- JUnit dependencies -->
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.8.2</version>
+            <version>${junit.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -40,7 +54,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.8.2</version>
+            <version>${junit.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -72,15 +86,24 @@
             <artifactId>spring-security-crypto</artifactId>
             <version>5.6.4</version>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.fxml</include>
+                    <include>**/*.css</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <!-- Maven Compiler Plugin -->
             <plugin>
@@ -88,7 +111,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <release>${java.version}</release> <!-- Use the Java version property here -->
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
 
@@ -100,18 +123,16 @@
                 <executions>
                     <execution>
                         <id>default-cli</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                         <configuration>
-                            <mainClass>teampixl.com.pixlpos/teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
-                            <launcher>app</launcher>
-                            <jlinkZipName>app</jlinkZipName>
-                            <jlinkImageName>app</jlinkImageName>
-                            <noManPages>true</noManPages>
-                            <stripDebug>true</stripDebug>
-                            <noHeaderFiles>true</noHeaderFiles>
+                            <mainClass>teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
 
             <!-- Maven Surefire Plugin for running tests -->
             <plugin>
@@ -158,6 +179,20 @@
                 </executions>
             </plugin>
 
+            <!-- Java jar executable plugin maven -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
             <!-- Maven Resources Plugin to manage resources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -177,6 +212,162 @@
                                     <directory>${project.basedir}/src/main/resources</directory>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven assembly for cross-platform compilation -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven shade plugin for dependency reduced runtime pom.xml -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>teampixl.com.pixlpos.application.POSApplicationLauncher</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <!-- Exclude JavaFX classes from being shaded -->
+                                        <exclude>javafx/**</exclude>
+                                        <exclude>com/sun/javafx/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Exec-plugin for easy java executable compilation @ local -->
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>exec-maven-plugin</artifactId>-->
+<!--                <version>3.1.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>windows-executable</id>-->
+<!--                        <goals>-->
+<!--                            <goal>exec</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <executable>cmd</executable>-->
+<!--                            <arguments>-->
+<!--                                <argument>/c</argument>-->
+<!--                                <argument>echo Building Windows Executable</argument>-->
+<!--                                <argument>&amp;&amp;</argument>-->
+<!--                                <argument>mkdir</argument>-->
+<!--                                <argument>target\windows</argument>-->
+<!--                                <argument>&amp;&amp;</argument>-->
+<!--                                <argument>copy</argument>-->
+<!--                                <argument>target\${project.build.finalName}.jar</argument>-->
+<!--                                <argument>target\windows\${project.build.finalName}.exe</argument>-->
+<!--                            </arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>linux-executable</id>-->
+<!--                        <goals>-->
+<!--                            <goal>exec</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <executable>sh</executable>-->
+<!--                            <arguments>-->
+<!--                                <argument>-c</argument>-->
+<!--                                <argument>echo Building Linux Executable</argument>-->
+<!--                                <argument>&amp;&amp;</argument>-->
+<!--                                <argument>mkdir -p target/linux</argument>-->
+<!--                                <argument>&amp;&amp;</argument>-->
+<!--                                <argument>cp target/${project.build.finalName}.jar target/linux/${project.build.finalName}.sh</argument>-->
+<!--                            </arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>mac-executable</id>-->
+<!--                        <goals>-->
+<!--                            <goal>exec</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <executable>sh</executable>-->
+<!--                            <arguments>-->
+<!--                                <argument>-c</argument>-->
+<!--                                <argument>echo Building Mac Executable</argument>-->
+<!--                                <argument>&amp;&amp;</argument>-->
+<!--                                <argument>mkdir -p target/mac</argument>-->
+<!--                                <argument>&amp;&amp;</argument>-->
+<!--                                <argument>cp target/${project.build.finalName}.jar target/mac/${project.build.finalName}.app</argument>-->
+<!--                            </arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>create-windows-installer</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jpackage</executable>
+                            <arguments>
+                                <argument>--type</argument>
+                                <argument>msi</argument>
+                                <argument>--input</argument>
+                                <argument>${project.build.directory}</argument>
+                                <argument>--dest</argument>
+                                <argument>${project.build.directory}/installer</argument>
+                                <argument>--name</argument>
+                                <argument>PIXL-POS</argument>
+                                <argument>--app-version</argument>
+                                <argument>1.0</argument>
+                                <argument>--main-jar</argument>
+                                <argument>PIXL-POS-1.0-jar-with-dependencies.jar</argument>
+                                <argument>--main-class</argument>
+                                <argument>teampixl.com.pixlpos.application.POSApplicationLauncher</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -217,6 +408,14 @@
         <repository>
             <id>codehaus</id>
             <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>apache-snapshots</id>
+            <url>https://repository.apache.org/snapshots</url>
+        </repository>
+        <repository>
+            <id>codehaus-mojo</id>
+            <url>https://repository.codehaus.org</url>
         </repository>
     </repositories>
 </project>

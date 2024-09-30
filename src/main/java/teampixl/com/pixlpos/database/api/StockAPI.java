@@ -1,298 +1,412 @@
 package teampixl.com.pixlpos.database.api;
 
 import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.Ingredients;
 import teampixl.com.pixlpos.models.Stock;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
-
+import javafx.util.Pair;
+import java.lang.reflect.Method;
 
 /**
- * API for managing stock in the database.
+ * The StockAPI class is a singleton class responsible for managing stock items in memory.
+ * It provides methods to create, read, update, and delete stock items, as well as validation and search functionalities.
  */
 public class StockAPI {
-    private static StockAPI instance;
-    private static final DataStore dataStore = DataStore.getInstance();
+    private static StockAPI INSTANCE;
+    private static final DataStore DATA_STORE = DataStore.getInstance();
 
     private StockAPI() { }
 
+    /**
+     * Gets the singleton instance of the StockAPI.
+     *
+     * @return the instance of the StockAPI
+     */
     public static synchronized StockAPI getInstance() {
-        if (instance == null) {
-            instance = new StockAPI();
+        if (INSTANCE == null) {
+            INSTANCE = new StockAPI();
         }
-        return instance;
+        return INSTANCE;
     }
 
     /**
-     * Validates the stock ID.
-     * @param ingredientID ID of the ingredient.
-     * @return StatusCode indicating the validation status.
+     * Validates the ingredient ID associated with the stock.
+     *
+     * @param INGREDIENT_ID the ingredient ID to validate
+     * @return the status code indicating the result of the validation
      */
-    public StatusCode validateStockByIngredientID(UUID ingredientID) {
-        if (ingredientID == null) { return StatusCode.INVALID_STOCK_ID; }
+    public StatusCode validateStockByIngredientID(String INGREDIENT_ID) {
+        if (INGREDIENT_ID == null || INGREDIENT_ID.trim().isEmpty()) {
+            return StatusCode.INVALID_INGREDIENT_ID;
+        }
+        Ingredients INGREDIENT = IngredientsAPI.getInstance().keyTransform(INGREDIENT_ID);
+        if (INGREDIENT == null) {
+            return StatusCode.INGREDIENT_NOT_FOUND;
+        }
         return StatusCode.SUCCESS;
     }
 
     /**
-     * Validates the stock quantity.
-     * @param quantity Quantity of the stock.
-     * @return StatusCode indicating the validation status.
+     * Validates the quantity of the stock.
+     *
+     * @param QUANTITY the quantity to validate
+     * @return the status code indicating the result of the validation
      */
-    public StatusCode validateStockByQuantity(double quantity) {
-        if (quantity < 0) { return StatusCode.INVALID_STOCK_QUANTITY; }
+    public StatusCode validateStockByQuantity(Object QUANTITY) {
+        switch (QUANTITY) {
+            case null -> {
+                return StatusCode.INVALID_STOCK_QUANTITY;
+            }
+            case Integer i -> {
+                if (i < 0) {
+                    return StatusCode.INVALID_STOCK_QUANTITY;
+                }
+            }
+            case Double v -> {
+                if (v < 0) {
+                    return StatusCode.INVALID_STOCK_QUANTITY;
+                }
+            }
+            default -> {
+                return StatusCode.INVALID_STOCK_QUANTITY_TYPE;
+            }
+        }
         return StatusCode.SUCCESS;
     }
 
     /**
-     * Validates the stock unit.
-     * @param unit Unit of the stock.
-     * @return StatusCode indicating the validation status.
+     * Validates the unit type of the stock.
+     *
+     * @param UNIT_TYPE the unit type to validate
+     * @return the status code indicating the result of the validation
      */
-    public StatusCode validateStockByUnit(Stock.UnitType unit) {
-        if (unit == null) { return StatusCode.INVALID_STOCK_UNIT; }
+    public StatusCode validateStockByUnitType(Stock.UnitType UNIT_TYPE) {
+        if (UNIT_TYPE == null) {
+            return StatusCode.INVALID_STOCK_UNIT_TYPE;
+        }
         return StatusCode.SUCCESS;
     }
 
     /**
-     * Validates the stock on order status.
-     * @param onOrder On order status of the stock.
-     * @return StatusCode indicating the validation status.
+     * Validates the onOrder status of the stock.
+     *
+     * @return the status code indicating the result of the validation
      */
-    public StatusCode validateStockByOnOrder(int onOrder) {
-        if (onOrder != 0 && onOrder != 1) { return StatusCode.INVALID_STOCK_ONORDER; }
+    public StatusCode validateStockByOnOrder() {
         return StatusCode.SUCCESS;
     }
 
     /**
      * Validates the stock status.
-     * @param stockStatus Status of the stock.
-     * @return StatusCode indicating the validation status.
+     *
+     * @param STOCK_STATUS the stock status to validate
+     * @return the status code indicating the result of the validation
      */
-    public StatusCode validateStockStatus(Stock.StockStatus stockStatus) {
-        if (stockStatus == null) { return StatusCode.INVALID_STOCK_STATUS; }
+    public StatusCode validateStockByStockStatus(Stock.StockStatus STOCK_STATUS) {
+        if (STOCK_STATUS == null) {
+            return StatusCode.INVALID_STOCK_STATUS;
+        }
         return StatusCode.SUCCESS;
     }
 
-    /**
-     * Gets stock by ingredient name.
-     * @param ingredientName name of the ingredient.
-     * @return Stock object.
-     */
-    public String getStockByIngredientName(String ingredientName) {
-        IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
+    /* ---> IMPORTANT INTERNAL FUNCTION FOR SAFELY MANAGING AND VALIDATING A STOCK UPDATE <---- */
+    private Pair<List<StatusCode>, Stock> validateAndGetStock(String FIELD, Object VALUE, String INGREDIENT_ID) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            String id = ingredientsAPI.getIngredientsByName(ingredientName);
-            if (id == null) {
-                return null;
+            Class<?> VALUE_TYPE = VALUE.getClass();
+            if (VALUE_TYPE == Boolean.class) {
+                VALUE_TYPE = boolean.class;
             }
-            return dataStore.getStockItems().stream().filter(stock -> stock.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get().getMetadata().metadata().get("stock_id").toString();
-        } catch (Exception e) {
+            Method VALIDATION_METHOD = this.getClass().getMethod("validateStockBy" + FIELD, VALUE_TYPE);
+            StatusCode VALIDATION_RESULT = (StatusCode) VALIDATION_METHOD.invoke(this, VALUE);
+            VALIDATIONS.add(VALIDATION_RESULT);
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return new Pair<>(VALIDATIONS, null);
+            }
+        } catch (NoSuchMethodException E) {
+            VALIDATIONS.add(StatusCode.INTERNAL_METHOD_NOT_FOUND);
+            return new Pair<>(VALIDATIONS, null);
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.INTERNAL_FAILURE);
+            return new Pair<>(VALIDATIONS, null);
+        }
+
+        Stock STOCK = getStockByIngredientID(INGREDIENT_ID);
+
+        if (STOCK == null) {
+            VALIDATIONS.add(StatusCode.STOCK_NOT_FOUND);
+            return new Pair<>(VALIDATIONS, null);
+        }
+
+        return new Pair<>(VALIDATIONS, STOCK);
+    }
+
+    /**
+     * Retrieves the stock ID based on the ingredient ID.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @return the stock ID
+     */
+    public String keySearch(String INGREDIENT_ID) {
+        if (INGREDIENT_ID == null) {
             return null;
         }
+        return DATA_STORE.readStock().stream()
+                .filter(STOCK -> STOCK.getMetadata().metadata().get("ingredient_id").toString().equals(INGREDIENT_ID))
+                .findFirst()
+                .map(STOCK -> STOCK.getMetadata().metadata().get("stock_id").toString())
+                .orElse(null);
     }
 
     /**
-     * Posts stock to the database.
-     * @param ingredientName Name of the ingredient.
-     * @param stockStatus Status of the stock.
-     * @param unitType Unit of the stock.
-     * @param numeral Quantity of the stock.
-     * @param onOrder On order status of the stock.
-     * @return StatusCode indicating the post status.
+     * Retrieves the ingredient ID based on the stock ID.
+     *
+     * @param STOCK_ID the stock ID
+     * @return the ingredient ID
      */
-    public StatusCode postStock(String ingredientName, Stock.StockStatus stockStatus, Stock.UnitType unitType, double numeral, int onOrder) {
+    public String reverseKeySearch(String STOCK_ID) {
+        if (STOCK_ID == null) {
+            return null;
+        }
+        return DATA_STORE.readStock().stream()
+                .filter(STOCK -> STOCK.getMetadata().metadata().get("stock_id").toString().equals(STOCK_ID))
+                .findFirst()
+                .map(STOCK -> STOCK.getMetadata().metadata().get("ingredient_id").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Transforms a stock ID into a Stock object.
+     *
+     * @param STOCK_ID the stock ID
+     * @return the Stock object
+     */
+    public Stock keyTransform(String STOCK_ID) {
+        if (STOCK_ID == null) {
+            return null;
+        }
+        return DATA_STORE.readStock().stream()
+                .filter(STOCK -> STOCK.getMetadata().metadata().get("stock_id").toString().equals(STOCK_ID))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Gets the Stock object associated with the given ingredient ID.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @return the Stock object
+     */
+    public Stock getStockByIngredientID(String INGREDIENT_ID) {
+        String STOCK_ID = keySearch(INGREDIENT_ID);
+        return keyTransform(STOCK_ID);
+    }
+
+    /**
+     * Creates a new stock entry and adds it to the database.
+     *
+     * @param INGREDIENT_ID  the ingredient ID
+     * @param STOCK_STATUS   the stock status
+     * @param UNIT_TYPE      the unit type
+     * @param NUMERAL        the quantity
+     * @param ON_ORDER       the onOrder status
+     * @return a list of status codes indicating the result of the operation
+     */
+    public List<StatusCode> postStock(String INGREDIENT_ID, Stock.StockStatus STOCK_STATUS, Stock.UnitType UNIT_TYPE, Object NUMERAL, boolean ON_ORDER) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            StatusCode quantityCheck = validateStockByQuantity(numeral);
-            StatusCode unitCheck = validateStockByUnit(unitType);
-            StatusCode onOrderCheck = validateStockByOnOrder(onOrder);
-            StatusCode statusCheck = validateStockStatus(stockStatus);
-            for (StatusCode status : new StatusCode[]{quantityCheck, unitCheck, onOrderCheck, statusCheck}) {
-                if (status != StatusCode.SUCCESS) {
-                    return status;
-                }
+            VALIDATIONS.add(validateStockByIngredientID(INGREDIENT_ID));
+            VALIDATIONS.add(validateStockByStockStatus(STOCK_STATUS));
+            VALIDATIONS.add(validateStockByUnitType(UNIT_TYPE));
+            VALIDATIONS.add(validateStockByQuantity(NUMERAL));
+            VALIDATIONS.add(validateStockByOnOrder());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
             }
 
-            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
-            String id = ingredientsAPI.getIngredientsByName(ingredientName);
-            if (id == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
+            Ingredients INGREDIENT = IngredientsAPI.getInstance().keyTransform(INGREDIENT_ID);
+            if (INGREDIENT == null) {
+                VALIDATIONS.add(StatusCode.INGREDIENT_NOT_FOUND);
+                return VALIDATIONS;
             }
 
-            Ingredients ingredient = ingredientsAPI.getIngredientById(id);
-            if (ingredient == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
+            Stock EXISTING_STOCK = getStockByIngredientID(INGREDIENT_ID);
+            if (EXISTING_STOCK != null) {
+                VALIDATIONS.add(StatusCode.STOCK_ALREADY_EXISTS);
+                return VALIDATIONS;
             }
 
-            boolean onOrderStatus = onOrder == 1;
-            Stock stock = new Stock(ingredient, stockStatus, unitType, numeral, onOrderStatus);
-            dataStore.addStock(stock);
-            return StatusCode.SUCCESS;
-        } catch (Exception e) {
-            return StatusCode.STOCK_CREATION_FAILED;
+            Stock STOCK = new Stock(INGREDIENT, STOCK_STATUS, UNIT_TYPE, NUMERAL, ON_ORDER);
+            DATA_STORE.createStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_CREATION_FAILED);
+            return VALIDATIONS;
         }
     }
 
     /**
-     * Puts stock quantity.
-     * @param ingredientName Name of the ingredient.
-     * @param quantity Quantity of the stock.
-     * @return StatusCode indicating the put status.
+     * Updates the quantity of an existing stock.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @param NEW_NUMERAL   the new quantity
+     * @return a list of status codes indicating the result of the operation
      */
-    public StatusCode putStockQuantity(String ingredientName, double quantity) {
+    public List<StatusCode> putStockNumeral(String INGREDIENT_ID, Object NEW_NUMERAL) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
-            String id = ingredientsAPI.getIngredientsByName(ingredientName);
-            if (id == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
+            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("Quantity", NEW_NUMERAL, INGREDIENT_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
             }
 
-            Ingredients ingredient = ingredientsAPI.getIngredientById(id);
-            if (ingredient == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
-            }
+            Stock STOCK = RESULT.getValue();
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
-            stock.setDataValue("numeral", quantity);
-            stock.updateMetadata("lastUpdated", stock.getMetadata().metadata().get("lastUpdated"));
-            return StatusCode.SUCCESS;
-        } catch (Exception e) {
-            return StatusCode.STOCK_UPDATE_FAILED;
+            STOCK.setDataValue("numeral", NEW_NUMERAL);
+            DATA_STORE.updateStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
+            return VALIDATIONS;
         }
     }
 
     /**
-     * Puts stock unit.
-     * @param ingredientName Name of the ingredient.
-     * @param unit Unit of the stock.
-     * @return StatusCode indicating the put status.
+     * Updates the unit type of existing stock.
+     *
+     * @param INGREDIENT_ID    the ingredient ID
+     * @param NEW_UNIT_TYPE    the new unit type
+     * @return a list of status codes indicating the result of the operation
      */
-    public StatusCode putStockUnit(String ingredientName, Stock.UnitType unit) {
+    public List<StatusCode> putStockUnitType(String INGREDIENT_ID, Stock.UnitType NEW_UNIT_TYPE) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
-            String id = ingredientsAPI.getIngredientsByName(ingredientName);
-            if (id == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
+            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("UnitType", NEW_UNIT_TYPE, INGREDIENT_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
             }
 
-            Ingredients ingredient = ingredientsAPI.getIngredientById(id);
-            if (ingredient == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
-            }
+            Stock STOCK = RESULT.getValue();
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
-            stock.setDataValue("unit", unit);
-            stock.updateMetadata("lastUpdated", stock.getMetadata().metadata().get("lastUpdated"));
-            return StatusCode.SUCCESS;
-        } catch (Exception e) {
-            return StatusCode.STOCK_UPDATE_FAILED;
+            STOCK.setDataValue("unit", NEW_UNIT_TYPE);
+            DATA_STORE.updateStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
+            return VALIDATIONS;
         }
     }
 
     /**
-     * Puts stock on order status.
-     * @param ingredientName Name of the ingredient.
-     * @param onOrder On order status of the stock.
-     * @return StatusCode indicating the put status.
+     * Updates the onOrder status of an existing stock.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @param NEW_ON_ORDER  the new onOrder status
+     * @return a list of status codes indicating the result of the operation
      */
-    public StatusCode putStockOnOrder(String ingredientName, int onOrder) {
+    public List<StatusCode> putStockOnOrder(String INGREDIENT_ID, boolean NEW_ON_ORDER) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
-            String id = ingredientsAPI.getIngredientsByName(ingredientName);
-            if (id == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
+            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("OnOrder", NEW_ON_ORDER, INGREDIENT_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
             }
 
-            Ingredients ingredient = ingredientsAPI.getIngredientById(id);
-            if (ingredient == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
-            }
+            Stock STOCK = RESULT.getValue();
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
-            stock.updateMetadata("onOrder", onOrder);
-            stock.updateMetadata("lastUpdated", stock.getMetadata().metadata().get("lastUpdated"));
-            return StatusCode.SUCCESS;
-        } catch (Exception e) {
-            return StatusCode.STOCK_UPDATE_FAILED;
+            STOCK.updateMetadata("onOrder", NEW_ON_ORDER);
+            DATA_STORE.updateStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
+            return VALIDATIONS;
         }
     }
 
     /**
-     * Puts stock status.
-     * @param ingredientName Name of the ingredient.
-     * @param stockStatus Status of the stock.
-     * @return StatusCode indicating the put status.
+     * Updates the stock status of an existing stock.
+     *
+     * @param INGREDIENT_ID     the ingredient ID
+     * @param NEW_STOCK_STATUS  the new stock status
+     * @return a list of status codes indicating the result of the operation
      */
-    public StatusCode putStockStatus(String ingredientName, Stock.StockStatus stockStatus) {
+    public List<StatusCode> putStockStatus(String INGREDIENT_ID, Stock.StockStatus NEW_STOCK_STATUS) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
-            String id = ingredientsAPI.getIngredientsByName(ingredientName);
-            if (id == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
+            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("StockStatus", NEW_STOCK_STATUS, INGREDIENT_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
             }
 
-            Ingredients ingredient = ingredientsAPI.getIngredientById(id);
-            if (ingredient == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
-            }
+            Stock STOCK = RESULT.getValue();
 
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
-            stock.updateMetadata("stockStatus", stockStatus);
-            stock.updateMetadata("lastUpdated", stock.getMetadata().metadata().get("lastUpdated"));
-            return StatusCode.SUCCESS;
-        } catch (Exception e) {
-            return StatusCode.STOCK_UPDATE_FAILED;
+            STOCK.updateMetadata("stockStatus", NEW_STOCK_STATUS);
+            DATA_STORE.updateStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
+            return VALIDATIONS;
         }
     }
 
     /**
-     * Deletes stock from the database.
-     * @param ingredientName Name of the ingredient.
-     * @return StatusCode indicating the deletion status.
+     * Deletes a stock entry from the database.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @return a list of status codes indicating the result of the operation
      */
-    public StatusCode deleteStock(String ingredientName) {
+    public List<StatusCode> deleteStock(String INGREDIENT_ID) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
-            String id = ingredientsAPI.getIngredientsByName(ingredientName);
-            if (id == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
+            Stock STOCK = getStockByIngredientID(INGREDIENT_ID);
+            if (STOCK == null) {
+                VALIDATIONS.add(StatusCode.STOCK_NOT_FOUND);
+                return VALIDATIONS;
             }
 
-            Ingredients ingredient = ingredientsAPI.getIngredientById(id);
-            if (ingredient == null) {
-                return StatusCode.INGREDIENT_NOT_FOUND;
-            }
-
-            Stock stock = dataStore.getStockItems().stream().filter(s -> s.getMetadata().metadata().get("ingredient_id").equals(id)).findFirst().get();
-            dataStore.removeStock(stock);
-            return StatusCode.SUCCESS;
-        } catch (Exception e) {
-            return StatusCode.STOCK_DELETION_FAILED;
+            DATA_STORE.deleteStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_DELETION_FAILED);
+            return VALIDATIONS;
         }
     }
 
     /**
-     * Searches for stock items based on a query.
-     * @param query the query to search for stock items.
-     * @return list of stock items matching the query.
+     * Searches for stock items in the database based on a query string.
+     *
+     * @param QUERY the search query
+     * @return a list of stock items matching the query
      */
-    public List<Stock> searchStock(String query) {
-        String[] parts = query.trim().split("\\s+");
-
-        if (parts.length > 2) {
-            return List.of();
+    public List<Stock> searchStock(String QUERY) {
+        if (QUERY == null || QUERY.trim().isEmpty()) {
+            return new ArrayList<>();
         }
+        IngredientsAPI INGREDIENTS_API = IngredientsAPI.getInstance();
+        List<Ingredients> MATCHING_INGREDIENTS = INGREDIENTS_API.searchIngredients(QUERY);
 
-        IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
-        List<String> ingredientIds = IngredientsAPI.searchIngredients(query).stream()
-                .map(ingredient -> (String) ingredient.getMetadata().metadata().get("ingredient_id"))
+        List<String> MATCHING_INGREDIENT_IDS = MATCHING_INGREDIENTS.stream()
+                .map(INGREDIENT -> INGREDIENT.getMetadata().metadata().get("ingredient_id").toString())
                 .toList();
 
-        return dataStore.getStockItems().parallelStream()
-                .filter(stock -> ingredientIds.contains(stock.getMetadata().metadata().get("ingredient_id")))
+        return DATA_STORE.readStock().parallelStream()
+                .filter(STOCK -> MATCHING_INGREDIENT_IDS.contains(STOCK.getMetadata().metadata().get("ingredient_id").toString()))
                 .collect(Collectors.toList());
     }
-
 }
+

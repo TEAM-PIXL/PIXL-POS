@@ -97,6 +97,8 @@ public class AdminScreenController {
 
     private DataStore dataStore;
 
+    private UsersAPI usersAPI;
+
     private Users loadedUser;
 
     private MenuItem loadedMenuItem;
@@ -115,6 +117,7 @@ public class AdminScreenController {
     public void initialize() {
         // Initialization code here
         dataStore = DataStore.getInstance();
+        usersAPI = UsersAPI.getInstance();
         //User Management Side
         onCancelButtonClick();
         populateUserGrid();
@@ -139,9 +142,8 @@ Methods for user management from here.
 
     @FXML
     protected void onExitButtonClick() {
-        // Handle exit button click
         Stage stage = (Stage) exitButton.getScene().getWindow();
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitButton);
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitButton);
     }
 
     @FXML
@@ -158,7 +160,7 @@ Methods for user management from here.
             if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() || password.isEmpty() || email.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
             } else {
-            if (dataStore.getUser(username) == null) {
+            if (usersAPI.getUser(username) == null) {
                 boolean registerUser = AuthenticationManager.register(firstName, lastName, username, password, email, role);
                 if (registerUser) {
                     initialize();
@@ -180,7 +182,7 @@ Methods for user management from here.
         // Handle delete user button click
         try{
             if (loadedUser != null) {
-                dataStore.removeUser(loadedUser);
+                dataStore.deleteUser(loadedUser);
                 initialize();
                 showAlert(Alert.AlertType.CONFIRMATION, "Deleted User", "User has been deleted");
             }
@@ -255,7 +257,7 @@ Methods for user management from here.
             showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a User");
         }else {
             try {
-                List<Users> usersList = UsersAPI.searchUsers(searchInput);
+                List<Users> usersList = usersAPI.searchUsers(searchInput);
                 if (usersList.isEmpty()) {
                     showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
                 }else {
@@ -294,7 +296,7 @@ Methods for user management from here.
     private void populateUserGrid() {
         int row = 0;
 
-        ObservableList<Users> listOfUsers = dataStore.getUsers();
+        ObservableList<Users> listOfUsers = dataStore.readUsers();
         userTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (Users user : listOfUsers) {
@@ -359,7 +361,7 @@ Methods for user management from here.
     private void populateMenuGrid() {
         int row = 0;
 
-        ObservableList<MenuItem> listOfMenuItems = dataStore.getMenuItems();
+        ObservableList<MenuItem> listOfMenuItems = dataStore.readMenuItems();
         menuTable.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null);
 
         for (MenuItem menuItem : listOfMenuItems) {
@@ -473,7 +475,7 @@ Methods for user management from here.
                 }
                 if (dataStore.getMenuItem(itemName) == null) {
                     MenuItem newMenuItem = new MenuItem(itemName, price, MenuItem.ItemType.MAIN, true, description, null);
-                    dataStore.addMenuItem(newMenuItem);
+                    dataStore.createMenuItem(newMenuItem);
                     if (dataStore.getMenuItem(itemName) != null) {
                         initialize();
                         showAlert(Alert.AlertType.CONFIRMATION, "New Menu Item", "New Menu Item has been created");
@@ -494,7 +496,7 @@ Methods for user management from here.
         // Handle delete user button click
         try{
             if (loadedMenuItem != null) {
-                dataStore.removeMenuItem(loadedMenuItem);
+                dataStore.deleteMenuItem(loadedMenuItem);
                 initialize();
                 showAlert(Alert.AlertType.CONFIRMATION, "Deleted Menu Item", "Menu Item has been deleted");
             }
@@ -569,7 +571,7 @@ Methods for user management from here.
     protected void onExitMenuItemButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) exitMenuItemButton.getScene().getWindow();
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitMenuItemButton);
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, exitMenuItemButton);
     }
 /*===================================================================================================================================================================================
     Methods for both User and Menu Item management:
