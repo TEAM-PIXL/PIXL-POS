@@ -13,13 +13,13 @@
     -fx-stroke-width: 0.2;
 }
 
-.message-text {
+.message-label {
     -fx-text-fill: #757575;
     -fx-font-size: 12px;
     -fx-font-family: "Arial", sans-serif;
 }
 
-.header-label {
+.hello-label {
     -fx-text-fill: black;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
@@ -34,33 +34,51 @@
     -fx-font-family: "Arial", sans-serif;
 }
 
-.button {
+.side-bar-button {
     -fx-background-color: white;
     -fx-text-fill: #4a4a4a;
     -fx-font-size: 14px;
     -fx-cursor: hand;
 }
 
-.button:hover {
+.side-bar-button:hover {
     -fx-background-color: #4A85F6;
     -fx-text-fill: white;
+    -fx-font-size: 14px;
 }
 
 .stock-button {
     -fx-text-fill: #4A85F6;
+    -fx-background-color: white;
+}
+.logout-button {
+    -fx-background-color: white;
+    -fx-text-fill: #4a4a4a;
+    -fx-font-size: 17px;
+    -fx-cursor: hand;
 }
 
+.logout-button:hover {
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+}
 
 .edit-button {
-    -fx-background-color: #A4CC72;
+    -fx-background-color: #96bd67;
     -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
     -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
 }
 
 .remove-button {
-    -fx-background-color: #F64A4A;
+    -fx-background-color: #dc4242;
     -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
     -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
 }
 
 .submit-button{
@@ -81,17 +99,6 @@
     -fx-background-radius: 5;
 }
 
-.logout-button {
-    -fx-background-color: white;
-    -fx-text-fill: #4a4a4a;
-    -fx-font-size: 17px;
-    -fx-cursor: hand;
-}
-
-.logout-button:hover {
-    -fx-background-color: #4A85F6;
-    -fx-text-fill: white;
-}
 
 /* TopBar styling */
 .top-container {
@@ -114,7 +121,7 @@
 }
 
 /* Tab Content */
-.manage-menu-container, .list-menu-container {
+.manage-stock-container, .list-stock-container {
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-color: white;
@@ -138,4 +145,16 @@
     -fx-text-fill: #8f9bb3;
     -fx-font-size: 15px;
     -fx-font-family: "Arial", sans-serif;
+}
+
+/* Title styling */
+.container-label {
+    -fx-text-fill: #222b45;
+    -fx-font-size: 17px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.line {
+    -fx-border-color: #4A85F6;
+    -fx-border-width: 1;
 }

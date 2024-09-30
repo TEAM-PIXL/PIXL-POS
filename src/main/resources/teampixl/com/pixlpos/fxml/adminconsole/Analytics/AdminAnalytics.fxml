@@ -27,11 +27,11 @@
                         <Label layoutX="39.0" layoutY="16.0" styleClass="logo" text="PIXL Services" />
                     </children>
                 </AnchorPane>
-                <Text fill="#4a85f6" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="heading" text="Analytics Dashboard">
-                    <HBox.margin>
-                        <Insets top="20.0" />
-                    </HBox.margin>
-                </Text>
+            <Label styleClass="heading" text="Analytics Dashboard">
+               <HBox.margin>
+                  <Insets top="20.0" />
+               </HBox.margin>
+            </Label>
                 <Region HBox.hgrow="ALWAYS" />
                 <HBox prefWidth="538.0" styleClass="search-bar" HBox.hgrow="ALWAYS">
                     <children>
@@ -85,14 +85,14 @@
                             </image>
                         </ImageView>
                         <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
-                        <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
-                        <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Have a nice day" AnchorPane.topAnchor="145.0" />
+                        <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0"  text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
+                        <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0"  text="Have a nice day" AnchorPane.topAnchor="145.0" />
                     </children>
                 </AnchorPane>
                 <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
                 <VBox layoutX="-1.0" layoutY="215.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="215.0">
                     <children>
-                        <Button fx:id="homebutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Home" onAction="#onHomeButtonClick">
+                        <Button fx:id="homebutton" mnemonicParsing="false" onAction="#onHomeButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Home">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -104,7 +104,7 @@
                                 <Insets />
                             </VBox.margin>
                         </Button>
-                        <Button fx:id="usersbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Users" onAction="#onUsersButtonClick">
+                        <Button fx:id="usersbutton" mnemonicParsing="false" onAction="#onUsersButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Users">
                             <graphic>
                                 <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -113,7 +113,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="menubutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Menu" onAction="#onMenuButtonClick">
+                        <Button fx:id="menubutton" mnemonicParsing="false" onAction="#onMenuButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Menu">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -122,7 +122,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="stockbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" text="Stock" onAction="#onStockButtonClick">
+                        <Button fx:id="stockbutton" mnemonicParsing="false" onAction="#onStockButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Stock">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -159,9 +159,9 @@
         </AnchorPane>
     </left>
     <right>
-        <AnchorPane prefHeight="654.0" prefWidth="495.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
+        <AnchorPane prefWidth="700.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="20.0" left="10.0" right="20.0" top="20.0" />
             </padding>
             <children>
             <ScatterChart fx:id="chart" layoutX="60.8" layoutY="20.8" prefHeight="654.4" prefWidth="700.0" style="-fx-background-color: white; -fx-background-radius: 20;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -180,10 +180,10 @@
     <center>
         <AnchorPane style="-fx-background-color: #f5f5f5;" BorderPane.alignment="TOP_LEFT">
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="10.0" left="20.0" right="10.0" top="20.0" />
             </padding>
             <children>
-                <BorderPane prefHeight="654.4" prefWidth="469.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <BorderPane prefHeight="655.0" prefWidth="370.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <bottom>
                         <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
                             <children>

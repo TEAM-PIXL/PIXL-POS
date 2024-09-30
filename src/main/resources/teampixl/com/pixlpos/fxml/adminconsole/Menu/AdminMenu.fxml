@@ -86,8 +86,8 @@
                             </image>
                         </ImageView>
                         <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
-                        <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
-                        <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Have a nice day" AnchorPane.topAnchor="145.0" />
+                        <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
+                        <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0"  text="Have a nice day" AnchorPane.topAnchor="145.0" />
                     </children>
                 </AnchorPane>
                 <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
@@ -245,11 +245,11 @@
                         </HBox>
                     </bottom>
                <center>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 20;" BorderPane.alignment="CENTER">
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
                      <center>
                               <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" styleClass="manage-menu-container" BorderPane.alignment="CENTER">
                            <children>
-                              <Label prefWidth="185.0" styleClass="container-label" text="Menu Item Infomation">
+                              <Label prefHeight="34.0" prefWidth="198.0" styleClass="container-label" text="Menu Item Information">
                                  <padding>
                                     <Insets left="10.0" top="10.0" />
                                  </padding>
@@ -289,9 +289,6 @@
                            </padding>
                         </ButtonBar>
                      </bottom>
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
                   </BorderPane>
                </center>
                 </BorderPane>

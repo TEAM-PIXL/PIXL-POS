@@ -13,18 +13,19 @@
     -fx-stroke-width: 0.2;
 }
 
-.message-text {
+.message-label {
     -fx-text-fill: #757575;
     -fx-font-size: 12px;
     -fx-font-family: "Arial", sans-serif;
 }
 
-.header-label {
+.hello-label {
     -fx-text-fill: black;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-font-family: "Arial", sans-serif;
 }
+
 
 .header-label, .logo {
     -fx-text-fill: #4A85F6;
@@ -33,21 +34,24 @@
     -fx-font-family: "Arial", sans-serif;
 }
 
-.button {
+.side-bar-button {
     -fx-background-color: white;
     -fx-text-fill: #4a4a4a;
     -fx-font-size: 14px;
     -fx-cursor: hand;
 }
 
-.home-button {
-    -fx-text-fill: #4A85F6;
-}
-
-.button:hover {
+.side-bar-button:hover {
     -fx-background-color: #4A85F6;
     -fx-text-fill: white;
+    -fx-font-size: 14px;
 }
+
+.home-button {
+    -fx-text-fill: #4A85F6;
+    -fx-background-color: white;
+}
+
 
 .logout-button {
     -fx-background-color: white;

@@ -25,11 +25,11 @@
                   <Label layoutX="39.0" layoutY="16.0" styleClass="logo" text="PIXL Services" />
                </children>
             </AnchorPane>
-            <Text fill="#4a85f6" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="heading" text="Home">
+            <Label styleClass="heading" text="Home">
                <HBox.margin>
                   <Insets top="20.0" />
                </HBox.margin>
-            </Text>
+            </Label>
             <Region HBox.hgrow="ALWAYS" />
             <HBox prefWidth="538.0" styleClass="search-bar" HBox.hgrow="ALWAYS">
                <children>
@@ -83,8 +83,8 @@
                      </image>
                   </ImageView>
                   <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
-                  <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
-                  <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Have a nice day" AnchorPane.topAnchor="145.0" />
+                  <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0"  text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
+                  <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Have a nice day" AnchorPane.topAnchor="145.0" />
                </children>
             </AnchorPane>
             <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
@@ -102,7 +102,7 @@
                         <Insets />
                      </VBox.margin>
                   </Button>
-                  <Button fx:id="usersbutton" mnemonicParsing="false" onAction="#onUsersButtonClick" prefHeight="40.0" prefWidth="210.0" text="Users">
+                  <Button fx:id="usersbutton" mnemonicParsing="false" onAction="#onUsersButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Users">
                      <graphic>
                         <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -111,7 +111,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="menubutton" mnemonicParsing="false" onAction="#onMenuButtonClick" prefHeight="40.0" prefWidth="210.0" text="Menu">
+                  <Button fx:id="menubutton" mnemonicParsing="false" onAction="#onMenuButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Menu">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -120,7 +120,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="stockbutton" mnemonicParsing="false" onAction="#onStockButtonClick" prefHeight="40.0" prefWidth="210.0" text="Stock">
+                  <Button fx:id="stockbutton" mnemonicParsing="false" onAction="#onStockButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Stock">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -129,7 +129,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="analyticsbutton" mnemonicParsing="false" onAction="#onAnalyticsButtonClick" prefHeight="40.0" prefWidth="210.0" text="Analytics">
+                  <Button fx:id="analyticsbutton" mnemonicParsing="false" onAction="#onAnalyticsButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Analytics">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
