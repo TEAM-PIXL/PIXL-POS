@@ -69,4 +69,10 @@ class UsersAPITest {
         assertEquals(StatusCode.INVALID_USER_ROLE, usersAPI.validateUsersByRole(null));
     }
 
+    @Test
+    void testValidateUsersByAdditionalInfo() {
+        assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByAdditionalInfo("additionalInfo"));
+        assertEquals(StatusCode.INVALID_USER_ADDITIONAL_INFO, usersAPI.validateUsersByAdditionalInfo(null));
+    }
+
 }
