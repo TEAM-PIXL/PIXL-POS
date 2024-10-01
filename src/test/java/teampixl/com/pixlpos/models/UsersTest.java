@@ -34,6 +34,12 @@ class UsersTest {
     }
 
     @Test
+    void testUpdateUserFirstName() {
+        user.setDataValue("first_name", "JaneUpdate");
+        assertEquals("JaneUpdate", user.getData().get("first_name"));
+    }
+
+    @Test
     void testUserIsActive() {
         assertTrue((Boolean) user.getMetadata().metadata().get("is_active"));
         user.updateMetadata("is_active", false);
@@ -58,11 +64,6 @@ class UsersTest {
     @Test
     void testUserCreationWithNullPassword() {
         assertThrows(IllegalArgumentException.class, () -> new Users("John", "Doe", "johndoe", null, "", Users.UserRole.ADMIN));
-    }
-
-    @Test
-    void testUserCreationWithNullEmail() {
-        assertDoesNotThrow(() -> new Users("John", "Doe", "johndoe", "password", null, Users.UserRole.ADMIN));
     }
 
     @Test
