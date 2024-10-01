@@ -39,16 +39,27 @@ class UsersAPITest {
     }
 
     @Test
-    void testValidateUsersByFirstName () {
+    void testValidateUsersByFirstName() {
         assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByFirstName("John"));
         assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(null));
         assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(""));
     }
 
     @Test
-    void testValidateUsersByLastName () {
+    void testValidateUsersByLastName() {
         assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByLastName("Doe"));
         assertEquals(StatusCode.INVALID_LAST_NAME, usersAPI.validateUsersByLastName(null));
         assertEquals(StatusCode.INVALID_LAST_NAME, usersAPI.validateUsersByLastName(""));
+    }
+
+    @Test
+    void testValidateUsersByPassword() {
+        assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByPassword("Password1!"));
+        assertEquals(StatusCode.PASSWORD_TOO_SHORT, usersAPI.validateUsersByPassword("Pass1!"));
+        assertEquals(StatusCode.PASSWORD_TOO_LONG, usersAPI.validateUsersByPassword("P".repeat(21)));
+        assertEquals(StatusCode.PASSWORD_NO_DIGITS, usersAPI.validateUsersByPassword("Password!"));
+        assertEquals(StatusCode.PASSWORD_NO_UPPERCASE, usersAPI.validateUsersByPassword("password1!"));
+        assertEquals(StatusCode.PASSWORD_NO_LOWERCASE, usersAPI.validateUsersByPassword("PASSWORD1!"));
+        assertEquals(StatusCode.PASSWORD_NO_SPECIAL_CHAR, usersAPI.validateUsersByPassword("Password1"));
     }
 }
