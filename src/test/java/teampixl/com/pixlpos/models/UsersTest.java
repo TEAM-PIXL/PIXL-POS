@@ -45,8 +45,6 @@ class UsersTest {
         assertEquals("DoeUpdate", user.getMetadata().metadata().get("last_name"));
     }
 
-
-
     @Test
     void testUserIsActive() {
         assertTrue((Boolean) user.getMetadata().metadata().get("is_active"));
@@ -84,5 +82,7 @@ class UsersTest {
         assertEquals(Users.UserRole.ADMIN, user.getMetadata().metadata().get("role"));
         user.updateMetadata("role", Users.UserRole.WAITER);
         assertEquals(Users.UserRole.WAITER, user.getMetadata().metadata().get("role"));
+        user.updateMetadata("role", Users.UserRole.COOK);
+        assertEquals(Users.UserRole.COOK, user.getMetadata().metadata().get("role"));
     }
 }
