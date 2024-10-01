@@ -12,7 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
-
+import javafx.animation.AnimationTimer;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
@@ -96,7 +96,18 @@ public class AdminScreenUsersController
 
     int adding_counter = 0;
 
+    AnimationTimer datetime = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+        }
+    };
 
+    @FXML
+    public void initialize() {
+        datetime.start();
+    }
 
 
 

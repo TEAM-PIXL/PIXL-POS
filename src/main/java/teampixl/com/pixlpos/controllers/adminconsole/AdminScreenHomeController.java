@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
+import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -7,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.animation.AnimationTimer;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.models.MenuItem;
@@ -56,6 +58,20 @@ public class AdminScreenHomeController
     private Button analyticsbutton;
     @FXML
     private Button logoutbutton;
+
+    AnimationTimer datetime = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+        }
+    };
+
+    @FXML
+    public void initialize() {
+        datetime.start();
+    }
+
 
     @FXML
     protected void onUsersButtonClick() {

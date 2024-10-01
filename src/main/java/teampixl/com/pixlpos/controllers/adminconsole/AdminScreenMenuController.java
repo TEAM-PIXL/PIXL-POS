@@ -13,6 +13,7 @@ import javafx.scene.control.ListView;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.geometry.Pos;
 import teampixl.com.pixlpos.models.MenuItem;
+import javafx.animation.AnimationTimer;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.UsersAPI;
@@ -92,7 +93,18 @@ public class AdminScreenMenuController
 
     int adding_counter = 0;
 
+    AnimationTimer datetime = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+        }
+    };
 
+    @FXML
+    public void initialize() {
+        datetime.start();
+    }
 
 
 

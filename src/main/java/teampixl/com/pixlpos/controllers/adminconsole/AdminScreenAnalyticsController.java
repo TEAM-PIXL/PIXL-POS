@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
+import javafx.animation.AnimationTimer;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
@@ -65,7 +66,18 @@ public class AdminScreenAnalyticsController
     private ScatterChart chart;
 
 
+    AnimationTimer datetime = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+        }
+    };
 
+    @FXML
+    public void initialize() {
+        datetime.start();
+    }
 
 
 
