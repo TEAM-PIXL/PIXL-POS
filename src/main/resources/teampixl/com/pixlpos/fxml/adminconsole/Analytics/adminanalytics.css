@@ -84,7 +84,7 @@
 }
 
 /* Tab Content */
-.manage-user-container, .list-user-container {
+.manage-menu-container, .list-menu-container {
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-color: white;
