@@ -21,4 +21,14 @@ class UsersAPITest {
         usersAPI = UsersAPI.getInstance();
     }
 
+    @Test
+    void testValidateUsersByUsername() {
+        assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByUsername("validUsername"));
+        assertEquals(StatusCode.USERNAME_TOO_SHORT, usersAPI.validateUsersByUsername("abc"));
+        assertEquals(StatusCode.USERNAME_TOO_LONG, usersAPI.validateUsersByUsername("a".repeat(21)));
+        assertEquals(StatusCode.USERNAME_CONTAINS_SPACES, usersAPI.validateUsersByUsername("user name"));
+        assertEquals(StatusCode.USERNAME_INVALID_CHARACTERS, usersAPI.validateUsersByUsername("user@name"));
+        assertEquals(StatusCode.USERNAME_ONLY_DIGITS, usersAPI.validateUsersByUsername("123456"));
+    }
+
 }
