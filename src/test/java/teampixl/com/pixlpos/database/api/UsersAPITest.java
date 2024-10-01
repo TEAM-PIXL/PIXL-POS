@@ -62,4 +62,11 @@ class UsersAPITest {
         assertEquals(StatusCode.PASSWORD_NO_LOWERCASE, usersAPI.validateUsersByPassword("PASSWORD1!"));
         assertEquals(StatusCode.PASSWORD_NO_SPECIAL_CHAR, usersAPI.validateUsersByPassword("Password1"));
     }
+
+    @Test
+    void testValidateUsersByRole() {
+        assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByRole(Users.UserRole.ADMIN));
+        assertEquals(StatusCode.INVALID_USER_ROLE, usersAPI.validateUsersByRole(null));
+    }
+
 }
