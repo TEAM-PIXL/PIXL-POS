@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.database.api;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import teampixl.com.pixlpos.database.DataStore;
@@ -14,11 +15,19 @@ class UsersAPITest {
 
     private UsersAPI usersAPI;
     private DataStore dataStore;
+    private String testUsername;
 
     @BeforeEach
     void setUp() {
         dataStore = DataStore.getInstance();
         usersAPI = UsersAPI.getInstance();
+        testUsername = "testUser";
+        usersAPI.postUsers("John", "Doe", testUsername, "Password1!", testUsername + "@example.com", Users.UserRole.ADMIN, "Some info");
+    }
+
+    @AfterEach
+    void tearDown() {
+        usersAPI.deleteUser(testUsername);
     }
 
     @Test
