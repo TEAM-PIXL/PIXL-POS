@@ -46,6 +46,11 @@ class UsersTest {
     }
 
     @Test
+    void testUserCreationWithNullLastName() {
+        assertThrows(IllegalArgumentException.class, () -> new Users("John", null, "johndoe", "password", "", Users.UserRole.ADMIN));
+    }
+
+    @Test
     void testUserCreationWithNullUsername() {
         assertThrows(IllegalArgumentException.class, () -> new Users("John", "Doe", null, "password", "", Users.UserRole.ADMIN));
     }
