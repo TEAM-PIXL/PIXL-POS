@@ -35,13 +35,13 @@ class UsersTest {
 
     @Test
     void testUpdateUserFirstName() {
-        user.setDataValue("first_name", "JaneUpdate");
+        user.updateMetadata("first_name", "JaneUpdate");
         assertEquals("JaneUpdate", user.getMetadata().metadata().get("first_name"));
     }
 
     @Test
     void testUpdateUserLastName() {
-        user.setDataValue("last_name", "DoeUpdate");
+        user.updateMetadata("last_name", "DoeUpdate");
         assertEquals("DoeUpdate", user.getMetadata().metadata().get("last_name"));
     }
 
