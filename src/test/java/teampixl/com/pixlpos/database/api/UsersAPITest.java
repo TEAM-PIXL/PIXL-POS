@@ -105,4 +105,10 @@ class UsersAPITest {
         assertEquals("John", usersAPI.getUsersFirstName("johndoe"));
     }
 
+    @Test
+    public void testGetUsersLastName() {
+        usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
+        assertEquals("Doe", usersAPI.getUsersLastName("johndoe"));
+    }
+
 }
