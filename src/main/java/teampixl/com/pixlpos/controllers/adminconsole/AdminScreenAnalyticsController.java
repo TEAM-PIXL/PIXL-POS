@@ -84,7 +84,7 @@ public class AdminScreenAnalyticsController
     private TextField monthlyordernumber;
 
     @FXML
-    private ListView<HBox> completedorders
+    private ListView<HBox> completedorders;
 
     @FXML
     private TextField totaldailysales;
