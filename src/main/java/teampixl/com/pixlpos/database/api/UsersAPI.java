@@ -1,20 +1,21 @@
 package teampixl.com.pixlpos.database.api;
 
+import teampixl.com.pixlpos.database.api.util.*;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
-import teampixl.com.pixlpos.database.api.util.Exceptions;
-import teampixl.com.pixlpos.database.api.util.StatusCode;
+import teampixl.com.pixlpos.authentication.PasswordUtils;
 import teampixl.com.pixlpos.models.Users;
 
 import java.util.List;
-import java.util.Objects;
-import javafx.util.Pair;
 import java.util.ArrayList;
-import java.lang.reflect.Method;
+import javafx.util.Pair;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.lang.reflect.Method;
 
 /**
- * This class is responsible for managing the users in the database. It is responsible for getting, posting, putting, and deleting users.
+ * The UsersAPI class is a singleton class that is responsible for managing the users in memory. It is responsible for getting, posting, putting, and deleting users. It also validates transactions and ensures that the data is consistent and correct.
+ * It employs key search and reverse key search to manage user data and metadata. It also provides search functionality to search for users based on their metadata.
  */
 public class UsersAPI {
     private static UsersAPI instance;
@@ -39,9 +40,7 @@ public class UsersAPI {
      *
      * @param dataStore the data store to use
      */
-    public UsersAPI(DataStore dataStore) {
-        UsersAPI.dataStore = dataStore;
-    }
+    public UsersAPI(DataStore dataStore) { UsersAPI.dataStore = dataStore; }
 
     /**
      * Validates the username of a user.
@@ -56,7 +55,7 @@ public class UsersAPI {
         if (USERNAME.chars().anyMatch(Character::isSpaceChar)) { return StatusCode.USERNAME_CONTAINS_SPACES; }
         if (!USERNAME.matches("^[a-zA-Z0-9]*$")) { return StatusCode.USERNAME_INVALID_CHARACTERS; }
         if (USERNAME.chars().allMatch(Character::isDigit)) { return StatusCode.USERNAME_ONLY_DIGITS; }
-        boolean USER_EXISTS = dataStore.getUsers().stream()
+        boolean USER_EXISTS = dataStore.readUsers().stream()
                 .anyMatch(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME));
         return USER_EXISTS ? StatusCode.USERNAME_TAKEN : StatusCode.SUCCESS;
     }
@@ -71,7 +70,7 @@ public class UsersAPI {
         if (EMAIL == null) { return StatusCode.EMAIL_NULL; }
         if (EMAIL.chars().filter(ch -> ch == '@').count() != 1) { return StatusCode.EMAIL_INVALID_FORMAT; }
         if (EMAIL.chars().anyMatch(Character::isSpaceChar)) { return StatusCode.EMAIL_CONTAINS_SPACES; }
-        boolean USER_EXISTS = dataStore.getUsers().stream()
+        boolean USER_EXISTS = dataStore.readUsers().stream()
                 .anyMatch(user -> user.getData().get("email").toString().equals(EMAIL));
         return USER_EXISTS ? StatusCode.EMAIL_TAKEN : StatusCode.SUCCESS;
     }
@@ -109,7 +108,7 @@ public class UsersAPI {
     public StatusCode validateUsersByName(String FIRST_NAME, String LAST_NAME) {
         if (FIRST_NAME == null || LAST_NAME == null) { return StatusCode.INVALID_NAME; }
         if (FIRST_NAME.trim().isEmpty() || LAST_NAME.trim().isEmpty()) { return StatusCode.INVALID_NAME; }
-        boolean USER_EXISTS = dataStore.getUsers().stream()
+        boolean USER_EXISTS = dataStore.readUsers().stream()
                 .anyMatch(user -> user.getMetadata().metadata().get("first_name").toString().equals(FIRST_NAME) &&
                         user.getMetadata().metadata().get("last_name").toString().equals(LAST_NAME));
         return USER_EXISTS ? StatusCode.USER_ALREADY_EXISTS : StatusCode.SUCCESS;
@@ -145,10 +144,13 @@ public class UsersAPI {
     /**
      * Validates the status of a user.
      *
-     * @param STATUS the status to validate
+     * @param USERNAME the status to validate
      * @return the status code indicating the result of the validation
      */
-    public StatusCode validateUsersByStatus(boolean STATUS) {
+    public StatusCode validateUsersByStatus(String USERNAME) {
+        Users USER = getUser(USERNAME);
+        if (USER == null) { return StatusCode.USER_NOT_FOUND; }
+        if (!(boolean) USER.getMetadata().metadata().get("is_active")) { return StatusCode.USER_INACTIVE; }
         return StatusCode.SUCCESS;
     }
 
@@ -163,39 +165,157 @@ public class UsersAPI {
     }
 
     /* ---> IMPORTANT INTERNAL FUNCTION FOR SAFELY MANAGING AND VALIDATING A USER UPDATE <---- */
-    private Pair<List<StatusCode>, Users> validateAndGetUser(String field, Object value, String username) {
-        List<StatusCode> validations = new ArrayList<>();
+    private Pair<List<StatusCode>, Users> validateAndGetUser(String FIELD, Object VALUE, String USERNAME) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            Class<?> valueType = value.getClass();
-            if (valueType == Boolean.class) {
-                valueType = boolean.class;
+            Class<?> VALUE_TYPE = VALUE.getClass();
+            if (VALUE_TYPE == Boolean.class) {
+                VALUE_TYPE = boolean.class;
             }
-            Method validationMethod = this.getClass().getMethod("validateUsersBy" + field, valueType);
-            StatusCode validationResult = (StatusCode) validationMethod.invoke(this, value);
-            validations.add(validationResult);
-            if (!Exceptions.isSuccessful(validations)) {
-                return new Pair<>(validations, null);
+            Method VALIDATION_METHOD = this.getClass().getMethod("validateUsersBy" + FIELD, VALUE_TYPE);
+            StatusCode VALIDATION_RESULT = (StatusCode) VALIDATION_METHOD.invoke(this, VALUE);
+            VALIDATIONS.add(VALIDATION_RESULT);
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return new Pair<>(VALIDATIONS, null);
             }
         } catch (Exception e) {
-            validations.add(StatusCode.INTERNAL_FAILURE);
-            return new Pair<>(validations, null);
+            VALIDATIONS.add(StatusCode.INTERNAL_FAILURE);
+            return new Pair<>(VALIDATIONS, null);
         }
 
-        String id = getUsersByUsername(username);
-        if (getUserById(id) == null) {
+        Users USER = getUser(USERNAME);
+
+        if (USER == null) {
             return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
         }
 
-        Users user = dataStore.getUsers().stream()
-                .filter(u -> u.getMetadata().metadata().get("id").toString().equals(id))
+        VALIDATIONS.add(StatusCode.SUCCESS);
+        return new Pair<>(VALIDATIONS, USER);
+    }
+
+    /**
+     * Gets a user ID from memory. Core method for user retrieval and key search.
+     * This method is useful when dealing with metadata references in other models. It helps transform user input into a user ID.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user id matching the query
+     */
+    public String keySearch(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("id").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a username from memory. Core method for user retrieval and reverse key search.
+     * This method is useful when dealing with metadata references in other models. It helps transform user ID into a username.
+     *
+     * @param ID the query to search for the user
+     * @return the username matching the query
+     */
+    public String reverseKeySearch(String ID) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("username").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Transforms a ID into a Users object in memory. Core method for user retrieval.
+     * This method is useful when dealing with metadata references in other models.
+     *
+     * @param ID the query to search for the user
+     * @return the user matching the query
+     */
+    public Users keyTransform(String ID) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
                 .findFirst()
                 .orElse(null);
-        if (user == null) {
-            return new Pair<>(List.of(StatusCode.USER_NOT_FOUND), null);
-        }
+    }
 
-        validations.add(StatusCode.SUCCESS);
-        return new Pair<>(validations, user);
+    /**
+     * Gets a user from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public Users getUser(String USERNAME) {
+        String ID = keySearch(USERNAME);
+        return keyTransform(ID);
+    }
+
+    /**
+     * Gets a user's first name from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersFirstNameByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("first_name").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's last name from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersLastNameByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getMetadata().metadata().get("last_name").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's role from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public Users.UserRole getUsersRoleByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> (Users.UserRole) user.getMetadata().metadata().get("role"))
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's email from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersEmailByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getData().get("email").toString())
+                .orElse(null);
+    }
+
+    /**
+     * Gets a user's additional info from memory.
+     *
+     * @param USERNAME the query to search for the user
+     * @return the user matching the query
+     */
+    public String getUsersAdditionalInfoByUsername(String USERNAME) {
+        return dataStore.readUsers().stream()
+                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
+                .findFirst()
+                .map(user -> user.getData().get("additional_info").toString())
+                .orElse(null);
     }
 
     /**
@@ -227,12 +347,12 @@ public class UsersAPI {
 
             boolean REGISTERED = AuthenticationManager.register(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD, EMAIL, ROLE);
             if (!REGISTERED) { VALIDATIONS.add(StatusCode.USER_REGISTRATION_FAILED); return VALIDATIONS; }
-            Users USER = getUserById(getUsersByUsername(USERNAME));
+            Users USER = getUser(USERNAME);
             USER.setDataValue("additional_info", ADDITIONAL_INFO);
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_CREATION_FAILED);
+            return List.of(StatusCode.USER_POST_FAILED);
         }
     }
 
@@ -249,75 +369,6 @@ public class UsersAPI {
      */
     public List<StatusCode> postUsers(String FIRST_NAME, String LAST_NAME, String USERNAME, String PASSWORD, String EMAIL, Users.UserRole ROLE) {
         return postUsers(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD, EMAIL, ROLE, "");
-    }
-
-    /**
-     * Gets a user ID from the database.
-     *
-     * @param USERNAME the query to search for the user
-     * @return the user matching the query
-     */
-    public static String getUsersByUsername(String USERNAME) {
-        return dataStore.getUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("id").toString())
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user ID from the database.
-     *
-     * @param EMAIL the query to search for the user
-     * @return the user matching the query
-     */
-    public String getUsersByEmailAddress(String EMAIL) {
-        return dataStore.getUsers().stream()
-                .filter(user -> user.getData().get("email").toString().equals(EMAIL))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("id").toString())
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user's first name from the database.
-     *
-     * @param USERNAME the query to search for the user
-     * @return the user matching the query
-     */
-    public String getUsersFirstName(String USERNAME) {
-        return dataStore.getUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("first_name").toString())
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user's last name from the database.
-     *
-     * @param USERNAME the query to search for the user
-     * @return the user matching the query
-     */
-    public String getUsersLastName(String USERNAME) {
-        return dataStore.getUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("username").toString().equals(USERNAME))
-                .findFirst()
-                .map(user -> user.getMetadata().metadata().get("last_name").toString())
-                .orElse(null);
-    }
-
-    /**
-     * Gets a user from the database.
-     *
-     * @param ID the query to search for the user
-     * @return the user matching the query
-     */
-    public Users getUserById(String ID) {
-        return dataStore.getUsers().stream()
-                .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
-                .findFirst()
-                .orElse(null);
     }
 
     /**
@@ -339,7 +390,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -362,7 +413,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -385,7 +436,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -408,7 +459,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -426,11 +477,13 @@ public class UsersAPI {
             if (!Exceptions.isSuccessful(VALIDATIONS)) { return VALIDATIONS; }
 
             Users USER = RESULT.getValue();
+            String PASSWORD_HASH = PasswordUtils.hashPassword(NEW_PASSWORD);
+            USER.setDataValue("password", PASSWORD_HASH);
 
-            dataStore.updateUserPassword(USER, NEW_PASSWORD);
+            dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -453,7 +506,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -476,7 +529,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -499,7 +552,7 @@ public class UsersAPI {
             dataStore.updateUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
-            return List.of(StatusCode.USER_UPDATE_FAILED);
+            return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
 
@@ -518,7 +571,7 @@ public class UsersAPI {
             Users USER = RESULT.getValue();
 
 
-            dataStore.removeUser(USER);
+            dataStore.deleteUser(USER);
             return VALIDATIONS;
         } catch (Exception e) {
             return List.of(StatusCode.USER_DELETION_FAILED);
@@ -526,27 +579,27 @@ public class UsersAPI {
     }
 
     /**
-     * Gets a user from the database.
+     * Gets all users from memory that match the query input based on the user's metadata.
      *
      * @param query the query to search for the user
      * @return list of users matching the query
      */
-    public static List<Users> searchUsers(String query) {
-        String[] parts = query.trim().split("\\s+");
+    public List<Users> searchUsers(String query) {
+        String[] TOKENS = query.trim().split("\\s+");
 
-        if (parts.length > 2) {
+        if (TOKENS.length > 2) {
             return List.of();
         }
 
-        return dataStore.getUsers().parallelStream()
+        return dataStore.readUsers().parallelStream()
                 .filter(user -> {
-                    if (parts.length == 2) {
-                        String firstName = parts[0].toLowerCase();
-                        String lastName = parts[1].toLowerCase();
+                    if (TOKENS.length == 2) {
+                        String firstName = TOKENS[0].toLowerCase();
+                        String lastName = TOKENS[1].toLowerCase();
                         return user.getMetadata().metadata().get("first_name").toString().toLowerCase().contains(firstName) &&
                                 user.getMetadata().metadata().get("last_name").toString().toLowerCase().contains(lastName);
                     } else {
-                        String singleQuery = parts[0].toLowerCase();
+                        String singleQuery = TOKENS[0].toLowerCase();
                         return user.getMetadata().metadata().values().stream()
                                 .filter(Objects::nonNull)
                                 .anyMatch(value -> value.toString().toLowerCase().contains(singleQuery)) ||

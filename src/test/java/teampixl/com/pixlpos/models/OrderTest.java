@@ -27,7 +27,7 @@ class OrderTest {
         assertNotNull(order.getMetadata().metadata().get("order_id"));
         assertEquals(1, order.getMetadata().metadata().get("order_number"));
         assertEquals("user123", order.getMetadata().metadata().get("user_id"));
-        assertEquals(Order.OrderStatus.PENDING, order.getMetadata().metadata().get("order_status"));
+        assertEquals(Order.OrderStatus.PENDING, Order.OrderStatus.valueOf(order.getMetadata().metadata().get("order_status").toString()));
     }
 
     @SuppressWarnings({"unchecked", "SuspiciousMethodCalls"})
@@ -48,14 +48,14 @@ class OrderTest {
     @Test
     void testOrderCompletion() {
         order.completeOrder();
-        assertEquals(Order.OrderStatus.COMPLETED, order.getMetadata().metadata().get("order_status"));
+        assertEquals(Order.OrderStatus.COMPLETED, Order.OrderStatus.valueOf(order.getMetadata().metadata().get("order_status").toString()));
         assertTrue((Boolean) order.getMetadata().metadata().get("is_completed"));
     }
 
     @Test
     void testUpdateOrderStatus() {
         order.updateOrderStatus(Order.OrderStatus.IN_PROGRESS);
-        assertEquals(Order.OrderStatus.IN_PROGRESS, order.getMetadata().metadata().get("order_status"));
+        assertEquals(Order.OrderStatus.IN_PROGRESS, Order.OrderStatus.valueOf(order.getMetadata().metadata().get("order_status").toString()));
     }
 }
 

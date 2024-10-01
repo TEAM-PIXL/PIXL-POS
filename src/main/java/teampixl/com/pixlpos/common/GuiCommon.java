@@ -11,21 +11,19 @@ import javafx.scene.image.Image;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Utility class for common GUI operations in the application.
  * This class provides methods to load different stages and scenes using FXML files.
  */
 public class GuiCommon {
-
-    // Constants for default dimensions
-    public static final int WIDTH = 1920;
-    public static final int HEIGHT = 1028;
-
-    // Default icon path (if needed)
-    public static final String ICON_PATH = "/images/icon.JPG";
-
-    // Paths to FXML files and their titles
+    
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
+    
+    public static final String ICON_PATH = "/teampixl/com/pixlpos/app-icon.jpg";
+    
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
     public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml";
 
@@ -42,7 +40,7 @@ public class GuiCommon {
      * Loads a new stage with the given FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
+     * @param title the title of the stage
      */
     public static void loadStage(String fxmlPath, String title) {
         try {
@@ -57,8 +55,7 @@ public class GuiCommon {
             Stage stage = new Stage();
             Scene scene = new Scene(root, WIDTH, HEIGHT);
 
-            // Optionally, set the application icon
-            // stage.getIcons().add(new Image(GuiCommon.class.getResourceAsStream(ICON_PATH)));
+            stage.getIcons().add(new Image(Objects.requireNonNull(GuiCommon.class.getResourceAsStream(ICON_PATH))));
 
             stage.setScene(scene);
             stage.setTitle(title);
@@ -73,8 +70,8 @@ public class GuiCommon {
      * Loads a new scene into the given stage using the specified FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param stage    the stage to set the scene on
+     * @param title the title of the stage
+     * @param stage the stage to set the scene on
      */
     public static void loadScene(String fxmlPath, String title, Stage stage) {
         loadScene(fxmlPath, title, stage, WIDTH, HEIGHT);
@@ -84,10 +81,10 @@ public class GuiCommon {
      * Loads a new scene into the given stage using the specified FXML file, title, and dimensions.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param stage    the stage to set the scene on
-     * @param width    the width of the scene
-     * @param height   the height of the scene
+     * @param title the title of the stage
+     * @param stage the stage to set the scene on
+     * @param width the width of the scene
+     * @param height the height of the scene
      */
     public static void loadScene(String fxmlPath, String title, Stage stage, int width, int height) {
         try {
@@ -102,6 +99,7 @@ public class GuiCommon {
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
+            stage.getIcons().add(new Image(Objects.requireNonNull(String.valueOf(GuiCommon.class.getResource(ICON_PATH)))));
             stage.show();
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
@@ -113,8 +111,8 @@ public class GuiCommon {
      * Loads a new scene into the stage associated with the given node.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param node     a node from the current scene
+     * @param title the title of the stage
+     * @param node a node from the current scene
      */
     public static void loadScene(String fxmlPath, String title, Node node) {
         loadScene(fxmlPath, title, node, WIDTH, HEIGHT);
@@ -124,10 +122,10 @@ public class GuiCommon {
      * Loads a new scene into the stage associated with the given node, with specified dimensions.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param node     a node from the current scene
-     * @param width    the width of the scene
-     * @param height   the height of the scene
+     * @param title the title of the stage
+     * @param node a node from the current scene
+     * @param width the width of the scene
+     * @param height the height of the scene
      */
     public static void loadScene(String fxmlPath, String title, Node node, int width, int height) {
         if (node == null || node.getScene() == null) {
@@ -142,25 +140,7 @@ public class GuiCommon {
     public static void loadRoot(String fxmlPath, String title, Stage stage, int width, int height) {
         try {
             URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
-            if (fxmlURL == null) {
-                throw new IOException("FXML file not found at path: " + fxmlPath);
-            }
-
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
-
-            // Load the root; handle the case where root is already set in FXML
-            Parent root = null;
-            try {
-                root = fxmlLoader.load(); // Try loading without setting a root
-            } catch (IllegalStateException ex) {
-                if (ex.getMessage().contains("Root value already specified")) {
-                    // Root is already specified inside FXML, we should not set it
-                    fxmlLoader = new FXMLLoader(fxmlURL); // Reset loader as previous state is invalid
-                    root = fxmlLoader.load(); // This should work as root is pre-defined in FXML
-                } else {
-                    throw ex; // Some other issue, re-throw it
-                }
-            }
+            Parent root = getParent(fxmlPath, fxmlURL);
 
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
@@ -172,12 +152,33 @@ public class GuiCommon {
         }
     }
 
+    private static Parent getParent(String fxmlPath, URL fxmlURL) throws IOException {
+        if (fxmlURL == null) {
+            throw new IOException("FXML file not found at path: " + fxmlPath);
+        }
+
+        FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+
+        Parent root;
+        try {
+            root = fxmlLoader.load();
+        } catch (IllegalStateException ex) {
+            if (ex.getMessage().contains("Root value already specified")) {
+                fxmlLoader = new FXMLLoader(fxmlURL);
+                root = fxmlLoader.load();
+            } else {
+                throw ex;
+            }
+        }
+        return root;
+    }
+
     /**
      * Loads a new scene into the stage associated with the given node.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param node     a node from the current scene
+     * @param title the title of the stage
+     * @param node a node from the current scene
      */
     public static void loadRoot(String fxmlPath, String title, Node node) {
         loadScene(fxmlPath, title, node, WIDTH, HEIGHT);
@@ -192,11 +193,10 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 
-            // Here you need to set the root, because the FXML file uses <fx:root>
-            Parent root = new BorderPane();  // Assuming BorderPane is the root type required
+            Parent root = new BorderPane();
             fxmlLoader.setRoot(root);
 
-            root = fxmlLoader.load();  // This load should now proceed without the root error
+            root = fxmlLoader.load();
 
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
@@ -235,8 +235,8 @@ public class GuiCommon {
      * Opens a new modal window with the specified FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the window
-     * @param owner    the owner window for the modal dialog
+     * @param title the title of the window
+     * @param owner the owner window for the modal dialog
      */
     public static void openModalWindow(String fxmlPath, String title, Stage owner) {
         try {
