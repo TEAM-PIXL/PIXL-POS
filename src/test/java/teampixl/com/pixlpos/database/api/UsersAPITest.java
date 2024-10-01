@@ -93,4 +93,9 @@ class UsersAPITest {
         assertNotNull(usersAPI.getUsersByUsername("johndoe"));
     }
 
+    @Test
+    public void testGetUsersByEmailAddress() {
+        usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
+        assertNotNull(usersAPI.getUsersByEmailAddress("johndoe@example.com"));
+    }
 }
