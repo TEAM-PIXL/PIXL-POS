@@ -98,4 +98,11 @@ class UsersAPITest {
         usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
         assertNotNull(usersAPI.getUsersByEmailAddress("johndoe@example.com"));
     }
+
+    @Test
+    public void testGetUsersFirstName() {
+        usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
+        assertEquals("John", usersAPI.getUsersFirstName("johndoe"));
+    }
+
 }
