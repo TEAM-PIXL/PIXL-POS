@@ -1,14 +1,9 @@
 package teampixl.com.pixlpos.database;
 
-import teampixl.com.pixlpos.models.MenuItem;
-import teampixl.com.pixlpos.models.Order;
-import teampixl.com.pixlpos.models.Users;
-import teampixl.com.pixlpos.models.Ingredients;
-import teampixl.com.pixlpos.models.Stock;
+import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import teampixl.com.pixlpos.authentication.PasswordUtils;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -88,35 +83,43 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /*====================================================================================================================================================================
     Code Description:
-    This section of code handles the implementation of the IMenuItemStore interface. It provides methods for adding, updating, and removing menu items.
-
+    This section of code handles the implementation of the IMenuItemStore interface. It provides methods for creating, reading, updating, and deleting menu items and ingredients.
     Methods:
         Methods for lists of menu items:
-            - getMenuItems(): ObservableList<MenuItem> - Returns a list of all menu items.
-            - addMenuItem(MenuItem item): void - Adds a new menu item to the list of menu items.
+            - createMenuItem(MenuItem item): void - Adds a new menu item to the list of menu items.
+            - readMenuItems(): ObservableList<MenuItem> - Returns a list of all menu items.
             - updateMenuItem(MenuItem item): void - Updates an existing menu item in the list of menu items.
-            - removeMenuItem(MenuItem item): void - Removes an existing menu item from the list of menu items.
+            - deleteMenuItem(MenuItem item): void - Removes an existing menu item from the list of menu items.
 
-        Methods for singular items:
+        Methods for Ingredient-MenuItem relationships:
+            - createMenuItemIngredient(MenuItem menuItem, Ingredients ingredient, Object numeral): void - Adds an ingredient to a menu item.
+            - readMenuItemIngredients(MenuItem menuItem): Map - Returns a map of all ingredients for a menu item.
+            - updateMenuItemIngredient(MenuItem menuItem, Ingredients ingredient, Object numeral): void - Updates an ingredient in a menu item.
+            - deleteMenuItemIngredient(MenuItem menuItem, Ingredients ingredient): void - Removes an ingredient from a menu item.
+
+        Methods for singular items (DEPRECATED):
             - getMenuItem(String itemName): MenuItem - Returns a menu item with the specified name.
+            - getMenuItemById(String itemId): MenuItem - Returns a menu item with the specified ID.
     ====================================================================================================================================================================*/
+
+
+    
+    /**
+     * Adds a new menu item to the list of menu items.
+     * @param item MenuItem - The menu item to add.
+     */
+    public void createMenuItem(MenuItem item) {
+        menuItems.add(item);
+        saveMenuItemToDatabase(item);
+    }
 
 
     /**
      * Returns a list of all menu items.
      * @return ObservableList<MenuItem> - A list of all menu items.
      */
-    public ObservableList<MenuItem> getMenuItems() {
+    public ObservableList<MenuItem> readMenuItems() {
         return menuItems;
-    }
-
-    /**
-     * Adds a new menu item to the list of menu items.
-     * @param item MenuItem - The menu item to add.
-     */
-    public void addMenuItem(MenuItem item) {
-        menuItems.add(item);
-        saveMenuItemToDatabase(item);
     }
 
     /**
@@ -131,18 +134,9 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * Removes an existing menu item from the list of menu items.
      * @param item MenuItem - The menu item to remove.
      */
-    public void removeMenuItem(MenuItem item) {
+    public void deleteMenuItem(MenuItem item) {
         menuItems.remove(item);
         deleteMenuItemFromDatabase(item);
-    }
-
-    /**
-     * Returns a map of all ingredients for a menu item.
-     * @param menuItem MenuItem - The menu item to get ingredients for.
-     * @return Map - A map of all ingredients for the menu item.
-     */
-    public Map<String, Object> getMenuItemIngredients(MenuItem menuItem) {
-        return getMenuItemIngredientsFromDatabase(menuItem);
     }
 
     /**
@@ -151,19 +145,18 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * @param ingredient Ingredients - The ingredient to add.
      * @param numeral Object - The quantity of the ingredient to add.
      */
-    public void addMenuItemIngredient(MenuItem menuItem, Ingredients ingredient, Object numeral) {
+    public void createMenuItemIngredient(MenuItem menuItem, Ingredients ingredient, Object numeral) {
         menuItem.addIngredient(ingredient, numeral);
         saveMenuItemIngredientsToDatabase(menuItem, ingredient, numeral);
     }
 
     /**
-     * Removes an ingredient from a menu item.
-     * @param menuItem MenuItem - The menu item to remove the ingredient from.
-     * @param ingredient Ingredients - The ingredient to remove.
+     * Returns a map of all ingredients for a menu item.
+     * @param menuItem MenuItem - The menu item to get ingredients for.
+     * @return Map - A map of all ingredients for the menu item.
      */
-    public void removeMenuItemIngredient(MenuItem menuItem, Ingredients ingredient) {
-        menuItem.removeIngredient(ingredient);
-        updateMenuItemIngredientsInDatabase(menuItem);
+    public Map<String, Object> readMenuItemIngredients(MenuItem menuItem) {
+        return getMenuItemIngredientsFromDatabase(menuItem);
     }
 
     /**
@@ -178,7 +171,20 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     /**
+     * Removes an ingredient from a menu item.
+     * @param menuItem MenuItem - The menu item to remove the ingredient from.
+     * @param ingredient Ingredients - The ingredient to remove.
+     */
+    public void deleteMenuItemIngredient(MenuItem menuItem, Ingredients ingredient) {
+        menuItem.removeIngredient(ingredient);
+        updateMenuItemIngredientsInDatabase(menuItem);
+    }
+
+    /* ---------------->   METHODS WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY MENUITEM API   <------------------------- */
+
+    /**
      * Returns a menu item with the specified name.
+     * METHODS WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY MENUITEM API
      * @param itemName String - The name of the menu item to get.
      * @return MenuItem - The menu item with the specified name.
      */
@@ -194,6 +200,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /**
      * Returns a menu item with the specified ID.
+     * METHODS WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY MENUITEM API
      * @param itemId String - The ID of the menu item to get.
      * @return MenuItem - The menu item with the specified ID.
      */
@@ -210,29 +217,115 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /*====================================================================================================================================================================
      Code Description:
-     This section of code handles the implementation of the IOrderStore interface. It provides methods for adding, updating, and removing orders.
+     This section of code handles the implementation of the IOrderStore interface. It provides methods for creating, reading, updating, and deleting orders and order items.
 
      Methods:
-        Methods for lists of orders:
-            - getOrders(): ObservableList<Order> - Returns a list of all orders.
-            - addOrder(Order order): void - Adds a new order to the list of orders.
+        Methods for orders:
+            - createOrder(Order order): void - Adds a new order to the list of orders.
+            - readOrders(): ObservableList<Order> - Returns a list of all orders.
             - updateOrder(Order order): void - Updates an existing order in the list of orders.
-            - removeOrder(Order order): void - Removes an existing order from the list of orders.
+            - deleteOrder(Order order): void - Removes an existing order from the list of orders.
 
-        Methods for singular items:
-            - addOrderItem(Order order, MenuItem item, int quantity): void - Adds a new item to an existing order.
+        Methods for order items:
+            - createOrderItem(Order order, MenuItem item, int quantity): void - Adds a new item to an existing order.
+            - readOrderItems(Order order): Map - Returns a map of all items in an order.
             - updateOrderItem(Order order, MenuItem menuItem, int quantity): void - Updates an existing item in an order.
-            - removeOrderItem(Order order, MenuItem item, int quantity): void - Removes an existing item from an order.
+            - deleteOrderItem(Order order, MenuItem item, int quantity): void - Removes an existing item from an order.
+
+        Methods for getting orders and order items (DEPRECATED):
+            - getOrder(int orderNumber): Order - Returns an order with the specified order number.
+            - getOrderItem(Order order, String menuItemId): Map - Returns an item in an order with the specified menu item ID.
+            - reloadOrdersFromDatabase(): void - Reloads orders from the database. (SPECIAL METHOD FOR RELOADING ORDERS FROM DATABASE, EXPERIMENTAL FOR CURRENT RELEASE)
     ====================================================================================================================================================================*/
 
+
+
+    /**
+     * Adds a new order to the list of orders.
+     * @param order Order - The order to add.
+     */
+    public void createOrder(Order order) {
+        orders.add(order);
+        saveOrderToDatabase(order);
+    }
 
     /**
      * Returns a list of all orders.
      * @return ObservableList<Order> - A list of all orders.
      */
-    public ObservableList<Order> getOrders() {
+    public ObservableList<Order> readOrders() {
         return orders;
     }
+
+    /**
+     * Updates an existing order in the list of orders.
+     * @param order Order - The order to update.
+     */
+    public void updateOrder(Order order) {
+        updateOrderInDatabase(order);
+        int index = orders.indexOf(order);
+        if (index != -1) {
+            orders.set(index, order);
+        } else {
+            orders.add(order);
+        }
+    }
+
+    /**
+     * Removes an existing order from the list of orders.
+     * @param order Order - The order to remove.
+     */
+    public void deleteOrder(Order order) {
+        orders.remove(order);
+        deleteOrderFromDatabase(order);
+    }
+
+    /**
+     * Adds a new item to an existing order.
+     * @param order Order - The order to add the item to.
+     * @param item MenuItem - The item to add.
+     * @param quantity int - The quantity of the item to add.
+     */
+    public void createOrderItem(Order order, MenuItem item, int quantity) {
+        order.addMenuItem(item, quantity);
+        saveOrderItemToDatabase(order, item, quantity);
+        deductIngredientsFromStock(item, quantity);
+    }
+
+    /**
+     * Returns a map of all items in an order.
+     * @param order Order - The order to get items for.
+     * @return Map - A map of all items in the order.
+     */
+    public Map<String, Object> readOrderItems(Order order) {
+        return getOrderItemsFromDatabase((String) order.getMetadata().metadata().get("order_id"));
+    }
+
+    /**
+     * Updates an existing item in an order.
+     * @param order Order - The order to update the item in.
+     * @param menuItem MenuItem - The item to update.
+     * @param quantity int - The new quantity of the item.
+     */
+    public void updateOrderItem(Order order, MenuItem menuItem, int quantity) {
+        order.updateMenuItem(menuItem, quantity);
+        updateOrderItemInDatabase(order, menuItem, quantity);
+        deductIngredientsFromStock(menuItem, quantity);
+    }
+
+    /**
+     * Removes an existing item from an order.
+     * @param order Order - The order to remove the item from.
+     * @param item MenuItem - The item to remove.
+     * @param quantity int - The quantity of the item to remove.
+     */
+    public void deleteOrderItem(Order order, MenuItem item, int quantity) {
+        order.removeMenuItem(item, quantity);
+        deleteOrderItemFromDatabase(order, item, quantity);
+        restoreIngredientsToStock(item, quantity);
+    }
+
+    /* ---------------->   METHODS WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY ORDER API   <------------------------- */
 
     /**
      * Returns an order with the specified order number.
@@ -246,41 +339,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             }
         }
         return null;
-    }
-
-    /**
-     * Adds a new order to the list of orders.
-     * @param order Order - The order to add.
-     */
-    public void addOrder(Order order) {
-        orders.add(order);
-        saveOrderToDatabase(order);
-    }
-
-    /**
-     * Updates an existing order in the list of orders.
-     * @param order Order - The order to update.
-     */
-    public void updateOrder(Order order) {
-        updateOrderInDatabase(order);
-    }
-
-    /**
-     * Removes an existing order from the list of orders.
-     * @param order Order - The order to remove.
-     */
-    public void removeOrder(Order order) {
-        orders.remove(order);
-        deleteOrderFromDatabase(order);
-    }
-
-    /**
-     * Returns a map of all items in an order.
-     * @param order Order - The order to get items for.
-     * @return Map - A map of all items in the order.
-     */
-    public Map<String, Object> getOrderItems(Order order) {
-        return getOrderItemsFromDatabase((String) order.getMetadata().metadata().get("order_id"));
     }
 
     /**
@@ -303,77 +361,51 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     /**
-     * Adds a new item to an existing order.
-     * @param order Order - The order to add the item to.
-     * @param item MenuItem - The item to add.
-     * @param quantity int - The quantity of the item to add.
+     * Reloads orders from the database.
+     * SPECIAL METHOD FOR RELOADING ORDERS FROM DATABASE, EXPERIMENTAL FOR CURRENT RELEASE.
+     * METHOD MAY BE DEPRECATED IN FUTURE RELEASES.
      */
-    public void addOrderItem(Order order, MenuItem item, int quantity) {
-        order.addMenuItem(item, quantity);
-        saveOrderItemToDatabase(order, item, quantity);
-        deductIngredientsFromStock(item, quantity);
+    public void reloadOrdersFromDatabase() {
+        orders.clear();
+        loadOrdersFromDatabase();
     }
 
-    /**
-     * Updates an existing item in an order.
-     * @param order Order - The order to update the item in.
-     * @param menuItem MenuItem - The item to update.
-     * @param quantity int - The new quantity of the item.
-     */
-    public void updateOrderItem(Order order, MenuItem menuItem, int quantity) {
-        order.updateMenuItem(menuItem, quantity);
-        updateOrderItemInDatabase(order, menuItem, quantity);
-        deductIngredientsFromStock(menuItem, quantity);
-    }
-
-    /**
-     * Removes an existing item from an order.
-     * @param order Order - The order to remove the item from.
-     * @param item MenuItem - The item to remove.
-     * @param quantity int - The quantity of the item to remove.
-     */
-    public void removeOrderItem(Order order, MenuItem item, int quantity) {
-        order.removeMenuItem(item, quantity);
-        deleteOrderItemFromDatabase(order, item, quantity);
-        restoreIngredientsToStock(item, quantity);
-    }
 
 
     /*====================================================================================================================================================================
     Code Description:
-    This section of code handles the implementation of the IUserStore interface. It provides methods for adding, updating, and removing users.
+    This section of code handles the implementation of the IUserStore interface. It provides methods for creating, reading, updating, and deleting users.
 
     Methods:
-        Methods for lists of users:
-            - getUsers(): ObservableList<Users> - Returns a list of all users.
-            - addUser(Users user): void - Adds a new user to the list of users.
+        Methods for users:
+            - createUser(Users user): void - Adds a new user to the list of users.
+            - readUsers(): ObservableList<Users> - Returns a list of all users.
             - updateUser(Users user): void - Updates an existing user in the list of users.
-            - removeUser(Users user): void - Removes an existing user from the list of users.
+            - deleteUser(Users user): void - Removes an existing user from the list of users.
 
-        Methods for singular items:
+        Methods for user operations (DEPRECATED):
+            - updateUserPassword(Users user, String newPassword): void - Updates a user's password.
+            - usernameExists(String username): boolean - Checks if a username already exists in the database.
             - getUser(String username): Users - Returns a user with the specified username.
     ====================================================================================================================================================================*/
 
 
-    /**
-     * Returns a list of all users.
-     * @return ObservableList<Users> - A list of all users.
-     */
-    public ObservableList<Users> getUsers() {
-        return users;
-    }
 
     /**
      * Adds a new user to the list of users.
      * @param user Users - The user to add.
      */
-    public void addUser(Users user) {
-        if (usernameExists(user.getMetadata().metadata().get("username").toString())) {
-            throw new IllegalArgumentException("Username already exists.");
-        }
-
+    public void createUser(Users user) {
         users.add(user);
         saveUserToDatabase(user);
+    }
+
+    /**
+     * Returns a list of all users.
+     * @return ObservableList<Users> - A list of all users.
+     */
+    public ObservableList<Users> readUsers() {
+        return users;
     }
 
     /**
@@ -388,90 +420,45 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * Removes an existing user from the list of users.
      * @param user Users - The user to remove.
      */
-    public void removeUser(Users user) {
+    public void deleteUser(Users user) {
         users.remove(user);
         deleteUserFromDatabase(user);
-    }
-
-    /**
-     * Returns a user with the specified username.
-     * @param username String - The username of the user to get.
-     * @return Users - The user with the specified username.
-     */
-    @Override
-    public Users getUser(String username) {
-        for (Users user : users) {
-            if (user.getMetadata().metadata().get("username").equals(username)) {
-                return user;
-            }
-        }
-        return null; // User not found
-    }
-
-    /**
-     * Returns a user with the specified user ID.
-     * @param userId String - The user ID of the user to get.
-     * @return Users - The user with the specified user ID.
-     */
-    public Users getUserById(String userId) {
-        for (Users user : users) {
-            if (user.getMetadata().metadata().get("user_id").equals(userId)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Updates a user's password.
-     * @param user Users - The user to update the password for.
-     * @param newPassword String - The new password.
-     */
-    public void updateUserPassword(Users user, String newPassword) {
-        String hashedPassword = PasswordUtils.hashPassword(newPassword);
-        user.setDataValue("password", hashedPassword);
-        updateUserInDatabase(user);
     }
 
 
 
     /*====================================================================================================================================================================
     Code Description:
-    This section of code handles the implementation of the IIngredientStore interface. It provides methods for adding, updating, and removing ingredients.
+    This section of code handles the implementation of the IIngredientStore interface. It provides methods for creating, reading, updating, and deleting ingredients.
 
     Methods:
-        - getIngredients(): ObservableList<Ingredients> - Returns a list of all ingredients.
-        - getIngredient(String ingredientName): Ingredients - Returns an ingredient with the specified name.
-        - addIngredient(Ingredients ingredient): void - Adds a new ingredient to the list of ingredients.
-        - updateIngredient(Ingredients ingredient): void - Updates an existing ingredient in the list of ingredients.
-        - removeIngredient(Ingredients ingredient): void - Removes an existing ingredient from the list of ingredients.
+        Methods for ingredients:
+            - createIngredient(Ingredients ingredient): void - Adds a new ingredient to the list of ingredients.
+            - readIngredients(): ObservableList<Ingredients> - Returns a list of all ingredients.
+            - updateIngredient(Ingredients ingredient): void - Updates an existing ingredient in the list of ingredients.
+            - deleteIngredient(Ingredients ingredient): void - Removes an existing ingredient from the list of ingredients.
+
+        Methods for getting ingredients (DEPRECATED):
+            - getIngredient(String ingredientName): Ingredients - Returns an ingredient with the specified name.
     ====================================================================================================================================================================*/
 
 
-    /**
-     * Returns a list of all ingredients.
-     * @return ObservableList<Ingredients> - A list of all ingredients.
-     */
-    public ObservableList<Ingredients> getIngredients() {
-        return ingredients;
-    }
-
-    public Ingredients getIngredient(String ingredientName) {
-        for (Ingredients ingredient : ingredients) {
-            if (ingredient.getMetadata().metadata().get("itemName").equals(ingredientName)) {
-                return ingredient;
-            }
-        }
-        return null;
-    }
 
     /**
      * Adds a new ingredient to the list of ingredients.
      * @param ingredient Ingredients - The ingredient to add.
      */
-    public void addIngredient(Ingredients ingredient) {
+    public void createIngredient(Ingredients ingredient) {
         ingredients.add(ingredient);
         saveIngredientToDatabase(ingredient);
+    }
+
+    /**
+     * Returns a list of all ingredients.
+     * @return ObservableList<Ingredients> - A list of all ingredients.
+     */
+    public ObservableList<Ingredients> readIngredients() {
+        return ingredients;
     }
 
     /**
@@ -486,50 +473,61 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * Removes an existing ingredient from the list of ingredients.
      * @param ingredient Ingredients - The ingredient to remove.
      */
-    public void removeIngredient(Ingredients ingredient) {
+    public void deleteIngredient(Ingredients ingredient) {
         ingredients.remove(ingredient);
         deleteIngredientFromDatabase(ingredient);
+    }
+
+    /* ---------------->   METHODS WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY INGREDIENT API   <------------------------- */
+
+    /**
+     * Returns an ingredient with the specified name.
+     * @param ingredientName String - The name of the ingredient to get.
+     * @return Ingredients - The ingredient with the specified name.
+     */
+    public Ingredients getIngredient(String ingredientName) {
+        for (Ingredients ingredient : ingredients) {
+            if (ingredient.getMetadata().metadata().get("itemName").equals(ingredientName)) {
+                return ingredient;
+            }
+        }
+        return null;
     }
 
 
 
     /*====================================================================================================================================================================
     Code Description:
-    This section of code outlines the methods used to interact with the database for Stock. It includes methods for loading, saving, updating, and deleting data.
+    This section of code outlines the methods used to interact with the database for Stock. It includes methods for creating, reading, updating, and deleting stock data.
 
     Methods:
-        - getStockItems(): ObservableList<Stock> - Returns a list of all stock items.
-        - addStock(Stock stock): void - Adds a new stock item to the list of stock items.
-        - updateStock(Stock stock): void - Updates an existing stock item in the list of stock items.
-        - removeStock(Stock stock): void - Removes an existing stock item from the list of stock items.
+        Methods for lists of stock items:
+            - createStock(Stock stock): void - Adds a new stock item to the list of stock items.
+            - readStock(): ObservableList<Stock> - Returns a list of all stock items.
+            - updateStock(Stock stock): void - Updates an existing stock item in the list of stock items.
+            - deleteStock(Stock stock): void - Removes an existing stock item from the list of stock items.
+
+        Methods for getting stock items (DEPRECATED):
+            - getStockItem(String itemName): Stock - Returns a stock item with the specified ingredient name.
     ====================================================================================================================================================================*/
 
 
-    /**
-     * Returns a list of all stock items.
-     * @return ObservableList<Stock> - A list of all stock items.
-     */
-    public ObservableList<Stock> getStockItems() {
-        return stockItems;
-    }
-
-    /**
-     * Returns a stock item with the specified ingredient name.
-     * @param itemName String - The ingredient name of the stock item to get.
-     * @return Stock - The stock item with the specified ingredient name.
-     */
-    public Stock getStockItem(String itemName) {
-        String checkIngredientId = getIngredientIdByIngredientName(itemName);
-        return getStockItemByIngredientId(checkIngredientId);
-    }
 
     /**
      * Adds a new stock item to the list of stock items.
      * @param stock Stock - The stock item to add.
      */
-    public void addStock(Stock stock) {
+    public void createStock(Stock stock) {
         stockItems.add(stock);
         saveStockToDatabase(stock);
+    }
+
+    /**
+     * Returns a list of all stock items.
+     * @return ObservableList<Stock> - A list of all stock items.
+     */
+    public ObservableList<Stock> readStock() {
+        return stockItems;
     }
 
     /**
@@ -544,9 +542,21 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * Removes an existing stock item from the list of stock items.
      * @param stock Stock - The stock item to remove.
      */
-    public void removeStock(Stock stock) {
+    public void deleteStock(Stock stock) {
         stockItems.remove(stock);
         deleteStockFromDatabase(stock);
+    }
+
+    /* ---------------->   METHODS WILL BE DEPRECATED IN FUTURE RELEASES REPLACED BY STOCK API   <------------------------- */
+
+    /**
+     * Returns a stock item with the specified ingredient name.
+     * @param itemName String - The ingredient name of the stock item to get.
+     * @return Stock - The stock item with the specified ingredient name.
+     */
+    public Stock getStockItem(String itemName) {
+        String checkIngredientId = getIngredientIdByIngredientName(itemName);
+        return getStockItemByIngredientId(checkIngredientId);
     }
 
 
@@ -681,8 +691,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
-                double numeral = rs.getDouble("numeral");  // Assuming that numeral is stored as REAL in SQLite
-                Ingredients ingredient = getIngredientById(ingredientId);  // You'll need a method to fetch ingredient by ID
+                double numeral = rs.getDouble("numeral");
+                Ingredients ingredient = getIngredientById(ingredientId);
 
                 menuItem.addIngredient(ingredient, numeral);
             }
@@ -738,24 +748,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    @SuppressWarnings("unused")
-    private boolean menuItemIngredientExists(String menuItemId, String ingredientId, Connection conn) {
-        String checkSql = "SELECT COUNT(*) FROM menu_item_ingredients WHERE menu_item_id = ? AND ingredient_id = ?";
-
-        try (PreparedStatement pstmt = conn.prepareStatement(checkSql)) {
-            pstmt.setString(1, menuItemId);
-            pstmt.setString(2, ingredientId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return false;
     }
 
     private void updateMenuItemIngredientsInDatabase(MenuItem menuItem) {
@@ -819,12 +811,16 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String userId = rs.getString("user_id");
                 Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
                 boolean isCompleted = rs.getInt("is_completed") == 1;
+                long createdAt = rs.getLong("created_at");
+                long updatedAt = rs.getLong("updated_at");
                 double total = rs.getDouble("total");
 
                 Order order = new Order(orderNumber, userId);
                 order.updateMetadata("order_id", orderId);
                 order.updateMetadata("order_status", orderStatus);
                 order.updateMetadata("is_completed", isCompleted);
+                order.updateMetadata("created_at", createdAt);
+                order.updateMetadata("updated_at", updatedAt);
                 order.setDataValue("total", total);
 
                 orders.add(order);
@@ -856,7 +852,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 orderItemsList.add(orderItemMap);
             }
 
-            // Update the order's menuItems map with the loaded items
             if (order != null) {
                 @SuppressWarnings("unchecked")
                 Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
@@ -1120,57 +1115,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    public Map<String, Object> getUserByIdFromDatabase(String userId) {
-        String sql = "SELECT * FROM users WHERE id = ?";
-        Map<String, Object> userMap = new HashMap<>();
-
-        try (Connection conn = DatabaseHelper.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, userId);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                userMap.put("id", rs.getString("id"));
-                userMap.put("first_name", rs.getString("first_name"));
-                userMap.put("last_name", rs.getString("last_name"));
-                userMap.put("username", rs.getString("username"));
-                userMap.put("role", rs.getString("role"));
-                userMap.put("email", rs.getString("email"));
-                userMap.put("password", rs.getString("password"));
-                userMap.put("additional_info", rs.getString("additional_info"));
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return userMap;
-    }
-
-    /**
-     * Checks if a username already exists in the database.
-     * @param username String - The username to check.
-     * @return boolean - True if the username exists, false otherwise.
-     */
-    public boolean usernameExists(String username) {
-        String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
-
-        try (Connection conn = DatabaseHelper.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, username);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return false;
     }
 
     private void saveUserToDatabase(Users user) {
@@ -1462,9 +1406,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     Code Description:
     This section of code outlines the methods used to manage stock levels based on orders.
 
-    Methods:
+    Methods (INTERNAL):
         - deductIngredientsFromStock(MenuItem item, int quantity): void - Deducts the appropriate amount of each ingredient from the stock based on the order.
         - restoreIngredientsToStock(MenuItem item, int quantity): void - Restores the appropriate amount of each ingredient to the stock if an order is canceled or modified.
+        - getStockItemByIngredientId(String ingredientId): Stock - Returns the stock item for the specified ingredient ID.
+        - getIngredientIdByIngredientName(String ingredientName): String - Returns the ingredient ID for the specified ingredient name.
     ====================================================================================================================================================================*/
 
 
@@ -1536,6 +1482,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         return null;
     }
 
+
+
     /*====================================================================================================================================================================
     Code Description:
     This section of code outlines the method used to clear all data from the database.
@@ -1544,32 +1492,84 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         - clearData(): void - Clears all data from the database.
 
         Methods for clearing individual tables (INTERNAL):
+            - clearUsers(): void - Clears all users from the database.
+            - clearIngredient(): void - Clears all ingredient relationships from the database.
+            - clearIngredients(): void - Clears all ingredients from the database.
+            - clearStock(): void - Clears all stock from the database.
             - clearMenuItems(): void - Clears all menu items from the database.
             - clearOrders(): void - Clears all orders from the database.
-            - clearUsers(): void - Clears all users from the database.
             - clearOrderItems(): void - Clears all order items from the database.
     ====================================================================================================================================================================*/
 
 
 
+    /**
+     * This method is used to clear all data from the database.
+     * THIS METHOD SHOULD BE USED WITH CAUTION.
+     */
     public void clearData() {
+        clearUsers();
+        clearIngredient();
+        clearIngredients();
         clearMenuItems();
         clearOrders();
-        clearUsers();
         clearOrderItems();
-        clearIngredients();
-        clearIngredient();
         clearStock();
     }
 
-    private void clearOrderItems() {
-        String sql = "DELETE FROM order_items";
+    private void clearUsers() {
+        users.clear();
+        String sql = "DELETE FROM users";
 
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement()) {
 
             stmt.execute(sql);
-            System.out.println("OrderItems table cleared.");
+            System.out.println("Users table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void clearIngredient() {
+        String sql = "DELETE FROM menu_item_ingredients";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("MenuItem-Ingredients relationships table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void clearIngredients() {
+        ingredients.clear();
+        String sql = "DELETE FROM ingredients";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Ingredients table cleared.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void clearStock() {
+        stockItems.clear();
+        String sql = "DELETE FROM stock";
+
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sql);
+            System.out.println("Stock table cleared.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -1606,67 +1606,19 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         }
     }
 
-    private void clearUsers() {
-        users.clear();
-        String sql = "DELETE FROM users";
+    private void clearOrderItems() {
+        String sql = "DELETE FROM order_items";
 
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement()) {
 
             stmt.execute(sql);
-            System.out.println("Users table cleared.");
+            System.out.println("OrderItems table cleared.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
-
-
-    private void clearIngredients() {
-        ingredients.clear();
-        String sql = "DELETE FROM ingredients";
-
-        try (Connection conn = DatabaseHelper.connect();
-             Statement stmt = conn.createStatement()) {
-
-            stmt.execute(sql);
-            System.out.println("Ingredients table cleared.");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-
-    private void clearIngredient() {
-        String sql = "DELETE FROM menu_item_ingredients";
-
-        try (Connection conn = DatabaseHelper.connect();
-             Statement stmt = conn.createStatement()) {
-
-            stmt.execute(sql);
-            System.out.println("MenuItem-Ingredients relationships table cleared.");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void clearStock() {
-        stockItems.clear();
-        String sql = "DELETE FROM stock";
-
-        try (Connection conn = DatabaseHelper.connect();
-             Statement stmt = conn.createStatement()) {
-
-            stmt.execute(sql);
-            System.out.println("Stock table cleared.");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
 
 }
 

@@ -18,9 +18,7 @@ public class POSApplication extends Application {
      */
     @Override
     public void start(Stage stage) {
-        // Using GuiCommon to load the initial stage
         GuiCommon.loadStage(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE);
-        // Note: GuiCommon now handles creating and showing the stage internally
     }
 
     /**
@@ -30,14 +28,12 @@ public class POSApplication extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        // Perform any necessary initialization here
         System.out.println("Application initialization tasks are completed.");
     }
 
     @Override
     public void stop() throws Exception {
         super.stop();
-        // Perform any necessary cleanup here
         System.out.println("Application cleanup tasks are completed.");
     }
 

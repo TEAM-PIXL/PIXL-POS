@@ -39,4 +39,8 @@ public class Exceptions {
         });
         return MESSAGE + " " + ERROR_CODES;
     }
+
+    public static String generateErrorMessage( StatusCode STATUS ) {
+        return "The following error occurred: " + STATUS;
+    }
 }
