@@ -174,4 +174,11 @@ class UsersAPITest {
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
+    @Test
+    public void testDeleteUser() {
+        usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
+        List<StatusCode> result = usersAPI.deleteUser("johndoe");
+        assertTrue(result.contains(StatusCode.SUCCESS));
+    }
+
 }
