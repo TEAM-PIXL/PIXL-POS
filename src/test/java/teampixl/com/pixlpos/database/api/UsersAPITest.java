@@ -37,4 +37,11 @@ class UsersAPITest {
         assertEquals(StatusCode.EMAIL_INVALID_FORMAT, usersAPI.validateUsersByEmailAddress("emailexample.com"));
         assertEquals(StatusCode.EMAIL_CONTAINS_SPACES, usersAPI.validateUsersByEmailAddress("email @example"));
     }
+
+    @Test
+    void testValidateUsersByFirstName () {
+        assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByFirstName("John"));
+        assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(null));
+        assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(""));
+    }
 }
