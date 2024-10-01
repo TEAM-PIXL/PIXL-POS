@@ -61,6 +61,11 @@ class UsersTest {
     }
 
     @Test
+    void testUserCreationWithNullEmail() {
+        assertDoesNotThrow(() -> new Users("John", "Doe", "johndoe", "password", null, Users.UserRole.ADMIN));
+    }
+
+    @Test
     void testUserCreationWithNullRole() {
         assertThrows(IllegalArgumentException.class, () -> new Users("John", "Doe", "johndoe", "password", "", null));
     }
