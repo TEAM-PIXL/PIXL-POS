@@ -167,4 +167,11 @@ class UsersAPITest {
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
+    @Test
+    public void testPutUsersAdditionalInfo() {
+        usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
+        List<StatusCode> result = usersAPI.putUsersAdditionalInfo("johndoe", "Updated info");
+        assertTrue(result.contains(StatusCode.SUCCESS));
+    }
+
 }
