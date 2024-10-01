@@ -87,4 +87,10 @@ class UsersAPITest {
         assertTrue(statusCodes.contains(StatusCode.SUCCESS));
     }
 
+    @Test
+    public void testGetUsersByUsername() {
+        usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
+        assertNotNull(usersAPI.getUsersByUsername("johndoe"));
+    }
+
 }
