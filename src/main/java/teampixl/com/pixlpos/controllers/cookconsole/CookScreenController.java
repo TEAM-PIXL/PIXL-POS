@@ -49,7 +49,6 @@ public class CookScreenController extends GuiCommon {
         } else {
             System.err.println("Error: Current user is not set.");
         }
-
         orderview.setOnMouseClicked(event -> {
             VBox selectedVBox = orderview.getSelectionModel().getSelectedItem();
             if (selectedVBox != null) {
@@ -84,15 +83,10 @@ public class CookScreenController extends GuiCommon {
         }
     }
 
-    @FXML
-    private void onLogoutButtonClick() {
-        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
-    }
-
     private void updateOrderListView() {
         orderview.getItems().clear();
         for (Order order : orders) {
-            Order.OrderStatus status = Order.OrderStatus.valueOf(order.getMetadata().metadata().get(ORDER_STATUS_KEY).toString());
+            Order.OrderStatus status = Order.OrderStatus.valueOf(order.getMetadata().metadata().get(ORDER_STATUS_KEY).toString()); //Clear and works
             if (status == Order.OrderStatus.SENT) {
                 VBox orderVBox = createOrderVBox(order);
                 orderview.getItems().add(orderVBox);
@@ -129,6 +123,7 @@ public class CookScreenController extends GuiCommon {
         VBox itemsVBox = new VBox();
         itemsVBox.getStyleClass().add("vbox-items");
         Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById(order.getMetadata().metadata().get(ORDER_ID_KEY).toString());
+        System.out.println("Order Items: " + orderItems);
         for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
             String itemName = entry.getKey().getMetadata().metadata().get("itemName").toString();
             int quantity = entry.getValue();
@@ -161,12 +156,18 @@ public class CookScreenController extends GuiCommon {
         return null;
     }
 
+    /* ------->HELPER FUNCTIONS<--------- */
     private void showAlert(String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Order Error");
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void onLogoutButtonClick() {
+        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
     }
 }
 

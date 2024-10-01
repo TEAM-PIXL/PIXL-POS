@@ -201,6 +201,8 @@ public class OrderAPI {
             return Collections.emptyMap();
         }
 
+        dataStore.loadOrderItems(orderId, order);
+
         @SuppressWarnings("unchecked")
         Map<String, Integer> menuItemsMap = (Map<String, Integer>) order.getData().get("menuItems");
         Map<MenuItem, Integer> menuItemsWithQuantity = new HashMap<>();
