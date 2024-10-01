@@ -104,6 +104,8 @@ public class AdminScreenMenuController
     @FXML
     public void initialize() {
         datetime.start();
+        adding_counter = 0;
+        menuitemlist.getItems().clear();
     }
 
 
@@ -203,6 +205,7 @@ public class AdminScreenMenuController
             }
         }
     }
+
     /**
      * Adds a menu item to the specified ListView. The menu item is represented as an HBox containing four AnchorPanes
      * that display the name, price, type, and dietary information of the item.
@@ -217,6 +220,7 @@ public class AdminScreenMenuController
         HBox hbox = new HBox();
         hbox.setPrefHeight(50.0);
         hbox.setPrefWidth(200.0);
+        hbox.setId(id);
 
         // Name
         AnchorPane namePane = new AnchorPane();

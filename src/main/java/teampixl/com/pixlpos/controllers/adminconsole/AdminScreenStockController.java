@@ -106,6 +106,8 @@ public class AdminScreenStockController
     @FXML
     public void initialize() {
         datetime.start();
+        adding_counter = 0;
+        itemlist.getItems().clear();
     }
 
 

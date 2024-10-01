@@ -107,6 +107,8 @@ public class AdminScreenUsersController
     @FXML
     public void initialize() {
         datetime.start();
+        adding_counter = 0;
+        userslist.getItems().clear();
     }
 
 
