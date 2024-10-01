@@ -67,7 +67,7 @@ Buttons
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
 }
 
-.customize-button, .item-correct{
+.customize-button, .item-correct, .filter-button{
     -fx-background-color: #4A85F6;
     -fx-text-fill: white;
     -fx-background-radius: 5;
@@ -82,6 +82,14 @@ Buttons
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
 }
 
+
+.item-button{
+    -fx-background-color: #EFF4FA;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-font-family: "Open Sans";
+}
 /*
 Text
  */
@@ -116,34 +124,61 @@ Text
     -fx-font-family: "Open Sans";
 }
 
+.buttonprice-label {
+    -fx-text-fill: #8f9bb3;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
 /*
 tabpane
  */
 /* TabPane styling */
 .tab-pane {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-border-radius: 10;
+
+
 }
 .tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: white;
+    -fx-background-color: #F5F5F5;
+    /*-fx-opacity: 0;*/
 }
 .tab-pane .tab-header-area .tab-header-background {
     -fx-effect: null;
+
 }
-.tab-pane .tab-header-area .tab-header-background {
-    -fx-opacity: 0;
+.tab-pane > .tab-header-area > .headers-region > .tab{
+    -fx-background-radius: 10px 10px 10px 10px;
+}
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
+    -fx-alignment: center;
+    -fx-text-fill: #4A85F6;
+}
+.tab-pane > .tab-header-area > .headers-region > .tab:selected
+{
+    -fx-focus-color:  transparent;  //red;
 }
 
+.tab-pane .tab-header-area .tab-label {
+    -fx-alignment: center;   /* Centers the text */
+}
 .tab {
-    -fx-background-color: #EFF4FA;
-    -fx-pref-width: 200;
+    -fx-background-color: white;
+    /*-fx-pref-width: 170;*/
+    -fx-pref-height: 50;
     -fx-text-alignment: center;
-    -fx-text-fill: #000000;
     -fx-font-size: 20px;
-    -fx-padding: 10px;
-    -fx-border-radius: 10px 10px 0 0;
-
+    -fx-border-radius: 10 10 10 10;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
     /*-fx-background-insets: 0 3 0 3;*/
 
+}
+.searchtab {
+    /*-fx-pref-width: 45;*/
+    /*-fx-background-insets: 0 3 0 3;*/
 }
 
 .tab:selected {
@@ -152,4 +187,22 @@ tabpane
 
 .tab:hover {
     -fx-background-color: #3B6FD1;
+}
+
+.pane-style{
+    -fx-background-radius: 10;
+    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-border-radius: 10;
+}
+
+.scroll-pane > .viewport {
+     -fx-background-color: transparent;
+ }
+
+.scroll-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10;
 }
