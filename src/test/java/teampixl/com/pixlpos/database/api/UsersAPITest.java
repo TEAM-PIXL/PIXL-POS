@@ -118,4 +118,11 @@ class UsersAPITest {
         assertNotNull(usersAPI.getUserById(userId));
     }
 
+    @Test
+    public void testPutUsersUsername() {
+        usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
+        List<StatusCode> result = usersAPI.putUsersUsername("johndoe", "newusername");
+        assertTrue(result.contains(StatusCode.SUCCESS));
+    }
+
 }
