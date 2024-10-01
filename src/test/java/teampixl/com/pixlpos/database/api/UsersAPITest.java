@@ -111,4 +111,11 @@ class UsersAPITest {
         assertEquals("Doe", usersAPI.getUsersLastName("johndoe"));
     }
 
+    @Test
+    public void testGetUserById() {
+        usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN, "Some info");
+        String userId = usersAPI.getUsersByUsername("johndoe");
+        assertNotNull(usersAPI.getUserById(userId));
+    }
+
 }
