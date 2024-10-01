@@ -82,3 +82,23 @@
     -fx-background-radius: 15px;
     -fx-background-color: #F5F5F5;
 }
+
+/* Tab Content */
+.manage-user-container, .list-user-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10px;
+}
+
+/* Title styling */
+.container-label {
+    -fx-text-fill: #222b45;
+    -fx-font-size: 17px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.line {
+    -fx-border-color: #4A85F6;
+    -fx-border-width: 1;
+}

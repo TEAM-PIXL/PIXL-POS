@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Button?>
@@ -43,7 +42,7 @@
                                 <Insets left="15.0" top="7.0" />
                             </HBox.margin>
                         </ImageView>
-                        <TextField fx:id="searchbar"  prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box" >
+                        <TextField fx:id="searchbar" prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -85,8 +84,8 @@
                             </image>
                         </ImageView>
                         <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
-                        <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0"  text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
-                        <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0"  text="Have a nice day" AnchorPane.topAnchor="145.0" />
+                        <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
+                        <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Have a nice day" AnchorPane.topAnchor="145.0" />
                     </children>
                 </AnchorPane>
                 <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
@@ -131,7 +130,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="analyticsbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="210.0" styleClass="analytics-button" text="Analytics" onAction="#onAnalyticsButtonClick">
+                        <Button fx:id="analyticsbutton" mnemonicParsing="false" onAction="#onAnalyticsButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="analytics-button" text="Analytics">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -144,7 +143,7 @@
                 </VBox>
                 <VBox layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                     <children>
-                        <Button fx:id="logoutbutton" mnemonicParsing="false" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout" onAction="#onLogoutButtonClick">
+                        <Button fx:id="logoutbutton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
                             <graphic>
                                 <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -159,20 +158,30 @@
         </AnchorPane>
     </left>
     <right>
-        <AnchorPane prefWidth="650.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
+        <AnchorPane prefWidth="400.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="20.0" left="10.0" right="20.0" top="20.0" />
             </padding>
-            <children>
-            <ScatterChart fx:id="chart" layoutX="60.8" layoutY="20.8" prefHeight="654.4" prefWidth="700.0" style="-fx-background-color: white; -fx-background-radius: 20;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <xAxis>
-                <CategoryAxis side="BOTTOM" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis side="LEFT" />
-              </yAxis>
-            </ScatterChart>
-            </children></AnchorPane>
+         <children>
+             <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" styleClass="manage-menu-container" BorderPane.alignment="CENTER">
+                 <children>
+                     <Label prefHeight="34.0" prefWidth="234.0" styleClass="container-label" text="Menu Item Information">
+                         <padding>
+                             <Insets left="10.0" top="10.0" />
+                         </padding>
+                         <font>
+                             <Font size="24.0" />
+                         </font>
+                     </Label>
+                     <HBox prefHeight="0.0" prefWidth="0.0" styleClass="line" />
+                     <Label text="Menu Item Name:" />
+
+                 </children>
+                 <padding>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                 </padding>
+             </VBox>
+         </children></AnchorPane>
     </right>
     <bottom>
         <AnchorPane maxHeight="0.0" maxWidth="0.0" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
@@ -183,17 +192,24 @@
                 <Insets bottom="10.0" left="20.0" right="10.0" top="20.0" />
             </padding>
             <children>
-                <BorderPane prefHeight="655.0" prefWidth="370.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <BorderPane prefHeight="654.4" prefWidth="419.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <bottom>
                         <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
                             <children>
-                                <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Update Data" />
+                                <Button fx:id="updatebutton" mnemonicParsing="false" onAction="#onUpdateDataButtonClick" prefHeight="40.0" prefWidth="150.0" text="Update Data" />
                                 <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Next Data Set" />
                             </children>
                         </HBox>
                     </bottom>
                <center>
-                  <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 20;" BorderPane.alignment="CENTER" />
+                      <ScatterChart fx:id="chart" prefHeight="400" prefWidth="600" BorderPane.alignment="CENTER">
+                          <xAxis>
+                              <NumberAxis label="Hour of the Day" fx:id="xAxis" />
+                          </xAxis>
+                          <yAxis>
+                              <NumberAxis fx:id="yAxis" label="Total Profit ($)" />
+                          </yAxis>
+                      </ScatterChart>
                </center>
                 </BorderPane>
             </children>
