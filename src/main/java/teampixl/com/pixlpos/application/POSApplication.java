@@ -18,7 +18,7 @@ public class POSApplication extends Application {
      */
     @Override
     public void start(Stage stage) {
-        GuiCommon.loadStage(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE);
+        GuiCommon.loadStage(GuiCommon.WAITER_SCREEN_FXML, GuiCommon.WAITER_SCREEN_TITLE);
     }
 
     /**

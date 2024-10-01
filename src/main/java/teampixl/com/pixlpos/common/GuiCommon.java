@@ -43,7 +43,7 @@ public class GuiCommon {
     public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage.fxml";
 
     public static final String WAITER_SCREEN_TITLE = "Waiter Screen";
-    public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage.fxml";
+    public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage2.fxml";
 
     /**
      * Loads a new stage with the given FXML file and title.
