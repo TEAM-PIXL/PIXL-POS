@@ -75,4 +75,10 @@ class UsersAPITest {
         assertEquals(StatusCode.INVALID_USER_ADDITIONAL_INFO, usersAPI.validateUsersByAdditionalInfo(null));
     }
 
+    @Test
+    void testPostUsers() {
+        List<StatusCode> statusCodes = usersAPI.postUsers("John", "Doe", "johndoe", "Password1!", "johndoe@example.com", Users.UserRole.ADMIN);
+        assertTrue(statusCodes.contains(StatusCode.SUCCESS));
+    }
+
 }
