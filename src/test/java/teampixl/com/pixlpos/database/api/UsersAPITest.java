@@ -44,4 +44,11 @@ class UsersAPITest {
         assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(null));
         assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(""));
     }
+
+    @Test
+    void testValidateUsersByLastName () {
+        assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByLastName("Doe"));
+        assertEquals(StatusCode.INVALID_LAST_NAME, usersAPI.validateUsersByLastName(null));
+        assertEquals(StatusCode.INVALID_LAST_NAME, usersAPI.validateUsersByLastName(""));
+    }
 }
