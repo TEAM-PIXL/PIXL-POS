@@ -30,7 +30,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-
+import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.models.Users;
 import javafx.scene.layout.HBox;
 
 public class AdminScreenUsersController
@@ -39,7 +40,9 @@ public class AdminScreenUsersController
     Code Description:
     This class is the controller for the home admin screen of the application.
     ====================================================================================================================================================================================*/
-
+    private final UserStack userStack = UserStack.getInstance();
+    Users currentuser = userStack.getCurrentUser();
+    String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
     /*
     Shared Components
      */
@@ -109,6 +112,8 @@ public class AdminScreenUsersController
         datetime.start();
         adding_counter = 0;
         userslist.getItems().clear();
+        greeting.setText("Hello, " + firstName);
+
     }
 
 

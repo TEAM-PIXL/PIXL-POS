@@ -15,7 +15,11 @@ import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.UsersAPI;
-
+import teampixl.com.pixlpos.database.api.MenuAPI;
+import teampixl.com.pixlpos.database.api.OrderAPI;
+import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.database.api.util.Exceptions;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -32,7 +36,9 @@ public class AdminScreenHomeController
     Code Description:
     This class is the controller for the home admin screen of the application.
     ====================================================================================================================================================================================*/
-
+    private final UserStack userStack = UserStack.getInstance();
+    Users currentuser = userStack.getCurrentUser();
+    String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
     /*
     Shared Components
      */
@@ -67,9 +73,11 @@ public class AdminScreenHomeController
         }
     };
 
+
     @FXML
     public void initialize() {
         datetime.start();
+        greeting.setText("Hello, " + firstName);
     }
 
 

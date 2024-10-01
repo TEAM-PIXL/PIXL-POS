@@ -21,7 +21,8 @@ import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.UsersAPI;
-
+import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.models.Users;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -38,7 +39,9 @@ public class AdminScreenStockController
     Code Description:
     This class is the controller for the home admin screen of the application.
     ====================================================================================================================================================================================*/
-
+    private final UserStack userStack = UserStack.getInstance();
+    Users currentuser = userStack.getCurrentUser();
+    String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
     /*
     Shared Components
      */
@@ -108,6 +111,7 @@ public class AdminScreenStockController
         datetime.start();
         adding_counter = 0;
         itemlist.getItems().clear();
+        greeting.setText("Hello, " + firstName);
     }
 
 
