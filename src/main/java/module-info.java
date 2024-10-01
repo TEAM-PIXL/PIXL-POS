@@ -45,6 +45,4 @@ module PIXL.POS {
     exports teampixl.com.pixlpos.database.api;
     exports teampixl.com.pixlpos.database.api.util;
     exports teampixl.com.pixlpos.models;
-    exports teampixl.com.pixlpos.controllers;
-    opens teampixl.com.pixlpos.controllers;
 }
