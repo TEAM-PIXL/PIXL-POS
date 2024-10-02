@@ -43,11 +43,14 @@ class UsersAPITest {
 
     @AfterAll
     static void deleteAllUsers() {
+        List<StatusCode> StatusCodes;
         int currentCounter = postCounter;
         for (int i = 1; i <= currentCounter; i++) {
-            usersAPI.deleteUser("johndoe" + i);
+            StatusCodes = usersAPI.deleteUser("johndoe" + i);
+            assertTrue(Exceptions.isSuccessful(StatusCodes));
         }
-        usersAPI.deleteUser("newusername");
+        StatusCodes = usersAPI.deleteUser("newusername");
+        assertTrue(Exceptions.isSuccessful(StatusCodes));
     }
 
     @Test
