@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.database.api;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.models.MenuItem;
 import org.junit.jupiter.api.*;
+import teampixl.com.pixlpos.database.DataStore;
 import static org.junit.jupiter.api.Assertions.*;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
 import javafx.util.Pair;
@@ -21,8 +22,8 @@ public class MenuAPITest {
     private static MenuItem.DietaryRequirement testMenuItemDiet;
 
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         menuAPI = MenuAPI.getInstance();
         testMenuItemName = "Dog Food";
         testMenuItemPrice = 23.00;
@@ -34,6 +35,10 @@ public class MenuAPITest {
 
         List<StatusCode> postedStatusCodes = menuAPI.postMenuItem(testMenuItemName,testMenuItemPrice,testMenuItemActive,
                 testMenuItemType,testMenuItemDescription,testMenuItemNotes,testMenuItemDiet);
+    }
+    @AfterEach
+    void tearDown() {
+        DataStore.getInstance().deleteMenuItem(menuAPI.getMenuItem(testMenuItemName));
     }
 
     @Test
@@ -64,7 +69,7 @@ public class MenuAPITest {
     @Test
     void testValidateMenuItemByNotes(){
         String LongerName = "A".repeat(501);
-        assertEquals(StatusCode.MENU_ITEM_DESCRIPTION_TOO_LONG, menuAPI.validateMenuItemByNotes(LongerName));
+        assertEquals(StatusCode.MENU_ITEM_NOTES_TOO_LONG, menuAPI.validateMenuItemByNotes(LongerName));
         assertEquals(StatusCode.SUCCESS, menuAPI.validateMenuItemByNotes("Super Cool Notes."));
     }
 
@@ -76,7 +81,8 @@ public class MenuAPITest {
     @Test
     void testPutMenuItemName(){
         assertTrue(Exceptions.isSuccessful(
-                menuAPI.putMenuItemName(testMenuItemName, "Super Dog Food")));
+                menuAPI.putMenuItemName(testMenuItemName, "Lithium Batteries")));
+        menuAPI.putMenuItemName("Lithium Batteries",testMenuItemName);
     }
 
     @Test
@@ -103,4 +109,9 @@ public class MenuAPITest {
                 menuAPI.putMenuItemNotes(testMenuItemName, "New Notes")));
     }
 
+    @Test
+    void testSearchMenuItem(){
+        List<MenuItem> menuItems = menuAPI.searchMenuItem(testMenuItemName);
+        assertTrue(menuItems.contains(menuAPI.getMenuItem(testMenuItemName)));;
+    }
 }
