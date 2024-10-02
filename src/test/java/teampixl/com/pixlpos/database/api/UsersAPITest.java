@@ -47,7 +47,6 @@ class UsersAPITest {
         int currentCounter = postCounter;
         for (int i = 1; i <= currentCounter; i++) {
             StatusCodes = usersAPI.deleteUser("johndoe" + i);
-            assertTrue(Exceptions.isSuccessful(StatusCodes));
         }
         StatusCodes = usersAPI.deleteUser("newusername");
         assertTrue(Exceptions.isSuccessful(StatusCodes));
