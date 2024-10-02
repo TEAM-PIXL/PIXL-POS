@@ -209,7 +209,8 @@ public class WaiterScreen2Controller
     @FXML
     protected void onSendOrderButtonClick() {
 
-    }g
+    }
+
     @FXML
     protected void onCustomizeButtonClick() {
         itemtab.getSelectionModel().select(searchtab); /** this brings you to the tab and runs selection code*/
