@@ -73,5 +73,11 @@ public class MenuAPITest {
         assertNotNull(menuAPI.getMenuItem(testMenuItemName));
     }
 
+    @Test
+    void testPutMenuItemName(){
+        assertTrue(Exceptions.isSuccessful(
+                menuAPI.putMenuItemName(testMenuItemName, "Super Dog Food")));
+    }
+
 
 }
