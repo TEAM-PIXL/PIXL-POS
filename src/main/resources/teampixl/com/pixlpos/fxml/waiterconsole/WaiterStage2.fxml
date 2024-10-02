@@ -71,12 +71,29 @@
                            </children>
                         </AnchorPane>
                         <ListView fx:id="orderitemslistview" prefHeight="200.0" prefWidth="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Label fx:id="totalprice" styleClass="amount-label" text="00">
+                                 <graphic>
+                                    <Label styleClass="customers-label" text="Price:">
+                                       <graphic>
+                                          <ImageView fitHeight="150.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../images/waitericons/8666652_chevrons_right_icon.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Label>
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children></VBox>
                </center>
                <bottom>
                   <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="sendorderbutton" onAction="#onSendOrderButtonClick" mnemonicParsing="false" prefHeight="120.0" prefWidth="120.0" styleClass="submit-button" text="Send Order" />
+                        <Button fx:id="sendorderbutton" mnemonicParsing="false" onAction="#onSendOrderButtonClick" prefHeight="120.0" prefWidth="120.0" styleClass="submit-button" text="Send Order" />
                         <VBox spacing="10.0">
                            <children>
                               <Button fx:id="customizebutton" mnemonicParsing="false" onAction="#onCustomizeButtonClick" prefHeight="55.0" prefWidth="170.0" styleClass="customize-button" text="Customize" />
@@ -115,7 +132,7 @@
          <children>
             <TabPane fx:id="itemtab" prefHeight="670.4" prefWidth="769.6" snapToPixel="false" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <tabs>
-                <Tab styleClass="searchtab" id="search" fx:id="searchtab">
+                <Tab id="search" fx:id="searchtab" styleClass="searchtab">
                     <graphic>
                         <ImageView fitHeight="22" fitWidth="22">
                             <image>
@@ -159,7 +176,7 @@
                            </children></AnchorPane>
                   </content>
                 </Tab>
-                <Tab styleClass="tab" text="Entree" id="entree">
+                <Tab id="entree" styleClass="tab" text="Entree">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="pane-style">
                            <children>
@@ -175,7 +192,7 @@
                            </children></AnchorPane>
                   </content>
                 </Tab>
-                  <Tab styleClass="tab" text="Main" id="main">
+                  <Tab id="main" styleClass="tab" text="Main">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="pane-style">
                            <children>
@@ -187,7 +204,7 @@
                            </children></AnchorPane>
                      </content>
                   </Tab>
-                  <Tab text="Drinks" id="drinks" styleClass="tab">
+                  <Tab id="drinks" styleClass="tab" text="Drinks">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="pane-style">
                            <children>
@@ -199,7 +216,7 @@
                            </children></AnchorPane>
                      </content>
                   </Tab>
-                  <Tab text="Dessert" styleClass="tab" id="dessert">
+                  <Tab id="dessert" styleClass="tab" text="Dessert">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="list-pane">
                            <children>
