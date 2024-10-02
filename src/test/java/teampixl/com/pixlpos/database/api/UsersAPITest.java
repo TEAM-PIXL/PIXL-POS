@@ -14,17 +14,37 @@ class UsersAPITest {
     private static UsersAPI usersAPI;
     private String testUsername;
     private static int postCounter = 1;
+    private String testFirstName;
+    private String testLastName;
+    private String testPassword;
+    private String testEmail;
+    private Users.UserRole testRole;
+    private String testAdditionalInfo;
 
     @BeforeEach
     void setUp() {
         usersAPI = UsersAPI.getInstance();
         testUsername = "johndoe" + postCounter;
+        testFirstName = "John" + postCounter;
+        testLastName = "Doe" + postCounter;
+        testPassword = "Password!1" + postCounter;
+        testEmail = "johndoe@example.com" + postCounter;
+        testRole = Users.UserRole.ADMIN;
+        testAdditionalInfo = "additional info" + postCounter;
     }
 
     @AfterEach
-    void tearDown() {
+    void postCounterUpdate() {
         postCounter++;
-        System.out.println("Post Counter: " + postCounter);
+    }
+
+    @AfterAll
+    static void deleteAllUsers() {
+        int currentCounter = postCounter;
+        for (int i = 1; i <= currentCounter; i++) {
+            usersAPI.deleteUser("johndoe" + i);
+        }
+        usersAPI.deleteUser("newusername");
     }
 
     @Test
@@ -71,7 +91,7 @@ class UsersAPITest {
 
     @Test
     void testValidateUsersByRole() {
-        assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByRole(Users.UserRole.ADMIN));
+        assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByRole(testRole));
         assertEquals(StatusCode.INVALID_USER_ROLE, usersAPI.validateUsersByRole(null));
     }
 
@@ -83,116 +103,133 @@ class UsersAPITest {
 
     @Test
     void testPostUsers() {
-        List<StatusCode> statusCodes = usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        List<StatusCode> statusCodes = usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         assertTrue(statusCodes.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testPostUsersAdditionalInfo() {
-        List<StatusCode> statusCodes = usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        List<StatusCode> statusCodes = usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         assertTrue(statusCodes.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testGetUsersByUsername() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
-        assertNotNull(usersAPI.getUsersByUsername(testUsername));
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        assertNotNull(usersAPI.getUser(testUsername));
     }
 
     @Test
-    void testGetUsersByEmailAddress() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
-        assertNotNull(usersAPI.getUsersByEmailAddress("johndoe@example.com" + postCounter));
+    void testGetUserIDByUsername() {
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        assertNotNull(usersAPI.keySearch(testUsername));
     }
 
     @Test
-    void testGetUsersFirstName() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
-        assertEquals("John" + postCounter, usersAPI.getUsersFirstName(testUsername));
+    void testGetUsernameByID() {
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        String userID = usersAPI.keySearch(testUsername);
+        assertEquals(testUsername, usersAPI.reverseKeySearch(userID));
     }
 
     @Test
-    void testGetUsersLastName() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
-        assertEquals("Doe" + postCounter, usersAPI.getUsersLastName(testUsername));
+    void testGetUsersFirstNameByUsername() {
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        assertEquals(testFirstName, usersAPI.getUsersFirstNameByUsername(testUsername));
     }
 
     @Test
-    void testGetUserById() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
-        String userId = usersAPI.getUsersByUsername(testUsername);
-        assertNotNull(usersAPI.getUserById(userId));
+    void testGetUsersLastNameByUsername() {
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        assertEquals(testLastName, usersAPI.getUsersLastNameByUsername(testUsername));
+    }
+
+    @Test
+    void testGetUsersRoleByUsername() {
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        assertEquals(testRole, usersAPI.getUsersRoleByUsername(testUsername));
+    }
+
+    @Test
+    void testGetUsersEmailByUsername() {
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        assertEquals(testEmail, usersAPI.getUsersEmailByUsername(testUsername));
+    }
+
+    @Test
+    void testGetUsersAdditionalInfoByUsername() {
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        assertEquals(testAdditionalInfo, usersAPI.getUsersAdditionalInfoByUsername(testUsername));
     }
 
     @Test
     void testPutUsersUsername() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersUsername(testUsername, "newusername");
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testPutUsersEmailAddress() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersEmailAddress(testUsername, "newemail@example.com");
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testPutUsersFirstName() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersFirstName(testUsername, "Jane");
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testPutUsersLastName() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersLastName(testUsername, "Smith");
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testPutUsersPassword() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersPassword(testUsername, "NewPassword1!");
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testPutUsersRole() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersRole(testUsername, Users.UserRole.WAITER);
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testPutUsersStatus() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersStatus(testUsername, false);
+        System.out.println(result);
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testPutUsersAdditionalInfo() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersAdditionalInfo(testUsername, "Updated info");
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
     @Test
     void testDeleteUser() {
-        usersAPI.postUsers("John" + postCounter, "Doe" + postCounter, testUsername, "Password1!" + postCounter, "johndoe@example.com" + postCounter, Users.UserRole.ADMIN, "Some info" + postCounter);
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.deleteUser(testUsername);
         assertTrue(result.contains(StatusCode.SUCCESS));
     }
 
-    @AfterAll
-    static void deleteAllUsers() {
-        int currentCounter = postCounter;
-        for (int i = 1; i <= currentCounter; i++) {
-            usersAPI.deleteUser("johndoe" + i);
-        }
-        usersAPI.deleteUser("newusername");
+    @Test
+    void testSearchUsers() {
+        usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
+        List<Users> result = usersAPI.searchUsers("John");
+        assertTrue(result.contains(usersAPI.getUser(testUsername)));
     }
 }
