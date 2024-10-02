@@ -115,7 +115,7 @@
          <children>
             <TabPane fx:id="itemtab" prefHeight="670.4" prefWidth="769.6" snapToPixel="false" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <tabs>
-                <Tab styleClass="searchtab">
+                <Tab styleClass="searchtab" id="search" fx:id="searchtab">
                     <graphic>
                         <ImageView fitHeight="22" fitWidth="22">
                             <image>
@@ -159,7 +159,7 @@
                            </children></AnchorPane>
                   </content>
                 </Tab>
-                <Tab styleClass="tab" text="Entree">
+                <Tab styleClass="tab" text="Entree" id="entree">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="pane-style">
                            <children>
@@ -175,7 +175,7 @@
                            </children></AnchorPane>
                   </content>
                 </Tab>
-                  <Tab text="Main">
+                  <Tab styleClass="tab" text="Main" id="main">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="pane-style">
                            <children>
@@ -187,7 +187,7 @@
                            </children></AnchorPane>
                      </content>
                   </Tab>
-                  <Tab text="Drinks">
+                  <Tab text="Drinks" id="drinks" styleClass="tab">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="pane-style">
                            <children>
@@ -199,7 +199,7 @@
                            </children></AnchorPane>
                      </content>
                   </Tab>
-                  <Tab text="Dessert">
+                  <Tab text="Dessert" styleClass="tab" id="dessert">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="list-pane">
                            <children>

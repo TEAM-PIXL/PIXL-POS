@@ -14,8 +14,8 @@ import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
@@ -30,11 +30,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 
 import javafx.scene.layout.HBox;
+
+import javax.lang.model.type.NullType;
+
+
 
 public class WaiterScreen2Controller
 {
@@ -90,6 +91,8 @@ public class WaiterScreen2Controller
     @FXML
     private TabPane itemtab;
     @FXML
+    private Tab searchtab;
+    @FXML
     private FlowPane searchpane;
     @FXML
     private FlowPane entreepane;
@@ -110,8 +113,11 @@ public class WaiterScreen2Controller
     private DynamicButtonManager drinksbuttonManager;
     private DynamicButtonManager dessertbuttonManager;
 
-
-
+    private DataStore dataStore;
+    private MenuAPI menuAPI;
+    /**
+     * Animation timer to update the date and time
+     */
     AnimationTimer datetime = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -122,6 +128,7 @@ public class WaiterScreen2Controller
 
     @FXML
     public void initialize() {
+        dataStore = DataStore.getInstance();
         datetime.start();
         tabManager = new DynamicTabManager(itemtab);
         labelManager = new DynamicLabelManager(orderitemslistview);
@@ -133,20 +140,79 @@ public class WaiterScreen2Controller
         dessertbuttonManager = new DynamicButtonManager(dessertpane,labelManager);
 
 
-
+        initsearch();
 
         /*this line allows for the tabs to scale dynamically as there is no feature for this ...*/
         itemtab.widthProperty().addListener((obs, oldVal, newVal) -> tabManager.adjustTabWidths());
+        /*this allows you to update the buttons when a tab is clicked, does not work on init search tab so that has to be loaded above*/
+        itemtab.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            if (newTab != null) {
+                if(Objects.equals(newTab.getId(), "search")){
+                    searchbuttonManager.clearAllButtons();
+                    /*this is where you would add search logic to define what buttons should be added*/
+                    searchbuttonManager.addButton("1","Beef Cheeseburger","$20");
+                }
+                if(Objects.equals(newTab.getId(), "entree")){
+                    entreebuttonManager.clearAllButtons();
+                    /*this is where you would add the buttons for the entrée tab using database and a for loop*/
+                    ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
+                    int id = 1;
+                    for (MenuItem menuItem : menuItems) {
+                        if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.ENTREE)) {
+                            entreebuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                            id++;
+                        }
+                    }
+                }
+                if(Objects.equals(newTab.getId(), "main")){
+                    mainbuttonManager.clearAllButtons();
+                    /*this is where you would add the buttons for the entrée tab using database and a for loop*/
+                    ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
+                    int id = 1;
+                    for (MenuItem menuItem : menuItems) {
+                        if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.MAIN)) {
+                            mainbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                            id++;
+                        }
+                    }
+                }
+
+                if(Objects.equals(newTab.getId(), "drinks")){
+                    drinksbuttonManager.clearAllButtons();
+                    /*this is where you would add the buttons for the entrée tab using database and a for loop*/
+                    ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
+                    int id = 1;
+                    for (MenuItem menuItem : menuItems) {
+                        if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.DRINK)) {
+                            drinksbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                            id++;
+                        }
+                    }
+                }
+                if(Objects.equals(newTab.getId(), "dessert")){
+                    dessertbuttonManager.clearAllButtons();
+                    /*this is where you would add the buttons for the entrée tab using database and a for loop*/
+                    ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
+                    int id = 1;
+                    for (MenuItem menuItem : menuItems) {
+                        if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.DESSERT)) {
+                            dessertbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                            id++;
+                        }
+                    }
+                }
+            }
+        });
     }
 
 
     @FXML
     protected void onSendOrderButtonClick() {
 
-    }
+    }g
     @FXML
     protected void onCustomizeButtonClick() {
-
+        itemtab.getSelectionModel().select(searchtab); /** this brings you to the tab and runs selection code*/
     }
     @FXML
     protected void onItemCorrectButtonClick() {
@@ -154,16 +220,16 @@ public class WaiterScreen2Controller
     }
     @FXML
     protected void onVoidItemButtonClick() {
-        labelManager.clearAllLabels();
+        labelManager.clearAllLabels(); /*SAMPLEUSE*/
     }
     @FXML
     protected void onRestartButtonClick() {
-        searchbuttonManager.clearAllButtons();
+        searchbuttonManager.clearAllButtons();/*SAMPLEUSE*/
     }
     @FXML
     protected void onFilterButtonClick() {
         // Handle exit button click
-        searchbuttonManager.addButton("1","Beef Cheeseburger","$20");
+        searchbuttonManager.addButton("1","Beef Cheeseburger","$20");/*SAMPLEUSE*/
     }
     @FXML
     protected void onLogoutButtonClick() {
@@ -172,12 +238,17 @@ public class WaiterScreen2Controller
         GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);
     }
 
-
-
-
-
-
-
+    protected void initsearch() {
+        int id = 1;
+        ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
+        for (MenuItem menuItem : menuItems){
+            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+            id++;
+        }
+    }
+    /**
+     * This class is used to manage dynamic buttons
+     */
     public static class DynamicButtonManager {
         private int buttonCount = 0; // Keep track of the number of buttons
         private final FlowPane buttonPane; // FlowPane to hold buttons
@@ -241,8 +312,10 @@ public class WaiterScreen2Controller
             System.out.println("All buttons cleared.");
         }
     }
-//    }
 
+    /**
+     * This class is used to manage dynamic tabs
+     */
     public static class DynamicTabManager {
         private final TabPane tabPane; // TabPane to hold the tabs
         public DynamicTabManager(TabPane tabPane) {
@@ -263,6 +336,9 @@ public class WaiterScreen2Controller
         }
     }
 
+    /**
+     * This class is used to manage dynamic labels
+     */
     public static class DynamicLabelManager {
         private final ListView<Label> labelListView;
 
@@ -272,10 +348,8 @@ public class WaiterScreen2Controller
 
         public void addLabel(String name) {
             Label newLabel = new Label("1x " + name);
-
             // Apply a dummy style class
-            newLabel.getStyleClass().add("custom-label");
-
+            newLabel.getStyleClass().add("docket-label");
             labelListView.getItems().add(newLabel);
             System.out.println("Added Label with text: " + name);
         }
