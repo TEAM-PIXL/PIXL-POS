@@ -1,7 +1,7 @@
 package teampixl.com.pixlpos.database.api;
 
 import org.junit.jupiter.api.*;
-import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
 
@@ -104,13 +104,13 @@ class UsersAPITest {
     @Test
     void testPostUsers() {
         List<StatusCode> statusCodes = usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
-        assertTrue(statusCodes.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(statusCodes));
     }
 
     @Test
     void testPostUsersAdditionalInfo() {
         List<StatusCode> statusCodes = usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
-        assertTrue(statusCodes.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(statusCodes));
     }
 
     @Test
@@ -166,42 +166,42 @@ class UsersAPITest {
     void testPutUsersUsername() {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersUsername(testUsername, "newusername");
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
     void testPutUsersEmailAddress() {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersEmailAddress(testUsername, "newemail@example.com");
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
     void testPutUsersFirstName() {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersFirstName(testUsername, "Jane");
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
     void testPutUsersLastName() {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersLastName(testUsername, "Smith");
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
     void testPutUsersPassword() {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersPassword(testUsername, "NewPassword1!");
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
     void testPutUsersRole() {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersRole(testUsername, Users.UserRole.WAITER);
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
@@ -209,21 +209,21 @@ class UsersAPITest {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersStatus(testUsername, false);
         System.out.println(result);
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
     void testPutUsersAdditionalInfo() {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.putUsersAdditionalInfo(testUsername, "Updated info");
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
     void testDeleteUser() {
         usersAPI.postUsers(testFirstName, testLastName, testUsername, testPassword, testEmail, testRole, testAdditionalInfo);
         List<StatusCode> result = usersAPI.deleteUser(testUsername);
-        assertTrue(result.contains(StatusCode.SUCCESS));
+        assertTrue(Exceptions.isSuccessful(result));
     }
 
     @Test
