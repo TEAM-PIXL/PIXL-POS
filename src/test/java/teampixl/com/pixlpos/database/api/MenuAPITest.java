@@ -85,5 +85,9 @@ public class MenuAPITest {
                 menuAPI.putMenuItemPrice(testMenuItemName, 12.00)));
     }
 
-
+    @Test
+    void testPutMenuItemType(){
+        assertTrue(Exceptions.isSuccessful(
+                menuAPI.putMenuItemItemType(testMenuItemName, MenuItem.ItemType.DESSERT)));
+    }
 }
