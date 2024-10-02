@@ -79,5 +79,11 @@ public class MenuAPITest {
                 menuAPI.putMenuItemName(testMenuItemName, "Super Dog Food")));
     }
 
+    @Test
+    void testPutMenuItemPrice(){
+        assertTrue(Exceptions.isSuccessful(
+                menuAPI.putMenuItemPrice(testMenuItemName, 12.00)));
+    }
+
 
 }
