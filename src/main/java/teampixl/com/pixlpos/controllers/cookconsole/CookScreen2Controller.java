@@ -99,7 +99,15 @@ public class CookScreen2Controller
 
         }
 
-        public void addLabel(String name) {
+        public void addorderLabel(String name) {
+            Label newLabel = new Label("1x" + name);
+            // Apply a dummy style class
+            newLabel.getStyleClass().add("docket-label");
+            labelListView.getItems().add(newLabel);
+            System.out.println("Added Label with text: " + name);
+        }
+
+        public void addcompleteLabel(String name) {
             Label newLabel = new Label(name);
             // Apply a dummy style class
             newLabel.getStyleClass().add("docket-label");
@@ -162,13 +170,14 @@ public class CookScreen2Controller
         private final DynamicLabelManager dynamicLabelManager;
 
 
+
         public OrderManager(ListView<VBox> orderListView,DynamicLabelManager dynamicLabelManager) {
             this.orderListView = orderListView;
             this.orderMap = new HashMap<>();
             this.dynamicLabelManager = dynamicLabelManager;
         }
 
-        public void addOrder(String orderNumber, int customerCount, int tableNumber,double totalPrice) {
+        public void addOrder(String orderNumber, int customerCount, int tableNumber, double totalPrice) {
             VBox orderVBox = new VBox();
             orderVBox.setMaxWidth(300.0);
             orderVBox.setPrefWidth(300.0);
@@ -232,6 +241,12 @@ public class CookScreen2Controller
             ListView<Label> orderItemsListView = new ListView<>();
             orderItemsListView.getStyleClass().add("list-pane");
             VBox.setVgrow(orderItemsListView, Priority.ALWAYS);
+            DynamicLabelManager internaldynamicLabelManager = new DynamicLabelManager(orderItemsListView);
+
+            // ADD THE DATABASE ITEMS HERE IN LOOP PLZ =====================================================================================================
+            internaldynamicLabelManager.addorderLabel("Burger");
+            internaldynamicLabelManager.addorderLabel("Pizza");
+            internaldynamicLabelManager.addorderLabel("Pasta");
 
             // Price Hbox
             // Create the main HBox
@@ -311,7 +326,7 @@ public class CookScreen2Controller
 
         private void handleSendAction(String orderNumber) {
             System.out.println("Send action for Order #" + orderNumber);
-            dynamicLabelManager.addLabel("Order #" + orderNumber + " @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            dynamicLabelManager.addcompleteLabel("Order #" + orderNumber + " @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
             removeOrderByNumber(orderNumber);
         }
 
