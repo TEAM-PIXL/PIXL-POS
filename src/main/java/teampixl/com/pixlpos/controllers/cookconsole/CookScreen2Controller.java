@@ -52,6 +52,7 @@ public class CookScreen2Controller
     public void initialize() {
         datetime.start();
         OrderManager orderManager = new OrderManager(orderList);
+        orderManager.addOrder("00001", 2, 3, 20.0);
     }
 
     @FXML
@@ -120,8 +121,18 @@ public class CookScreen2Controller
             return labelListView.getItems().size();
         }
     }
+
+
+
+
+
+
+
+
     /**
+     * =================================================================================================
      * This class is used to manage dynamic orders
+     * =================================================================================================
      */
     public static class OrderManager {
         private final ListView<VBox> orderListView;
@@ -132,7 +143,7 @@ public class CookScreen2Controller
             this.orderMap = new HashMap<>();
         }
 
-        public void addOrder(String orderNumber, int customerCount, int tableNumber) {
+        public void addOrder(String orderNumber, int customerCount, int tableNumber,double totalPrice) {
             VBox orderVBox = new VBox();
             orderVBox.setMaxWidth(300.0);
             orderVBox.setPrefHeight(660.0);
@@ -168,7 +179,7 @@ public class CookScreen2Controller
             customerLabel.getStyleClass().add("amount-label");
             Label customerInnerLabel = new Label("Customers:");
             customerInnerLabel.getStyleClass().add("customers-label");
-            ImageView customerIcon = new ImageView(new Image("../../images/waitericons/8666546_user_plus_icon.png"));
+            ImageView customerIcon = new ImageView(new Image("../../images/w/8666546_user_plus_icon.png"));
             customerIcon.setFitHeight(22);
             customerIcon.setFitWidth(22);
             customerIcon.setPreserveRatio(true);
@@ -198,6 +209,22 @@ public class CookScreen2Controller
             orderItemsListView.getStyleClass().add("list-pane");
             VBox.setVgrow(orderItemsListView, Priority.ALWAYS);
 
+            // Price Hbox
+            // Create the main HBox
+            HBox hbox = new HBox();
+            hbox.setAlignment(Pos.CENTER);
+            Label totalPriceLabel = new Label("$ " + String.valueOf(totalPrice));
+            totalPriceLabel.getStyleClass().add("amount-label");
+            Label priceLabel = new Label("Price:");
+            priceLabel.getStyleClass().add("customers-label");
+            ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/images/waitericons/8666652_chevrons_right_icon.png")));
+            imageView.setFitHeight(150.0);
+            imageView.setFitWidth(22.0);
+            imageView.setPickOnBounds(true);
+            imageView.setPreserveRatio(true);
+            priceLabel.setGraphic(imageView);
+            totalPriceLabel.setGraphic(priceLabel);
+            hbox.getChildren().add(totalPriceLabel);
 
             // Action buttons
             HBox actionButtonsHBox = new HBox();

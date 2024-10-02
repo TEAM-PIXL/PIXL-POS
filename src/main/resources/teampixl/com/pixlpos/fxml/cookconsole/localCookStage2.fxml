@@ -120,6 +120,23 @@
                                </children>
                            </AnchorPane>
                            <ListView fx:id="orderitemslistview" prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                           <HBox alignment="CENTER">
+                               <children>
+                                   <Label fx:id="totalprice" styleClass="amount-label" text="00">
+                                       <graphic>
+                                           <Label styleClass="customers-label" text="Price:">
+                                               <graphic>
+                                                   <ImageView fitHeight="150.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                                       <image>
+                                                           <Image url="@../../images/waitericons/8666652_chevrons_right_icon.png" />
+                                                       </image>
+                                                   </ImageView>
+                                               </graphic>
+                                           </Label>
+                                       </graphic>
+                                   </Label>
+                               </children>
+                           </HBox>
                            <HBox alignment="CENTER" prefHeight="100.0" spacing="30.0">
                                <children>
                                    <Button mnemonicParsing="false" styleClass="icon-button" text="Button">
