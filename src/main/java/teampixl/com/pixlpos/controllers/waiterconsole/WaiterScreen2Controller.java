@@ -58,7 +58,8 @@ public class WaiterScreen2Controller
     private Label customernumber;
     @FXML
     private Label tabelnumber;
-
+    @FXML
+    private Label totalprice;
     /*
     listviews
      */
