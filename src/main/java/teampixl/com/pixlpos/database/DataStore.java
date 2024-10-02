@@ -1121,8 +1121,10 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String email = rs.getString("email");
                 String password = rs.getString("password");
                 String additionalInfo = rs.getString("additional_info");
+                Boolean isActive = rs.getInt("is_active") == 1;
                 Users user = new Users(firstName, lastName,username, password, email, role);
                 user.updateMetadata("id", id);
+                user.updateMetadata("is_active", isActive);
                 user.setDataValue("additional_info", additionalInfo);
                 users.add(user);
             }

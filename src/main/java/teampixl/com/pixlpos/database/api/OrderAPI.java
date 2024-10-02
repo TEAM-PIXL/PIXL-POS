@@ -251,7 +251,6 @@ public class OrderAPI {
                 .atStartOfDay(ZoneId.systemDefault())
                 .toInstant()
                 .toEpochMilli();
-
         Optional<Order> pendingOrder = orders.stream()
                 .filter(order -> userId.equals(order.getMetadata().metadata().get("user_id")))
                 .filter(order -> Order.OrderStatus.PENDING.name().equals(order.getMetadata().metadata().get("order_status")))
@@ -259,6 +258,7 @@ public class OrderAPI {
                     Object createdAtObj = order.getMetadata().metadata().get("created_at");
                     if (createdAtObj instanceof Number) {
                         long createdAt = ((Number) createdAtObj).longValue();
+                        System.out.println("Order created at: " + createdAt);
                         return createdAt >= startOfToday;
                     } else {
                         System.out.println("Invalid created_at for order: " + order.getMetadata().metadata().get("order_id"));
@@ -268,6 +268,7 @@ public class OrderAPI {
                 .max(Comparator.comparing(order -> {
                     Object createdAtObj = order.getMetadata().metadata().get("created_at");
                     if (createdAtObj instanceof Number) {
+                        System.out.println("Order created at: " + createdAtObj);
                         return ((Number) createdAtObj).longValue();
                     } else {
                         return 0L;
