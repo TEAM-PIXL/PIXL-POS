@@ -1,6 +1,8 @@
 package teampixl.com.pixlpos.controllers.cookconsole;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,6 +24,8 @@ import javafx.geometry.Pos;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class CookScreen2Controller
 {
@@ -33,7 +37,8 @@ public class CookScreen2Controller
     private Label date;
     @FXML
     private Label time;
-
+    @FXML
+    private Label orders;
     @FXML
     private ListView<Label> completedOrders;
     @FXML
@@ -51,8 +56,24 @@ public class CookScreen2Controller
     @FXML
     public void initialize() {
         datetime.start();
-        OrderManager orderManager = new OrderManager(orderList);
+        ObservableList<VBox> ordernum = FXCollections.observableArrayList();
+        ListProperty<VBox> listProperty = new SimpleListProperty<>(ordernum);
+        orderList.itemsProperty().bindBidirectional(listProperty);
+        listProperty.addListener((observable, oldList, newList) -> {
+            orders.setText(orderList.getItems().size() + " Orders");
+
+        });
+        DynamicLabelManager dynamicLabelManager = new DynamicLabelManager(completedOrders);
+        OrderManager orderManager = new OrderManager(orderList,dynamicLabelManager);
+
         orderManager.addOrder("00001", 2, 3, 20.0);
+        orderManager.addOrder("00002", 4, 5, 40.0);
+        orderManager.addOrder("00003", 6, 7, 60.0);
+        orderManager.addOrder("00004", 8, 9, 80.0);
+        orderManager.addOrder("00005", 10, 11, 100.0);
+
+
+
     }
 
     @FXML
@@ -75,10 +96,11 @@ public class CookScreen2Controller
 
         public DynamicLabelManager(ListView<Label> labelListView) {
             this.labelListView = labelListView;
+
         }
 
         public void addLabel(String name) {
-            Label newLabel = new Label("1x " + name);
+            Label newLabel = new Label(name);
             // Apply a dummy style class
             newLabel.getStyleClass().add("docket-label");
             labelListView.getItems().add(newLabel);
@@ -137,17 +159,20 @@ public class CookScreen2Controller
     public static class OrderManager {
         private final ListView<VBox> orderListView;
         private final Map<String, VBox> orderMap;
+        private final DynamicLabelManager dynamicLabelManager;
 
-        public OrderManager(ListView<VBox> orderListView) {
+
+        public OrderManager(ListView<VBox> orderListView,DynamicLabelManager dynamicLabelManager) {
             this.orderListView = orderListView;
             this.orderMap = new HashMap<>();
+            this.dynamicLabelManager = dynamicLabelManager;
         }
 
         public void addOrder(String orderNumber, int customerCount, int tableNumber,double totalPrice) {
             VBox orderVBox = new VBox();
             orderVBox.setMaxWidth(300.0);
-            orderVBox.setPrefHeight(660.0);
             orderVBox.setPrefWidth(300.0);
+            orderVBox.setMinWidth(300.0);
             orderVBox.getStyleClass().add("order-container");
             VBox.setVgrow(orderVBox, Priority.ALWAYS);
 
@@ -179,7 +204,7 @@ public class CookScreen2Controller
             customerLabel.getStyleClass().add("amount-label");
             Label customerInnerLabel = new Label("Customers:");
             customerInnerLabel.getStyleClass().add("customers-label");
-            ImageView customerIcon = new ImageView(new Image("../../images/w/8666546_user_plus_icon.png"));
+            ImageView customerIcon = new ImageView(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/user_plus_icon.png")));
             customerIcon.setFitHeight(22);
             customerIcon.setFitWidth(22);
             customerIcon.setPreserveRatio(true);
@@ -192,7 +217,7 @@ public class CookScreen2Controller
             tableLabel.getStyleClass().add("amount-label");
             Label tableInnerLabel = new Label("Table:");
             tableInnerLabel.getStyleClass().add("table-label");
-            ImageView tableIcon = new ImageView(new Image("../../images/waitericons/8666548_hash_icon.png"));
+            ImageView tableIcon = new ImageView(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/hash_icon.png")));
             tableIcon.setFitHeight(22);
             tableIcon.setFitWidth(22);
             tableIcon.setPreserveRatio(true);
@@ -205,44 +230,42 @@ public class CookScreen2Controller
 
             // Order items ListView
             ListView<Label> orderItemsListView = new ListView<>();
-            orderItemsListView.setPrefHeight(200.0);
             orderItemsListView.getStyleClass().add("list-pane");
             VBox.setVgrow(orderItemsListView, Priority.ALWAYS);
 
             // Price Hbox
             // Create the main HBox
-            HBox hbox = new HBox();
-            hbox.setAlignment(Pos.CENTER);
+            HBox price = new HBox();
+            price.setAlignment(Pos.CENTER);
             Label totalPriceLabel = new Label("$ " + String.valueOf(totalPrice));
             totalPriceLabel.getStyleClass().add("amount-label");
             Label priceLabel = new Label("Price:");
             priceLabel.getStyleClass().add("customers-label");
-            ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/images/waitericons/8666652_chevrons_right_icon.png")));
-            imageView.setFitHeight(150.0);
+            ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png")));
+            imageView.setFitHeight(22.0);
             imageView.setFitWidth(22.0);
             imageView.setPickOnBounds(true);
             imageView.setPreserveRatio(true);
             priceLabel.setGraphic(imageView);
             totalPriceLabel.setGraphic(priceLabel);
-            hbox.getChildren().add(totalPriceLabel);
+            price.getChildren().add(totalPriceLabel);
 
             // Action buttons
             HBox actionButtonsHBox = new HBox();
             actionButtonsHBox.setAlignment(Pos.CENTER);
-            actionButtonsHBox.setPrefHeight(100.0);
             actionButtonsHBox.setSpacing(30.0);
 
             String[] iconPaths = {
-                    "../../images/cookicons/trash_icon.png",
-                    "../../images/cookicons/flag_icon.png",
-                    "../../images/cookicons/send_icon.png"
+                    "/teampixl/com/pixlpos/images/cookicons/trash_icon.png",
+                    "/teampixl/com/pixlpos/images/cookicons/flag_icon.png",
+                    "/teampixl/com/pixlpos/images/cookicons/send_icon.png"
             };
 
             for (String iconPath : iconPaths) {
                 Button button = new Button();
                 button.setMnemonicParsing(false);
                 button.getStyleClass().add("icon-button");
-                ImageView buttonIcon = new ImageView(new Image(iconPath));
+                ImageView buttonIcon = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
                 buttonIcon.setFitHeight(22);
                 buttonIcon.setFitWidth(22);
                 buttonIcon.setPreserveRatio(true);
@@ -267,7 +290,10 @@ public class CookScreen2Controller
                 actionButtonsHBox.getChildren().add(button);
             }
 
-            orderVBox.getChildren().addAll(orderNumberHBox, infoPane, orderItemsListView, actionButtonsHBox);
+            orderVBox.getChildren().addAll(orderNumberHBox, infoPane, orderItemsListView,price, actionButtonsHBox);
+            orderListView.heightProperty().addListener((obs, oldVal, newVal) -> {
+                orderVBox.setMaxHeight(newVal.doubleValue()-30);
+            });
             orderListView.getItems().add(orderVBox);
             orderMap.put(orderNumber, orderVBox);
             System.out.println("Added Order: " + orderNumber);
@@ -285,7 +311,8 @@ public class CookScreen2Controller
 
         private void handleSendAction(String orderNumber) {
             System.out.println("Send action for Order #" + orderNumber);
-            // Add your send action logic here
+            dynamicLabelManager.addLabel("Order #" + orderNumber + " @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            removeOrderByNumber(orderNumber);
         }
 
         public void removeOrderByNumber(String orderNumber) {
