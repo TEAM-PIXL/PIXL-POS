@@ -90,4 +90,12 @@ public class MenuAPITest {
         assertTrue(Exceptions.isSuccessful(
                 menuAPI.putMenuItemItemType(testMenuItemName, MenuItem.ItemType.DESSERT)));
     }
+
+    @Test
+    void testPutMenuItemDescription(){
+        assertTrue(Exceptions.isSuccessful(
+                menuAPI.putMenuItemDescription(testMenuItemName, "New Description")));
+    }
+
+
 }
