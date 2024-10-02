@@ -1,0 +1,42 @@
+name: Run Unit Tests
+
+on:
+  workflow_call:
+    outputs:
+      success:
+        description: 'Whether the test job succeeded.'
+        value: ${{ jobs.test.outputs.success }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    outputs:
+      success: ${{ job.status == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Build and run tests
+        id: junit
+        run: mvn test
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-results
+          path: target/surefire-reports
+
