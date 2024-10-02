@@ -73,7 +73,87 @@
                      </padding>
                   </HBox>
                   <HBox styleClass="line" />
-                  <ListView fx:id="orderList" orientation="HORIZONTAL" prefHeight="200.0" prefWidth="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+<!--                  <ListView fx:id="orderList" orientation="HORIZONTAL" prefHeight="200.0" prefWidth="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />-->
+                   <VBox maxWidth="300.0" prefHeight="660.0" prefWidth="300.0" styleClass="order-container" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+                       <children>
+                           <HBox alignment="CENTER">
+                               <children>
+                                   <AnchorPane HBox.hgrow="ALWAYS">
+                                       <children>
+                                           <Label layoutX="14.0" layoutY="3.0" styleClass="order-label" text="Order #" />
+                                       </children>
+                                   </AnchorPane>
+                                   <Label fx:id="ordernumber" styleClass="order-number" text="0000000" />
+                               </children>
+                               <padding>
+                                   <Insets right="10.0" />
+                               </padding>
+                           </HBox>
+                           <AnchorPane prefHeight="60.0" styleClass="order-highlevel-container">
+                               <children>
+                                   <Label id="customer-amount" fx:id="customernumber" layoutX="14.0" layoutY="15.0" styleClass="amount-label" text="00">
+                                       <graphic>
+                                           <Label styleClass="customers-label" text="Customers:">
+                                               <graphic>
+                                                   <ImageView fitHeight="150.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                                       <image>
+                                                           <Image url="@../../images/waitericons/8666546_user_plus_icon.png" />
+                                                       </image>
+                                                   </ImageView>
+                                               </graphic>
+                                           </Label>
+                                       </graphic>
+                                   </Label>
+                                   <Label fx:id="tablenumber" layoutX="166.0" layoutY="15.0" styleClass="amount-label" text="00">
+                                       <graphic>
+                                           <Label styleClass="table-label" text="Table:">
+                                               <graphic>
+                                                   <ImageView fitHeight="22.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                                       <image>
+                                                           <Image url="@../../images/waitericons/8666548_hash_icon.png" />
+                                                       </image>
+                                                   </ImageView>
+                                               </graphic>
+                                           </Label>
+                                       </graphic>
+                                   </Label>
+                               </children>
+                           </AnchorPane>
+                           <ListView fx:id="orderitemslistview" prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                           <HBox alignment="CENTER" prefHeight="100.0" spacing="30.0">
+                               <children>
+                                   <Button mnemonicParsing="false" styleClass="icon-button" text="Button">
+                                       <graphic>
+                                           <ImageView fitHeight="150.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                               <image>
+                                                   <Image url="@../../images/cookicons/trash_icon.png" />
+                                               </image>
+                                           </ImageView>
+                                       </graphic>
+                                   </Button>
+                                   <Button mnemonicParsing="false" styleClass="icon-button" text="Button">
+                                       <graphic>
+                                           <ImageView fitHeight="150.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                               <image>
+                                                   <Image url="@../../images/cookicons/flag_icon.png" />
+                                               </image>
+                                           </ImageView>
+                                       </graphic>
+                                   </Button>
+                                   <Button mnemonicParsing="false" styleClass="icon-button" text="Button">
+                                       <graphic>
+                                           <ImageView fitHeight="150.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                               <image>
+                                                   <Image url="@../../images/cookicons/send_icon.png" />
+                                               </image>
+                                           </ImageView>
+                                       </graphic>
+                                   </Button>
+                               </children>
+                           </HBox>
+                       </children>
+                   </VBox>
+
                </children>
             </VBox>
          </children>

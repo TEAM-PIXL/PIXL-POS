@@ -255,6 +255,7 @@ public class WaiterScreen2Controller
         private final FlowPane buttonPane; // FlowPane to hold buttons
         private final Map<String, Button> buttons; // Map to associate IDs with buttons
         private final DynamicLabelManager labelManager;
+
         public DynamicButtonManager(FlowPane buttonPane,DynamicLabelManager labelManager) {
             this.buttonPane = buttonPane;
             this.labelManager = labelManager;
