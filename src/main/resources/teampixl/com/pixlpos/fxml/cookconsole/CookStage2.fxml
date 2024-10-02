@@ -62,7 +62,7 @@
                      <children>
                         <AnchorPane prefHeight="60.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label layoutX="441.0" layoutY="15.0" styleClass="order-label" text="Orders" fx:id="orders" />
+                              <Label fx:id="orders" alignment="CENTER" contentDisplay="CENTER" layoutX="441.0" layoutY="15.0" prefHeight="60.0" prefWidth="947.2" styleClass="order-label" text="Orders" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                      </children>
