@@ -74,8 +74,13 @@ public class MenuAPITest {
     }
 
     @Test
-    void testGetMenuItem(){
+    void testGetMenuItemByName(){
         assertNotNull(menuAPI.getMenuItem(testMenuItemName));
+    }
+
+    @Test
+    void testGetMenuItemIDByName(){
+        assertNotNull(menuAPI.keySearch(testMenuItemName));
     }
 
     @Test
