@@ -97,5 +97,10 @@ public class MenuAPITest {
                 menuAPI.putMenuItemDescription(testMenuItemName, "New Description")));
     }
 
+    @Test
+    void testPutMenuItemNotes(){
+        assertTrue(Exceptions.isSuccessful(
+                menuAPI.putMenuItemNotes(testMenuItemName, "New Notes")));
+    }
 
 }
