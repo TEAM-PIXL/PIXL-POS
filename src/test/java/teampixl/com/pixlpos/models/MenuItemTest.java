@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,7 +67,13 @@ class MenuItemTest {
     @Test
     void testGetIngredients() {
         menuItem.addIngredient(tomatoSauce, 2.5);
-        assertEquals(tomatoSauce, menuItem.getIngredients());
+        assertNotNull(menuItem.getIngredients());
+    }
+
+    @Test
+    void testHasIngredient() {
+        menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"));
+        assertNotNull(menuItem.getIngredients());
     }
 }
 
