@@ -91,6 +91,12 @@ class MenuItemTest {
         assertNotNull(tomatoSauce.getData());
     }
 
+    @Test
+    void testSetDataValue() {
+        menuItem.setDataValue("description", "New description");
+        assertEquals("New description", menuItem.getData().get("description"));
+    }
+
 }
 
 
