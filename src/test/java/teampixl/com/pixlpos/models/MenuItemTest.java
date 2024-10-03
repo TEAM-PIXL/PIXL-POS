@@ -75,6 +75,11 @@ class MenuItemTest {
         menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"));
         assertNotNull(menuItem.getIngredients());
     }
+
+    @Test
+    void testGetPrice() {
+        assertEquals(14.99,menuItem.getPrice());
+    }
 }
 
 
