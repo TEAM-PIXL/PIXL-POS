@@ -80,6 +80,17 @@ class MenuItemTest {
     void testGetPrice() {
         assertEquals(14.99,menuItem.getPrice());
     }
+
+    @Test
+    void testGetMetadata() {
+        assertNotNull(tomatoSauce.getMetadata());
+    }
+
+    @Test
+    void testGetData() {
+        assertNotNull(tomatoSauce.getData());
+    }
+
 }
 
 
