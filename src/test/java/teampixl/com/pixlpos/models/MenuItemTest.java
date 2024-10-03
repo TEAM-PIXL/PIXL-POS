@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,6 +63,40 @@ class MenuItemTest {
         long timestampAfterUpdate = (long) menuItem.getMetadata().metadata().get("updated_at");
         assertTrue(timestampAfterUpdate > timestampBeforeUpdate);
     }
+
+    @Test
+    void testGetIngredients() {
+        menuItem.addIngredient(tomatoSauce, 2.5);
+        assertNotNull(menuItem.getIngredients());
+    }
+
+    @Test
+    void testHasIngredient() {
+        menuItem.hasIngredient((String) tomatoSauce.getMetadata().metadata().get("ingredient_id"));
+        assertNotNull(menuItem.getIngredients());
+    }
+
+    @Test
+    void testGetPrice() {
+        assertEquals(14.99,menuItem.getPrice());
+    }
+
+    @Test
+    void testGetMetadata() {
+        assertNotNull(tomatoSauce.getMetadata());
+    }
+
+    @Test
+    void testGetData() {
+        assertNotNull(tomatoSauce.getData());
+    }
+
+    @Test
+    void testSetDataValue() {
+        menuItem.setDataValue("description", "New description");
+        assertEquals("New description", menuItem.getData().get("description"));
+    }
+
 }
 
 
