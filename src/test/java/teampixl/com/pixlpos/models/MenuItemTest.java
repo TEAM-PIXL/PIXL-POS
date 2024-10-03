@@ -62,6 +62,12 @@ class MenuItemTest {
         long timestampAfterUpdate = (long) menuItem.getMetadata().metadata().get("updated_at");
         assertTrue(timestampAfterUpdate > timestampBeforeUpdate);
     }
+
+    @Test
+    void testGetIngredients() {
+        menuItem.addIngredient(tomatoSauce, 2.5);
+        assertEquals(tomatoSauce, menuItem.getIngredients());
+    }
 }
 
 
