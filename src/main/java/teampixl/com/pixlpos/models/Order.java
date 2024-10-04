@@ -97,6 +97,7 @@ public class Order implements IDataManager {
         metadataMap.put("is_completed", false);
         metadataMap.put("order_type", OrderType.DINE_IN.name());
         metadataMap.put("table_number", 0);
+        metadataMap.put("customers", 1);
         metadataMap.put("created_at", System.currentTimeMillis());
         metadataMap.put("updated_at", System.currentTimeMillis());
 

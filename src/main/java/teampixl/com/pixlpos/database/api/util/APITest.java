@@ -17,14 +17,9 @@ import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) {
-        UsersAPI usersAPI = UsersAPI.getInstance();
-
-        List<StatusCode> result = usersAPI.putUsersStatus("admin", false);
-        if (isSuccessful(result)) {
-            System.out.println("User status updated successfully. With result " + result);
-        } else {
-            System.out.println(returnStatus("User status could not be updated with the following errors:", result));
-        }
+        Order ORDER = new Order(2, "123abc");
+        System.out.println("The order metadata is as such: " + ORDER.getMetadata().metadata());
+        System.out.println("The order data is as such: " + ORDER.getData());
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
 //        UserStack userStack = UserStack.getInstance();

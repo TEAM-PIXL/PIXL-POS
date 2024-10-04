@@ -813,10 +813,12 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 boolean isCompleted = rs.getInt("is_completed") == 1;
                 Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
                 int tableNumber = rs.getInt("table_number");
+                int customers = rs.getInt("customers");
                 long createdAt = rs.getLong("created_at");
                 long updatedAt = rs.getLong("updated_at");
                 double total = rs.getDouble("total");
                 String specialRequests = rs.getString("special_requests");
+                Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
 
                 Order order = new Order(orderNumber, userId);
                 order.updateMetadata("order_id", orderId);
@@ -824,11 +826,12 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 order.updateMetadata("is_completed", isCompleted);
                 order.updateMetadata("order_type", orderType);
                 order.updateMetadata("table_number", tableNumber);
+                order.updateMetadata("customers", customers);
                 order.updateMetadata("created_at", createdAt);
                 order.updateMetadata("updated_at", updatedAt);
                 order.setDataValue("total", total);
-                order.setDataValue("specialRequests", specialRequests);
-                order.setDataValue("paymentMethod", rs.getString("payment_method"));
+                order.setDataValue("special_requests", specialRequests);
+                order.setDataValue("payment_method", paymentMethod);
 
                 orders.add(order);
             }
@@ -923,7 +926,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void saveOrderToDatabase(Order order) {
-        String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, order_type, table_number, total, special_requests, payment_method, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, order_type, table_number, customers, total, special_requests, payment_method, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -935,11 +938,12 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setInt(5, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
             pstmt.setString(6, order.getMetadata().metadata().get("order_type").toString());
             pstmt.setInt(7, (Integer) order.getMetadata().metadata().get("table_number"));
-            pstmt.setDouble(8, (Double) order.getData().get("total"));
-            pstmt.setString(9, (String) order.getData().get("specialRequests"));
-            pstmt.setString(10, (String) order.getData().get("paymentMethod"));
-            pstmt.setLong(11, (Long) order.getMetadata().metadata().get("created_at"));
-            pstmt.setLong(12, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setInt(8, (Integer) order.getMetadata().metadata().get("customers"));
+            pstmt.setDouble(9, (Double) order.getData().get("total"));
+            pstmt.setString(10, (String) order.getData().get("special_requests"));
+            pstmt.setString(11, order.getData().get("payment_method").toString());
+            pstmt.setLong(12, (Long) order.getMetadata().metadata().get("created_at"));
+            pstmt.setLong(13, (Long) order.getMetadata().metadata().get("updated_at"));
 
             pstmt.executeUpdate();
             System.out.println("Order saved to database.");
@@ -1018,11 +1022,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setInt(2, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
             pstmt.setString(3, order.getMetadata().metadata().get("order_type").toString());
             pstmt.setInt(4, (Integer) order.getMetadata().metadata().get("table_number"));
-            pstmt.setDouble(3, (Double) order.getData().get("total"));
-            pstmt.setString(4, (String) order.getData().get("specialRequests"));
-            pstmt.setString(5, (String) order.getData().get("paymentMethod"));
-            pstmt.setLong(4, (Long) order.getMetadata().metadata().get("updated_at"));
-            pstmt.setString(5, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setDouble(5, (Double) order.getData().get("total"));
+            pstmt.setString(6, (String) order.getData().get("special_requests"));
+            pstmt.setString(7, (String) order.getData().get("payment_method").toString());
+            pstmt.setLong(8, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(9, (String) order.getMetadata().metadata().get("order_id"));
 
             pstmt.executeUpdate();
             System.out.println("Order updated in database.");
