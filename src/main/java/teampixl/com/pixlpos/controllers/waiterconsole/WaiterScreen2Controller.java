@@ -177,14 +177,17 @@ public class WaiterScreen2Controller
         dessertbuttonManager = new DynamicButtonManager(dessertpane,labelManager);
         initialiseSlider();
 
-        searchbar.setOnAction(e -> handleSearchBarEnter());
+        searchbar.setOnAction(event -> handleSearchBarEnter());
         priceslider.valueProperty().addListener((observable, oldValue, newValue) -> {
             handleSliderChange(newValue.doubleValue());
             priceTooltip.setText(String.format("$%.2f", newValue.doubleValue()));
-            System.out.println("Slider value changed: " + newValue.doubleValue()); // Debug statement
         });
 
         priceslider.setOnMouseMoved(event -> {
+            priceTooltip.show(priceslider, event.getScreenX(), event.getScreenY() + 10);
+        });
+
+        priceslider.setOnMouseDragged(event -> {
             priceTooltip.show(priceslider, event.getScreenX(), event.getScreenY() + 10);
         });
 
@@ -271,7 +274,6 @@ public class WaiterScreen2Controller
 
         priceTooltip = new Tooltip(String.format("$%.2f", priceslider.getValue()));
         Tooltip.install(priceslider, priceTooltip);
-        System.out.println("Tooltip installed with initial value: " + priceslider.getValue()); // Debug statement
     }
 
     private void handleSliderChange(double maxPrice) {
