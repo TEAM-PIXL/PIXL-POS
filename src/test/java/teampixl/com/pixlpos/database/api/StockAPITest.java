@@ -1,6 +1,7 @@
 package teampixl.com.pixlpos.database.api;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import teampixl.com.pixlpos.database.api.StockAPI;
@@ -27,19 +28,28 @@ class StockAPITest {
     private static int testCounter;
     private static IngredientsAPI ingredientsAPI;
 
-    private String postIngredient() {
+    private String postIngredient(String IngredientName) {
         String IngredientID;
-        List<StatusCode> StatusCodes = ingredientsAPI.postIngredient(testIngredientName);
-        assertTrue(Exceptions.isSuccessful(StatusCodes));
+        List<StatusCode> StatusCodes = ingredientsAPI.postIngredient(IngredientName);
+        assertTrue(StatusCodes.contains(StatusCode.SUCCESS));
 
-        IngredientID = ingredientsAPI.keySearch(testIngredientName);
+        ingredientsAPI = IngredientsAPI.getInstance();
+
+        IngredientID = ingredientsAPI.keySearch(IngredientName);
+        System.out.println(IngredientID);
         assertNotEquals(null, IngredientID);
 
         return IngredientID;
     }
 
+    @BeforeAll
+    static void setUpAll() {
+        testCounter = 0;
+    }
+
     @BeforeEach
     void setUp() {
+        ingredientsAPI = IngredientsAPI.getInstance();
         stockAPI = StockAPI.getInstance();
         testCounter++;
 
@@ -49,9 +59,10 @@ class StockAPITest {
         testStockQuantity = 100.0;
         testOnOrderStatus = false;
 
-        testIngredientID = postIngredient();
+        testIngredientID = postIngredient(testIngredientName);
 
         List<StatusCode> StatusCodes = stockAPI.postStock(testIngredientID, testStockStatus, testUnitType, testStockQuantity, testOnOrderStatus);
+        System.out.println(StatusCodes);
         assertTrue(Exceptions.isSuccessful(StatusCodes));
     }
 
