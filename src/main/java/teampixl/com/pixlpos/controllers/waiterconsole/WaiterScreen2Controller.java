@@ -192,6 +192,16 @@ public class WaiterScreen2Controller
             priceTooltip.show(priceslider, event.getScreenX(), event.getScreenY() + 10);
         });
 
+        // Hide the tooltip when the mouse is released
+        priceslider.setOnMouseReleased(event -> {
+            priceTooltip.hide();
+        });
+
+        // Hide the tooltip when the mouse exits the slider
+        priceslider.setOnMouseExited(event -> {
+            priceTooltip.hide();
+        });
+
         initsearch();
 
         menuItems = dataStore.readMenuItems();
