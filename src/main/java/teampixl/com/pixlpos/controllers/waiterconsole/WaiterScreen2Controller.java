@@ -121,6 +121,7 @@ public class WaiterScreen2Controller
 
     private int id = 1;
 
+    private List<MenuItem> menuItems;
     private List<MenuItem> queryMenuItems;
     private Tooltip priceTooltip;
 
@@ -193,7 +194,7 @@ public class WaiterScreen2Controller
 
         initsearch();
 
-        ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
+        menuItems = dataStore.readMenuItems();
         queryMenuItems = menuItems;
 
         /*this line allows for the tabs to scale dynamically as there is no feature for this ...*/
@@ -257,9 +258,17 @@ public class WaiterScreen2Controller
         searchText = searchbar.getText();
         searchbuttonManager.clearAllButtons();
         queryMenuItems = menuAPI.searchMenuItem(searchText);
-        for (MenuItem menuItem : queryMenuItems) {
-            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
-            id++;
+        if (queryMenuItems.isEmpty()) {
+            showErrorDialog(searchText);
+            for (MenuItem menuItem : menuItems) {
+                searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                id++;
+            }
+        } else {
+            for (MenuItem menuItem : queryMenuItems) {
+                searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                id++;
+            }
         }
     }
 
@@ -291,6 +300,14 @@ public class WaiterScreen2Controller
                 }
             }
         }
+    }
+
+    private void showErrorDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("No items found");
+        alert.setHeaderText(null);
+        alert.setContentText("No items found for search term: " + message);
+        alert.showAndWait();
     }
 
     @FXML
