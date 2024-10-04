@@ -39,6 +39,7 @@ import javax.lang.model.type.NullType;
 
 public class WaiterScreen2Controller
 {
+
     /*
     Textfields
      */
@@ -104,18 +105,44 @@ public class WaiterScreen2Controller
     @FXML
     private FlowPane dessertpane;
 
-
-
     private DynamicTabManager tabManager;
-    public DynamicLabelManager labelManager;
+    private DynamicLabelManager labelManager;
     private DynamicButtonManager searchbuttonManager;
     private DynamicButtonManager entreebuttonManager;
     private DynamicButtonManager mainbuttonManager;
     private DynamicButtonManager drinksbuttonManager;
     private DynamicButtonManager dessertbuttonManager;
 
-    private DataStore dataStore;
-    private MenuAPI menuAPI;
+    private static MenuAPI menuAPI;
+    private static DataStore dataStore;
+
+    private enum TabType {
+        SEARCH("search"),
+        ENTREE("entree"),
+        MAIN("main"),
+        DRINKS("drinks"),
+        DESSERT("dessert");
+
+        private final String id;
+
+        TabType(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public static TabType fromId(String id) {
+            for (TabType tabType : values()) {
+                if (tabType.getId().equals(id)) {
+                    return tabType;
+                }
+            }
+            return null;
+        }
+    }
+
     /**
      * Animation timer to update the date and time
      */
@@ -128,8 +155,9 @@ public class WaiterScreen2Controller
     };
 
     @FXML
-    public void initialize() {
+    private void initialize() {
         dataStore = DataStore.getInstance();
+        menuAPI = menuAPI.getInstance();
         datetime.start();
         tabManager = new DynamicTabManager(itemtab);
         labelManager = new DynamicLabelManager(orderitemslistview);
@@ -140,67 +168,60 @@ public class WaiterScreen2Controller
         drinksbuttonManager = new DynamicButtonManager(drinkspane,labelManager);
         dessertbuttonManager = new DynamicButtonManager(dessertpane,labelManager);
 
-
         initsearch();
+
+        ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
 
         /*this line allows for the tabs to scale dynamically as there is no feature for this ...*/
         itemtab.widthProperty().addListener((obs, oldVal, newVal) -> tabManager.adjustTabWidths());
         /*this allows you to update the buttons when a tab is clicked, does not work on init search tab so that has to be loaded above*/
         itemtab.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
-            if (newTab != null) {
-                if(Objects.equals(newTab.getId(), "search")){
-                    searchbuttonManager.clearAllButtons();
-                    /*this is where you would add search logic to define what buttons should be added*/
-                    searchbuttonManager.addButton("1","Beef Cheeseburger","$20");
-                }
-                if(Objects.equals(newTab.getId(), "entree")){
-                    entreebuttonManager.clearAllButtons();
-                    /*this is where you would add the buttons for the entrée tab using database and a for loop*/
-                    ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
-                    int id = 1;
-                    for (MenuItem menuItem : menuItems) {
-                        if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.ENTREE)) {
-                            entreebuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
-                            id++;
-                        }
-                    }
-                }
-                if(Objects.equals(newTab.getId(), "main")){
-                    mainbuttonManager.clearAllButtons();
-                    /*this is where you would add the buttons for the entrée tab using database and a for loop*/
-                    ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
-                    int id = 1;
-                    for (MenuItem menuItem : menuItems) {
-                        if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.MAIN)) {
-                            mainbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
-                            id++;
-                        }
-                    }
-                }
 
-                if(Objects.equals(newTab.getId(), "drinks")){
-                    drinksbuttonManager.clearAllButtons();
-                    /*this is where you would add the buttons for the entrée tab using database and a for loop*/
-                    ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
-                    int id = 1;
-                    for (MenuItem menuItem : menuItems) {
-                        if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.DRINK)) {
-                            drinksbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
-                            id++;
+            if (newTab != null) {
+                TabType tabType = TabType.fromId(newTab.getId());
+                int id = 1;
+
+                switch (tabType) {
+                    case SEARCH:
+                        searchbuttonManager.clearAllButtons();
+                        searchbuttonManager.addButton("1","Beef Cheeseburger","$20");
+                        break;
+                    case ENTREE:
+                        entreebuttonManager.clearAllButtons();
+                        for (MenuItem menuItem : menuItems) {
+                            if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.ENTREE)) {
+                                entreebuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                                id++;
+                            }
                         }
-                    }
-                }
-                if(Objects.equals(newTab.getId(), "dessert")){
-                    dessertbuttonManager.clearAllButtons();
-                    /*this is where you would add the buttons for the entrée tab using database and a for loop*/
-                    ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
-                    int id = 1;
-                    for (MenuItem menuItem : menuItems) {
-                        if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.DESSERT)) {
-                            dessertbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
-                            id++;
+                        break;
+                    case MAIN:
+                        mainbuttonManager.clearAllButtons();
+                        for (MenuItem menuItem : menuItems) {
+                            if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.MAIN)) {
+                                mainbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                                id++;
+                            }
                         }
-                    }
+                        break;
+                    case DRINKS:
+                        drinksbuttonManager.clearAllButtons();
+                        for (MenuItem menuItem : menuItems) {
+                            if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.DRINK)) {
+                                drinksbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                                id++;
+                            }
+                        }
+                        break;
+                    case DESSERT:
+                        dessertbuttonManager.clearAllButtons();
+                        for (MenuItem menuItem : menuItems) {
+                            if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.DESSERT)) {
+                                dessertbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                                id++;
+                            }
+                        }
+                        break;
                 }
             }
         });
@@ -251,19 +272,19 @@ public class WaiterScreen2Controller
     /**
      * This class is used to manage dynamic buttons
      */
-    public static class DynamicButtonManager {
+    private static class DynamicButtonManager {
         private int buttonCount = 0; // Keep track of the number of buttons
         private final FlowPane buttonPane; // FlowPane to hold buttons
         private final Map<String, Button> buttons; // Map to associate IDs with buttons
         private final DynamicLabelManager labelManager;
-        public DynamicButtonManager(FlowPane buttonPane,DynamicLabelManager labelManager) {
+        private DynamicButtonManager(FlowPane buttonPane,DynamicLabelManager labelManager) {
             this.buttonPane = buttonPane;
             this.labelManager = labelManager;
             this.buttons = new HashMap<>();
         }
 
         // Method to add a new button
-        public void addButton(String id,String itemname,String price) {
+        private void addButton(String id,String itemname,String price) {
             buttonCount++;
             Button newButton = new Button(itemname);
             newButton.setId(id); // Set the button's ID
@@ -291,7 +312,7 @@ public class WaiterScreen2Controller
         }
 
         // Method to remove a button by ID
-        public void removeButtonById(String id) {
+        private void removeButtonById(String id) {
             Button buttonToRemove = buttons.get(id);
             if (buttonToRemove != null) {
                 removeButton(buttonToRemove);
@@ -308,7 +329,7 @@ public class WaiterScreen2Controller
         }
 
         // Method to clear all buttons
-        public void clearAllButtons() {
+        private void clearAllButtons() {
             buttonPane.getChildren().clear(); // Clear the FlowPane
             buttons.clear(); // Clear the map
             System.out.println("All buttons cleared.");
@@ -318,14 +339,14 @@ public class WaiterScreen2Controller
     /**
      * This class is used to manage dynamic tabs
      */
-    public static class DynamicTabManager {
+    private static class DynamicTabManager {
         private final TabPane tabPane; // TabPane to hold the tabs
-        public DynamicTabManager(TabPane tabPane) {
+        private DynamicTabManager(TabPane tabPane) {
             this.tabPane = tabPane;
         }
 
         // Method to adjust the widths of the tabs
-        public void adjustTabWidths() {
+        private void adjustTabWidths() {
             double totalWidth = tabPane.getWidth(); // Get the width of the TabPane
             int numberOfTabs = tabPane.getTabs().size(); // Get the number of tabs
 
@@ -341,14 +362,14 @@ public class WaiterScreen2Controller
     /**
      * This class is used to manage dynamic labels
      */
-    public static class DynamicLabelManager {
+    private static class DynamicLabelManager {
         private final ListView<Label> labelListView;
 
-        public DynamicLabelManager(ListView<Label> labelListView) {
+        private DynamicLabelManager(ListView<Label> labelListView) {
             this.labelListView = labelListView;
         }
 
-        public void addLabel(String name) {
+        private void addLabel(String name) {
             Label newLabel = new Label("1x " + name);
             // Apply a dummy style class
             newLabel.getStyleClass().add("docket-label");
@@ -356,7 +377,7 @@ public class WaiterScreen2Controller
             System.out.println("Added Label with text: " + name);
         }
 
-        public void removeLabelByIndex(int index) {
+        private void removeLabelByIndex(int index) {
             if (index >= 0 && index < labelListView.getItems().size()) {
                 Label removedLabel = labelListView.getItems().remove(index);
                 System.out.println("Removed Label: " + removedLabel.getText());
@@ -365,7 +386,7 @@ public class WaiterScreen2Controller
             }
         }
 
-        public void removeLabelByText(String text) {
+        private void removeLabelByText(String text) {
             for (Label label : labelListView.getItems()) {
                 if (label.getText().equals(text)) {
                     labelListView.getItems().remove(label);
@@ -376,19 +397,19 @@ public class WaiterScreen2Controller
             System.out.println("Label with text '" + text + "' not found.");
         }
 
-        public void clearAllLabels() {
+        private void clearAllLabels() {
             labelListView.getItems().clear();
             System.out.println("All labels cleared.");
         }
 
-        public Label getLabelByIndex(int index) {
+        private Label getLabelByIndex(int index) {
             if (index >= 0 && index < labelListView.getItems().size()) {
                 return labelListView.getItems().get(index);
             }
             return null;
         }
 
-        public int getLabelCount() {
+        private int getLabelCount() {
             return labelListView.getItems().size();
         }
     }
