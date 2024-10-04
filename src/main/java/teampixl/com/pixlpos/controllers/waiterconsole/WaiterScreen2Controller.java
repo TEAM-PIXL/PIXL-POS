@@ -46,6 +46,8 @@ public class WaiterScreen2Controller
     @FXML
     private TextField searchbar;
 
+    private String searchText;
+
     /*
     labels
      */
@@ -168,6 +170,8 @@ public class WaiterScreen2Controller
         drinksbuttonManager = new DynamicButtonManager(drinkspane,labelManager);
         dessertbuttonManager = new DynamicButtonManager(dessertpane,labelManager);
 
+        searchbar.setOnAction(e -> handleSearchBarEnter());
+
         initsearch();
 
         ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
@@ -184,7 +188,10 @@ public class WaiterScreen2Controller
                 switch (tabType) {
                     case SEARCH:
                         searchbuttonManager.clearAllButtons();
-                        searchbuttonManager.addButton("1","Beef Cheeseburger","$20");
+                        for (MenuItem menuItem : menuItems) {
+                            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+                            id++;
+                        }
                         break;
                     case ENTREE:
                         entreebuttonManager.clearAllButtons();
@@ -225,6 +232,10 @@ public class WaiterScreen2Controller
                 }
             }
         });
+    }
+
+    private void handleSearchBarEnter() {
+        searchText = searchbar.getText();
     }
 
     @FXML
