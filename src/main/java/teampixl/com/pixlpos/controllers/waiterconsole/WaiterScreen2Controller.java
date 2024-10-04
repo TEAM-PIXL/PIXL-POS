@@ -120,6 +120,8 @@ public class WaiterScreen2Controller
 
     private int id = 1;
 
+    private List<MenuItem> queryMenuItems;
+
     private enum TabType {
         SEARCH("search"),
         ENTREE("entree"),
@@ -240,7 +242,7 @@ public class WaiterScreen2Controller
         itemtab.getSelectionModel().select(searchtab);
         searchText = searchbar.getText();
         searchbuttonManager.clearAllButtons();
-        List<MenuItem> queryMenuItems = menuAPI.searchMenuItem(searchText);
+        queryMenuItems = menuAPI.searchMenuItem(searchText);
         for (MenuItem menuItem : queryMenuItems) {
             searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
             id++;
@@ -263,7 +265,7 @@ public class WaiterScreen2Controller
 
     private void filterMenuItemsByPrice(double maxPrice) {
         searchbuttonManager.clearAllButtons();
-        List<MenuItem> menuItems = dataStore.readMenuItems();
+        List<MenuItem> menuItems = queryMenuItems;
         for (MenuItem menuItem : menuItems) {
             if (menuItem.getMetadata().metadata().get("price") instanceof Double) {
                 if ((Double) menuItem.getMetadata().metadata().get("price") <= maxPrice) {
