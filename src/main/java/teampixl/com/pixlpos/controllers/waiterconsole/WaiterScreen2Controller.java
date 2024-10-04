@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.animation.AnimationTimer;
@@ -121,6 +122,7 @@ public class WaiterScreen2Controller
     private int id = 1;
 
     private List<MenuItem> queryMenuItems;
+    private Tooltip priceTooltip;
 
     private enum TabType {
         SEARCH("search"),
@@ -176,11 +178,20 @@ public class WaiterScreen2Controller
         initialiseSlider();
 
         searchbar.setOnAction(e -> handleSearchBarEnter());
-        priceslider.valueProperty().addListener((observable, oldValue, newValue) -> handleSliderChange(newValue.doubleValue()));
+        priceslider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            handleSliderChange(newValue.doubleValue());
+            priceTooltip.setText(String.format("$%.2f", newValue.doubleValue()));
+            System.out.println("Slider value changed: " + newValue.doubleValue()); // Debug statement
+        });
+
+        priceslider.setOnMouseMoved(event -> {
+            priceTooltip.show(priceslider, event.getScreenX(), event.getScreenY() + 10);
+        });
 
         initsearch();
 
         ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
+        queryMenuItems = menuItems;
 
         /*this line allows for the tabs to scale dynamically as there is no feature for this ...*/
         itemtab.widthProperty().addListener((obs, oldVal, newVal) -> tabManager.adjustTabWidths());
@@ -257,6 +268,10 @@ public class WaiterScreen2Controller
         priceslider.setShowTickMarks(true);
         priceslider.setMinorTickCount(5);
         priceslider.setBlockIncrement(10);
+
+        priceTooltip = new Tooltip(String.format("$%.2f", priceslider.getValue()));
+        Tooltip.install(priceslider, priceTooltip);
+        System.out.println("Tooltip installed with initial value: " + priceslider.getValue()); // Debug statement
     }
 
     private void handleSliderChange(double maxPrice) {
