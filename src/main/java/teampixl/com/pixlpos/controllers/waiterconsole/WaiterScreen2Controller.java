@@ -227,10 +227,9 @@ public class WaiterScreen2Controller
         });
     }
 
-
     @FXML
     protected void onSendOrderButtonClick() {
-
+        // TODO: When orderAPI finished
     }
 
     @FXML
