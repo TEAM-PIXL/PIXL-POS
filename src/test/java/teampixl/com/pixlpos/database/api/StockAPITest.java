@@ -24,8 +24,8 @@ class StockAPITest {
     private Stock.UnitType testUnitType;
     private double testStockQuantity;
     private boolean testOnOrderStatus;
-    private int testCounter;
-    private IngredientsAPI ingredientsAPI;
+    private static int testCounter;
+    private static IngredientsAPI ingredientsAPI;
 
     private String postIngredient() {
         String IngredientID;
@@ -53,6 +53,19 @@ class StockAPITest {
 
         List<StatusCode> StatusCodes = stockAPI.postStock(testIngredientID, testStockStatus, testUnitType, testStockQuantity, testOnOrderStatus);
         assertTrue(Exceptions.isSuccessful(StatusCodes));
+    }
+
+    @AfterAll
+    static void tearDown() {
+        for (int i = 1; i <= testCounter; i++) {
+            String ingredientName = "testIngredientID" + i;
+            String ingredientID = ingredientsAPI.keySearch(ingredientName);
+            assertNotEquals(null, ingredientID);
+            List<StatusCode> StatusCodes = stockAPI.deleteStock(ingredientID);
+            assertTrue(Exceptions.isSuccessful(StatusCodes));
+            StatusCodes = ingredientsAPI.deleteIngredient(ingredientID);
+            assertTrue(Exceptions.isSuccessful(StatusCodes));
+        }
     }
 
     @Test
