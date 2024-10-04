@@ -118,6 +118,8 @@ public class WaiterScreen2Controller
     private static MenuAPI menuAPI;
     private static DataStore dataStore;
 
+    private int id = 1;
+
     private enum TabType {
         SEARCH("search"),
         ENTREE("entree"),
@@ -183,8 +185,6 @@ public class WaiterScreen2Controller
 
             if (newTab != null) {
                 TabType tabType = TabType.fromId(newTab.getId());
-                int id = 1;
-
                 switch (tabType) {
                     case SEARCH:
                         searchbuttonManager.clearAllButtons();
@@ -235,7 +235,14 @@ public class WaiterScreen2Controller
     }
 
     private void handleSearchBarEnter() {
+        itemtab.getSelectionModel().select(searchtab);
         searchText = searchbar.getText();
+        searchbuttonManager.clearAllButtons();
+        List<MenuItem> queryMenuItems = menuAPI.searchMenuItem(searchText);
+        for (MenuItem menuItem : queryMenuItems) {
+            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), String.valueOf(menuItem.getMetadata().metadata().get("itemPrice")));
+            id++;
+        }
     }
 
     @FXML
