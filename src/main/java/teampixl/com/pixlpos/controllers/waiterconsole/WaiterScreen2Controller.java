@@ -171,8 +171,10 @@ public class WaiterScreen2Controller
         mainbuttonManager = new DynamicButtonManager(mainpane,labelManager);
         drinksbuttonManager = new DynamicButtonManager(drinkspane,labelManager);
         dessertbuttonManager = new DynamicButtonManager(dessertpane,labelManager);
+        initialiseSlider();
 
         searchbar.setOnAction(e -> handleSearchBarEnter());
+        priceslider.valueProperty().addListener((observable, oldValue, newValue) -> handleSliderChange(newValue.doubleValue()));
 
         initsearch();
 
@@ -242,6 +244,33 @@ public class WaiterScreen2Controller
         for (MenuItem menuItem : queryMenuItems) {
             searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
             id++;
+        }
+    }
+
+    private void initialiseSlider() {
+        priceslider.setMin(0);
+        priceslider.setMax(50);
+        priceslider.setValue(50);
+        priceslider.setShowTickLabels(true);
+        priceslider.setShowTickMarks(true);
+        priceslider.setMinorTickCount(5);
+        priceslider.setBlockIncrement(10);
+    }
+
+    private void handleSliderChange(double maxPrice) {
+        filterMenuItemsByPrice(maxPrice);
+    }
+
+    private void filterMenuItemsByPrice(double maxPrice) {
+        searchbuttonManager.clearAllButtons();
+        List<MenuItem> menuItems = dataStore.readMenuItems();
+        for (MenuItem menuItem : menuItems) {
+            if (menuItem.getMetadata().metadata().get("price") instanceof Double) {
+                if ((Double) menuItem.getMetadata().metadata().get("price") <= maxPrice) {
+                    searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                    id++;
+                }
+            }
         }
     }
 
