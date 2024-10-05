@@ -54,7 +54,7 @@ public class IngredientsAPITest {
     }
 
     @Test
-    void testpostIngredient(){
+    void testPostIngredient(){
         assertTrue(Exceptions.isSuccessful(
                 ingredientsAPI.postIngredient("Flour","Cool Notes")
         ));
@@ -62,7 +62,7 @@ public class IngredientsAPITest {
     }
 
     @Test
-    void testputIngredientName(){
+    void testPutIngredientName(){
         assertTrue(Exceptions.isSuccessful(
                 ingredientsAPI.putIngredientName(testIngredientName,"Flour")
         ));
@@ -70,7 +70,7 @@ public class IngredientsAPITest {
     }
 
     @Test
-    void testputIngredientNotes(){
+    void testPutIngredientNotes(){
         assertTrue(Exceptions.isSuccessful(
                 ingredientsAPI.putIngredientNotes(testIngredientName,"Super Cool New Notes")
         ));
@@ -78,7 +78,16 @@ public class IngredientsAPITest {
     }
 
     @Test
-    void testdeleteIngredient(){}
+    void testDeleteIngredient(){
+        assertTrue(Exceptions.isSuccessful(
+                ingredientsAPI.deleteIngredient(testIngredientName)));
+        List<StatusCode> postedStatusCodes = ingredientsAPI.postIngredient(testIngredientName, testIngredientNotes);
+    }
 
+    @Test
+    void testSearchIngredient(){
+        List<Ingredients> ingredients = ingredientsAPI.searchIngredients(testIngredientName);
+        assertTrue(ingredients.contains(ingredientsAPI.getIngredient(testIngredientName)));;
+    }
 
 }
