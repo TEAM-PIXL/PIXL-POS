@@ -29,6 +29,15 @@ public class IngredientsAPITest {
         DataStore.getInstance().deleteIngredient(ingredientsAPI.getIngredient(testIngredientName));
     }
 
-
-
+    @Test
+    void testValidateMenuItemByName(){
+        assertEquals(StatusCode.INGREDIENT_NAME_EMPTY, ingredientsAPI.validateIngredientByName(""));
+        String LongName = "A".repeat(51);
+        assertEquals(StatusCode.INGREDIENT_NAME_TOO_LONG, ingredientsAPI.validateIngredientByName(LongName));
+        assertEquals(StatusCode.INGREDIENT_NAME_TOO_SHORT, ingredientsAPI.validateIngredientByName("A"));
+        assertEquals(StatusCode.INGREDIENT_NAME_CONTAINS_DIGITS, ingredientsAPI.validateIngredientByName("Salt1"));
+        assertEquals(StatusCode.INGREDIENT_NAME_CONTAINS_SPECIAL_CHARACTERS, ingredientsAPI.validateIngredientByName("Soup?"));
+        assertEquals(StatusCode.INGREDIENT_NAME_TAKEN, ingredientsAPI.validateIngredientByName("Salt"));
+        assertEquals(StatusCode.SUCCESS, ingredientsAPI.validateIngredientByName("Pepper"));
+    }
 }
