@@ -54,7 +54,7 @@ public class IngredientsAPITest {
     }
 
     @Test
-    void postIngredient(){
+    void testpostIngredient(){
         assertTrue(Exceptions.isSuccessful(
                 ingredientsAPI.postIngredient("Flour","Cool Notes")
         ));
@@ -62,7 +62,7 @@ public class IngredientsAPITest {
     }
 
     @Test
-    void putIngredientName(){
+    void testputIngredientName(){
         assertTrue(Exceptions.isSuccessful(
                 ingredientsAPI.putIngredientName(testIngredientName,"Flour")
         ));
@@ -70,12 +70,15 @@ public class IngredientsAPITest {
     }
 
     @Test
-    void putIngredientNotes(){
+    void testputIngredientNotes(){
         assertTrue(Exceptions.isSuccessful(
                 ingredientsAPI.putIngredientNotes(testIngredientName,"Super Cool New Notes")
         ));
         ingredientsAPI.putIngredientNotes(testIngredientName,testIngredientNotes);
     }
+
+    @Test
+    void testdeleteIngredient(){}
 
 
 }
