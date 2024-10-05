@@ -52,4 +52,13 @@ public class IngredientsAPITest {
     void testGetIngredientByName(){
         assertNotNull(ingredientsAPI.getIngredient(testIngredientName));
     }
+
+    @Test
+    void postIngredient(){
+        assertTrue(Exceptions.isSuccessful(
+                ingredientsAPI.postIngredient("Flour","Cool Notes")
+        ));
+        ingredientsAPI.deleteIngredient("Flour");
+    }
+
 }
