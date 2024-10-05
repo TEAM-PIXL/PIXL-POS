@@ -61,4 +61,21 @@ public class IngredientsAPITest {
         ingredientsAPI.deleteIngredient("Flour");
     }
 
+    @Test
+    void putIngredientName(){
+        assertTrue(Exceptions.isSuccessful(
+                ingredientsAPI.putIngredientName(testIngredientName,"Flour")
+        ));
+        ingredientsAPI.putIngredientName("Flour",testIngredientName);
+    }
+
+    @Test
+    void putIngredientNotes(){
+        assertTrue(Exceptions.isSuccessful(
+                ingredientsAPI.putIngredientNotes(testIngredientName,"Super Cool New Notes")
+        ));
+        ingredientsAPI.putIngredientNotes(testIngredientName,testIngredientNotes);
+    }
+
+
 }
