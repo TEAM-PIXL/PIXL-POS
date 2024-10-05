@@ -47,4 +47,9 @@ public class IngredientsAPITest {
         assertEquals(StatusCode.INGREDIENT_NOTES_TOO_LONG, ingredientsAPI.validateIngredientByNotes(LongerName));
         assertEquals(StatusCode.SUCCESS, ingredientsAPI.validateIngredientByNotes("Super Cool Notes."));
     }
+
+    @Test
+    void testGetIngredientByName(){
+        assertNotNull(ingredientsAPI.getIngredient(testIngredientName));
+    }
 }
