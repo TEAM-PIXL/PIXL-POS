@@ -30,7 +30,7 @@ public class IngredientsAPITest {
     }
 
     @Test
-    void testValidateMenuItemByName(){
+    void testValidateIngredientByName(){
         assertEquals(StatusCode.INGREDIENT_NAME_EMPTY, ingredientsAPI.validateIngredientByName(""));
         String LongName = "A".repeat(51);
         assertEquals(StatusCode.INGREDIENT_NAME_TOO_LONG, ingredientsAPI.validateIngredientByName(LongName));
@@ -39,5 +39,12 @@ public class IngredientsAPITest {
         assertEquals(StatusCode.INGREDIENT_NAME_CONTAINS_SPECIAL_CHARACTERS, ingredientsAPI.validateIngredientByName("Soup?"));
         assertEquals(StatusCode.INGREDIENT_NAME_TAKEN, ingredientsAPI.validateIngredientByName("Salt"));
         assertEquals(StatusCode.SUCCESS, ingredientsAPI.validateIngredientByName("Pepper"));
+    }
+
+    @Test
+    void testValidateIngredientByNotes(){
+        String LongerName = "A".repeat(501);
+        assertEquals(StatusCode.INGREDIENT_NOTES_TOO_LONG, ingredientsAPI.validateIngredientByNotes(LongerName));
+        assertEquals(StatusCode.SUCCESS, ingredientsAPI.validateIngredientByNotes("Super Cool Notes."));
     }
 }
