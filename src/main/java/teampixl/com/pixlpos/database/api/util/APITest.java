@@ -17,9 +17,20 @@ import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) {
-        Order ORDER = new Order(2, "123abc");
+        UserStack userStack = UserStack.getInstance();
+        MenuAPI menuAPI = MenuAPI.getInstance();
+        OrderAPI orderAPI = OrderAPI.getInstance();
+
+        userStack.setCurrentUser("cook");
+
+        Order ORDER = orderAPI.initializeOrder();
+        System.out.println("The order metadata is as such: " + ORDER.getMetadata().metadata());
+        List<StatusCode> STATUS1 = orderAPI.putOrderItem(ORDER.getMetadata().metadata().get("order_id").toString(), "cb68a1b2-fbda-448a-a972-875b0a30f7c5", 2);
         System.out.println("The order metadata is as such: " + ORDER.getMetadata().metadata());
         System.out.println("The order data is as such: " + ORDER.getData());
+
+        List<StatusCode> STATUS = orderAPI.postOrder(ORDER);
+        System.out.println("The status of the order post is: " + STATUS);
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
 //        UserStack userStack = UserStack.getInstance();

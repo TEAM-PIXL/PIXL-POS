@@ -7,7 +7,7 @@ import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
 
-import java.util.stream.Collectors;
+import java.sql.SQLSyntaxErrorException;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -93,6 +93,34 @@ public class OrderAPI {
         return StatusCode.SUCCESS;
     }
 
+    public StatusCode validateOrderByTableNumber(Integer tableNumber) {
+        if (tableNumber == null || tableNumber < 0) {
+            return StatusCode.INVALID_TABLE_NUMBER;
+        }
+        return StatusCode.SUCCESS;
+    }
+
+    public StatusCode validateOrderByCustomers(Integer customers) {
+        if (customers == null || customers <= 0) {
+            return StatusCode.INVALID_CUSTOMERS;
+        }
+        return StatusCode.SUCCESS;
+    }
+
+    public StatusCode validateOrderBySpecialRequests(String specialRequests) {
+        if (specialRequests != null && specialRequests.length() > 255) {
+            return StatusCode.SPECIAL_REQUESTS_TOO_LONG;
+        }
+        return StatusCode.SUCCESS;
+    }
+
+    public StatusCode validateOrderByItems(Map<MenuItem, Integer> menuItems) {
+        if (menuItems == null || menuItems.isEmpty()) {
+            return StatusCode.INVALID_ORDER_ITEMS;
+        }
+        return StatusCode.SUCCESS;
+    }
+
     /**
      * Validates the entire Order object.
      *
@@ -109,31 +137,21 @@ public class OrderAPI {
         String orderId = (String) order.getMetadata().metadata().get("order_id");
         Integer orderNumber = (Integer) order.getMetadata().metadata().get("order_number");
         String userId = (String) order.getMetadata().metadata().get("user_id");
-        String orderStatus = (String) order.getMetadata().metadata().get("order_status");
+        Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(order.getMetadata().metadata().get("order_status").toString());
+        Integer tableNumber = (Integer) order.getMetadata().metadata().get("table_number");
+        Integer customers = (Integer) order.getMetadata().metadata().get("customers");
+        String specialRequests = (String) order.getMetadata().metadata().get("special_requests");
 
         statusCodes.add(validateOrderById(orderId));
         statusCodes.add(validateOrderByNumber(orderNumber));
         statusCodes.add(validateOrderByUserId(userId));
+        statusCodes.add(validateOrderByStatus(orderStatus));
+        statusCodes.add(validateOrderByTableNumber(tableNumber));
+        statusCodes.add(validateOrderByCustomers(customers));
+        statusCodes.add(validateOrderBySpecialRequests(specialRequests));
+        statusCodes.add(validateOrderByItems(getOrderItemsById(orderId)));
 
-        try {
-            Order.OrderStatus.valueOf(orderStatus);
-        } catch (IllegalArgumentException e) {
-            statusCodes.add(StatusCode.INVALID_ORDER_STATUS);
-        }
-
-        Object totalObj = order.getData().get("total");
-        if (!(totalObj instanceof Double) || (Double) totalObj < 0) {
-            statusCodes.add(StatusCode.INVALID_ORDER_TOTAL);
-        }
-
-        Object menuItemsObj = order.getData().get("menuItems");
-        if (!(menuItemsObj instanceof Map<?, ?> menuItemsMap) || menuItemsMap.isEmpty()) {
-            statusCodes.add(StatusCode.INVALID_ORDER_ITEMS);
-        }
-
-        return statusCodes.stream()
-                .filter(statusCode -> statusCode != StatusCode.SUCCESS)
-                .collect(Collectors.toList());
+        return statusCodes;
     }
 
     /**
@@ -301,38 +319,23 @@ public class OrderAPI {
 
 
 
-    /**
-     * Creates a new order and adds it to the database.
-     *
-     * @param orderNumber the order number
-     * @param userId the user ID
-     * @return a list of StatusCodes indicating the result of the operation
-     */
-    public List<StatusCode> postOrder(Integer orderNumber, String userId) {
-        List<StatusCode> validations = new ArrayList<>();
 
-        StatusCode numberValidation = validateOrderByNumber(orderNumber);
-        StatusCode userValidation = validateOrderByUserId(userId);
-        validations.add(numberValidation);
-        validations.add(userValidation);
-
+    public List<StatusCode> postOrder(Order order) {
+        List<StatusCode> validations = validateOrder(order);
         if (!Exceptions.isSuccessful(validations)) {
+            System.out.println("Order post validation failed.");
             return validations;
         }
-
-        if (getOrderByNumber(orderNumber) != null) {
-            validations.add(StatusCode.ORDER_ALREADY_EXISTS);
-            return validations;
-        }
+        System.out.println("Order post validation successful.");
 
         try {
-            Order order = new Order(orderNumber, userId);
-            dataStore.createOrder(order);
-            validations.add(StatusCode.SUCCESS);
+            order.updateMetadata("order_status", Order.OrderStatus.SENT.name());
+            dataStore.updateOrder(order);
+            System.out.println("Order posted successfully.");
+            return validations;
         } catch (Exception e) {
-            validations.add(StatusCode.ORDER_CREATION_FAILED);
+            return List.of(StatusCode.POST_ORDER_FAILED);
         }
-        return validations;
     }
 
     /**
