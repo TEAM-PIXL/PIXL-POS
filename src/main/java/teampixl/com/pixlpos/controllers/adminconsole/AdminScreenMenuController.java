@@ -147,7 +147,13 @@ public class AdminScreenMenuController
     }
     @FXML
     protected void onCancelButtonClick(){
-
+        // Handle clear button click
+        pricefield.clear();
+        menuitemnamefield.clear();
+        itemtypefield.setValue(null);
+        dietaryrequirementsfield.setValue(null);
+        itemdescriptionfield.clear();
+        loadedMenuItem = null;
     }
     @FXML
     protected void onEditButtonClick(){
