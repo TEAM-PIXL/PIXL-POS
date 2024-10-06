@@ -440,12 +440,37 @@ public class WaiterScreen2Controller
         // Method to remove a button directly
         private void addtoorder(String itemname) {
            String menuItemId = menuAPI.keySearch(itemname);
-              if (orderItems.containsKey(menuItemId)) {
-                orderItems.put(menuItemId, orderItems.get(menuItemId) + 1);
+          if (orderItems.containsKey(menuItemId)) {
+            orderItems.put(menuItemId, orderItems.get(menuItemId) + 1);
+          } else {
+            orderItems.put(menuItemId, 1);
+          }
+
+          actionStack.push(() -> {
+              if (orderItems.get(menuItemId) == 1) {
+                  orderItems.remove(menuItemId);
               } else {
-                orderItems.put(menuItemId, 1);
+                  orderItems.put(menuItemId, orderItems.get(menuItemId) - 1);
               }
-           labelManager.addLabel(itemname);
+          });
+
+          updateOrderSummary();
+        }
+
+        private void updateOrderSummary() {
+            for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
+                String menuItemId = entry.getKey();
+                int quantity = entry.getValue();
+                MenuItem menuItem = menuAPI.getMenuItem(menuItemId);
+                if (menuItem != null) {
+                    String itemName = menuItem.getMetadataValue("itemName").toString();
+                    Double price = (Double) menuItem.getMetadataValue("price");
+                    Double total = price * quantity;
+                    orderTotal += total;
+                    totalprice.setText("$" + orderTotal);
+                    labelManager.addLabel(itemName);
+                }
+            }
         }
 
         // Method to clear all buttons
