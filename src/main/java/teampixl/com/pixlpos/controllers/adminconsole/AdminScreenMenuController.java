@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.geometry.Pos;
+import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.models.MenuItem;
 import javafx.animation.AnimationTimer;
 import teampixl.com.pixlpos.database.DataStore;
@@ -41,6 +42,7 @@ public class AdminScreenMenuController
     Users currentuser = userStack.getCurrentUser();
     String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
     private MenuItem loadedMenuItem;
+    private MenuAPI menuAPI;
     /*
     Shared Components
      */
@@ -106,12 +108,14 @@ public class AdminScreenMenuController
     };
 
 
+
     @FXML
     public void initialize() {
         datetime.start();
         adding_counter = 0;
         menuitemlist.getItems().clear();
         greeting.setText("Hello, " + firstName);
+        menuAPI = MenuAPI.getInstance();
     }
 
 
@@ -194,6 +198,16 @@ public class AdminScreenMenuController
     // Placeholder methods for button actions
     private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
         // Implement edit menu item logic here
+        try{
+            loadedMenuItem = menuAPI.keyTransform(id);
+            if (loadedMenuItem == null) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Please select a user from the table");
+            } else{
+                populateUserParam(loadedUser);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
     private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
@@ -335,5 +349,13 @@ public class AdminScreenMenuController
             System.out.println(("No Description"));
         }
         loadedMenuItem = menuItem;
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
