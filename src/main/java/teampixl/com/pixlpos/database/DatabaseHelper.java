@@ -89,6 +89,26 @@ public class DatabaseHelper {
         );
     """;
 
+        String sqlCreateLogsTable = """
+        CREATE TABLE IF NOT EXISTS global_logs (
+            log_id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            log_timestamp INTEGER NOT NULL,
+            log_action TEXT NOT NULL,
+            log_status TEXT NOT NULL,
+            log_type TEXT NOT NULL,
+            log_category TEXT NOT NULL,
+            log_priority TEXT NOT NULL,
+            log_description TEXT NOT NULL,
+            log_location TEXT,
+            log_device TEXT,
+            log_ip TEXT,
+            log_mac TEXT,
+            log_os TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+        """;
+
         String sqlCreateSettingsTable = """
         CREATE TABLE IF NOT EXISTS user_settings (
             user_id TEXT PRIMARY KEY,
@@ -195,6 +215,7 @@ public class DatabaseHelper {
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(sqlCreateUsersTable);
             stmt.execute(sqlCreateLoginTable);
+            stmt.execute(sqlCreateLogsTable);
             stmt.execute(sqlCreateSettingsTable);
             stmt.execute(sqlCreateGlobalNotesTable);
             stmt.execute(sqlCreateMenuItemsTable);

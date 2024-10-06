@@ -23,6 +23,7 @@ module PIXL.POS {
     requires org.junit.platform.commons;
     requires org.junit.jupiter;
     requires geoip2;
+    requires java.xml.crypto;
 
     opens teampixl.com.pixlpos.database;
     opens teampixl.com.pixlpos.authentication;
@@ -53,5 +54,4 @@ module PIXL.POS {
     exports teampixl.com.pixlpos.models.tools;
     exports teampixl.com.pixlpos.models.logs;
     exports teampixl.com.pixlpos.models.logs.definitions;
-
 }
