@@ -7,6 +7,9 @@ import teampixl.com.pixlpos.database.api.*;
 import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.OrderAPI;
+import teampixl.com.pixlpos.models.logs.network.GeoLocation;
+import teampixl.com.pixlpos.models.logs.network.ServerLocation;
+import teampixl.com.pixlpos.models.logs.network.Util;
 
 
 import java.io.ObjectInputFilter;
@@ -58,6 +61,22 @@ public class APITest {
         System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
         System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
 
+        String IP = null;
+        try {
+            IP = Util.getIp();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("IP: " + IP);
+
+        String location = null;
+        try
+        {
+            location = Util.getLocation(IP);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Location: " + location);
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
 //        UserStack userStack = UserStack.getInstance();
