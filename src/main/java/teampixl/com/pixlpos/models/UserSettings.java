@@ -115,17 +115,16 @@ public class UserSettings extends DataManager {
      * Constructor for UserSettings object. Stores metadata and data.
      * Takes no parameters. These values are set to default values.
      */
-    public UserSettings() {
-        super(initializeMetadata());
+    public UserSettings(String USER_ID) {
+        super(initializeMetadata(USER_ID));
 
         this.data = new HashMap<>();
         this.data.put("language", Language.ENGLISH);
         this.data.put("access_level", AccessLevel.BASIC);
     }
 
-    private static MetadataWrapper initializeMetadata() {
+    private static MetadataWrapper initializeMetadata(String USER_ID) {
         Map<String, Object> metadataMap = new HashMap<>();
-        String USER_ID = UserStack.getInstance().getCurrentUserId();
         metadataMap.put("user_id", USER_ID);
         metadataMap.put("theme", Theme.LIGHT);
         metadataMap.put("resolution", Resolution.SD);
