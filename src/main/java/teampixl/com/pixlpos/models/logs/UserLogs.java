@@ -32,11 +32,12 @@ public class UserLogs extends DataManager {
         this.data.put("log_type", "");
         this.data.put("log_category", "");
         this.data.put("log_priority", "");
-        this.data.put("log_location", "Unknown");
+        String IP = Util.getIp();
+        this.data.put("log_location", Util.getLocation(IP));
         this.data.put("log_device", "Unknown");
-        this.data.put("log_ip", Util.getIp());
+        this.data.put("log_ip", IP);
         this.data.put("log_mac", "Unknown");
-        this.data.put("log_os", "Unknown");
+        this.data.put("log_os", Util.checkOS());
     }
 
     private static MetadataWrapper initializeMetadata(Action action) {
