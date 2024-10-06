@@ -304,6 +304,7 @@ public class WaiterScreen2Controller
         // change order number
 
         System.out.println("Order initialized: " + currentOrder);
+        ordernumber.setText(orderNumber.toString());
         orderID = currentOrder.getMetadataValue("order_id").toString();
     }
 
