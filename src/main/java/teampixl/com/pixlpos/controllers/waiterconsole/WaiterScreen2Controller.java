@@ -61,9 +61,13 @@ public class WaiterScreen2Controller
     @FXML
     private Label ordernumber;
     @FXML
-    private Label customernumber;
+    private ComboBox<String> customernumber;
     @FXML
-    private Label tabelnumber;
+    private ComboBox<String> tablenumber;
+    @FXML
+    private ComboBox<String> paymentstatus;
+    @FXML
+    private ComboBox<String> ordertype;
     @FXML
     private Label totalprice;
     /*
@@ -137,6 +141,61 @@ public class WaiterScreen2Controller
     private Integer orderNumber = 0;
     private Double orderTotal = 0.00;
 
+
+    //ComboBoxes for inputs
+    public void comboinitialize() {
+        // Define options for each ComboBox
+        String[] customerAmounts = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        String[] orderTypes = {"DINEIN", "TAKEAWAY", "DELIVERY"};
+        String[] tableNumbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
+        String[] paymentStatuses = {"PAID", "PENDING", "NOT PAID"};
+
+        // Initialize ComboBoxes with options
+        customernumber.getItems().setAll(customerAmounts);
+        ordertype.getItems().setAll(orderTypes);
+        tablenumber.getItems().setAll(tableNumbers);
+        paymentstatus.getItems().setAll(paymentStatuses);
+
+        // Set default selections (optional)
+        customernumber.setValue("00");
+        ordertype.setValue("Dine In");
+        tablenumber.setValue("1");
+        paymentstatus.setValue("Not PAID");
+
+        // Event Handlers using Lambdas
+        customernumber.setOnAction(event -> handleCustomerNumberSelection());
+        ordertype.setOnAction(event -> handleOrderTypeSelection());
+        tablenumber.setOnAction(event -> handleTableNumberSelection());
+        paymentstatus.setOnAction(event -> handlePaymentStatusSelection());
+    }
+
+    // Event handler methods
+    private void handleCustomerNumberSelection() {
+        String selectedCustomerNumber = customernumber.getValue();
+        // Add logic to update the database or perform other actions
+        System.out.println("Customer Number selected: " + selectedCustomerNumber);
+    }
+
+    private void handleOrderTypeSelection() {
+        String selectedOrderType = ordertype.getValue();
+        // Add logic here
+        System.out.println("Order Type selected: " + selectedOrderType);
+    }
+
+    private void handleTableNumberSelection() {
+        String selectedTableNumber = tablenumber.getValue();
+        // Add logic here
+        System.out.println("Table Number selected: " + selectedTableNumber);
+    }
+
+    private void handlePaymentStatusSelection() {
+        String selectedPaymentStatus = paymentstatus.getValue();
+        // Add logic here
+        System.out.println("Payment Status selected: " + selectedPaymentStatus);
+    }
+
+
+
     private enum TabType {
         SEARCH("search"),
         ENTREE("entree"),
@@ -188,6 +247,7 @@ public class WaiterScreen2Controller
         drinksbuttonManager = new DynamicButtonManager(drinkspane,labelManager);
         dessertbuttonManager = new DynamicButtonManager(dessertpane,labelManager);
         initialiseSlider();
+        comboinitialize();
 
         searchbar.setOnAction(event -> handleSearchBarEnter());
         priceslider.valueProperty().addListener((observable, oldValue, newValue) -> {
