@@ -105,4 +105,30 @@ public abstract class DataManager {
                 metadata != null ? metadata.metadata() : "null",
                 data != null ? new HashMap<>(data) : "null");
     }
+
+    /**
+     * Compares DataManager object with another object.
+     * @param obj Object to compare
+     * @return boolean value
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        DataManager other = (DataManager) obj;
+        return metadata.equals(other.metadata) && data.equals(other.data);
+    }
+
+    /**
+     * Generates hash code for DataManager object.
+     * @return int hash code
+     */
+    @Override
+    public int hashCode() {
+        return metadata.hashCode() + data.hashCode();
+    }
 }
