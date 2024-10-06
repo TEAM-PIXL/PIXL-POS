@@ -217,7 +217,16 @@ public class AdminScreenUsersController
 
     @FXML
     protected void onEditButtonClick(){
-
+        // Handle customise button click
+        try{
+            if (loadedUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Please select a user from the table");
+            } else{
+                populateUserParam(loadedUser);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -408,6 +417,21 @@ public class AdminScreenUsersController
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void populateUserParam(Users User) {
+        Object password = User.getData().get("password");
+        Object email = User.getData().get("email");
+        Object role = User.getMetadata().metadata().get("role");
+        Object fistName = User.getMetadata().metadata().get("first_name");
+        Object lastName = User.getMetadata().metadata().get("last_name");
+
+        firstNameField.setText(fistName.toString());
+        lastNameField.setText(lastName.toString());
+        passwordField.setText(password.toString());
+        emailField.setText(email.toString());
+        roleSelect.setValue(Users.UserRole.valueOf(role.toString()));
+        loadedUser = User;
     }
 
 }
