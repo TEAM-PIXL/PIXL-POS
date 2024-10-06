@@ -119,6 +119,12 @@ public class AdminScreenMenuController
         greeting.setText("Hello, " + firstName);
         menuAPI = MenuAPI.getInstance();
         datastore = DataStore.getInstance();
+        populateMenuGrid();
+        itemtypefield.getItems().clear();
+        itemtypefield.getItems().addAll(MenuItem.ItemType.values());
+        dietaryrequirementsfield.getItems().clear();
+        dietaryrequirementsfield.getItems().addAll(MenuItem.DietaryRequirement.values());
+        loadedMenuItem = null;
     }
 
 
@@ -409,7 +415,7 @@ public class AdminScreenMenuController
     private void populateMenuParam(MenuItem menuItem) {
         Object price = menuItem.getMetadataValue("price");
         Object itemName = menuItem.getMetadataValue("itemName");
-        Object itemType = menuItem.getData().get("itemTame");
+        Object itemType = menuItem.getMetadataValue("itemType");
         pricefield.setText(Double.toString((double) price));
         menuitemnamefield.setText(itemName.toString());
         itemtypefield.setValue(MenuItem.ItemType.valueOf(itemType.toString()));
@@ -434,5 +440,28 @@ public class AdminScreenMenuController
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void populateMenuGrid() {
+
+        ObservableList<MenuItem> listOfMenuItems = datastore.readMenuItems();
+        String dietaryRequirement;
+        for (MenuItem menuItem : listOfMenuItems) {
+            String menuItemName = menuItem.getMetadataValue("itemName").toString();
+            if (menuItem.getMetadataValue("dietaryRequirement") == null){
+                 dietaryRequirement = "";
+            } else {
+                 dietaryRequirement = menuItem.getMetadataValue("dietaryRequirement").toString();
+            }
+            addMenuItemToListView(
+                    menuitemlist,
+                    menuItem.getMetadataValue("id").toString(),
+                    menuItemName,
+                    menuItem.getMetadataValue("price").toString(),
+                    menuItem.getMetadataValue("itemType").toString(),
+                    dietaryRequirement
+            );
+
+        }
     }
 }
