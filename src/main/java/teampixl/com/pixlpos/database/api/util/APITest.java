@@ -17,22 +17,43 @@ import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) {
-        Users user = new Users("John", "Doe", "johnnyboy", "Goo7yLu%%y", "parker@gmail.com", Users.UserRole.WAITER);
+        /* KEYS */
+        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
+        String[] DataKeys = {"description", "notes", "amountOrdered", "ingredients"};
 
-        System.out.println("User: " + user);
-        System.out.println("User Metadata: " + user.getMetadata());
-        System.out.println("User Data: " + user.getData());
-//        System.out.println("User Metadata Map: " + user.getMetadataMap());
-//        System.out.println("User Metadata Value: " + user.getMetadataValue("id"));
-//        System.out.println("User Data Value: " + user.getDataValue("password"));
-//        user.updateMetadata("id", "1234");
-//        user.setDataValue("password", "Goo7yLu%%y2");
-//        System.out.println("User Metadata: " + user.getMetadata());
-//        System.out.println("User Data: " + user.getData());
-//        System.out.println("User Metadata Map: " + user.getMetadataMap());
-//        System.out.println("User Metadata Value: " + user.getMetadataValue("id"));
-//        System.out.println("User Data Value: " + user.getDataValue("password"));
-//        System.out.println("User: " + user);
+        MenuItem menuItem = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "This is a Pizza", MenuItem.DietaryRequirement.NONE);
+        Ingredients ingredients = new Ingredients("Cheese", "This is cheese");
+        Ingredients ingredients1 = new Ingredients("Tomato", "This is tomato");
+        menuItem.addIngredient(ingredients, 2);
+        menuItem.addIngredient(ingredients1, 3);
+        System.out.println("Menu Item: " + menuItem.getMetadata().metadata());
+        System.out.println("Menu Item: " + menuItem.getData());
+        System.out.println("Menu Item: " + menuItem.getIngredients());
+
+        /* KEYS */
+        System.out.println("Metadata Keys: ");
+        for (String key : MetadataKeys) {
+            System.out.println(key);
+        }
+
+        System.out.println("Data Keys: ");
+        for (String key : DataKeys) {
+            System.out.println(key);
+        }
+
+        System.out.println("Item Name: " + menuItem.getMetadataValue(MetadataKeys[1]));
+        System.out.println("Price: " + menuItem.getMetadataValue(MetadataKeys[2]));
+        System.out.println("Item Type: " + menuItem.getMetadataValue(MetadataKeys[3]));
+        System.out.println("Active Item: " + menuItem.getMetadataValue(MetadataKeys[4]));
+        System.out.println("Dietary Requirement: " + menuItem.getMetadataValue(MetadataKeys[5]));
+        System.out.println("Created At: " + menuItem.getMetadataValue(MetadataKeys[6]));
+        System.out.println("Updated At: " + menuItem.getMetadataValue(MetadataKeys[7]));
+
+        System.out.println("Description: " + menuItem.getDataValue(DataKeys[0]));
+        System.out.println("Notes: " + menuItem.getDataValue(DataKeys[1]));
+        System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
+        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
+
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
 //        UserStack userStack = UserStack.getInstance();
