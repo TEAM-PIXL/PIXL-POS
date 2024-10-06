@@ -17,8 +17,6 @@ public class Order extends DataManager {
     Code Description:
     - Enumerations for OrderStatus
     - Enumerations for OrderType
-    - MetadataWrapper object for metadata
-    - Map object for data
     ============================================================================================================================================================*/
 
     /**
@@ -362,14 +360,9 @@ public class Order extends DataManager {
 
     /*============================================================================================================================================================
     Code Description:
-    - Method to get metadata, update metadata, and provide a string representation of the Order object.
+    - Overridden methods for Order object.
 
     Methods:
-        - getMetadata(): returns the metadata
-        - getData(): returns the data map
-        - updateMetadata(String key, Object value): updates the metadata map
-        - setDataValue(String key, Object value): sets data value in the data map
-        - toString(): returns a string representation of the Order object
         - equals(Object obj): checks if two Order objects are equal
         - hashCode(): returns the hash code of the Order object
     ============================================================================================================================================================*/
