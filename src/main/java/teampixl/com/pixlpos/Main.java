@@ -1,13 +1,9 @@
 package teampixl.com.pixlpos;
 
-import javafx.collections.ObservableList;
-import teampixl.com.pixlpos.models.Ingredients;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Users;
-import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
-import teampixl.com.pixlpos.authentication.PasswordUtils;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 
 public class Main {

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import teampixl.com.pixlpos.models.interfaces.IDataManager;
-import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.models.tools.DataManager;
+import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 
 /**
  * The MenuItem class represents a menu item in the system. It contains metadata, data, and ingredients.
@@ -28,10 +28,10 @@ import teampixl.com.pixlpos.database.MetadataWrapper;
  * Ingredients:
  * - IngredientAmount: a record to hold an ingredient and its corresponding numeral
  * @see MetadataWrapper
- * @see IDataManager
+ * @see DataManager
  * @see Ingredients
  */
-public class MenuItem implements IDataManager {
+public class MenuItem extends DataManager {
 
     /*============================================================================================================================================================
     Code Description:
@@ -63,8 +63,6 @@ public class MenuItem implements IDataManager {
         NONE
     }
 
-    private MetadataWrapper metadata;
-    private final Map<String, Object> data;
     private final Map<String, IngredientAmount> ingredients;
 
     /*============================================================================================================================================================
@@ -99,14 +97,24 @@ public class MenuItem implements IDataManager {
      * @param dietaryRequirement dietary requirement of the item
      */
     public MenuItem(String itemName, double price, ItemType itemType, boolean activeItem, String description, DietaryRequirement dietaryRequirement) {
+        super(initializeMetadata(itemName, price, itemType, activeItem, dietaryRequirement));
+        if (description == null || description.isEmpty()) {
+            throw new IllegalArgumentException("description cannot be null or empty");
+        }
+
+        this.data.put("description", description);
+        this.data.put("notes", null);
+        this.data.put("amountOrdered", 0);
+        this.ingredients = new HashMap<>();
+        this.data.put("ingredients", this.ingredients); // Ensure ingredients map is added to data map
+    }
+
+    private static MetadataWrapper initializeMetadata(String itemName, double price, ItemType itemType, boolean activeItem, DietaryRequirement dietaryRequirement) {
         if (itemName == null || itemName.isEmpty()) {
             throw new IllegalArgumentException("itemName cannot be null or empty");
         }
         if (itemType == null) {
             throw new IllegalArgumentException("itemType cannot be null");
-        }
-        if (description == null || description.isEmpty()) {
-            throw new IllegalArgumentException("description cannot be null or empty");
         }
 
         Map<String, Object> metadataMap = new HashMap<>();
@@ -123,20 +131,12 @@ public class MenuItem implements IDataManager {
         metadataMap.put("created_at", System.currentTimeMillis());
         metadataMap.put("updated_at", System.currentTimeMillis());
 
-        this.metadata = new MetadataWrapper(metadataMap);
-
-        this.data = new HashMap<>();
-        this.data.put("description", description);
-        this.data.put("notes", null);
-        this.data.put("amountOrdered", 0);
-        this.ingredients = new HashMap<>();
+        return new MetadataWrapper(metadataMap);
     }
 
     /*=========================================================================================================================================================================================================
     Code Description:
     This section of the code contains methods to add, update, remove, clear and check for ingredients in a MenuItem object.
-
-
     =========================================================================================================================================================================================================*/
 
     /**
@@ -152,6 +152,7 @@ public class MenuItem implements IDataManager {
      * @param ingredient ingredient to add
      * @param numeral amount of the ingredient
      */
+
     public void addIngredient(Ingredients ingredient, Object numeral) {
         if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
             throw new IllegalArgumentException("Numeral must be a non-negative value.");
@@ -168,6 +169,7 @@ public class MenuItem implements IDataManager {
         }
 
         ingredients.put(ingredientId, new IngredientAmount(ingredient, numeral));
+        this.data.put("ingredients", this.ingredients); // Update data map with ingredients
         updateTimestamp();
     }
 
@@ -189,6 +191,7 @@ public class MenuItem implements IDataManager {
         }
         String newIngredientId = (String) newIngredient.getMetadata().metadata().get("ingredient_id");
         ingredients.put(newIngredientId, new IngredientAmount(newIngredient, numeral));
+        this.data.put("ingredients", this.ingredients); // Update data map with ingredients
         updateTimestamp();
     }
 
@@ -201,6 +204,7 @@ public class MenuItem implements IDataManager {
 
         if (ingredients.containsKey(ingredientId)) {
             ingredients.remove(ingredientId);
+            this.data.put("ingredients", this.ingredients); // Update data map with ingredients
             updateTimestamp();
         } else {
             throw new IllegalArgumentException("Ingredient not found.");
@@ -222,45 +226,6 @@ public class MenuItem implements IDataManager {
 
     public double getPrice() {
         return (double) metadata.metadata().get("price");
-    }
-
-    /*============================================================================================================================================================
-    Code Description:
-    - Method to get metadata, data, update metadata and set data value.
-
-    Methods:
-    - getMetadata(): returns metadata
-    - getData(): returns data
-    - updateMetadata(String key, Object value): updates metadata
-    - setDataValue(String key, Object value): sets data value
-    - toString(): returns string representation of MenuItem object
-    ============================================================================================================================================================*/
-
-    public MetadataWrapper getMetadata() {
-        return metadata;
-    }
-
-    public Map<String, Object> getData() {
-        return data;
-    }
-
-    public void updateMetadata(String key, Object value) {
-        Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
-        if (value != null) {
-            modifiableMetadata.put(key, value);
-        } else {
-            modifiableMetadata.remove(key);
-        }
-        this.metadata = new MetadataWrapper(Map.copyOf(modifiableMetadata));
-    }
-
-    public void setDataValue(String key, Object value) {
-        data.put(key, value);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("MenuItem{Metadata: %s, Data: %s, Ingredients: %s}", new HashMap<>(metadata.metadata()), new HashMap<>(data), ingredients);
     }
 
     /*============================================================================================================================================================
