@@ -604,9 +604,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String dietaryRequirementStr = rs.getString("dietary_requirement");
                 MenuItem.DietaryRequirement dietaryRequirement = dietaryRequirementStr != null ? MenuItem.DietaryRequirement.valueOf(dietaryRequirementStr) : null;
                 String description = rs.getString("description");
+                String notes = rs.getString("notes");
+                Integer amountOrdered = rs.getInt("amount_ordered");
 
                 MenuItem item = new MenuItem(itemName, price, itemType, activeItem, description, dietaryRequirement);
                 item.updateMetadata("id", id);
+                item.setDataValue("notes", notes);
+                item.setDataValue("amountOrdered", amountOrdered);
                 menuItems.add(item);
             }
 
@@ -714,8 +718,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
-                double numeral = rs.getDouble("numeral");  // Assuming that numeral is stored as REAL in SQLite
-                Ingredients ingredient = getIngredientById(ingredientId);  // You'll need a method to fetch ingredient by ID
+                double numeral = rs.getDouble("numeral");
+                Ingredients ingredient = getIngredientById(ingredientId);
 
                 assert ingredient != null;
                 ingredientsMap.put(ingredient.getMetadata().metadata().get("itemName").toString(), numeral);
@@ -1322,7 +1326,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String notes = rs.getString("notes");
 
                 Ingredients ingredient = new Ingredients(itemName, notes);
-                ingredient.updateMetadata("ingredient_id", ingredientId); // Set the ingredient ID from the database
+                ingredient.updateMetadata("ingredient_id", ingredientId);
 
                 ingredients.add(ingredient);
             }
@@ -1409,7 +1413,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
-                Ingredients ingredient = getIngredientById(ingredientId);  // Fetch the ingredient by its ID
+                Ingredients ingredient = getIngredientById(ingredientId);
 
                 if (ingredient != null) {
                     Stock.StockStatus stockStatus = Stock.StockStatus.valueOf(rs.getString("stock_status"));

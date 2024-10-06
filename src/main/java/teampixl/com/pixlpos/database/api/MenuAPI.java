@@ -130,6 +130,13 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    public StatusCode validateMenuItemByStatus(Boolean ACTIVE_ITEM) {
+        if (ACTIVE_ITEM == null) {
+            return StatusCode.INVALID_MENU_ITEM_STATUS;
+        }
+        return StatusCode.SUCCESS;
+    }
+
     /**
      * Validates a menu item object.
      *
@@ -464,6 +471,25 @@ public class MenuAPI {
 
         try {
             MENU_ITEM.setDataValue("notes", NEW_MENU_ITEM_NOTES);
+            DATA_STORE.updateMenuItem(MENU_ITEM);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.MENU_ITEM_UPDATE_FAILED);
+        }
+        return VALIDATIONS;
+    }
+
+    public List<StatusCode> putMenuItemStatus(String MENU_ITEM_NAME, boolean ACTIVE_ITEM) {
+        Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Status", ACTIVE_ITEM, MENU_ITEM_NAME);
+        List<StatusCode> VALIDATIONS = new ArrayList<>(RESULT.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        MenuItem MENU_ITEM = RESULT.getValue();
+
+        try {
+            MENU_ITEM.updateMetadata("activeItem", ACTIVE_ITEM);
             DATA_STORE.updateMenuItem(MENU_ITEM);
             VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {
