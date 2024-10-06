@@ -170,19 +170,20 @@ public class AdminScreenUsersController
     protected void onSubmitButtonClick(){
         // Handle submit changes button click
         try{
-
+            String username = usernamefield.getText();
             String firstName = firstnamefield.getText();
             String lastName = lastnamefield.getText();
             String password = passwordfield.getText();
             String email = emailfield.getText();
             Users.UserRole role = roleselect.getSelectionModel().getSelectedItem();
-            if (password.isEmpty() || email.isEmpty() || firstName.isEmpty() ||
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || firstName.isEmpty() ||
                     lastName.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
             }else {
 
 
                 try {
+                    loadedUser.updateMetadata("username", username);
                     loadedUser.updateMetadata("first_name", firstName);
                     loadedUser.updateMetadata("last_name", lastName);
                     loadedUser.updateMetadata("role", role);
