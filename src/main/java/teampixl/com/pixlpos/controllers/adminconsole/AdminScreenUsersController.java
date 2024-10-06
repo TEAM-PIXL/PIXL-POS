@@ -133,6 +133,16 @@ public class AdminScreenUsersController
 
     }
 
+    private String toReadableDate(String dateString){
+
+        long createAt = Long.parseLong(dateString);
+
+        LocalDateTime createdAtDateTime = Instant.ofEpochMilli(createAt).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        return createdAtDateTime.format(formatter);
+    }
+
     private void populateUserGrid() {
         int id_counter = 0;
 
@@ -147,7 +157,7 @@ public class AdminScreenUsersController
                     userAPI.getUsersFirstNameByUsername(username),
                     (userAPI.getUsersFirstNameByUsername(username) + " " + userAPI.getUsersLastNameByUsername(username)),
                     userAPI.getUsersEmailByUsername(username),
-                    user.getMetadataValue("role").toString(),
+                    toReadableDate(user.getMetadataValue("created_at").toString()),
                     userAPI.getUsersRoleByUsername(username).toString());
 
             id_counter++;
