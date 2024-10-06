@@ -131,10 +131,6 @@ public class AdminScreenMenuController
 
     @FXML
     protected void onSubmitButtonClick(){
-        if (loadedMenuItem == null) {
-            showAlert(Alert.AlertType.ERROR, "Failed", "Please select a Menu Item");
-            return;
-        }
         try{
             String itemName = menuitemnamefield.getText();
             Double price;
@@ -171,6 +167,7 @@ public class AdminScreenMenuController
         catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
         }
+        onCancelButtonClick();
     }
     @FXML
     protected void onAddMenuItemButtonClick(){

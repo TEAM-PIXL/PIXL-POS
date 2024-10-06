@@ -203,6 +203,7 @@ public class AdminScreenUsersController
         catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
         }
+        onCancelButtonClick();
     }
     @FXML
     protected void onAddUserButtonClick(){
@@ -234,6 +235,7 @@ public class AdminScreenUsersController
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "New User", "Unexpected error occured: " + e.getMessage());
         }
+        onCancelButtonClick();
 
     }
     @FXML
