@@ -247,7 +247,19 @@ public class AdminScreenUsersController
 
     @FXML
     protected void onRemoveButtonClick(){
-
+        // Handle delete user button click
+        try{
+            if (loadedUser != null) {
+                dataStore.deleteUser(loadedUser);
+                initialize();
+                showAlert(Alert.AlertType.CONFIRMATION, "Deleted User", "User has been deleted");
+            }
+            else{
+                showAlert(Alert.AlertType.ERROR, "Deleted User", "Select a user to delete");
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Deleted User", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
 
