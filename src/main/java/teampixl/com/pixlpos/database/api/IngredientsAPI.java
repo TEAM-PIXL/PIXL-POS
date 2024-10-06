@@ -6,7 +6,6 @@ import teampixl.com.pixlpos.models.Ingredients;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javafx.util.Pair;
 import java.lang.reflect.Method;
@@ -156,6 +155,15 @@ public class IngredientsAPI {
     }
 
     /**
+     * Reads all ingredients from memory.
+     *
+     * @return a list of all ingredients
+     */
+    public List<Ingredients> getIngredients() {
+        return DATA_STORE.readIngredients();
+    }
+
+    /**
      * Gets an ingredient from memory based on its name.
      *
      * @param INGREDIENT_NAME the name of the ingredient
@@ -170,7 +178,7 @@ public class IngredientsAPI {
      * Creates a new ingredient and adds it to the database.
      *
      * @param INGREDIENT_NAME the name of the ingredient
-     * @param NOTES           notes about the ingredient
+     * @param NOTES notes about the ingredient
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> postIngredient(String INGREDIENT_NAME, String NOTES) {
@@ -209,7 +217,7 @@ public class IngredientsAPI {
     /**
      * Updates the name of an existing ingredient.
      *
-     * @param INGREDIENT_NAME     the current name of the ingredient
+     * @param INGREDIENT_NAME the current name of the ingredient
      * @param NEW_INGREDIENT_NAME the new name for the ingredient
      * @return a list of status codes indicating the result of the operation
      */
@@ -238,7 +246,7 @@ public class IngredientsAPI {
      * Updates the notes of an existing ingredient.
      *
      * @param INGREDIENT_NAME the name of the ingredient
-     * @param NEW_NOTES       the new notes for the ingredient
+     * @param NEW_NOTES the new notes for the ingredient
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putIngredientNotes(String INGREDIENT_NAME, String NEW_NOTES) {

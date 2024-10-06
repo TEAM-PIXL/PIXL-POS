@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.models;
 
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.models.interfaces.IDataManager;
 
 import java.util.*;
@@ -11,6 +12,14 @@ import java.util.*;
  * It contains metadata, data, and methods to manage the order.
  */
 public class Order implements IDataManager {
+
+    /*============================================================================================================================================================
+    Code Description:
+    - Enumerations for OrderStatus
+    - Enumerations for OrderType
+    - MetadataWrapper object for metadata
+    - Map object for data
+    ============================================================================================================================================================*/
 
     /**
      * Enumerations for the status of an order.
@@ -24,17 +33,57 @@ public class Order implements IDataManager {
         CANCELED
     }
 
+    /**
+     * Enumerations for the type of an order.
+     */
+    public enum OrderType {
+        DINE_IN,
+        TAKE_OUT,
+        DELIVERY
+    }
+
+    /**
+     * Enumerations for the payment method of an order.
+     */
+    public enum PaymentMethod {
+        CASH,
+        CARD,
+        MOBILE
+    }
+
     private MetadataWrapper metadata;
     private final Map<String, Object> data;
+
+    /*============================================================================================================================================================
+    Code Description:
+    - Constructor for Order object.
+
+    Metadata:
+        - order_id: UUID
+        - order_number: orderNumber
+        - user_id: userId
+        - order_status: OrderStatus.PENDING
+        - is_completed: false
+        - order_type: OrderType.DINE_IN
+        - table_number: 0
+        - customers: 1
+        - created_at: timestamp for creation
+        - updated_at: timestamp for last update
+
+    Data:
+        - menuItems: Map<String, Integer> where key is MenuItem ID and value is the quantity
+        - total: 0.0
+        - special_requests: null
+        - payment_method: null
+    ============================================================================================================================================================*/
 
     /**
      * Constructor for an order.
      *
      * @param orderNumber The order number.
-     * @param userId      The user ID.
+     * @param userId The user ID.
      */
     public Order(int orderNumber, String userId) {
-        // Validation
         if (orderNumber <= 0) {
             throw new IllegalArgumentException("Order number must be positive.");
         }
@@ -42,30 +91,48 @@ public class Order implements IDataManager {
             throw new IllegalArgumentException("User ID must not be null or empty.");
         }
 
-        // Metadata initialization
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("order_id", UUID.randomUUID().toString());
         metadataMap.put("order_number", orderNumber);
         metadataMap.put("user_id", userId);
-        metadataMap.put("order_status", OrderStatus.PENDING.name()); // Store as String
+        metadataMap.put("order_status", OrderStatus.PENDING.name());
         metadataMap.put("is_completed", false);
+        metadataMap.put("order_type", OrderType.DINE_IN.name());
+        metadataMap.put("table_number", 0);
+        metadataMap.put("customers", 1);
         metadataMap.put("created_at", System.currentTimeMillis());
         metadataMap.put("updated_at", System.currentTimeMillis());
 
         this.metadata = new MetadataWrapper(metadataMap);
 
-        // Data initialization
         this.data = new HashMap<>();
         this.data.put("menuItems", new HashMap<String, Integer>());
         this.data.put("total", 0.0);
         this.data.put("special_requests", null);
-        this.data.put("payment_details", null);
+        this.data.put("payment_method", PaymentMethod.CARD.name());
     }
+
+    /*============================================================================================================================================================
+    Code Description:
+    - Handles internal logic for CRUD operations on Order object.
+
+    Methods:
+        - addMenuItem(MenuItem item, int quantity): Adds a MenuItem to the order and deducts the corresponding ingredients from stock.
+        - removeMenuItem(MenuItem item, int quantity): Removes a MenuItem from the order and restores the corresponding ingredients to stock.
+        - updateTotal(MenuItem item, int quantity): Updates the total cost of the order.
+        - updateOrderStatus(OrderStatus newStatus): Updates the status of the order.
+        - completeOrder(): Marks the order as completed and updates the status.
+        - updateTimestamp(): Updates the timestamp in the metadata.
+        - deductIngredientsFromStock(MenuItem menuItem, int quantity): Deducts the ingredients from stock.
+        - restoreIngredientsToStock(MenuItem menuItem, int quantity): Restores the ingredients to stock.
+        - getOrderNumber(): Returns the order number.
+        - getTotal(): Returns the total cost of the order.
+    ============================================================================================================================================================*/
 
     /**
      * Adds a menu item to the order.
      *
-     * @param item     The menu item to add.
+     * @param item The menu item to add.
      * @param quantity The quantity of the menu item to add.
      */
     public void addMenuItem(MenuItem item, int quantity) {
@@ -85,9 +152,15 @@ public class Order implements IDataManager {
 
         menuItems.put(itemId, newQuantity);
 
-        updateTotal(item.getPrice() * quantity); // Assuming MenuItem has a getPrice() method
+        updateTotal(item.getPrice() * quantity);
         deductIngredientsFromStock(item, quantity);
         updateTimestamp();
+
+        MenuItem instanceItem = MenuAPI.getInstance().keyTransform(itemId);
+        int currentOrderTotal = (int) instanceItem.getData().get("amountOrdered");
+        int newOrderTotal = currentOrderTotal + quantity;
+        instanceItem.setDataValue("amountOrdered", newOrderTotal);
+        DataStore.getInstance().updateMenuItem(instanceItem);
 
         DataStore.getInstance().updateOrderItem(this, itemId, newQuantity);
     }
@@ -95,11 +168,10 @@ public class Order implements IDataManager {
     /**
      * Removes a menu item from the order.
      *
-     * @param item     The menu item to remove.
+     * @param item The menu item to remove.
      * @param quantity The quantity of the menu item to remove.
      */
     public void removeMenuItem(MenuItem item, int quantity) {
-        // Validation
         if (item == null) {
             throw new IllegalArgumentException("MenuItem cannot be null.");
         }
@@ -123,9 +195,15 @@ public class Order implements IDataManager {
                 menuItems.put(itemId, newQuantity);
             }
 
-            updateTotal(-item.getPrice() * quantity); // Subtract from total
+            updateTotal(-item.getPrice() * quantity);
             restoreIngredientsToStock(item, quantity);
             updateTimestamp();
+
+            MenuItem instanceItem = MenuAPI.getInstance().keyTransform(itemId);
+            int currentOrderTotal = (int) instanceItem.getData().get("amountOrdered");
+            int newOrderTotal = currentOrderTotal - quantity;
+            instanceItem.setDataValue("amountOrdered", newOrderTotal);
+            DataStore.getInstance().updateMenuItem(instanceItem);
         } else {
             throw new IllegalArgumentException("Menu item not found in the order.");
         }
@@ -134,11 +212,10 @@ public class Order implements IDataManager {
     /**
      * Updates the quantity of a menu item in the order.
      *
-     * @param menuItem    The menu item to update.
+     * @param menuItem The menu item to update.
      * @param newQuantity The new quantity of the menu item.
      */
     public void updateMenuItem(MenuItem menuItem, int newQuantity) {
-        // Validation
         if (menuItem == null) {
             throw new IllegalArgumentException("MenuItem cannot be null.");
         }
@@ -155,13 +232,11 @@ public class Order implements IDataManager {
             int quantityDifference = newQuantity - currentQuantity;
 
             if (quantityDifference > 0) {
-                // Increase in quantity
                 deductIngredientsFromStock(menuItem, quantityDifference);
                 updateTotal(menuItem.getPrice() * quantityDifference);
             } else if (quantityDifference < 0) {
-                // Decrease in quantity
                 restoreIngredientsToStock(menuItem, -quantityDifference);
-                updateTotal(menuItem.getPrice() * quantityDifference); // Negative amount
+                updateTotal(menuItem.getPrice() * quantityDifference);
             }
 
             if (newQuantity == 0) {
@@ -192,7 +267,6 @@ public class Order implements IDataManager {
      * @param newStatus The new status of the order.
      */
     public void updateOrderStatus(OrderStatus newStatus) {
-        // Validation
         if (newStatus == null) {
             throw new IllegalArgumentException("OrderStatus cannot be null.");
         }
@@ -291,6 +365,20 @@ public class Order implements IDataManager {
     public double getTotal() {
         return (double) data.get("total");
     }
+
+    /*============================================================================================================================================================
+    Code Description:
+    - Method to get metadata, update metadata, and provide a string representation of the Order object.
+
+    Methods:
+        - getMetadata(): returns the metadata
+        - getData(): returns the data map
+        - updateMetadata(String key, Object value): updates the metadata map
+        - setDataValue(String key, Object value): sets data value in the data map
+        - toString(): returns a string representation of the Order object
+        - equals(Object obj): checks if two Order objects are equal
+        - hashCode(): returns the hash code of the Order object
+    ============================================================================================================================================================*/
 
     public MetadataWrapper getMetadata() {
         return metadata;
