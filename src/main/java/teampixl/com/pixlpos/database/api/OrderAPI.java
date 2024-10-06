@@ -10,6 +10,8 @@ import teampixl.com.pixlpos.models.Users;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import javafx.util.Pair;
+import java.lang.reflect.Method;
 
 
 /**
@@ -192,6 +194,37 @@ public class OrderAPI {
         statusCodes.addAll(validateOrderByItems(getOrderItemsById(orderId)));
 
         return statusCodes;
+    }
+
+    private Pair<List<StatusCode>, Order> validateAndGetOrder(String FIELD, Object VALUE, String ORDER_ID) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
+        try {
+            Class<?> VALUE_TYPE = VALUE.getClass();
+            if (VALUE_TYPE == Boolean.class) {
+                VALUE_TYPE = boolean.class;
+            }
+            Method VALIDATION_METHOD = this.getClass().getMethod("validateOrderBy" + FIELD, VALUE_TYPE);
+            StatusCode VALIDATION_RESULT = (StatusCode) VALIDATION_METHOD.invoke(this, VALUE);
+            VALIDATIONS.add(VALIDATION_RESULT);
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return new Pair<>(VALIDATIONS, null);
+            }
+        } catch (NoSuchMethodException e) {
+            VALIDATIONS.add(StatusCode.INTERNAL_METHOD_NOT_FOUND);
+            return new Pair<>(VALIDATIONS, null);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.INTERNAL_FAILURE);
+            return new Pair<>(VALIDATIONS, null);
+        }
+
+        Order ORDER = keyTransform(ORDER_ID);
+
+        if (ORDER == null) {
+            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
+            return new Pair<>(VALIDATIONS, null);
+        }
+
+        return new Pair<>(VALIDATIONS, ORDER);
     }
 
     /**
@@ -383,125 +416,97 @@ public class OrderAPI {
         }
     }
 
-    /**
-     * Adds a menu item to an existing order.
-     *
-     * @param ORDER_ID the order ID
-     * @param MENU_ITEM_ID the menu item ID
-     * @param QUANTITY the quantity to add
-     * @return a list of StatusCodes indicating the result of the operation
-     */
     public List<StatusCode> putOrderItem(String ORDER_ID, String MENU_ITEM_ID, Integer QUANTITY) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
-
-        StatusCode ORDER_VALIDATION = validateOrderById(ORDER_ID);
-        VALIDATIONS.add(ORDER_VALIDATION);
-        if (ORDER_VALIDATION != StatusCode.SUCCESS) {
-            return VALIDATIONS;
-        }
-
-        MenuItem menuItem = MENUAPI.keyTransform(MENU_ITEM_ID);
-        if (menuItem == null) {
-            VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
-            return VALIDATIONS;
-        }
-
-        if (QUANTITY == null || QUANTITY <= 0) {
-            VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
-            return VALIDATIONS;
-        }
-
-        Order order = keyTransform(ORDER_ID);
-        if (order == null) {
-            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
-            return VALIDATIONS;
-        }
-
         try {
-            order.addMenuItem(menuItem, QUANTITY);
-            DATASTORE.updateOrder(order);
-            VALIDATIONS.add(StatusCode.SUCCESS);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
-        }
-        return VALIDATIONS;
-    }
+            Pair<List<StatusCode>, Order> RESULT = validateAndGetOrder("Id", ORDER_ID, ORDER_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
 
-    /**
-     * Updates the status of an existing order.
-     *
-     * @param ORDER_ID the order ID
-     * @param ORDER_STATUS the new order status
-     * @return a list of StatusCodes indicating the result of the operation
-     */
-    public List<StatusCode> putOrderStatus(String ORDER_ID, Order.OrderStatus ORDER_STATUS) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
+            Order ORDER = RESULT.getValue();
 
-        VALIDATIONS.add(validateOrderById(ORDER_ID));
-        VALIDATIONS.add(validateOrderByStatus(ORDER_STATUS));
+            Pair<List<StatusCode>, MenuItem> MENU_RESULT = MENUAPI.validateAndGetMenuItem("Id", MENU_ITEM_ID, MENU_ITEM_ID);
+            VALIDATIONS.addAll(MENU_RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+            MenuItem MENU_ITEM = MENU_RESULT.getValue();
 
-        if (!Exceptions.isSuccessful(VALIDATIONS)) {
-            return VALIDATIONS;
-        }
+            if (QUANTITY == null || QUANTITY <= 0) {
+                VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
+                return VALIDATIONS;
+            }
 
-        Order ORDER = keyTransform(ORDER_ID);
-        if (ORDER == null) {
-            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
-            return VALIDATIONS;
-        }
-
-        try {
-            ORDER.updateOrderStatus(ORDER_STATUS);
+            ORDER.addMenuItem(MENU_ITEM, QUANTITY);
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+            return VALIDATIONS;
         }
-        return VALIDATIONS;
     }
 
-    /**
-     * Removes a menu item from an existing order.
-     *
-     * @param ORDER_ID the order ID
-     * @param MENU_ITEM_ID the menu item ID
-     * @param QUANTITY the quantity to remove
-     * @return a list of StatusCodes indicating the result of the operation
-     */
-    public List<StatusCode> deleteOrderItem(String ORDER_ID, String MENU_ITEM_ID, Integer QUANTITY) {
+
+
+    public List<StatusCode> putOrderStatus(String ORDER_ID, Order.OrderStatus NEW_ORDER_STATUS) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
-
-        StatusCode ORDER_VALIDATION = validateOrderById(ORDER_ID);
-        VALIDATIONS.add(ORDER_VALIDATION);
-        if (ORDER_VALIDATION != StatusCode.SUCCESS) {
-            return VALIDATIONS;
-        }
-        MenuItem menuItem = MENUAPI.keyTransform(MENU_ITEM_ID);
-        if (menuItem == null) {
-            VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
-            return VALIDATIONS;
-        }
-
-        if (QUANTITY == null || QUANTITY <= 0) {
-            VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
-            return VALIDATIONS;
-        }
-
-        Order ORDER = keyTransform(ORDER_ID);
-        if (ORDER == null) {
-            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
-            return VALIDATIONS;
-        }
-
         try {
-            ORDER.removeMenuItem(menuItem, QUANTITY);
+            Pair<List<StatusCode>, Order> RESULT = validateAndGetOrder("Status", NEW_ORDER_STATUS, ORDER_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+
+            Order ORDER = RESULT.getValue();
+
+            ORDER.updateOrderStatus(NEW_ORDER_STATUS);
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
-        } catch (IllegalArgumentException | IllegalStateException e) {
+            return VALIDATIONS;
+        } catch (Exception e) {
             VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+            return VALIDATIONS;
         }
-        return VALIDATIONS;
     }
+
+
+    public List<StatusCode> deleteOrderItem(String ORDER_ID, String MENU_ITEM_ID, Integer QUANTITY) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
+        try {
+            Pair<List<StatusCode>, Order> RESULT = validateAndGetOrder("Id", ORDER_ID, ORDER_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+
+            Order ORDER = RESULT.getValue();
+
+            // Validate MenuItem
+            Pair<List<StatusCode>, MenuItem> MENU_RESULT = MENUAPI.validateAndGetMenuItem("Id", MENU_ITEM_ID, MENU_ITEM_ID);
+            VALIDATIONS.addAll(MENU_RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+            MenuItem MENU_ITEM = MENU_RESULT.getValue();
+
+            if (QUANTITY == null || QUANTITY <= 0) {
+                VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
+                return VALIDATIONS;
+            }
+
+            ORDER.removeMenuItem(MENU_ITEM, QUANTITY);
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+            return VALIDATIONS;
+        }
+    }
+
 
     /**
      * Deletes an order from the database.
@@ -533,34 +538,25 @@ public class OrderAPI {
         return VALIDATIONS;
     }
 
-    /**
-     * Clears all items from an existing order.
-     *
-     * @param ORDER_ID the order ID
-     * @return a list of StatusCodes indicating the result of the operation
-     */
     public List<StatusCode> clearOrderItems(String ORDER_ID) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
-
-        StatusCode ORDER_VALIDATION = validateOrderById(ORDER_ID);
-        VALIDATIONS.add(ORDER_VALIDATION);
-        if (ORDER_VALIDATION != StatusCode.SUCCESS) {
-            return VALIDATIONS;
-        }
-
-        Order ORDER = keyTransform(ORDER_ID);
-        if (ORDER == null) {
-            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
-            return VALIDATIONS;
-        }
-
         try {
+            Pair<List<StatusCode>, Order> RESULT = validateAndGetOrder("Id", ORDER_ID, ORDER_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+
+            Order ORDER = RESULT.getValue();
+
             ORDER.setDataValue("menuItems", new HashMap<>());
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+            return VALIDATIONS;
         }
-        return VALIDATIONS;
     }
+
 }

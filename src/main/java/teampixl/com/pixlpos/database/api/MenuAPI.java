@@ -149,7 +149,7 @@ public class MenuAPI {
 
 
     /* ---> IMPORTANT INTERNAL FUNCTION FOR SAFELY MANAGING AND VALIDATING A MENU ITEM UPDATE <---- */
-    private Pair<List<StatusCode>, MenuItem> validateAndGetMenuItem(String FIELD, Object VALUE, String MENU_ITEM_NAME) {
+    protected Pair<List<StatusCode>, MenuItem> validateAndGetMenuItem(String FIELD, Object VALUE, String MENU_ITEM_NAME) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
             Class<?> VALUE_TYPE = VALUE.getClass();
