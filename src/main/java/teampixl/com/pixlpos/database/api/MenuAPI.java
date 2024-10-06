@@ -120,6 +120,34 @@ public class MenuAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates a menu item object.
+     *
+     * @param MENUITEM the menu item to validate
+     * @return a list of status codes indicating the result of the validation
+     */
+    public List<StatusCode> validateMenuItem(MenuItem MENUITEM) {
+        ArrayList<StatusCode> VALIDATIONS = new ArrayList<>();
+        if (MENUITEM == null) {
+            return List.of(StatusCode.INVALID_MENU_ITEM);
+        }
+
+        String MENU_ITEM_NAME = MENUITEM.getMetadata().metadata().get("itemName").toString();
+        Double MENU_ITEM_PRICE = (Double) MENUITEM.getMetadata().metadata().get("price");
+        MenuItem.ItemType MENU_ITEM_TYPE = (MenuItem.ItemType) MENUITEM.getMetadata().metadata().get("itemType");
+        String MENU_ITEM_DESCRIPTION = (String) MENUITEM.getData().get("description");
+        String MENU_ITEM_NOTES = (String) MENUITEM.getData().get("notes");
+
+        VALIDATIONS.add(validateMenuItemByName(MENU_ITEM_NAME));
+        VALIDATIONS.add(validateMenuItemByPrice(MENU_ITEM_PRICE));
+        VALIDATIONS.add(validateMenuItemByItemType(MENU_ITEM_TYPE));
+        VALIDATIONS.add(validateMenuItemByDescription(MENU_ITEM_DESCRIPTION));
+        VALIDATIONS.add(validateMenuItemByNotes(MENU_ITEM_NOTES));
+
+        return VALIDATIONS;
+    }
+
+
     /* ---> IMPORTANT INTERNAL FUNCTION FOR SAFELY MANAGING AND VALIDATING A MENU ITEM UPDATE <---- */
     private Pair<List<StatusCode>, MenuItem> validateAndGetMenuItem(String FIELD, Object VALUE, String MENU_ITEM_NAME) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
@@ -412,6 +440,30 @@ public class MenuAPI {
             return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.MENU_ITEM_UPDATE_FAILED);
+            return VALIDATIONS;
+        }
+    }
+
+    /**
+     * Deletes a menu item from the database.
+     *
+     * @param MENU_ITEM_NAME the name of the menu item to delete
+     * @return a list of status codes indicating the result of the operation
+     */
+    public List<StatusCode> deleteMenuItem(String MENU_ITEM_NAME) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
+        try {
+            MenuItem MENU_ITEM = getMenuItem(MENU_ITEM_NAME);
+            if (MENU_ITEM == null) {
+                VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
+                return VALIDATIONS;
+            }
+
+            DATA_STORE.deleteMenuItem(MENU_ITEM);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.MENU_ITEM_DELETION_FAILED);
             return VALIDATIONS;
         }
     }

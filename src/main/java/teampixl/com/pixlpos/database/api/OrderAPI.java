@@ -7,7 +7,6 @@ import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
 
-import java.sql.SQLSyntaxErrorException;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -20,9 +19,9 @@ import java.time.ZoneId;
  */
 public class OrderAPI {
     private static OrderAPI instance;
-    private static final DataStore dataStore = DataStore.getInstance();
-    private static final UsersAPI usersAPI = UsersAPI.getInstance();
-    private static final MenuAPI menuAPI = MenuAPI.getInstance();
+    private static final DataStore DATASTORE = DataStore.getInstance();
+    private static final UsersAPI USERSAPI = UsersAPI.getInstance();
+    private static final MenuAPI MENUAPI = MenuAPI.getInstance();
 
     private OrderAPI() {
     }
@@ -42,11 +41,11 @@ public class OrderAPI {
     /**
      * Validates the order number.
      *
-     * @param orderNumber the order number to validate
+     * @param ORDER_NUMBER the order number to validate
      * @return the appropriate StatusCode
      */
-    public StatusCode validateOrderByNumber(Integer orderNumber) {
-        if (orderNumber == null || orderNumber <= 0) {
+    public StatusCode validateOrderByNumber(Integer ORDER_NUMBER) {
+        if (ORDER_NUMBER == null || ORDER_NUMBER <= 0) {
             return StatusCode.INVALID_ORDER_NUMBER;
         }
         return StatusCode.SUCCESS;
@@ -55,71 +54,112 @@ public class OrderAPI {
     /**
      * Validates the user ID associated with the order.
      *
-     * @param userId the user ID to validate
+     * @param USER_ID the user ID to validate
      * @return the appropriate StatusCode
      */
-    public StatusCode validateOrderByUserId(String userId) {
-        if (userId == null || userId.trim().isEmpty()) {
+    public StatusCode validateOrderByUserId(String USER_ID) {
+        if (USER_ID == null || USER_ID.trim().isEmpty()) {
             return StatusCode.INVALID_USER_ID;
         }
-        Users user = usersAPI.keyTransform(userId);
-        return user != null ? StatusCode.SUCCESS : StatusCode.USER_NOT_FOUND;
+        Users USER = USERSAPI.keyTransform(USER_ID);
+        return USER != null ? StatusCode.SUCCESS : StatusCode.USER_NOT_FOUND;
     }
 
     /**
      * Validates the order ID.
      *
-     * @param orderId the order ID to validate
+     * @param ORDER_ID the order ID to validate
      * @return the appropriate StatusCode
      */
-    public StatusCode validateOrderById(String orderId) {
-        if (orderId == null || orderId.trim().isEmpty()) {
+    public StatusCode validateOrderById(String ORDER_ID) {
+        if (ORDER_ID == null || ORDER_ID.trim().isEmpty()) {
             return StatusCode.INVALID_ORDER_ID;
         }
-        Order order = keyTransform(orderId);
-        return order != null ? StatusCode.SUCCESS : StatusCode.ORDER_NOT_FOUND;
+        Order ORDER = keyTransform(ORDER_ID);
+        return ORDER != null ? StatusCode.SUCCESS : StatusCode.ORDER_NOT_FOUND;
     }
 
     /**
      * Validates the order status.
      *
-     * @param orderStatus the order status to validate
+     * @param ORDER_STATUS the order status to validate
      * @return the appropriate StatusCode
      */
-    public StatusCode validateOrderByStatus(Order.OrderStatus orderStatus) {
-        if (orderStatus == null) {
+    public StatusCode validateOrderByStatus(Order.OrderStatus ORDER_STATUS) {
+        if (ORDER_STATUS == null) {
             return StatusCode.INVALID_ORDER_STATUS;
         }
         return StatusCode.SUCCESS;
     }
 
-    public StatusCode validateOrderByTableNumber(Integer tableNumber) {
-        if (tableNumber == null || tableNumber < 0) {
+    /**
+     * Validates the table number associated with the order.
+     *
+     * @param TABLE_NUMBER the table number to validate
+     * @return the appropriate StatusCode
+     */
+    public StatusCode validateOrderByTableNumber(Integer TABLE_NUMBER) {
+        if (TABLE_NUMBER == null || TABLE_NUMBER < 0) {
             return StatusCode.INVALID_TABLE_NUMBER;
         }
         return StatusCode.SUCCESS;
     }
 
-    public StatusCode validateOrderByCustomers(Integer customers) {
-        if (customers == null || customers <= 0) {
+    /**
+     * Validates the number of customers associated with the order.
+     *
+     * @param CUSTOMERS the number of customers to validate
+     * @return the appropriate StatusCode
+     */
+    public StatusCode validateOrderByCustomers(Integer CUSTOMERS) {
+        if (CUSTOMERS == null || CUSTOMERS <= 0) {
             return StatusCode.INVALID_CUSTOMERS;
         }
         return StatusCode.SUCCESS;
     }
 
-    public StatusCode validateOrderBySpecialRequests(String specialRequests) {
-        if (specialRequests != null && specialRequests.length() > 255) {
+    /**
+     * Validates the special requests associated with the order.
+     *
+     * @param SPECIAL_REQUESTS the special requests to validate
+     * @return the appropriate StatusCode
+     */
+    public StatusCode validateOrderBySpecialRequests(String SPECIAL_REQUESTS) {
+        if (SPECIAL_REQUESTS != null && SPECIAL_REQUESTS.length() > 255) {
             return StatusCode.SPECIAL_REQUESTS_TOO_LONG;
         }
         return StatusCode.SUCCESS;
     }
 
-    public StatusCode validateOrderByItems(Map<MenuItem, Integer> menuItems) {
-        if (menuItems == null || menuItems.isEmpty()) {
-            return StatusCode.INVALID_ORDER_ITEMS;
+    /**
+     * Validates the menu items associated with the order.
+     *
+     * @param MENU_ITEMS the menu items to validate
+     * @return the appropriate StatusCode
+     */
+    public List<StatusCode> validateOrderByItems(Map<MenuItem, Integer> MENU_ITEMS) {
+        ArrayList<StatusCode> VALIDATIONS = new ArrayList<>();
+        if (MENU_ITEMS == null || MENU_ITEMS.isEmpty()) {
+            return List.of(StatusCode.NO_ORDER_ITEMS);
         }
-        return StatusCode.SUCCESS;
+        if (MENU_ITEMS.keySet().stream().anyMatch(Objects::isNull)) {
+            VALIDATIONS.add(StatusCode.UNKNOWN_MENU_ITEM);
+        }
+        if (MENU_ITEMS.values().stream().anyMatch(quantity -> quantity <= 0)) {
+            VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
+        }
+        if (MENU_ITEMS.keySet().stream().anyMatch(menuItem -> MENUAPI.keyTransform(menuItem.getMetadata().metadata().get("id").toString()) == null)) {
+            VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
+        }
+        for (Map.Entry<MenuItem, Integer> entry : MENU_ITEMS.entrySet()) {
+            List<StatusCode> MENU_ITEM_CHECK = MENUAPI.validateMenuItem(entry.getKey());
+            if (!Exceptions.isSuccessful(MENU_ITEM_CHECK)) {
+                VALIDATIONS.addAll(MENU_ITEM_CHECK);
+            }
+        }
+        return VALIDATIONS;
     }
+
 
     /**
      * Validates the entire Order object.
@@ -149,7 +189,7 @@ public class OrderAPI {
         statusCodes.add(validateOrderByTableNumber(tableNumber));
         statusCodes.add(validateOrderByCustomers(customers));
         statusCodes.add(validateOrderBySpecialRequests(specialRequests));
-        statusCodes.add(validateOrderByItems(getOrderItemsById(orderId)));
+        statusCodes.addAll(validateOrderByItems(getOrderItemsById(orderId)));
 
         return statusCodes;
     }
@@ -164,7 +204,7 @@ public class OrderAPI {
         if (orderNumber == null) {
             return null;
         }
-        return dataStore.readOrders().stream()
+        return DATASTORE.readOrders().stream()
                 .filter(order -> Objects.equals(order.getMetadata().metadata().get("order_number"), orderNumber))
                 .findFirst()
                 .map(order -> (String) order.getMetadata().metadata().get("order_id"))
@@ -181,7 +221,7 @@ public class OrderAPI {
         if (orderId == null) {
             return null;
         }
-        return dataStore.readOrders().stream()
+        return DATASTORE.readOrders().stream()
                 .filter(order -> orderId.equals(order.getMetadata().metadata().get("order_id")))
                 .findFirst()
                 .map(order -> (Integer) order.getMetadata().metadata().get("order_number"))
@@ -198,7 +238,7 @@ public class OrderAPI {
         if (orderId == null) {
             return null;
         }
-        return dataStore.readOrders().stream()
+        return DATASTORE.readOrders().stream()
                 .filter(order -> orderId.equals(order.getMetadata().metadata().get("order_id")))
                 .findFirst()
                 .orElse(null);
@@ -221,7 +261,7 @@ public class OrderAPI {
      * @return a list of all orders
      */
     public List<Order> getOrders() {
-        return dataStore.readOrders();
+        return DATASTORE.readOrders();
     }
 
     /**
@@ -236,14 +276,14 @@ public class OrderAPI {
             return Collections.emptyMap();
         }
 
-        dataStore.loadOrderItems(orderId, order);
+        DATASTORE.loadOrderItems(orderId, order);
 
         @SuppressWarnings("unchecked")
         Map<String, Integer> menuItemsMap = (Map<String, Integer>) order.getData().get("menuItems");
         Map<MenuItem, Integer> menuItemsWithQuantity = new HashMap<>();
 
         for (Map.Entry<String, Integer> entry : menuItemsMap.entrySet()) {
-            MenuItem menuItem = menuAPI.keyTransform(entry.getKey());
+            MenuItem menuItem = MENUAPI.keyTransform(entry.getKey());
             if (menuItem != null) {
                 menuItemsWithQuantity.put(menuItem, entry.getValue());
             }
@@ -264,7 +304,7 @@ public class OrderAPI {
             return null;
         }
 
-        List<Order> orders = dataStore.readOrders();
+        List<Order> orders = DATASTORE.readOrders();
         long startOfToday = LocalDate.now()
                 .atStartOfDay(ZoneId.systemDefault())
                 .toInstant()
@@ -307,7 +347,7 @@ public class OrderAPI {
 
             try {
                 Order order = new Order(orderNumber, userId);
-                dataStore.createOrder(order);
+                DATASTORE.createOrder(order);
                 System.out.println("New order created for user: " + userId + " with order number: " + orderNumber);
                 return order;
             } catch (Exception e) {
@@ -330,7 +370,7 @@ public class OrderAPI {
 
         try {
             order.updateMetadata("order_status", Order.OrderStatus.SENT.name());
-            dataStore.updateOrder(order);
+            DATASTORE.updateOrder(order);
             System.out.println("Order posted successfully.");
             return validations;
         } catch (Exception e) {
@@ -355,7 +395,7 @@ public class OrderAPI {
             return validations;
         }
 
-        MenuItem menuItem = menuAPI.keyTransform(menuItemId);
+        MenuItem menuItem = MENUAPI.keyTransform(menuItemId);
         if (menuItem == null) {
             validations.add(StatusCode.MENU_ITEM_NOT_FOUND);
             return validations;
@@ -374,7 +414,7 @@ public class OrderAPI {
 
         try {
             order.addMenuItem(menuItem, quantity);
-            dataStore.updateOrder(order);
+            DATASTORE.updateOrder(order);
             validations.add(StatusCode.SUCCESS);
         } catch (IllegalArgumentException | IllegalStateException e) {
             validations.add(StatusCode.ORDER_UPDATE_FAILED);
@@ -407,7 +447,7 @@ public class OrderAPI {
 
         try {
             order.updateOrderStatus(orderStatus);
-            dataStore.updateOrder(order);
+            DATASTORE.updateOrder(order);
             validations.add(StatusCode.SUCCESS);
         } catch (Exception e) {
             validations.add(StatusCode.ORDER_UPDATE_FAILED);
@@ -431,7 +471,7 @@ public class OrderAPI {
         if (orderValidation != StatusCode.SUCCESS) {
             return validations;
         }
-        MenuItem menuItem = menuAPI.keyTransform(menuItemId);
+        MenuItem menuItem = MENUAPI.keyTransform(menuItemId);
         if (menuItem == null) {
             validations.add(StatusCode.MENU_ITEM_NOT_FOUND);
             return validations;
@@ -450,7 +490,7 @@ public class OrderAPI {
 
         try {
             order.removeMenuItem(menuItem, quantity);
-            dataStore.updateOrder(order);
+            DATASTORE.updateOrder(order);
             validations.add(StatusCode.SUCCESS);
         } catch (IllegalArgumentException | IllegalStateException e) {
             validations.add(StatusCode.ORDER_UPDATE_FAILED);
@@ -480,7 +520,7 @@ public class OrderAPI {
         }
 
         try {
-            dataStore.deleteOrder(order);
+            DATASTORE.deleteOrder(order);
             validations.add(StatusCode.SUCCESS);
         } catch (Exception e) {
             validations.add(StatusCode.ORDER_DELETION_FAILED);
@@ -511,7 +551,7 @@ public class OrderAPI {
 
         try {
             order.setDataValue("menuItems", new HashMap<>());
-            dataStore.updateOrder(order);
+            DATASTORE.updateOrder(order);
             validations.add(StatusCode.SUCCESS);
         } catch (Exception e) {
             validations.add(StatusCode.ORDER_UPDATE_FAILED);
