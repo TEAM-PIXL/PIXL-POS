@@ -301,7 +301,6 @@ public class WaiterScreen2Controller
             return;
         }
         orderNumber = currentOrder.getOrderNumber();
-        // change order number
 
         System.out.println("Order initialized: " + currentOrder);
         ordernumber.setText(orderNumber.toString());
@@ -357,8 +356,12 @@ public class WaiterScreen2Controller
     }
     @FXML
     protected void onItemCorrectButtonClick() {
-
+        System.out.println(actionStack);
+        if (!actionStack.isEmpty()) {
+            actionStack.pop().run();
+        }
     }
+
     @FXML
     protected void onVoidItemButtonClick() {
         if (selectedItem != null) {
