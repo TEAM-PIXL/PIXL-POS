@@ -85,15 +85,15 @@ public class AdminScreenUsersController
     User components
      */
     @FXML
-    private TextField firstNameField;
+    private TextField firstnamefield;
     @FXML
-    private TextField lastNameField;
+    private TextField lastnamefield;
     @FXML
-    private TextField emailField;
+    private TextField emailfield;
     @FXML
-    private PasswordField passwordField;
+    private PasswordField passwordfield;
     @FXML
-    private ChoiceBox<Users.UserRole> roleSelect;
+    private ChoiceBox<Users.UserRole> roleselect;
 
     @FXML
     private Button submitbutton;
@@ -153,7 +153,7 @@ public class AdminScreenUsersController
 
             addUserToListView(
                     userslist,
-                    String.valueOf(id_counter),
+                    user.getMetadataValue("id").toString(),
                     userAPI.getUsersFirstNameByUsername(username),
                     (userAPI.getUsersFirstNameByUsername(username) + " " + userAPI.getUsersLastNameByUsername(username)),
                     userAPI.getUsersEmailByUsername(username),
@@ -172,11 +172,11 @@ public class AdminScreenUsersController
             return;
         }
         try{
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            String password = passwordField.getText();
-            String email = emailField.getText();
-            Users.UserRole role = roleSelect.getSelectionModel().getSelectedItem();
+            String firstName = firstnamefield.getText();
+            String lastName = lastnamefield.getText();
+            String password = passwordfield.getText();
+            String email = emailfield.getText();
+            Users.UserRole role = roleselect.getSelectionModel().getSelectedItem();
             if (password.isEmpty() || email.isEmpty() || firstName.isEmpty() ||
                     lastName.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
@@ -223,20 +223,6 @@ public class AdminScreenUsersController
     @FXML
     protected void onCancelButtonClick(){
 
-    }
-
-    @FXML
-    protected void onEditButtonClick(){
-        // Handle customise button click
-        try{
-            if (loadedUser == null) {
-                showAlert(Alert.AlertType.ERROR, "Failed", "Please select a user from the table");
-            } else{
-                populateUserParam(loadedUser);
-            }
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
-        }
     }
 
     @FXML
@@ -289,6 +275,16 @@ public class AdminScreenUsersController
     // Placeholder methods for button actions
     private void onEditButtonClick(ActionEvent event, String id) {
         // Implement edit menu item logic here
+        try{
+            loadedUser = userAPI.keyTransform(id);
+            if (loadedUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Please select a user from the table");
+            } else{
+                populateUserParam(loadedUser);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
     private void onRemoveButtonClick(ActionEvent event, String id) {
@@ -436,11 +432,11 @@ public class AdminScreenUsersController
         Object fistName = User.getMetadata().metadata().get("first_name");
         Object lastName = User.getMetadata().metadata().get("last_name");
 
-        firstNameField.setText(fistName.toString());
-        lastNameField.setText(lastName.toString());
-        passwordField.setText(password.toString());
-        emailField.setText(email.toString());
-        roleSelect.setValue(Users.UserRole.valueOf(role.toString()));
+        firstnamefield.setText(fistName.toString());
+        lastnamefield.setText(lastName.toString());
+        passwordfield.setText(password.toString());
+        emailfield.setText(email.toString());
+        roleselect.setValue(Users.UserRole.valueOf(role.toString()));
         loadedUser = User;
     }
 
