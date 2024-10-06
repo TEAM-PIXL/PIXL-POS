@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.database.api.OrderAPI;
@@ -277,7 +276,6 @@ public class WaiterScreenController extends GuiCommon {
 
         String orderId = currentOrder.getMetadata().metadata().get(ORDER_ID_KEY).toString();
 
-        // Remove existing items to avoid duplicates
         orderAPI.clearOrderItems(orderId);
 
         for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
@@ -294,8 +292,9 @@ public class WaiterScreenController extends GuiCommon {
         }
 
         List<StatusCode> status = orderAPI.putOrderStatus(orderId, Order.OrderStatus.SENT);
-
-        if (Exceptions.isSuccessful(status)) {
+        Order ORDER = orderAPI.keyTransform(orderId);
+        List<StatusCode> status2 = orderAPI.postOrder(ORDER);
+        if (Exceptions.isSuccessful(status2)) {
             System.out.println("Order placed successfully.");
             restartOrder();
             initializeOrder();

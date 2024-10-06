@@ -519,12 +519,11 @@ public class UsersAPI {
      */
     public List<StatusCode> putUsersStatus(String USERNAME, boolean NEW_STATUS) {
         try {
-            List<StatusCode> VALIDATIONS = new ArrayList<>();
+            Pair<List<StatusCode>, Users> RESULT = validateAndGetUser("Status", NEW_STATUS, USERNAME);
+            List<StatusCode> VALIDATIONS = RESULT.getKey();
+            if (!Exceptions.isSuccessful(VALIDATIONS)) { return VALIDATIONS; }
 
-            String ID = keySearch(USERNAME);
-            if (ID == null) { return List.of(StatusCode.USER_NOT_FOUND); }
-
-            Users USER = keyTransform(ID);
+            Users USER = RESULT.getValue();
 
             USER.updateMetadata("is_active", NEW_STATUS);
             dataStore.updateUser(USER);
