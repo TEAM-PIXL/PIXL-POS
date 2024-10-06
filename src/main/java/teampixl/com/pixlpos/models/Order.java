@@ -73,7 +73,7 @@ public class Order implements IDataManager {
         - menuItems: Map<String, Integer> where key is MenuItem ID and value is the quantity
         - total: 0.0
         - special_requests: null
-        - payment_details: null
+        - payment_method: null
     ============================================================================================================================================================*/
 
     /**

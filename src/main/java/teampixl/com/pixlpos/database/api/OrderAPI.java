@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.database.api;
 
+import javafx.collections.ObservableList;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
@@ -259,6 +260,30 @@ public class OrderAPI {
      */
     public List<Order> getOrders() {
         return DATASTORE.readOrders();
+    }
+
+    /**
+     * Updates memory with the latest orders from the database. This also prevents memory leaks.
+     * This method should be called when restoring state after large order loads.
+     */
+    public void reloadOrders() {
+        DATASTORE.reloadOrdersFromDatabase();
+    }
+
+    /**
+     * Updates memory with the latest orders from the database within a timeframe.
+     * @param start the start time of the timeframe
+     * @param end the end time of the timeframe
+     */
+    public void loadOrderTimeframe(long start, long end) {
+        DATASTORE.loadOrdersFromDatabase(start, end);
+    }
+
+    /**
+     * Updates memory with the latest orders from the database. This takes all orders. DANGEROUS! Be careful with this method.
+     */
+    public void loadAllOrders() {
+        DATASTORE.loadAllOrdersFromDatabase();
     }
 
     /**

@@ -801,9 +801,101 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
     private void loadOrdersFromDatabase() {
+        long twentyFourHoursAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
+
+        String sql = "SELECT * FROM orders WHERE updated_at >= ?";
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, twentyFourHoursAgo);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String orderId = rs.getString("order_id");
+                    int orderNumber = rs.getInt("order_number");
+                    String userId = rs.getString("user_id");
+                    Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
+                    boolean isCompleted = rs.getInt("is_completed") == 1;
+                    Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                    int tableNumber = rs.getInt("table_number");
+                    int customers = rs.getInt("customers");
+                    long createdAt = rs.getLong("created_at");
+                    long updatedAt = rs.getLong("updated_at");
+                    double total = rs.getDouble("total");
+                    String specialRequests = rs.getString("special_requests");
+                    Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
+
+                    Order order = new Order(orderNumber, userId);
+                    order.updateMetadata("order_id", orderId);
+                    order.updateMetadata("order_status", orderStatus);
+                    order.updateMetadata("is_completed", isCompleted);
+                    order.updateMetadata("order_type", orderType);
+                    order.updateMetadata("table_number", tableNumber);
+                    order.updateMetadata("customers", customers);
+                    order.updateMetadata("created_at", createdAt);
+                    order.updateMetadata("updated_at", updatedAt);
+                    order.setDataValue("total", total);
+                    order.setDataValue("special_requests", specialRequests);
+                    order.setDataValue("payment_method", paymentMethod);
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void loadOrdersFromDatabase(long startTime, long endTime) {
+        String sql = "SELECT * FROM orders WHERE updated_at BETWEEN ? AND ?";
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, startTime);
+            pstmt.setLong(2, endTime);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String orderId = rs.getString("order_id");
+                    int orderNumber = rs.getInt("order_number");
+                    String userId = rs.getString("user_id");
+                    Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
+                    boolean isCompleted = rs.getInt("is_completed") == 1;
+                    Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                    int tableNumber = rs.getInt("table_number");
+                    int customers = rs.getInt("customers");
+                    long createdAt = rs.getLong("created_at");
+                    long updatedAt = rs.getLong("updated_at");
+                    double total = rs.getDouble("total");
+                    String specialRequests = rs.getString("special_requests");
+                    Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
+
+                    Order order = new Order(orderNumber, userId);
+                    order.updateMetadata("order_id", orderId);
+                    order.updateMetadata("order_status", orderStatus);
+                    order.updateMetadata("is_completed", isCompleted);
+                    order.updateMetadata("order_type", orderType);
+                    order.updateMetadata("table_number", tableNumber);
+                    order.updateMetadata("customers", customers);
+                    order.updateMetadata("created_at", createdAt);
+                    order.updateMetadata("updated_at", updatedAt);
+                    order.setDataValue("total", total);
+                    order.setDataValue("special_requests", specialRequests);
+                    order.setDataValue("payment_method", paymentMethod);
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void loadAllOrdersFromDatabase() {
+        String sql = "SELECT * FROM orders";
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM orders")) {
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 String orderId = rs.getString("order_id");
@@ -835,11 +927,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
                 orders.add(order);
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
 
     public void loadOrderItems(String orderId, Order order) {
         ObservableList<Map<String, Object>> orderItemsList = FXCollections.observableArrayList();
