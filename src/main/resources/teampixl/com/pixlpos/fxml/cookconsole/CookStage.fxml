@@ -16,7 +16,7 @@
    <left>
       <AnchorPane prefHeight="622.0" prefWidth="300.0" styleClass="order-container" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="70.0" layoutY="27.0" prefHeight="20.0" prefWidth="163.0" styleClass="order-label" text="Completed Orders" AnchorPane.leftAnchor="69.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="5.0" />
+            <Label layoutX="87.2" layoutY="14.0" prefHeight="24.0" prefWidth="187.0" styleClass="order-label" text="Completed Orders" AnchorPane.leftAnchor="65.0" AnchorPane.rightAnchor="66.19999999999999" AnchorPane.topAnchor="14.0" />
             <ListView layoutX="84.0" layoutY="215.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="40.0" />
          </children>
          <BorderPane.margin>
@@ -40,7 +40,7 @@
          <center>
             <AnchorPane styleClass="order-container" BorderPane.alignment="CENTER">
                <children>
-                  <Label styleClass="order-label" text="Orders" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                  <Label layoutX="432.0" layoutY="14.0" styleClass="order-label" text="Orders" AnchorPane.leftAnchor="432.0" AnchorPane.topAnchor="14.0">
                      <font>
                         <Font size="40.0" />
                      </font>

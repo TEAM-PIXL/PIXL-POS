@@ -60,7 +60,7 @@ public class Main {
                 - removeUser()
         ===================================================================================================================================================================================================================================*/
 
-        boolean registerAdmin = AuthenticationManager.register("admin", "admin", "admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
+        boolean registerAdmin = AuthenticationManager.register("Jon", "Doe", "admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
         boolean registerWaiter =  AuthenticationManager.register("waiter", "waiter","waiter", "waiter", "waiter@example.com", Users.UserRole.WAITER);
         boolean registerCook =  AuthenticationManager.register("cook", "cook","cook", "cook", "cook@example.com", Users.UserRole.COOK);
 
