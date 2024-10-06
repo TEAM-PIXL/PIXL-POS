@@ -139,7 +139,7 @@ public class AdminScreenUsersController
         ObservableList<Users> listOfUsers = dataStore.readUsers();
 
         for (Users user : listOfUsers) {
-            String username = dataManager.getMetadataValue("username").toString();
+            String username = user.getMetadataValue("username").toString();
 
             addUserToListView(
                     userslist,
@@ -147,7 +147,7 @@ public class AdminScreenUsersController
                     userAPI.getUsersFirstNameByUsername(username),
                     (userAPI.getUsersFirstNameByUsername(username) + " " + userAPI.getUsersLastNameByUsername(username)),
                     userAPI.getUsersEmailByUsername(username),
-                    dataManager.getMetadataValue("created_at").toString();,
+                    user.getMetadataValue("role").toString(),
                     userAPI.getUsersRoleByUsername(username).toString());
 
             id_counter++;
