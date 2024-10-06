@@ -3,15 +3,15 @@ package teampixl.com.pixlpos.database.api;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
-import teampixl.com.pixlpos.models.Ingredients;
+import teampixl.com.pixlpos.database.api.util.Util;
 import teampixl.com.pixlpos.models.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javafx.util.Pair;
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 /**
  * The MenuAPI class is a singleton responsible for managing menu items in memory.
@@ -33,6 +33,16 @@ public class MenuAPI {
             INSTANCE = new MenuAPI();
         }
         return INSTANCE;
+    }
+
+    /**
+     * Validates the menu item ID.
+     *
+     * @param MENU_ITEM_ID the ID to validate
+     * @return the status code indicating the result of the validation
+     */
+    public StatusCode validateMenuItemById(Object MENU_ITEM_ID) {
+        return Util.validateNotNullOrEmpty((String) MENU_ITEM_ID, StatusCode.INVALID_MENU_ITEM_ID, StatusCode.INVALID_MENU_ITEM_ID);
     }
 
     /**
@@ -147,37 +157,39 @@ public class MenuAPI {
         return VALIDATIONS;
     }
 
-
-    /* ---> IMPORTANT INTERNAL FUNCTION FOR SAFELY MANAGING AND VALIDATING A MENU ITEM UPDATE <---- */
-    protected Pair<List<StatusCode>, MenuItem> validateAndGetMenuItem(String FIELD, Object VALUE, String MENU_ITEM_NAME) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
-        try {
-            Class<?> VALUE_TYPE = VALUE.getClass();
-            if (VALUE_TYPE == Boolean.class) {
-                VALUE_TYPE = boolean.class;
+    /**
+     * Validates and retrieves a MenuItem object.
+     *
+     * @param FIELD the field to validate
+     * @param VALUE the value to validate
+     * @param MENU_ITEM_NAME the name of the menu item
+     * @return a Pair containing the list of StatusCodes and the MenuItem object
+     */
+    public Pair<List<StatusCode>, MenuItem> validateAndGetMenuItem(String FIELD, Object VALUE, String MENU_ITEM_NAME) {
+        Function<Object, StatusCode> validationFunction = val -> {
+            try {
+                Class<?> VALUE_TYPE = VALUE.getClass();
+                if (VALUE_TYPE == Boolean.class) {
+                    VALUE_TYPE = boolean.class;
+                }
+                Method VALIDATION_METHOD = this.getClass().getMethod("validateMenuItemBy" + FIELD, VALUE_TYPE);
+                return (StatusCode) VALIDATION_METHOD.invoke(this, val);
+            } catch (NoSuchMethodException e) {
+                return StatusCode.INTERNAL_METHOD_NOT_FOUND;
+            } catch (Exception e) {
+                return StatusCode.INTERNAL_FAILURE;
             }
-            Method VALIDATION_METHOD = this.getClass().getMethod("validateMenuItemBy" + FIELD, VALUE_TYPE);
-            StatusCode VALIDATION_RESULT = (StatusCode) VALIDATION_METHOD.invoke(this, VALUE);
-            VALIDATIONS.add(VALIDATION_RESULT);
-            if (!Exceptions.isSuccessful(VALIDATIONS)) {
-                return new Pair<>(VALIDATIONS, null);
-            }
-        } catch (NoSuchMethodException e) {
-            VALIDATIONS.add(StatusCode.INTERNAL_METHOD_NOT_FOUND);
-            return new Pair<>(VALIDATIONS, null);
-        } catch (Exception e) {
-            VALIDATIONS.add(StatusCode.INTERNAL_FAILURE);
-            return new Pair<>(VALIDATIONS, null);
-        }
+        };
 
-        MenuItem MENU_ITEM = getMenuItem(MENU_ITEM_NAME);
+        Function<String, MenuItem> retrievalFunction = this::getMenuItem;
 
-        if (MENU_ITEM == null) {
-            VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
-            return new Pair<>(VALIDATIONS, null);
-        }
-
-        return new Pair<>(VALIDATIONS, MENU_ITEM);
+        return Util.validateAndGetObject(
+                validationFunction,
+                retrievalFunction,
+                VALUE,
+                MENU_ITEM_NAME,
+                StatusCode.MENU_ITEM_NOT_FOUND
+        );
     }
 
     /**
@@ -257,23 +269,23 @@ public class MenuAPI {
                                          MenuItem.ItemType MENU_ITEM_TYPE, String MENU_ITEM_DESCRIPTION,
                                          String MENU_ITEM_NOTES, MenuItem.DietaryRequirement DIETARY_REQUIREMENT) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
+        VALIDATIONS.add(validateMenuItemByName(MENU_ITEM_NAME));
+        VALIDATIONS.add(validateMenuItemByPrice(MENU_ITEM_PRICE));
+        VALIDATIONS.add(validateMenuItemByItemType(MENU_ITEM_TYPE));
+        VALIDATIONS.add(validateMenuItemByDescription(MENU_ITEM_DESCRIPTION));
+        VALIDATIONS.add(validateMenuItemByNotes(MENU_ITEM_NOTES));
+
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        MenuItem EXISTING_MENU_ITEM = getMenuItem(MENU_ITEM_NAME);
+        if (EXISTING_MENU_ITEM != null) {
+            VALIDATIONS.add(StatusCode.MENU_ITEM_ALREADY_EXISTS);
+            return VALIDATIONS;
+        }
+
         try {
-            VALIDATIONS.add(validateMenuItemByName(MENU_ITEM_NAME));
-            VALIDATIONS.add(validateMenuItemByPrice(MENU_ITEM_PRICE));
-            VALIDATIONS.add(validateMenuItemByItemType(MENU_ITEM_TYPE));
-            VALIDATIONS.add(validateMenuItemByDescription(MENU_ITEM_DESCRIPTION));
-            VALIDATIONS.add(validateMenuItemByNotes(MENU_ITEM_NOTES));
-
-            if (!Exceptions.isSuccessful(VALIDATIONS)) {
-                return VALIDATIONS;
-            }
-
-            MenuItem EXISTING_MENU_ITEM = getMenuItem(MENU_ITEM_NAME);
-            if (EXISTING_MENU_ITEM != null) {
-                VALIDATIONS.add(StatusCode.MENU_ITEM_ALREADY_EXISTS);
-                return VALIDATIONS;
-            }
-
             MenuItem MENU_ITEM = new MenuItem(MENU_ITEM_NAME, MENU_ITEM_PRICE, MENU_ITEM_TYPE, ACTIVE_ITEM,
                     MENU_ITEM_DESCRIPTION, DIETARY_REQUIREMENT);
 
@@ -283,11 +295,10 @@ public class MenuAPI {
 
             DATA_STORE.createMenuItem(MENU_ITEM);
             VALIDATIONS.add(StatusCode.SUCCESS);
-            return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.MENU_ITEM_CREATION_FAILED);
-            return VALIDATIONS;
         }
+        return VALIDATIONS;
     }
 
     /**
@@ -313,23 +324,23 @@ public class MenuAPI {
      */
     public List<StatusCode> putMenuItemName(String MENU_ITEM_NAME, String NEW_MENU_ITEM_NAME) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
+
+        Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Name", NEW_MENU_ITEM_NAME, MENU_ITEM_NAME);
+        VALIDATIONS.addAll(RESULT.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        MenuItem MENU_ITEM = RESULT.getValue();
+
         try {
-            Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Name", NEW_MENU_ITEM_NAME, MENU_ITEM_NAME);
-            VALIDATIONS.addAll(RESULT.getKey());
-            if (!Exceptions.isSuccessful(VALIDATIONS)) {
-                return VALIDATIONS;
-            }
-
-            MenuItem MENU_ITEM = RESULT.getValue();
-
             MENU_ITEM.updateMetadata("itemName", NEW_MENU_ITEM_NAME);
             DATA_STORE.updateMenuItem(MENU_ITEM);
             VALIDATIONS.add(StatusCode.SUCCESS);
-            return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.MENU_ITEM_UPDATE_FAILED);
-            return VALIDATIONS;
         }
+        return VALIDATIONS;
     }
 
     /**
@@ -341,23 +352,23 @@ public class MenuAPI {
      */
     public List<StatusCode> putMenuItemPrice(String MENU_ITEM_NAME, Double NEW_MENU_ITEM_PRICE) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
+
+        Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Price", NEW_MENU_ITEM_PRICE, MENU_ITEM_NAME);
+        VALIDATIONS.addAll(RESULT.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        MenuItem MENU_ITEM = RESULT.getValue();
+
         try {
-            Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Price", NEW_MENU_ITEM_PRICE, MENU_ITEM_NAME);
-            VALIDATIONS.addAll(RESULT.getKey());
-            if (!Exceptions.isSuccessful(VALIDATIONS)) {
-                return VALIDATIONS;
-            }
-
-            MenuItem MENU_ITEM = RESULT.getValue();
-
             MENU_ITEM.updateMetadata("price", NEW_MENU_ITEM_PRICE);
             DATA_STORE.updateMenuItem(MENU_ITEM);
             VALIDATIONS.add(StatusCode.SUCCESS);
-            return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.MENU_ITEM_UPDATE_FAILED);
-            return VALIDATIONS;
         }
+        return VALIDATIONS;
     }
 
     /**
@@ -369,23 +380,23 @@ public class MenuAPI {
      */
     public List<StatusCode> putMenuItemItemType(String MENU_ITEM_NAME, MenuItem.ItemType NEW_MENU_ITEM_TYPE) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
+
+        Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("ItemType", NEW_MENU_ITEM_TYPE, MENU_ITEM_NAME);
+        VALIDATIONS.addAll(RESULT.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        MenuItem MENU_ITEM = RESULT.getValue();
+
         try {
-            Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("ItemType", NEW_MENU_ITEM_TYPE, MENU_ITEM_NAME);
-            VALIDATIONS.addAll(RESULT.getKey());
-            if (!Exceptions.isSuccessful(VALIDATIONS)) {
-                return VALIDATIONS;
-            }
-
-            MenuItem MENU_ITEM = RESULT.getValue();
-
             MENU_ITEM.updateMetadata("itemType", NEW_MENU_ITEM_TYPE);
             DATA_STORE.updateMenuItem(MENU_ITEM);
             VALIDATIONS.add(StatusCode.SUCCESS);
-            return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.MENU_ITEM_UPDATE_FAILED);
-            return VALIDATIONS;
         }
+        return VALIDATIONS;
     }
 
     /**
@@ -397,23 +408,23 @@ public class MenuAPI {
      */
     public List<StatusCode> putMenuItemDescription(String MENU_ITEM_NAME, String NEW_MENU_ITEM_DESCRIPTION) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
+
+        Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Description", NEW_MENU_ITEM_DESCRIPTION, MENU_ITEM_NAME);
+        VALIDATIONS.addAll(RESULT.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        MenuItem MENU_ITEM = RESULT.getValue();
+
         try {
-            Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Description", NEW_MENU_ITEM_DESCRIPTION, MENU_ITEM_NAME);
-            VALIDATIONS.addAll(RESULT.getKey());
-            if (!Exceptions.isSuccessful(VALIDATIONS)) {
-                return VALIDATIONS;
-            }
-
-            MenuItem MENU_ITEM = RESULT.getValue();
-
             MENU_ITEM.setDataValue("description", NEW_MENU_ITEM_DESCRIPTION);
             DATA_STORE.updateMenuItem(MENU_ITEM);
             VALIDATIONS.add(StatusCode.SUCCESS);
-            return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.MENU_ITEM_UPDATE_FAILED);
-            return VALIDATIONS;
         }
+        return VALIDATIONS;
     }
 
     /**
@@ -425,23 +436,23 @@ public class MenuAPI {
      */
     public List<StatusCode> putMenuItemNotes(String MENU_ITEM_NAME, String NEW_MENU_ITEM_NOTES) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
+
+        Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Notes", NEW_MENU_ITEM_NOTES, MENU_ITEM_NAME);
+        VALIDATIONS.addAll(RESULT.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        MenuItem MENU_ITEM = RESULT.getValue();
+
         try {
-            Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Notes", NEW_MENU_ITEM_NOTES, MENU_ITEM_NAME);
-            VALIDATIONS.addAll(RESULT.getKey());
-            if (!Exceptions.isSuccessful(VALIDATIONS)) {
-                return VALIDATIONS;
-            }
-
-            MenuItem MENU_ITEM = RESULT.getValue();
-
             MENU_ITEM.setDataValue("notes", NEW_MENU_ITEM_NOTES);
             DATA_STORE.updateMenuItem(MENU_ITEM);
             VALIDATIONS.add(StatusCode.SUCCESS);
-            return VALIDATIONS;
         } catch (Exception e) {
             VALIDATIONS.add(StatusCode.MENU_ITEM_UPDATE_FAILED);
-            return VALIDATIONS;
         }
+        return VALIDATIONS;
     }
 
     /**
@@ -452,20 +463,19 @@ public class MenuAPI {
      */
     public List<StatusCode> deleteMenuItem(String MENU_ITEM_NAME) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
-        try {
-            MenuItem MENU_ITEM = getMenuItem(MENU_ITEM_NAME);
-            if (MENU_ITEM == null) {
-                VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
-                return VALIDATIONS;
-            }
-
-            DATA_STORE.deleteMenuItem(MENU_ITEM);
-            VALIDATIONS.add(StatusCode.SUCCESS);
-            return VALIDATIONS;
-        } catch (Exception e) {
-            VALIDATIONS.add(StatusCode.MENU_ITEM_DELETION_FAILED);
+        MenuItem MENU_ITEM = getMenuItem(MENU_ITEM_NAME);
+        if (MENU_ITEM == null) {
+            VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
             return VALIDATIONS;
         }
+
+        try {
+            DATA_STORE.deleteMenuItem(MENU_ITEM);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.MENU_ITEM_DELETION_FAILED);
+        }
+        return VALIDATIONS;
     }
 
     /**
@@ -490,4 +500,3 @@ public class MenuAPI {
                 .collect(Collectors.toList());
     }
 }
-

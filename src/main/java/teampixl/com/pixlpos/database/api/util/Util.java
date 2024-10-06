@@ -17,7 +17,7 @@ public class Util {
         return StatusCode.SUCCESS;
     }
 
-    public <T> Pair<List<StatusCode>, T> validateAndGetObject(
+    public static <T> Pair<List<StatusCode>, T> validateAndGetObject(
             Function<Object, StatusCode> validationFunction,
             Function<String, T> retrievalFunction,
             Object value,
