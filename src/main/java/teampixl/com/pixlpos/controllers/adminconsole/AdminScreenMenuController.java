@@ -203,7 +203,7 @@ public class AdminScreenMenuController
             if (loadedMenuItem == null) {
                 showAlert(Alert.AlertType.ERROR, "Failed", "Please select a user from the table");
             } else{
-                populateUserParam(loadedUser);
+                populateMenuParam(loadedMenuItem);
             }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
