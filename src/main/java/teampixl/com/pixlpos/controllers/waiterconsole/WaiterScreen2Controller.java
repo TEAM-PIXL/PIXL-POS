@@ -17,6 +17,7 @@ import javafx.scene.layout.FlowPane;
 
 import java.util.*;
 
+import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
@@ -117,14 +118,23 @@ public class WaiterScreen2Controller
     private DynamicButtonManager drinksbuttonManager;
     private DynamicButtonManager dessertbuttonManager;
 
-    private static MenuAPI menuAPI;
-    private static DataStore dataStore;
+    private final MenuAPI menuAPI = MenuAPI.getInstance();
+    private final DataStore dataStore = DataStore.getInstance();
+    private final OrderAPI orderAPI = OrderAPI.getInstance();
 
     private int id = 1;
 
     private List<MenuItem> menuItems;
     private List<MenuItem> queryMenuItems;
     private Tooltip priceTooltip;
+
+    private final Map<String, Integer> orderItems = new HashMap<>();
+    private Label selectedItem = null;
+    private final Stack<Runnable> actionStack = new Stack<>();
+    private Order currentOrder;
+    private String orderID;
+    private Integer orderNumber = 0;
+    private Double orderTotal = 0.00;
 
     private enum TabType {
         SEARCH("search"),
@@ -166,8 +176,8 @@ public class WaiterScreen2Controller
 
     @FXML
     private void initialize() {
-        dataStore = DataStore.getInstance();
-        menuAPI = menuAPI.getInstance();
+        currentOrder = orderAPI.initializeOrder();
+        orderID = currentOrder.getMetadataValue("orderID").toString();
         datetime.start();
         tabManager = new DynamicTabManager(itemtab);
         labelManager = new DynamicLabelManager(orderitemslistview);
@@ -304,7 +314,7 @@ public class WaiterScreen2Controller
         searchbuttonManager.clearAllButtons();
         List<MenuItem> menuItems = queryMenuItems;
         for (MenuItem menuItem : menuItems) {
-            if (menuItem.getMetadataValue("price") instanceof Double) {`
+            if (menuItem.getMetadataValue("price") instanceof Double) {
                 if ((Double) menuItem.getMetadataValue("price") <= maxPrice) {
                     searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                     id++;
@@ -344,8 +354,7 @@ public class WaiterScreen2Controller
     }
     @FXML
     protected void onFilterButtonClick() {
-        // Handle exit button click
-        searchbuttonManager.addButton("1","Beef Cheeseburger","$20");/*SAMPLEUSE*/
+        // NOT NEEDED
     }
     @FXML
     protected void onLogoutButtonClick() {
@@ -415,7 +424,12 @@ public class WaiterScreen2Controller
 
         // Method to remove a button directly
         private void addtoorder(String itemname) {
-           /*this code will envoke another function which adds an id dependant item to the order listview*/
+           String menuItemId = menuAPI.keySearch(itemname);
+              if (orderItems.containsKey(menuItemId)) {
+                orderItems.put(menuItemId, orderItems.get(menuItemId) + 1);
+              } else {
+                orderItems.put(menuItemId, 1);
+              }
            labelManager.addLabel(itemname);
         }
 
