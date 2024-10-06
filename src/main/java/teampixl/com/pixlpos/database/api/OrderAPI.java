@@ -430,6 +430,45 @@ public class OrderAPI {
     }
 
     /**
+     * Updates the order with new menu items.
+     *
+     * @param ORDER_ID the order ID to update
+     * @param MENU_ITEMS the new menu items to set for the order
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> putOrderItems(String ORDER_ID, Map<MenuItem, Integer> MENU_ITEMS) {
+        Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
+                this::validateOrderById,
+                this::keyTransform,
+                ORDER_ID,
+                ORDER_ID,
+                StatusCode.ORDER_NOT_FOUND
+        );
+        List<StatusCode> VALIDATIONS = new ArrayList<>(orderResult.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+        Order ORDER = orderResult.getValue();
+
+        VALIDATIONS.addAll(validateOrderByItems(MENU_ITEMS));
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        try {
+            ORDER.setDataValue("menuItems", new HashMap<>());
+            for (Map.Entry<MenuItem, Integer> entry : MENU_ITEMS.entrySet()) {
+                ORDER.addMenuItem(entry.getKey(), entry.getValue());
+            }
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return VALIDATIONS;
+    }
+
+    /**
      * Updates the status of an existing order.
      *
      * @param ORDER_ID the order ID
@@ -453,6 +492,176 @@ public class OrderAPI {
 
         try {
             ORDER.updateOrderStatus(NEW_ORDER_STATUS);
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return VALIDATIONS;
+    }
+
+    /**
+     * Updates the table number of an existing order.
+     *
+     * @param ORDER_ID the order ID
+     * @param TABLE_NUMBER the new table number to set
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> putOrderTableNumber(String ORDER_ID, Integer TABLE_NUMBER) {
+        Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
+                this::validateOrderById,
+                this::keyTransform,
+                ORDER_ID,
+                ORDER_ID,
+                StatusCode.ORDER_NOT_FOUND
+        );
+        List<StatusCode> VALIDATIONS = new ArrayList<>(orderResult.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+        Order ORDER = orderResult.getValue();
+
+        VALIDATIONS.add(validateOrderByTableNumber(TABLE_NUMBER));
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        try {
+            ORDER.updateMetadata("table_number", TABLE_NUMBER);
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return VALIDATIONS;
+    }
+
+    /**
+     * Updates the number of customers associated with an existing order.
+     *
+     * @param ORDER_ID the order ID
+     * @param CUSTOMERS the new number of customers to set
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> putOrderCustomers(String ORDER_ID, Integer CUSTOMERS) {
+        Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
+                this::validateOrderById,
+                this::keyTransform,
+                ORDER_ID,
+                ORDER_ID,
+                StatusCode.ORDER_NOT_FOUND
+        );
+        List<StatusCode> VALIDATIONS = new ArrayList<>(orderResult.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+        Order ORDER = orderResult.getValue();
+
+        VALIDATIONS.add(validateOrderByCustomers(CUSTOMERS));
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        try {
+            ORDER.updateMetadata("customers", CUSTOMERS);
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return VALIDATIONS;
+    }
+
+    /**
+     * Updates the special requests associated with an existing order.
+     *
+     * @param ORDER_ID the order ID
+     * @param SPECIAL_REQUESTS the new special requests to set
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> putOrderSpecialRequests(String ORDER_ID, String SPECIAL_REQUESTS) {
+        Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
+                this::validateOrderById,
+                this::keyTransform,
+                ORDER_ID,
+                ORDER_ID,
+                StatusCode.ORDER_NOT_FOUND
+        );
+        List<StatusCode> VALIDATIONS = new ArrayList<>(orderResult.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+        Order ORDER = orderResult.getValue();
+
+        VALIDATIONS.add(validateOrderBySpecialRequests(SPECIAL_REQUESTS));
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+
+        try {
+            ORDER.updateMetadata("special_requests", SPECIAL_REQUESTS);
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return VALIDATIONS;
+    }
+
+    /**
+     * Updates the order type of existing order.
+     *
+     * @param ORDER_ID the order ID
+     * @param ORDER_TYPE the new order type to set
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> putOrderType(String ORDER_ID, Order.OrderType ORDER_TYPE) {
+        Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
+                status -> validateOrderByStatus(ORDER_TYPE),
+                this::keyTransform,
+                ORDER_TYPE,
+                ORDER_ID,
+                StatusCode.ORDER_NOT_FOUND
+        );
+        List<StatusCode> VALIDATIONS = new ArrayList<>(orderResult.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+        Order ORDER = orderResult.getValue();
+
+        try {
+            ORDER.updateMetadata("order_type", ORDER_TYPE);
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+        } catch (Exception e) {
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
+        }
+        return VALIDATIONS;
+    }
+
+    /**
+     * Updates the payment method of an existing order.
+     *
+     * @param ORDER_ID the order ID
+     * @param PAYMENT_METHOD the new payment method to set
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> putOrderPaymentMethod(String ORDER_ID, Order.PaymentMethod PAYMENT_METHOD) {
+        Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
+                status -> validateOrderByStatus(PAYMENT_METHOD),
+                this::keyTransform,
+                PAYMENT_METHOD,
+                ORDER_ID,
+                StatusCode.ORDER_NOT_FOUND
+        );
+        List<StatusCode> VALIDATIONS = new ArrayList<>(orderResult.getKey());
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
+        }
+        Order ORDER = orderResult.getValue();
+
+        try {
+            ORDER.updateMetadata("payment_method", PAYMENT_METHOD);
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {
