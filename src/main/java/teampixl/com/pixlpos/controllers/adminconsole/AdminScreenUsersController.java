@@ -156,7 +156,41 @@ public class AdminScreenUsersController
 
     @FXML
     protected void onSubmitButtonClick(){
+        // Handle submit changes button click
+        if (loadedUser == null) {
+            showAlert(Alert.AlertType.ERROR, "New User", "Please select a user");
+            return;
+        }
+        try{
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
+            String password = passwordField.getText();
+            String email = emailField.getText();
+            Users.UserRole role = roleSelect.getSelectionModel().getSelectedItem();
+            if (password.isEmpty() || email.isEmpty() || firstName.isEmpty() ||
+                    lastName.isEmpty() || role == null) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
+            }else {
 
+
+                try {
+                    loadedUser.updateMetadata("first_name", firstName);
+                    loadedUser.updateMetadata("last_name", lastName);
+                    loadedUser.updateMetadata("role", role);
+                    loadedUser.setDataValue("password", password);
+                    loadedUser.setDataValue("email", email);
+                    loadedUser.updateMetadata("updated_at", System.currentTimeMillis());
+                    dataStore.updateUser(loadedUser);
+                    showAlert(Alert.AlertType.CONFIRMATION, "Updated User", "User has been updated");
+                    initialize();
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Updated User", "Unexpected error occured while updating user: " + e.getMessage());
+                }
+            }
+        }
+        catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
+        }
     }
     @FXML
     protected void onAddUserButtonClick(){
