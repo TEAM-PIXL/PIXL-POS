@@ -21,4 +21,14 @@ public class Util {
         }
         return location;
     }
+
+    public static String checkOS() {
+        OsCheck.OSType ostype = OsCheck.getOperatingSystemType();
+        return switch (ostype) {
+            case Windows -> OsCheck.OSType.Windows.toString();
+            case MacOS -> OsCheck.OSType.MacOS.toString();
+            case Linux -> OsCheck.OSType.Linux.toString();
+            case Other -> "Unknown";
+        };
+    }
 }

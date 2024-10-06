@@ -61,22 +61,7 @@ public class APITest {
         System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
         System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
 
-        String IP = null;
-        try {
-            IP = Util.getIp();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("IP: " + IP);
 
-        String location = null;
-        try
-        {
-            location = Util.getLocation(IP);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("Location: " + location);
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
 //        UserStack userStack = UserStack.getInstance();
