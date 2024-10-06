@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import teampixl.com.pixlpos.models.interfaces.IDataManager;
-import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.models.tools.IDataManager;
+import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 
 /**
  * Represents an ingredient with associated metadata and data. Implements IDataManager.

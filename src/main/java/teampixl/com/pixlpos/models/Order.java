@@ -1,9 +1,9 @@
 package teampixl.com.pixlpos.models;
 
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 import teampixl.com.pixlpos.database.api.MenuAPI;
-import teampixl.com.pixlpos.models.interfaces.IDataManager;
+import teampixl.com.pixlpos.models.tools.IDataManager;
 
 import java.util.*;
 
