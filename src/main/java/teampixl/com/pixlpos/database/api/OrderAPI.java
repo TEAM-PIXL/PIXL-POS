@@ -387,7 +387,6 @@ public class OrderAPI {
     public List<StatusCode> putOrderItem(String ORDER_ID, String MENU_ITEM_ID, Integer QUANTITY) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
 
-        // Validate and get Order
         Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
                 this::validateOrderById,
                 this::keyTransform,
@@ -401,7 +400,6 @@ public class OrderAPI {
         }
         Order ORDER = orderResult.getValue();
 
-        // Validate and get MenuItem
         Pair<List<StatusCode>, MenuItem> menuItemResult = Util.validateAndGetObject(
                 MENUAPI::validateMenuItemById,
                 MENUAPI::keyTransform,
@@ -415,7 +413,6 @@ public class OrderAPI {
         }
         MenuItem MENU_ITEM = menuItemResult.getValue();
 
-        // Validate Quantity
         if (QUANTITY == null || QUANTITY <= 0) {
             VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
             return VALIDATIONS;
@@ -441,7 +438,6 @@ public class OrderAPI {
     public List<StatusCode> putOrderStatus(String ORDER_ID, Order.OrderStatus NEW_ORDER_STATUS) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
 
-        // Validate and get Order
         Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
                 status -> validateOrderByStatus(NEW_ORDER_STATUS),
                 this::keyTransform,
@@ -475,7 +471,6 @@ public class OrderAPI {
      */
     public List<StatusCode> deleteOrderItem(String ORDER_ID, String MENU_ITEM_ID, Integer QUANTITY) {
 
-        // Validate and get Order
         Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
                 this::validateOrderById,
                 this::keyTransform,
@@ -489,7 +484,6 @@ public class OrderAPI {
         }
         Order ORDER = orderResult.getValue();
 
-        // Validate and get MenuItem
         Pair<List<StatusCode>, MenuItem> menuItemResult = Util.validateAndGetObject(
                 MENUAPI::validateMenuItemById,
                 MENUAPI::keyTransform,
@@ -503,7 +497,6 @@ public class OrderAPI {
         }
         MenuItem MENU_ITEM = menuItemResult.getValue();
 
-        // Validate Quantity
         if (QUANTITY == null || QUANTITY <= 0) {
             VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
             return VALIDATIONS;
@@ -527,7 +520,6 @@ public class OrderAPI {
      */
     public List<StatusCode> deleteOrder(String ORDER_ID) {
 
-        // Validate and get Order
         Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
                 this::validateOrderById,
                 this::keyTransform,
@@ -558,7 +550,6 @@ public class OrderAPI {
      */
     public List<StatusCode> clearOrderItems(String ORDER_ID) {
 
-        // Validate and get Order
         Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
                 this::validateOrderById,
                 this::keyTransform,
