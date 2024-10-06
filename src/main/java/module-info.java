@@ -24,6 +24,7 @@ module PIXL.POS {
     requires org.junit.jupiter;
     requires geoip2;
     requires java.xml.crypto;
+    requires commons.logging;
 
     opens teampixl.com.pixlpos.database;
     opens teampixl.com.pixlpos.authentication;

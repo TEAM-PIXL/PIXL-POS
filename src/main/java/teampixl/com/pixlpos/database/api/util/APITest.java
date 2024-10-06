@@ -1,12 +1,19 @@
 package teampixl.com.pixlpos.database.api.util;
 
+import org.apache.commons.logging.Log;
 import teampixl.com.pixlpos.database.api.*;
 import teampixl.com.pixlpos.models.logs.Logs;
+import teampixl.com.pixlpos.models.logs.UserLogs;
 import teampixl.com.pixlpos.models.logs.definitions.Priority;
 import teampixl.com.pixlpos.models.logs.definitions.Category;
 import teampixl.com.pixlpos.models.logs.definitions.Type;
 import teampixl.com.pixlpos.models.logs.definitions.Status;
 import teampixl.com.pixlpos.models.logs.definitions.Action;
+import teampixl.com.pixlpos.models.*;
+import teampixl.com.pixlpos.models.logs.network.LogTask;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class APITest {
     public static void main(String[] args) throws Exception {
@@ -17,47 +24,61 @@ public class APITest {
 
 
         /* KEYS */
-//        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
-//        String[] DataKeys = {"description", "notes", "amountOrdered", "ingredients"};
-//
-//        MenuItem menuItem = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "This is a Pizza", MenuItem.DietaryRequirement.NONE);
-//        Ingredients ingredients = new Ingredients("Cheese", "This is cheese");
-//        Ingredients ingredients1 = new Ingredients("Tomato", "This is tomato");
-//        System.out.println("Ingredients: " + ingredients.getMetadata().metadata());
-//        System.out.println("Ingredients: " + ingredients.getData());
-//
-//
-//        menuItem.addIngredient(ingredients, 2);
-//        menuItem.addIngredient(ingredients1, 3);
-//        System.out.println("Menu Item: " + menuItem.getMetadata().metadata());
-//        System.out.println("Menu Item: " + menuItem.getData());
-//        System.out.println("Menu Item: " + menuItem.getIngredients());
-//
-//        /* KEYS */
-//        System.out.println("Metadata Keys: ");
-//        for (String key : MetadataKeys) {
-//            System.out.println(key);
-//        }
-//
-//        System.out.println("Data Keys: ");
-//        for (String key : DataKeys) {
-//            System.out.println(key);
-//        }
-//
-//        System.out.println("Item Name: " + menuItem.getMetadataValue(MetadataKeys[1]));
-//        System.out.println("Price: " + menuItem.getMetadataValue(MetadataKeys[2]));
-//        System.out.println("Item Type: " + menuItem.getMetadataValue(MetadataKeys[3]));
-//        System.out.println("Active Item: " + menuItem.getMetadataValue(MetadataKeys[4]));
-//        System.out.println("Dietary Requirement: " + menuItem.getMetadataValue(MetadataKeys[5]));
-//        System.out.println("Created At: " + menuItem.getMetadataValue(MetadataKeys[6]));
-//        System.out.println("Updated At: " + menuItem.getMetadataValue(MetadataKeys[7]));
-//
-//        System.out.println("Description: " + menuItem.getDataValue(DataKeys[0]));
-//        System.out.println("Notes: " + menuItem.getDataValue(DataKeys[1]));
-//        System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
-//        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
+        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
+        String[] DataKeys = {"description", "notes", "amountOrdered", "ingredients"};
+
+        MenuItem menuItem = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "This is a Pizza", MenuItem.DietaryRequirement.NONE);
+        Ingredients ingredients = new Ingredients("Cheese", "This is cheese");
+        Ingredients ingredients1 = new Ingredients("Tomato", "This is tomato");
+        System.out.println("Ingredients: " + ingredients.getMetadata().metadata());
+        System.out.println("Ingredients: " + ingredients.getData());
+
+
+        menuItem.addIngredient(ingredients, 2);
+        menuItem.addIngredient(ingredients1, 3);
+        System.out.println("Menu Item: " + menuItem.getMetadata().metadata());
+        System.out.println("Menu Item: " + menuItem.getData());
+        System.out.println("Menu Item: " + menuItem.getIngredients());
+
+        /* KEYS */
+        System.out.println("Metadata Keys: ");
+        for (String key : MetadataKeys) {
+            System.out.println(key);
+        }
+
+        System.out.println("Data Keys: ");
+        for (String key : DataKeys) {
+            System.out.println(key);
+        }
+
+        System.out.println("Item Name: " + menuItem.getMetadataValue(MetadataKeys[1]));
+        System.out.println("Price: " + menuItem.getMetadataValue(MetadataKeys[2]));
+        System.out.println("Item Type: " + menuItem.getMetadataValue(MetadataKeys[3]));
+        System.out.println("Active Item: " + menuItem.getMetadataValue(MetadataKeys[4]));
+        System.out.println("Dietary Requirement: " + menuItem.getMetadataValue(MetadataKeys[5]));
+        System.out.println("Created At: " + menuItem.getMetadataValue(MetadataKeys[6]));
+        System.out.println("Updated At: " + menuItem.getMetadataValue(MetadataKeys[7]));
+
+        System.out.println("Description: " + menuItem.getDataValue(DataKeys[0]));
+        System.out.println("Notes: " + menuItem.getDataValue(DataKeys[1]));
+        System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
+        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
 
         /* Network */
+
+        /* ---> Init stack <---- */
+        UserStack.getInstance().setCurrentUser("admin");
+
+        String ID = UserStack.getInstance().getCurrentUserId();
+        System.out.println("The current user has the ID: " + ID);
+
+        /* ---> Init API <---- */
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(new LogTask(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW));
+        executor.shutdown();
+
+        UserLogs USER_LOGS = new UserLogs(UserLogs.LogType.LOGIN);
+        System.out.println("The user log has the contents: " + USER_LOGS);
 
 
 //    public static void main(String[] args) {
