@@ -1,4 +1,4 @@
-package teampixl.com.pixlpos.database;
+package teampixl.com.pixlpos.models.tools;
 
 import java.util.Map;
 import java.util.Objects;

@@ -141,6 +141,44 @@
     -fx-font-size: 15px;
     -fx-font-family: "Arial", sans-serif;
 }
+
+.combo-box .list-cell {
+    -fx-text-overrun: ellipsis;  /* Truncate text with ellipsis if it's too long */
+    -fx-max-width: 0;
+}
+
+
+.combo-box-base .text{
+    -fx-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Open Sans";
+}
+
+.combo-box{
+    -fx-text-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+    -fx-background-color: transparent;
+}
+.combo-box .arrow-button
+{
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.0em 0em 0.0em 0.0em; /* 0 3 0 0 */
+}
+
+.combo-box .arrow-button .arrow
+{
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 0 0 0 0, 0;
+    -fx-padding: 0em 0em 0em 0em; /* 3 3.75 3 3.75 */
+    /*
+        -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+    */
+    -fx-shape: null;
+}
+
 /**
     * Tab Styling
  */
