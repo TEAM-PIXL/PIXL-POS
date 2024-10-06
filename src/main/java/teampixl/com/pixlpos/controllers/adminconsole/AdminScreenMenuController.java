@@ -31,6 +31,7 @@ import java.util.List;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.models.Users;
 import javafx.scene.layout.HBox;
+import teampixl.com.pixlpos.database.DataStore;
 
 public class AdminScreenMenuController
 {
@@ -43,6 +44,7 @@ public class AdminScreenMenuController
     String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
     private MenuItem loadedMenuItem;
     private MenuAPI menuAPI;
+    private DataStore datastore;
     /*
     Shared Components
      */
@@ -116,6 +118,7 @@ public class AdminScreenMenuController
         menuitemlist.getItems().clear();
         greeting.setText("Hello, " + firstName);
         menuAPI = MenuAPI.getInstance();
+        datastore = DataStore.getInstance();
     }
 
 
@@ -219,7 +222,15 @@ public class AdminScreenMenuController
             HBox hbox = items.get(i);
 
             if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
-                items.remove(i);  // Remove the HBox at the found index
+                try{
+                    items.remove(i);  // Remove the HBox at the found index
+                    // Handle delete user button click
+                    datastore.deleteMenuItem(menuAPI.getMenuItem(menuAPI.reverseKeySearch(id)));
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "Deleted Menu Item", "Menu Item has been deleted");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Deleted Menu Item", "Unexpected error occured: " + e.getMessage());
+                }
                 break;            // Exit the loop once the HBox is removed
             }
         }
