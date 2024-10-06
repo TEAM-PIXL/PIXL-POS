@@ -1,12 +1,12 @@
 package teampixl.com.pixlpos.database.api.util;
 
 import javafx.collections.ObservableList;
+import javafx.scene.chart.PieChart;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.*;
-import teampixl.com.pixlpos.models.Order;
+import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.OrderAPI;
-import teampixl.com.pixlpos.models.Users;
 
 
 import java.io.ObjectInputFilter;
@@ -17,20 +17,18 @@ import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) {
-        UserStack userStack = UserStack.getInstance();
-        MenuAPI menuAPI = MenuAPI.getInstance();
-        OrderAPI orderAPI = OrderAPI.getInstance();
+        IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
+        StockAPI stockAPI = StockAPI.getInstance();
 
-        userStack.setCurrentUser("cook");
+        List<StatusCode> STATUS = ingredientsAPI.postIngredient("My Item");
+        if (isSuccessful(STATUS)) {
+            System.out.println("Ingredient created successfully.");
+        } else {
+            System.out.println(returnStatus("Ingredient could not be created with the following errors:", STATUS));
+        }
+        List<StatusCode> STATUS2 = stockAPI.postStock(ingredientsAPI.keySearch("My Item"), Stock.StockStatus.INSTOCK, Stock.UnitType.KG, 10.0, false);
+        System.out.println("Stock created with the following status: " + STATUS2);
 
-        Order ORDER = orderAPI.initializeOrder();
-        System.out.println("The order metadata is as such: " + ORDER.getMetadata().metadata());
-        List<StatusCode> STATUS1 = orderAPI.putOrderItem(ORDER.getMetadata().metadata().get("order_id").toString(), "cb68a1b2-fbda-448a-a972-875b0a30f7c5", 2);
-        System.out.println("The order metadata is as such: " + ORDER.getMetadata().metadata());
-        System.out.println("The order data is as such: " + ORDER.getData());
-
-        List<StatusCode> STATUS = orderAPI.postOrder(ORDER);
-        System.out.println("The status of the order post is: " + STATUS);
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
 //        UserStack userStack = UserStack.getInstance();

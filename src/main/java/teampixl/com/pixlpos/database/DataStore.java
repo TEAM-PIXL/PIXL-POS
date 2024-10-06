@@ -72,7 +72,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * Returns the singleton instance of the DataStore class.
      * @return DataStore - The singleton instance of the DataStore class.
      */
-    public static DataStore getInstance() {
+    public static synchronized DataStore getInstance() {
         if (instance == null) {
             instance = new DataStore();
         }

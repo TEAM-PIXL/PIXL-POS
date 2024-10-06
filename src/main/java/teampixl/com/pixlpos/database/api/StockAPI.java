@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 public class StockAPI {
     private static StockAPI INSTANCE;
     private static final DataStore DATA_STORE = DataStore.getInstance();
+    private static final IngredientsAPI INGREDIENTS_API = IngredientsAPI.getInstance();
 
     private StockAPI() { }
 
@@ -234,11 +235,18 @@ public class StockAPI {
             VALIDATIONS.add(validateStockByUnitType(UNIT_TYPE));
             VALIDATIONS.add(validateStockByQuantity(NUMERAL));
             VALIDATIONS.add(validateStockByOnOrder());
+            if (UNIT_TYPE == Stock.UnitType.QTY && !(NUMERAL instanceof Integer)) {
+                VALIDATIONS.add(StatusCode.STOCK_QUANTITY_MUST_BE_INTEGER);
+            }
+            if ((UNIT_TYPE == Stock.UnitType.KG || UNIT_TYPE == Stock.UnitType.L) && !(NUMERAL instanceof Double)) {
+                VALIDATIONS.add(StatusCode.STOCK_QUANTITY_MUST_BE_DOUBLE);
+            }
+
             if (!Exceptions.isSuccessful(VALIDATIONS)) {
                 return VALIDATIONS;
             }
 
-            Ingredients INGREDIENT = IngredientsAPI.getInstance().keyTransform(INGREDIENT_ID);
+            Ingredients INGREDIENT = INGREDIENTS_API.keyTransform(INGREDIENT_ID);
             if (INGREDIENT == null) {
                 VALIDATIONS.add(StatusCode.INGREDIENT_NOT_FOUND);
                 return VALIDATIONS;
@@ -249,10 +257,11 @@ public class StockAPI {
                 VALIDATIONS.add(StatusCode.STOCK_ALREADY_EXISTS);
                 return VALIDATIONS;
             }
-
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
             Stock STOCK = new Stock(INGREDIENT, STOCK_STATUS, UNIT_TYPE, NUMERAL, ON_ORDER);
             DATA_STORE.createStock(STOCK);
-            VALIDATIONS.add(StatusCode.SUCCESS);
             return VALIDATIONS;
         } catch (Exception E) {
             VALIDATIONS.add(StatusCode.STOCK_CREATION_FAILED);
