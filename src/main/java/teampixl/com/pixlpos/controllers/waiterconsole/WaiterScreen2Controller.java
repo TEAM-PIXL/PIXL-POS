@@ -414,6 +414,7 @@ public class WaiterScreen2Controller
     protected void onCustomizeButtonClick() {
         itemtab.getSelectionModel().select(searchtab); /** this brings you to the tab and runs selection code*/
     }
+
     @FXML
     protected void onItemCorrectButtonClick() {
         System.out.println(actionStack);
@@ -538,22 +539,23 @@ public class WaiterScreen2Controller
 
         // Method to remove a button directly
         private void addtoorder(String itemname) {
-           String menuItemId = menuAPI.keySearch(itemname);
-          if (orderItems.containsKey(menuItemId)) {
-            orderItems.put(menuItemId, orderItems.get(menuItemId) + 1);
-          } else {
-            orderItems.put(menuItemId, 1);
-          }
+            String menuItemId = menuAPI.keySearch(itemname);
+            if (orderItems.containsKey(menuItemId)) {
+                orderItems.put(menuItemId, orderItems.get(menuItemId) + 1);
+            } else {
+                orderItems.put(menuItemId, 1);
+            }
 
-          actionStack.push(() -> {
-              if (orderItems.get(menuItemId) == 1) {
-                  orderItems.remove(menuItemId);
-              } else {
-                  orderItems.put(menuItemId, orderItems.get(menuItemId) - 1);
-              }
-          });
+            actionStack.push(() -> {
+                if (orderItems.get(menuItemId) == 1) {
+                    orderItems.remove(menuItemId);
+                } else {
+                    orderItems.put(menuItemId, orderItems.get(menuItemId) - 1);
+                }
+                updateOrderSummary();
+            });
 
-          updateOrderSummary();
+            updateOrderSummary();
         }
 
         private void updateOrderSummary() {
