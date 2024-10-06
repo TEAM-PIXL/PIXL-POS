@@ -355,7 +355,6 @@ public class WaiterScreen2Controller
 
     private void initialiseOrder() {
         orderTotal = 0.00;
-        String userId = userStack.getCurrentUserId();
         currentOrder = orderAPI.initializeOrder();
         if (currentOrder == null) {
             System.out.println("Failed to initialize order.");
@@ -435,6 +434,9 @@ public class WaiterScreen2Controller
         });
 
         orderItems.clear();
+
+        orderAPI.deleteOrder(orderID);
+        initialiseOrder();
         mainbuttonManager.updateOrderSummary();
 
     }
