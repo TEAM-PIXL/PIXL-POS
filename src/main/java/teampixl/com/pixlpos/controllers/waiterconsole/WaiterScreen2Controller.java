@@ -121,6 +121,7 @@ public class WaiterScreen2Controller
     private final MenuAPI menuAPI = MenuAPI.getInstance();
     private final DataStore dataStore = DataStore.getInstance();
     private final OrderAPI orderAPI = OrderAPI.getInstance();
+    private final UserStack userStack = UserStack.getInstance();
 
     private int id = 1;
 
@@ -176,8 +177,7 @@ public class WaiterScreen2Controller
 
     @FXML
     private void initialize() {
-        currentOrder = orderAPI.initializeOrder();
-        orderID = currentOrder.getMetadataValue("orderID").toString();
+        initialiseOrder();
         datetime.start();
         tabManager = new DynamicTabManager(itemtab);
         labelManager = new DynamicLabelManager(orderitemslistview);
@@ -293,6 +293,20 @@ public class WaiterScreen2Controller
         }
     }
 
+    private void initialiseOrder() {
+        String userId = userStack.getCurrentUserId();
+        currentOrder = orderAPI.initializeOrder();
+        if (currentOrder == null) {
+            System.out.println("Failed to initialize order.");
+            return;
+        }
+        orderNumber = currentOrder.getOrderNumber();
+        // change order number
+
+        System.out.println("Order initialized: " + currentOrder);
+        orderID = currentOrder.getMetadataValue("order_id").toString();
+    }
+
     private void initialiseSlider() {
         priceslider.setMin(0);
         priceslider.setMax(50);
@@ -372,7 +386,7 @@ public class WaiterScreen2Controller
     /**
      * This class is used to manage dynamic buttons
      */
-    private static class DynamicButtonManager {
+    private class DynamicButtonManager {
         private int buttonCount = 0; // Keep track of the number of buttons
         private final FlowPane buttonPane; // FlowPane to hold buttons
         private final Map<String, Button> buttons; // Map to associate IDs with buttons
