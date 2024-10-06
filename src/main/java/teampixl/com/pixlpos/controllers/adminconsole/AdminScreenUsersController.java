@@ -131,6 +131,8 @@ public class AdminScreenUsersController
         dataStore = DataStore.getInstance();
         userAPI = UsersAPI.getInstance();
 
+        roleselect.getItems().clear();
+        roleselect.getItems().addAll(new HashSet<>(Arrays.asList(Users.UserRole.values())));
         populateUserGrid();
 
     }
@@ -216,7 +218,7 @@ public class AdminScreenUsersController
             if (username.isEmpty()|| firstName.isEmpty() || lastName.isEmpty()  || password.isEmpty() || email.isEmpty() || role == null) {
                 showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
             } else {
-                if (loadedUser == null) {
+                if (userAPI.getUser(username) == null) {
                     boolean registerUser = AuthenticationManager.register(firstName, lastName, username, password, email, role);
                     if (registerUser) {
                         initialize();
