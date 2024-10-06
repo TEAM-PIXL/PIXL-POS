@@ -528,7 +528,7 @@ public class WaiterScreen2Controller
                     Double price = (Double) menuItem.getMetadataValue("price");
                     Double total = price * quantity;
                     orderTotal += total;
-                    totalprice.setText("$" + orderTotal);
+                    totalprice.setText("$" + String.format("%.2f", orderTotal));
                     labelManager.addLabel(quantity, itemName);
                 }
             }
