@@ -449,6 +449,14 @@ public class WaiterScreen2Controller
         GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutbutton);
     }
 
+    private void setSelectedItem(Label itemLabel) {
+        if (selectedItem != null) {
+            selectedItem.setStyle("");
+        }
+        selectedItem = itemLabel;
+        selectedItem.setStyle("-fx-background-color: lightblue;");
+    }
+
     protected void initsearch() {
         int id = 1;
         ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
