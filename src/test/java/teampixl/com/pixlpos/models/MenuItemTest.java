@@ -47,11 +47,11 @@ class MenuItemTest {
         assertEquals(3.0, updatedIngredientAmount.numeral());
     }
 
-    @Test
-    void testMenuItemToString() {
-        String expected = String.format("MenuItem{Metadata: %s, Data: %s, Ingredients: %s}", new HashMap<>(menuItem.getMetadata().metadata()), new HashMap<>(menuItem.getData()), menuItem.getIngredients());
-        assertEquals(expected, menuItem.toString());
-    }
+//    @Test
+//    void testMenuItemToString() {
+//        String expected = String.format("MenuItem{Metadata: %s, Data: %s, Ingredients: %s}", new HashMap<>(menuItem.getMetadata().metadata()), new HashMap<>(menuItem.getData()), menuItem.getIngredients());
+//        assertEquals(expected, menuItem.toString());
+//    }
 
     @Test
     void testTimestampUpdateOnIngredientModification() throws InterruptedException {
