@@ -448,8 +448,9 @@ public class AdminScreenUsersController
     }
 
     private void populateUserParam(Users User) {
-        Object username = User.getMetadataValue("username");
-        Object password = User.getData().get("password");
+        Object price = User.getMetadataValue("price");
+        Object itemName = User.getData().get("itemName");
+        Object itemType = User.getData().get("itemType");
         Object email = User.getData().get("email");
         Object role = User.getMetadata().metadata().get("role");
         Object fistName = User.getMetadata().metadata().get("first_name");

@@ -40,6 +40,7 @@ public class AdminScreenMenuController
     private final UserStack userStack = UserStack.getInstance();
     Users currentuser = userStack.getCurrentUser();
     String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
+    private MenuItem loadedMenuItem;
     /*
     Shared Components
      */
@@ -103,6 +104,7 @@ public class AdminScreenMenuController
             time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
         }
     };
+
 
     @FXML
     public void initialize() {
@@ -311,5 +313,27 @@ public class AdminScreenMenuController
 
         // Add the HBox to the ListView
         listView.getItems().add(hbox);
+    }
+
+    private void populateMenuParam(MenuItem menuItem) {
+        Object price = menuItem.getMetadataValue("price");
+        Object itemName = menuItem.getMetadataValue("itemName");
+        Object itemType = menuItem.getData().get("itemTame");
+        pricefield.setText(Double.toString((double) price));
+        menuitemnamefield.setText(itemName.toString());
+        itemtypefield.setValue(MenuItem.ItemType.valueOf(itemType.toString()));
+        try {
+            Object dietaryRequirement = menuItem.getMetadataValue("dietaryRequirement");
+            dietaryrequirementsfield.setValue(MenuItem.DietaryRequirement.valueOf(dietaryRequirement.toString()));
+        } catch (Exception e) {
+            System.out.println(("No Dietary Requirement"));
+        }
+        try {
+            Object description = menuItem.getData().get("description");
+            itemdescriptionfield.setText(description.toString());
+        } catch (Exception e) {
+            System.out.println(("No Description"));
+        }
+        loadedMenuItem = menuItem;
     }
 }
