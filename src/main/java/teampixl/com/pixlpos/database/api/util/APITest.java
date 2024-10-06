@@ -1,35 +1,19 @@
 package teampixl.com.pixlpos.database.api.util;
 
-import javafx.collections.ObservableList;
-import javafx.scene.chart.PieChart;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.*;
-import teampixl.com.pixlpos.models.*;
-import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.api.OrderAPI;
-import teampixl.com.pixlpos.models.logs.UserLogs;
+import teampixl.com.pixlpos.models.logs.Logs;
 import teampixl.com.pixlpos.models.logs.definitions.Priority;
 import teampixl.com.pixlpos.models.logs.definitions.Category;
 import teampixl.com.pixlpos.models.logs.definitions.Type;
 import teampixl.com.pixlpos.models.logs.definitions.Status;
 import teampixl.com.pixlpos.models.logs.definitions.Action;
-import teampixl.com.pixlpos.models.logs.network.GeoLocation;
-import teampixl.com.pixlpos.models.logs.network.ServerLocation;
-import teampixl.com.pixlpos.models.logs.network.Util;
-
-
-import java.io.ObjectInputFilter;
-import java.util.List;
-
-import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
-import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) throws Exception {
         UserStack.getInstance().setCurrentUser("admin");
-        UserLogs userLogs = new UserLogs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
-        System.out.println("User Logs: " + userLogs.getMetadata().metadata());
-        System.out.println("User Logs: " + userLogs.getData());
+        Logs logs = new Logs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
+        System.out.println("User Logs: " + logs.getMetadata().metadata());
+        System.out.println("User Logs: " + logs.getData());
 
 
         /* KEYS */

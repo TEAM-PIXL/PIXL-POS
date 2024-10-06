@@ -1,85 +1,53 @@
 package teampixl.com.pixlpos.models.logs;
 
 import teampixl.com.pixlpos.database.api.UserStack;
-import teampixl.com.pixlpos.database.api.UsersAPI;
-import teampixl.com.pixlpos.models.logs.network.Util;
-import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 import teampixl.com.pixlpos.models.tools.DataManager;
-import teampixl.com.pixlpos.models.logs.definitions.*;
-import teampixl.com.pixlpos.common.TimeUtil;
+import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
+/**
+ * UserLogs class is a construct for creating UserLogs object. Extends DataManager.
+ * <p>
+ * Metadata:
+ * - id: UUID
+ * - user_id: UUID
+ * - log_type: LogType
+ * - created_at: timestamp for creation
+ * @see DataManager
+ * @see MetadataWrapper
+ */
 public class UserLogs extends DataManager {
 
-    public UserLogs(Action action,
-                    Status logStatus,
-                    Type logType,
-                    Category logCategory,
-                    Priority logPriority,
-                    String description
-    ) throws Exception {
-        super(initializeMetadata(action));
-
-        this.data = new HashMap<>();
-        this.data.put("log_description", description);
-        this.data.put("log_status", logStatus);
-        this.data.put("log_type", logType);
-        this.data.put("log_category", logCategory);
-        this.data.put("log_priority", logPriority);
-        String IP = Util.getIp();
-        this.data.put("log_location", Util.getLocation(IP));
-        this.data.put("log_device", Util.getDeviceInfo());
-        this.data.put("log_ip", IP);
-        this.data.put("log_mac", Util.getMacAddress());
-        this.data.put("log_os", Util.checkOS());
+    /**
+     * Enumerations for LogType
+     */
+    public enum LogType {
+        LOGIN,
+        LOGOUT
     }
 
-    public UserLogs(Action action,
-                    Status logStatus,
-                    Type logType,
-                    Category logCategory,
-                    Priority logPriority
-    ) throws Exception {
-        super(initializeMetadata(action));
-        this.data = new HashMap<>();
-        this.data.put("log_status", logStatus);
-        this.data.put("log_type", logType);
-        this.data.put("log_category", logCategory);
-        this.data.put("log_priority", logPriority);
-        this.data.put("log_description", this.generateLogDescription());
-        String IP = Util.getIp();
-        this.data.put("log_location", Util.getLocation(IP));
-        this.data.put("log_device", Util.getDeviceInfo());
-        this.data.put("log_ip", IP);
-        this.data.put("log_mac", Util.getMacAddress());
-        this.data.put("log_os", Util.checkOS());
+    /**
+     * Constructor for UserLogs object.
+     * <p>
+     * Metadata:
+     * - id: UUID
+     * - user_id: UUID
+     * - log_type: LogType
+     * - created_at: timestamp for creation
+     */
+    public UserLogs(LogType logType) {
+        super(initializeMetadata(logType));
     }
 
-    private static MetadataWrapper initializeMetadata(Action action) {
+    private static MetadataWrapper initializeMetadata(LogType logType) {
         Map<String, Object> metadataMap = new HashMap<>();
-        String ID = null;
-        try {
-            ID = UserStack.getInstance().getCurrentUserId();
-        } catch (Exception e) {
-            ID = "Unknown";
-        }
-        metadataMap.put("user_id", ID != null ? ID : "Unknown");
-        metadataMap.put("log_id", UUID.randomUUID().toString());
-        metadataMap.put("log_timestamp", System.currentTimeMillis());
-        metadataMap.put("log_action", action != null ? action : "Unknown");
+        metadataMap.put("id", UUID.randomUUID());
+        metadataMap.put("user_id", UserStack.getInstance().getCurrentUserId());
+        metadataMap.put("log_type", logType);
+        metadataMap.put("created_at", System.currentTimeMillis());
         return new MetadataWrapper(metadataMap);
-    }
-
-    public void setLogDescription(String logDescription) {
-        this.data.put("log_description", logDescription);
-    }
-
-    public String generateLogDescription() {
-        long timestamp = (long) this.getMetadataValue("log_timestamp");
-        String readableTimestamp = TimeUtil.convertUnixTimestampToReadable(timestamp);
-        return "User " + UsersAPI.getInstance().reverseKeySearch(UserStack.getInstance().getCurrentUserId()) + " performed the action " + this.getMetadataValue("log_action") + " at the time " + readableTimestamp;
     }
 }
