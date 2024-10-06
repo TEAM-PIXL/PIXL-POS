@@ -294,6 +294,7 @@ public class WaiterScreen2Controller
     }
 
     private void initialiseOrder() {
+        orderTotal = 0.00;
         String userId = userStack.getCurrentUserId();
         currentOrder = orderAPI.initializeOrder();
         if (currentOrder == null) {
@@ -365,7 +366,17 @@ public class WaiterScreen2Controller
     }
     @FXML
     protected void onRestartButtonClick() {
-        searchbuttonManager.clearAllButtons();/*SAMPLEUSE*/
+
+        Map<String, Integer> currentOrderItems = new HashMap<>(orderItems);
+
+        actionStack.push(() -> {
+            orderItems.putAll(currentOrderItems);
+            mainbuttonManager.updateOrderSummary();
+        });
+
+        orderItems.clear();
+        mainbuttonManager.updateOrderSummary();
+
     }
     @FXML
     protected void onFilterButtonClick() {
@@ -459,6 +470,7 @@ public class WaiterScreen2Controller
 
         private void updateOrderSummary() {
             labelManager.clearAllLabels();
+            orderTotal = 0.00;
             for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
                 String menuItemId = entry.getKey();
                 String itemName = menuAPI.reverseKeySearch(menuItemId);
@@ -468,10 +480,10 @@ public class WaiterScreen2Controller
                     Double price = (Double) menuItem.getMetadataValue("price");
                     Double total = price * quantity;
                     orderTotal += total;
-                    totalprice.setText("$" + String.format("%.2f", orderTotal));
                     labelManager.addLabel(quantity, itemName);
                 }
             }
+            totalprice.setText("$" + String.format("%.2f", orderTotal));
         }
 
         // Method to clear all buttons
