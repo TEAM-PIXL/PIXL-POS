@@ -1,10 +1,12 @@
 package teampixl.com.pixlpos.models.logs;
 
 import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.database.api.UsersAPI;
 import teampixl.com.pixlpos.models.logs.network.Util;
 import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 import teampixl.com.pixlpos.models.tools.DataManager;
 import teampixl.com.pixlpos.models.logs.definitions.*;
+import teampixl.com.pixlpos.common.TimeUtil;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -16,16 +18,38 @@ public class UserLogs extends DataManager {
                     Status logStatus,
                     Type logType,
                     Category logCategory,
-                    Priority logPriority
+                    Priority logPriority,
+                    String description
     ) throws Exception {
         super(initializeMetadata(action));
 
         this.data = new HashMap<>();
-        this.data.put("log_description", generateLogDescription());
+        this.data.put("log_description", description);
         this.data.put("log_status", logStatus);
         this.data.put("log_type", logType);
         this.data.put("log_category", logCategory);
         this.data.put("log_priority", logPriority);
+        String IP = Util.getIp();
+        this.data.put("log_location", Util.getLocation(IP));
+        this.data.put("log_device", Util.getDeviceInfo());
+        this.data.put("log_ip", IP);
+        this.data.put("log_mac", Util.getMacAddress());
+        this.data.put("log_os", Util.checkOS());
+    }
+
+    public UserLogs(Action action,
+                    Status logStatus,
+                    Type logType,
+                    Category logCategory,
+                    Priority logPriority
+    ) throws Exception {
+        super(initializeMetadata(action));
+        this.data = new HashMap<>();
+        this.data.put("log_status", logStatus);
+        this.data.put("log_type", logType);
+        this.data.put("log_category", logCategory);
+        this.data.put("log_priority", logPriority);
+        this.data.put("log_description", this.generateLogDescription());
         String IP = Util.getIp();
         this.data.put("log_location", Util.getLocation(IP));
         this.data.put("log_device", Util.getDeviceInfo());
@@ -54,6 +78,8 @@ public class UserLogs extends DataManager {
     }
 
     public String generateLogDescription() {
-        return "User " + UserStack.getInstance().getCurrentUserId() + " performed the action " + this.getMetadataValue("log_action") + " at the time " + this.getMetadataValue("log_timestamp");
+        long timestamp = (long) this.getMetadataValue("log_timestamp");
+        String readableTimestamp = TimeUtil.convertUnixTimestampToReadable(timestamp);
+        return "User " + UsersAPI.getInstance().reverseKeySearch(UserStack.getInstance().getCurrentUserId()) + " performed the action " + this.getMetadataValue("log_action") + " at the time " + readableTimestamp;
     }
 }
