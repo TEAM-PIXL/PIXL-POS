@@ -340,7 +340,7 @@ public class WaiterScreen2Controller
         searchbuttonManager.clearAllButtons();
         queryMenuItems = menuAPI.searchMenuItem(searchText);
         if (queryMenuItems.isEmpty()) {
-            showErrorDialog(searchText);
+            showErrorDialog("No items were found with the name: " + searchText);
             for (MenuItem menuItem : menuItems) {
                 searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                 id++;
@@ -399,15 +399,60 @@ public class WaiterScreen2Controller
 
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("No items found");
+        alert.setTitle("Error");
         alert.setHeaderText(null);
-        alert.setContentText("No items found for search term: " + message);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 
     @FXML
     protected void onSendOrderButtonClick() {
-        // TODO: When orderAPI finished
+        if (orderItems.isEmpty()) {
+            System.out.println("No items in order");
+            return;
+        }
+
+        for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
+            String menuItemId = entry.getKey();
+            int quantity = entry.getValue();
+
+            System.out.println(quantity + "x " + menuItemId);
+
+            List<StatusCode> statusCodes = orderAPI.putOrderItem(orderID, menuItemId, quantity);
+
+            if (!Exceptions.isSuccessful(statusCodes)){
+                System.err.println("Failed to add item to order: " + menuItemId + " Status: " + statusCodes);
+                showErrorDialog(Exceptions.returnStatus("Failed to add item to order:", statusCodes));
+                return;
+            }
+        }
+
+        // TODO: Fix the Drop downs to actually work
+
+//        List<StatusCode> statusCodes = new ArrayList<>();
+//        List<StatusCode> statusCodesCustomer = orderAPI.putOrderCustomers(orderID, Integer.valueOf(customernumber.getValue()));
+//        statusCodes.addAll(statusCodesCustomer);
+//        List<StatusCode> statusCodesTableNum = orderAPI.putOrderTableNumber(orderID, Integer.valueOf(tablenumber.getValue()));
+//        statusCodes.addAll(statusCodesTableNum);
+//        List<StatusCode> statusCodesOrderType = orderAPI.putOrderType(orderID, Order.OrderType.DINE_IN);
+//        statusCodes.addAll(statusCodesOrderType);
+//        List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.CARD);
+//        statusCodes.addAll(statusCodesPaymentSelection);
+//        List<StatusCode> statusCodesOrderStatus = orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT);
+//        statusCodes.addAll(statusCodesOrderStatus);
+//
+//        if (!Exceptions.isSuccessful(statusCodes)) {
+//            showErrorDialog(Exceptions.returnStatus("Failed to Apply Order Details to order:", statusCodes));
+//        }
+
+        List<StatusCode> statusCodes = orderAPI.postOrder(currentOrder);
+        if (Exceptions.isSuccessful(statusCodes)){
+            System.out.println("Order Placed Successfully");
+            initialiseOrder();
+            onRestartButtonClick();
+        } else {
+            showErrorDialog(Exceptions.returnStatus("Order could not be placed with the following erros:", statusCodes));
+        }
     }
 
     @FXML
@@ -463,6 +508,7 @@ public class WaiterScreen2Controller
     protected void onFilterButtonClick() {
         // NOT NEEDED
     }
+
     @FXML
     protected void onLogoutButtonClick() {
         GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutbutton);
