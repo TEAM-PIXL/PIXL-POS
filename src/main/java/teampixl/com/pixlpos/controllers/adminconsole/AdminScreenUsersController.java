@@ -309,7 +309,15 @@ public class AdminScreenUsersController
             HBox hbox = items.get(i);
 
             if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
-                items.remove(i);  // Remove the HBox at the found index
+                try{
+                    items.remove(i);  // Remove the HBox at the found index
+                    // Handle delete user button click
+                    dataStore.deleteUser(userAPI.getUser(userAPI.reverseKeySearch(id)));
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "Deleted User", "User has been deleted");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Deleted User", "Unexpected error occured: " + e.getMessage());
+                }
                 break;            // Exit the loop once the HBox is removed
             }
         }
