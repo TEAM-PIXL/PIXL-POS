@@ -1,9 +1,11 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
@@ -22,7 +24,7 @@ import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.UsersAPI;
-
+import javafx.scene.control.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -31,8 +33,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.Users;
 import javafx.scene.layout.HBox;
+import teampixl.com.pixlpos.models.tools.DataManager;
+
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class AdminScreenUsersController
 {
@@ -43,6 +51,10 @@ public class AdminScreenUsersController
     private final UserStack userStack = UserStack.getInstance();
     Users currentuser = userStack.getCurrentUser();
     String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
+    private DataStore dataStore;
+    private UsersAPI userAPI;
+    private DataManager dataManager;
+    private Users loadedUser;
     /*
     Shared Components
      */
@@ -73,15 +85,15 @@ public class AdminScreenUsersController
     User components
      */
     @FXML
-    private TextField firstnamefield;
+    private TextField firstNameField;
     @FXML
-    private TextField lastnamefield;
+    private TextField lastNameField;
     @FXML
-    private TextField emailfield;
+    private TextField emailField;
     @FXML
-    private PasswordField passwordfield;
+    private PasswordField passwordField;
     @FXML
-    private ChoiceBox<Users.UserRole> roleselect;
+    private ChoiceBox<Users.UserRole> roleSelect;
 
     @FXML
     private Button submitbutton;
@@ -107,53 +119,47 @@ public class AdminScreenUsersController
         }
     };
 
+
     @FXML
     public void initialize() {
         datetime.start();
         adding_counter = 0;
         userslist.getItems().clear();
         greeting.setText("Hello, " + firstName);
+        dataStore = DataStore.getInstance();
+        userAPI = UsersAPI.getInstance();
+
+        populateUserGrid();
 
     }
 
+    private void populateUserGrid() {
+        int id_counter = 0;
 
+        ObservableList<Users> listOfUsers = dataStore.readUsers();
 
+        for (Users user : listOfUsers) {
+            String username = dataManager.getMetadataValue("username").toString();
 
+            addUserToListView(
+                    userslist,
+                    String.valueOf(id_counter),
+                    userAPI.getUsersFirstNameByUsername(username),
+                    (userAPI.getUsersFirstNameByUsername(username) + " " + userAPI.getUsersLastNameByUsername(username)),
+                    userAPI.getUsersEmailByUsername(username),
+                    dataManager.getMetadataValue("created_at").toString();,
+                    userAPI.getUsersRoleByUsername(username).toString());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            id_counter++;
+        }
+    }
 
     @FXML
     protected void onSubmitButtonClick(){
 
     }
     @FXML
-        protected void onAddUserButtonClick(){
+    protected void onAddUserButtonClick(){
 
         if(adding_counter == 0){
             addUserToListView(userslist,String.valueOf(adding_counter),"steve steven","steve@gmail.com","Graycat45","20/20/2033","Waiter");
@@ -228,11 +234,11 @@ public class AdminScreenUsersController
 
 
     // Placeholder methods for button actions
-    private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
+    private void onEditButtonClick(ActionEvent event, String id) {
         // Implement edit menu item logic here
     }
 
-    private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
+    private void onRemoveButtonClick(ActionEvent event, String id) {
         // Implement remove menu item logic here
 
         ObservableList<HBox> items = userslist.getItems(); // Get the items of the ListView
@@ -269,11 +275,11 @@ public class AdminScreenUsersController
         // Name and Email
         AnchorPane nameEmailPane = new AnchorPane();
         Label nameLabel = new Label(name);
-        nameLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        nameLabel.setAlignment(Pos.CENTER);
         nameLabel.setContentDisplay(ContentDisplay.BOTTOM);
         nameLabel.setPrefSize(83.2, 50.4);
         Label emailLabel = new Label(email);
-        emailLabel.setTextFill(javafx.scene.paint.Color.web("#918e8e"));
+        emailLabel.setTextFill(Color.web("#918e8e"));
         nameLabel.setGraphic(emailLabel);
         AnchorPane.setTopAnchor(nameLabel, 0.0);
         AnchorPane.setRightAnchor(nameLabel, 0.0);
@@ -285,7 +291,7 @@ public class AdminScreenUsersController
         // Username
         AnchorPane usernamePane = new AnchorPane();
         Label usernameLabel = new Label(username);
-        usernameLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        usernameLabel.setAlignment(Pos.CENTER);
         usernameLabel.setContentDisplay(ContentDisplay.CENTER);
         usernameLabel.setPrefSize(111.2, 50.4);
         AnchorPane.setTopAnchor(usernameLabel, 0.0);
@@ -298,7 +304,7 @@ public class AdminScreenUsersController
         // User Since Date
         AnchorPane datePane = new AnchorPane();
         Label dateLabel = new Label(userSince);
-        dateLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        dateLabel.setAlignment(Pos.CENTER);
         dateLabel.setPrefSize(89.6, 50.4);
         AnchorPane.setTopAnchor(dateLabel, 0.0);
         AnchorPane.setRightAnchor(dateLabel, 0.0);
@@ -310,10 +316,10 @@ public class AdminScreenUsersController
         // Role
         AnchorPane rolePane = new AnchorPane();
         Label roleLabel = new Label(role);
-        roleLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        roleLabel.setAlignment(Pos.CENTER);
         roleLabel.setPrefSize(83.2, 50.4);
         roleLabel.setStyle("-fx-background-color: #0095FF; -fx-background-radius: 10;");
-        roleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+        roleLabel.setTextFill(Color.WHITE);
         AnchorPane.setTopAnchor(roleLabel, 0.0);
         AnchorPane.setRightAnchor(roleLabel, 0.0);
         AnchorPane.setBottomAnchor(roleLabel, 0.0);
@@ -360,6 +366,14 @@ public class AdminScreenUsersController
 
         // Add the HBox to the ListView
         listView.getItems().add(hbox);
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
 }
