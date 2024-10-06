@@ -17,18 +17,22 @@ import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) {
-        IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
-        StockAPI stockAPI = StockAPI.getInstance();
+        Users user = new Users("John", "Doe", "johnnyboy", "Goo7yLu%%y", "parker@gmail.com", Users.UserRole.WAITER);
 
-        List<StatusCode> STATUS = ingredientsAPI.postIngredient("My Item");
-        if (isSuccessful(STATUS)) {
-            System.out.println("Ingredient created successfully.");
-        } else {
-            System.out.println(returnStatus("Ingredient could not be created with the following errors:", STATUS));
-        }
-        List<StatusCode> STATUS2 = stockAPI.postStock(ingredientsAPI.keySearch("My Item"), Stock.StockStatus.INSTOCK, Stock.UnitType.KG, 10.0, false);
-        System.out.println("Stock created with the following status: " + STATUS2);
-
+        System.out.println("User: " + user);
+        System.out.println("User Metadata: " + user.getMetadata());
+        System.out.println("User Data: " + user.getData());
+//        System.out.println("User Metadata Map: " + user.getMetadataMap());
+//        System.out.println("User Metadata Value: " + user.getMetadataValue("id"));
+//        System.out.println("User Data Value: " + user.getDataValue("password"));
+//        user.updateMetadata("id", "1234");
+//        user.setDataValue("password", "Goo7yLu%%y2");
+//        System.out.println("User Metadata: " + user.getMetadata());
+//        System.out.println("User Data: " + user.getData());
+//        System.out.println("User Metadata Map: " + user.getMetadataMap());
+//        System.out.println("User Metadata Value: " + user.getMetadataValue("id"));
+//        System.out.println("User Data Value: " + user.getDataValue("password"));
+//        System.out.println("User: " + user);
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
 //        UserStack userStack = UserStack.getInstance();

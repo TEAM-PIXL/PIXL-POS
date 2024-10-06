@@ -94,9 +94,10 @@ public class DatabaseHelper {
             user_id TEXT PRIMARY KEY,
             theme TEXT,
             resolution TEXT,
-            language TEXT,
             currency TEXT,
             timezone TEXT,
+            language TEXT,
+            access_level TEXT,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
     """;

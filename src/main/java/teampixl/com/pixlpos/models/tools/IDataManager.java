@@ -1,6 +1,4 @@
-package teampixl.com.pixlpos.models.interfaces;
-
-import teampixl.com.pixlpos.database.MetadataWrapper;
+package teampixl.com.pixlpos.models.tools;
 
 import java.util.Map;
 
