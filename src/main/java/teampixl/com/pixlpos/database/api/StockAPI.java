@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 public class StockAPI {
     private static StockAPI INSTANCE;
     private static final DataStore DATA_STORE = DataStore.getInstance();
+    private static final IngredientsAPI INGREDIENTS_API = IngredientsAPI.getInstance();
 
     private StockAPI() { }
 
@@ -197,6 +198,15 @@ public class StockAPI {
     }
 
     /**
+     * Gets all stock items from the database.
+     *
+     * @return a list of stock items
+     */
+    public List<Stock> getStock() {
+        return DATA_STORE.readStock();
+    }
+
+    /**
      * Gets the Stock object associated with the given ingredient ID.
      *
      * @param INGREDIENT_ID the ingredient ID
@@ -210,11 +220,11 @@ public class StockAPI {
     /**
      * Creates a new stock entry and adds it to the database.
      *
-     * @param INGREDIENT_ID  the ingredient ID
-     * @param STOCK_STATUS   the stock status
-     * @param UNIT_TYPE      the unit type
-     * @param NUMERAL        the quantity
-     * @param ON_ORDER       the onOrder status
+     * @param INGREDIENT_ID the ingredient ID
+     * @param STOCK_STATUS the stock status
+     * @param UNIT_TYPE the unit type
+     * @param NUMERAL the quantity
+     * @param ON_ORDER the onOrder status
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> postStock(String INGREDIENT_ID, Stock.StockStatus STOCK_STATUS, Stock.UnitType UNIT_TYPE, Object NUMERAL, boolean ON_ORDER) {
@@ -225,11 +235,18 @@ public class StockAPI {
             VALIDATIONS.add(validateStockByUnitType(UNIT_TYPE));
             VALIDATIONS.add(validateStockByQuantity(NUMERAL));
             VALIDATIONS.add(validateStockByOnOrder());
+            if (UNIT_TYPE == Stock.UnitType.QTY && !(NUMERAL instanceof Integer)) {
+                VALIDATIONS.add(StatusCode.STOCK_QUANTITY_MUST_BE_INTEGER);
+            }
+            if ((UNIT_TYPE == Stock.UnitType.KG || UNIT_TYPE == Stock.UnitType.L) && !(NUMERAL instanceof Double)) {
+                VALIDATIONS.add(StatusCode.STOCK_QUANTITY_MUST_BE_DOUBLE);
+            }
+
             if (!Exceptions.isSuccessful(VALIDATIONS)) {
                 return VALIDATIONS;
             }
 
-            Ingredients INGREDIENT = IngredientsAPI.getInstance().keyTransform(INGREDIENT_ID);
+            Ingredients INGREDIENT = INGREDIENTS_API.keyTransform(INGREDIENT_ID);
             if (INGREDIENT == null) {
                 VALIDATIONS.add(StatusCode.INGREDIENT_NOT_FOUND);
                 return VALIDATIONS;
@@ -240,10 +257,11 @@ public class StockAPI {
                 VALIDATIONS.add(StatusCode.STOCK_ALREADY_EXISTS);
                 return VALIDATIONS;
             }
-
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
             Stock STOCK = new Stock(INGREDIENT, STOCK_STATUS, UNIT_TYPE, NUMERAL, ON_ORDER);
             DATA_STORE.createStock(STOCK);
-            VALIDATIONS.add(StatusCode.SUCCESS);
             return VALIDATIONS;
         } catch (Exception E) {
             VALIDATIONS.add(StatusCode.STOCK_CREATION_FAILED);
@@ -255,7 +273,7 @@ public class StockAPI {
      * Updates the quantity of an existing stock.
      *
      * @param INGREDIENT_ID the ingredient ID
-     * @param NEW_NUMERAL   the new quantity
+     * @param NEW_NUMERAL the new quantity
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putStockNumeral(String INGREDIENT_ID, Object NEW_NUMERAL) {
@@ -282,8 +300,8 @@ public class StockAPI {
     /**
      * Updates the unit type of existing stock.
      *
-     * @param INGREDIENT_ID    the ingredient ID
-     * @param NEW_UNIT_TYPE    the new unit type
+     * @param INGREDIENT_ID the ingredient ID
+     * @param NEW_UNIT_TYPE the new unit type
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putStockUnitType(String INGREDIENT_ID, Stock.UnitType NEW_UNIT_TYPE) {
@@ -311,7 +329,7 @@ public class StockAPI {
      * Updates the onOrder status of an existing stock.
      *
      * @param INGREDIENT_ID the ingredient ID
-     * @param NEW_ON_ORDER  the new onOrder status
+     * @param NEW_ON_ORDER the new onOrder status
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putStockOnOrder(String INGREDIENT_ID, boolean NEW_ON_ORDER) {
@@ -338,8 +356,8 @@ public class StockAPI {
     /**
      * Updates the stock status of an existing stock.
      *
-     * @param INGREDIENT_ID     the ingredient ID
-     * @param NEW_STOCK_STATUS  the new stock status
+     * @param INGREDIENT_ID the ingredient ID
+     * @param NEW_STOCK_STATUS the new stock status
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putStockStatus(String INGREDIENT_ID, Stock.StockStatus NEW_STOCK_STATUS) {
