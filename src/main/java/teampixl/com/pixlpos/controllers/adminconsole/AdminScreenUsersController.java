@@ -220,10 +220,11 @@ public class AdminScreenUsersController
             } else {
                 if (userAPI.getUser(username) == null) {
                     boolean registerUser = AuthenticationManager.register(firstName, lastName, username, password, email, role);
-                    if (registerUser) {
+                    try {
+                        userAPI.postUsers(firstName, lastName, username, password, email, role);
                         initialize();
                         showAlert(Alert.AlertType.CONFIRMATION, "New User", "New User has been created");
-                    } else {
+                    }catch (Exception e) {
                         showAlert(Alert.AlertType.ERROR, "New User", "Registration Failed");
                     }
                 } else {
@@ -448,9 +449,8 @@ public class AdminScreenUsersController
     }
 
     private void populateUserParam(Users User) {
-        Object price = User.getMetadataValue("price");
-        Object itemName = User.getData().get("itemName");
-        Object itemType = User.getData().get("itemType");
+        Object username = User.getMetadataValue("username");
+        Object password = User.getData().get("password");
         Object email = User.getData().get("email");
         Object role = User.getMetadata().metadata().get("role");
         Object fistName = User.getMetadata().metadata().get("first_name");
