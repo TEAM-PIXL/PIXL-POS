@@ -155,6 +155,15 @@ public class IngredientsAPI {
     }
 
     /**
+     * Reads all ingredients from memory.
+     *
+     * @return a list of all ingredients
+     */
+    public List<Ingredients> getIngredients() {
+        return DATA_STORE.readIngredients();
+    }
+
+    /**
      * Gets an ingredient from memory based on its name.
      *
      * @param INGREDIENT_NAME the name of the ingredient

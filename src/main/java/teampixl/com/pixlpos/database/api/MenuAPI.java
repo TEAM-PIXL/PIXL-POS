@@ -272,6 +272,15 @@ public class MenuAPI {
     }
 
     /**
+     * Retrieves all menu items from the database.
+     *
+     * @return a list of menu items
+     */
+    public List<MenuItem> getMenuItems() {
+        return DATA_STORE.readMenuItems();
+    }
+
+    /**
      * Gets a MenuItem object based on its name.
      *
      * @param MENU_ITEM_NAME the name of the menu item

@@ -197,6 +197,15 @@ public class StockAPI {
     }
 
     /**
+     * Gets all stock items from the database.
+     *
+     * @return a list of stock items
+     */
+    public List<Stock> getStock() {
+        return DATA_STORE.readStock();
+    }
+
+    /**
      * Gets the Stock object associated with the given ingredient ID.
      *
      * @param INGREDIENT_ID the ingredient ID

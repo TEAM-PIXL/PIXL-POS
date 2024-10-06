@@ -239,6 +239,15 @@ public class UsersAPI {
     }
 
     /**
+     * Gets all users from memory.
+     *
+     * @return list of all users
+     */
+    public List<Users> getUsers() {
+        return dataStore.readUsers();
+    }
+
+    /**
      * Gets a user from memory.
      *
      * @param USERNAME the query to search for the user
