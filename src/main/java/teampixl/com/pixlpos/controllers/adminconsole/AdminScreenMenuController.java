@@ -168,21 +168,42 @@ public class AdminScreenMenuController
     }
     @FXML
     protected void onAddMenuItemButtonClick(){
+        try {
+            Double price;
+            String itemName = menuitemnamefield.getText();
+            MenuItem.ItemType itemType = itemtypefield.getSelectionModel().getSelectedItem();
+            MenuItem.DietaryRequirement dietaryRequirement = dietaryrequirementsfield.getValue();
+            String description = itemdescriptionfield.getText();
 
-
-        if(adding_counter == 0){
-            addMenuItemToListView(menuitemlist,String.valueOf(adding_counter),"Foo Burger","$20.98","MAIN","VEGAN");
+            if (itemName.isEmpty() || itemType == null || description.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "Item Name, Item Type, Description and Price are required");
+            } else {
+                try {
+                    price = Double.parseDouble(pricefield.getText());
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Please enter a valid price");
+                    return;
+                }
+                if (price < 0){
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Price cannot be negative");
+                    return;
+                }
+                if (datastore.getMenuItem(itemName) == null) {
+                    MenuItem newMenuItem = new MenuItem(itemName, price, MenuItem.ItemType.MAIN, true, description, null);
+                    datastore.createMenuItem(newMenuItem);
+                    if (datastore.getMenuItem(itemName) != null) {
+                        initialize();
+                        showAlert(Alert.AlertType.CONFIRMATION, "New Menu Item", "New Menu Item has been created");
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "New Menu Item", "Menu Item creation failed");
+                    }
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New Menu Item", "Menu Item already exists");
+                }
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "New Menu Item", "Unexpected error occurred: " + e.getMessage());
         }
-        else if(adding_counter == 1){
-            addMenuItemToListView(menuitemlist,String.valueOf(adding_counter),"American Burger","$20.98","MAIN","NULL");
-        }
-        else if(adding_counter == 2){
-            addMenuItemToListView(menuitemlist,String.valueOf(adding_counter),"CHEESE BURGER","$14.98","MAIN","NULL");
-        }
-        else{
-            addMenuItemToListView(menuitemlist,String.valueOf(adding_counter),"you get it","$999","MAIN","meow");
-        }
-        adding_counter++;
     }
     @FXML
     protected void onCancelButtonClick(){
