@@ -82,12 +82,6 @@ public class Stock implements IDataManager {
      * @param onOrder: boolean
      */
     public Stock(Ingredients ingredient, StockStatus stockStatus, UnitType unitType, Object numeral, boolean onOrder) {
-        if (unitType == UnitType.QTY && !(numeral instanceof Integer)) {
-            throw new IllegalArgumentException("Numeral must be an Integer for QTY unit type");
-        }
-        if ((unitType == UnitType.KG || unitType == UnitType.L) && !(numeral instanceof Double)) {
-            throw new IllegalArgumentException("Numeral must be a Double for KG or L unit types");
-        }
         if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
             numeral = 0;
         }

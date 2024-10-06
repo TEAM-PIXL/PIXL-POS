@@ -72,7 +72,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
      * Returns the singleton instance of the DataStore class.
      * @return DataStore - The singleton instance of the DataStore class.
      */
-    public static DataStore getInstance() {
+    public static synchronized DataStore getInstance() {
         if (instance == null) {
             instance = new DataStore();
         }
@@ -604,9 +604,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String dietaryRequirementStr = rs.getString("dietary_requirement");
                 MenuItem.DietaryRequirement dietaryRequirement = dietaryRequirementStr != null ? MenuItem.DietaryRequirement.valueOf(dietaryRequirementStr) : null;
                 String description = rs.getString("description");
+                String notes = rs.getString("notes");
+                Integer amountOrdered = rs.getInt("amount_ordered");
 
                 MenuItem item = new MenuItem(itemName, price, itemType, activeItem, description, dietaryRequirement);
                 item.updateMetadata("id", id);
+                item.setDataValue("notes", notes);
+                item.setDataValue("amountOrdered", amountOrdered);
                 menuItems.add(item);
             }
 
@@ -714,8 +718,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
-                double numeral = rs.getDouble("numeral");  // Assuming that numeral is stored as REAL in SQLite
-                Ingredients ingredient = getIngredientById(ingredientId);  // You'll need a method to fetch ingredient by ID
+                double numeral = rs.getDouble("numeral");
+                Ingredients ingredient = getIngredientById(ingredientId);
 
                 assert ingredient != null;
                 ingredientsMap.put(ingredient.getMetadata().metadata().get("itemName").toString(), numeral);
@@ -801,9 +805,101 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
     private void loadOrdersFromDatabase() {
+        long twentyFourHoursAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
+
+        String sql = "SELECT * FROM orders WHERE updated_at >= ?";
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, twentyFourHoursAgo);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String orderId = rs.getString("order_id");
+                    int orderNumber = rs.getInt("order_number");
+                    String userId = rs.getString("user_id");
+                    Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
+                    boolean isCompleted = rs.getInt("is_completed") == 1;
+                    Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                    int tableNumber = rs.getInt("table_number");
+                    int customers = rs.getInt("customers");
+                    long createdAt = rs.getLong("created_at");
+                    long updatedAt = rs.getLong("updated_at");
+                    double total = rs.getDouble("total");
+                    String specialRequests = rs.getString("special_requests");
+                    Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
+
+                    Order order = new Order(orderNumber, userId);
+                    order.updateMetadata("order_id", orderId);
+                    order.updateMetadata("order_status", orderStatus);
+                    order.updateMetadata("is_completed", isCompleted);
+                    order.updateMetadata("order_type", orderType);
+                    order.updateMetadata("table_number", tableNumber);
+                    order.updateMetadata("customers", customers);
+                    order.updateMetadata("created_at", createdAt);
+                    order.updateMetadata("updated_at", updatedAt);
+                    order.setDataValue("total", total);
+                    order.setDataValue("special_requests", specialRequests);
+                    order.setDataValue("payment_method", paymentMethod);
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void loadOrdersFromDatabase(long startTime, long endTime) {
+        String sql = "SELECT * FROM orders WHERE updated_at BETWEEN ? AND ?";
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, startTime);
+            pstmt.setLong(2, endTime);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String orderId = rs.getString("order_id");
+                    int orderNumber = rs.getInt("order_number");
+                    String userId = rs.getString("user_id");
+                    Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
+                    boolean isCompleted = rs.getInt("is_completed") == 1;
+                    Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                    int tableNumber = rs.getInt("table_number");
+                    int customers = rs.getInt("customers");
+                    long createdAt = rs.getLong("created_at");
+                    long updatedAt = rs.getLong("updated_at");
+                    double total = rs.getDouble("total");
+                    String specialRequests = rs.getString("special_requests");
+                    Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
+
+                    Order order = new Order(orderNumber, userId);
+                    order.updateMetadata("order_id", orderId);
+                    order.updateMetadata("order_status", orderStatus);
+                    order.updateMetadata("is_completed", isCompleted);
+                    order.updateMetadata("order_type", orderType);
+                    order.updateMetadata("table_number", tableNumber);
+                    order.updateMetadata("customers", customers);
+                    order.updateMetadata("created_at", createdAt);
+                    order.updateMetadata("updated_at", updatedAt);
+                    order.setDataValue("total", total);
+                    order.setDataValue("special_requests", specialRequests);
+                    order.setDataValue("payment_method", paymentMethod);
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void loadAllOrdersFromDatabase() {
+        String sql = "SELECT * FROM orders";
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM orders")) {
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 String orderId = rs.getString("order_id");
@@ -811,25 +907,35 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String userId = rs.getString("user_id");
                 Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
                 boolean isCompleted = rs.getInt("is_completed") == 1;
+                Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                int tableNumber = rs.getInt("table_number");
+                int customers = rs.getInt("customers");
                 long createdAt = rs.getLong("created_at");
                 long updatedAt = rs.getLong("updated_at");
                 double total = rs.getDouble("total");
+                String specialRequests = rs.getString("special_requests");
+                Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
 
                 Order order = new Order(orderNumber, userId);
                 order.updateMetadata("order_id", orderId);
                 order.updateMetadata("order_status", orderStatus);
                 order.updateMetadata("is_completed", isCompleted);
+                order.updateMetadata("order_type", orderType);
+                order.updateMetadata("table_number", tableNumber);
+                order.updateMetadata("customers", customers);
                 order.updateMetadata("created_at", createdAt);
                 order.updateMetadata("updated_at", updatedAt);
                 order.setDataValue("total", total);
+                order.setDataValue("special_requests", specialRequests);
+                order.setDataValue("payment_method", paymentMethod);
 
                 orders.add(order);
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
 
     public void loadOrderItems(String orderId, Order order) {
         ObservableList<Map<String, Object>> orderItemsList = FXCollections.observableArrayList();
@@ -916,7 +1022,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void saveOrderToDatabase(Order order) {
-        String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, total, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, order_type, table_number, customers, total, special_requests, payment_method, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -926,9 +1032,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setString(3, (String) order.getMetadata().metadata().get("user_id"));
             pstmt.setString(4, order.getMetadata().metadata().get("order_status").toString());
             pstmt.setInt(5, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
-            pstmt.setDouble(6, (Double) order.getData().get("total"));
-            pstmt.setLong(7, (Long) order.getMetadata().metadata().get("created_at"));
-            pstmt.setLong(8, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(6, order.getMetadata().metadata().get("order_type").toString());
+            pstmt.setInt(7, (Integer) order.getMetadata().metadata().get("table_number"));
+            pstmt.setInt(8, (Integer) order.getMetadata().metadata().get("customers"));
+            pstmt.setDouble(9, (Double) order.getData().get("total"));
+            pstmt.setString(10, (String) order.getData().get("special_requests"));
+            pstmt.setString(11, order.getData().get("payment_method").toString());
+            pstmt.setLong(12, (Long) order.getMetadata().metadata().get("created_at"));
+            pstmt.setLong(13, (Long) order.getMetadata().metadata().get("updated_at"));
 
             pstmt.executeUpdate();
             System.out.println("Order saved to database.");
@@ -998,16 +1109,20 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void updateOrderInDatabase(Order order) {
-        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, total = ?, updated_at = ? WHERE order_id = ?";
+        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, order_type = ?, table_number = ?, total = ?, special_requests = ?, payment_method = ?, updated_at = ? WHERE order_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, order.getMetadata().metadata().get("order_status").toString());
             pstmt.setInt(2, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
-            pstmt.setDouble(3, (Double) order.getData().get("total"));
-            pstmt.setLong(4, (Long) order.getMetadata().metadata().get("updated_at"));
-            pstmt.setString(5, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setString(3, order.getMetadata().metadata().get("order_type").toString());
+            pstmt.setInt(4, (Integer) order.getMetadata().metadata().get("table_number"));
+            pstmt.setDouble(5, (Double) order.getData().get("total"));
+            pstmt.setString(6, (String) order.getData().get("special_requests"));
+            pstmt.setString(7, (String) order.getData().get("payment_method").toString());
+            pstmt.setLong(8, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(9, (String) order.getMetadata().metadata().get("order_id"));
 
             pstmt.executeUpdate();
             System.out.println("Order updated in database.");
@@ -1106,8 +1221,10 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String email = rs.getString("email");
                 String password = rs.getString("password");
                 String additionalInfo = rs.getString("additional_info");
+                Boolean isActive = rs.getInt("is_active") == 1;
                 Users user = new Users(firstName, lastName,username, password, email, role);
                 user.updateMetadata("id", id);
+                user.updateMetadata("is_active", isActive);
                 user.setDataValue("additional_info", additionalInfo);
                 users.add(user);
             }
@@ -1209,7 +1326,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String notes = rs.getString("notes");
 
                 Ingredients ingredient = new Ingredients(itemName, notes);
-                ingredient.updateMetadata("ingredient_id", ingredientId); // Set the ingredient ID from the database
+                ingredient.updateMetadata("ingredient_id", ingredientId);
 
                 ingredients.add(ingredient);
             }
@@ -1296,7 +1413,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
-                Ingredients ingredient = getIngredientById(ingredientId);  // Fetch the ingredient by its ID
+                Ingredients ingredient = getIngredientById(ingredientId);
 
                 if (ingredient != null) {
                     Stock.StockStatus stockStatus = Stock.StockStatus.valueOf(rs.getString("stock_status"));
