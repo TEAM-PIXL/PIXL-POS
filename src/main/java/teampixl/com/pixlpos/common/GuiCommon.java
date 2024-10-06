@@ -1,3 +1,4 @@
+
 package teampixl.com.pixlpos.common;
 
 import javafx.fxml.FXMLLoader;
@@ -27,8 +28,16 @@ public class GuiCommon {
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
     public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml";
 
-    public static final String ADMIN_SCREEN_TITLE = "Admin Screen";
-    public static final String ADMIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/AdminStage.fxml";
+    public static final String ADMIN_SCREEN_HOME_TITLE = "Admin Home Screen";
+    public static final String ADMIN_SCREEN_HOME_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Home/AdminHome.fxml";
+    public static final String ADMIN_SCREEN_USERS_TITLE = "Admin Users Screen";
+    public static final String ADMIN_SCREEN_USERS_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Users/AdminUsers.fxml";
+    public static final String ADMIN_SCREEN_MENU_TITLE = "Admin Menu Screen";
+    public static final String ADMIN_SCREEN_MENU_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Menu/AdminMenu.fxml";
+    public static final String ADMIN_SCREEN_STOCK_TITLE = "Admin Stock Screen";
+    public static final String ADMIN_SCREEN_STOCK_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Stock/AdminStock.fxml";
+    public static final String ADMIN_SCREEN_ANALYTICS_TITLE = "Admin Analytics Screen";
+    public static final String ADMIN_SCREEN_ANALYTICS_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Analytics/AdminAnalytics.fxml";
 
     public static final String COOK_SCREEN_TITLE = "Cook Screen";
     public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage.fxml";
