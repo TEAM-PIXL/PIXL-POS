@@ -1,62 +1,64 @@
 package teampixl.com.pixlpos.database.api.util;
 
-import javafx.collections.ObservableList;
-import javafx.scene.chart.PieChart;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.*;
-import teampixl.com.pixlpos.models.*;
-import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.api.OrderAPI;
-
-
-import java.io.ObjectInputFilter;
-import java.util.List;
-
-import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
-import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
+import teampixl.com.pixlpos.models.logs.Logs;
+import teampixl.com.pixlpos.models.logs.definitions.Priority;
+import teampixl.com.pixlpos.models.logs.definitions.Category;
+import teampixl.com.pixlpos.models.logs.definitions.Type;
+import teampixl.com.pixlpos.models.logs.definitions.Status;
+import teampixl.com.pixlpos.models.logs.definitions.Action;
 
 public class APITest {
-    public static void main(String[] args) {
-        /* KEYS */
-        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
-        String[] DataKeys = {"description", "notes", "amountOrdered", "ingredients"};
+    public static void main(String[] args) throws Exception {
+        UserStack.getInstance().setCurrentUser("admin");
+        Logs logs = new Logs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
+        System.out.println("User Logs: " + logs.getMetadata().metadata());
+        System.out.println("User Logs: " + logs.getData());
 
-        MenuItem menuItem = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "This is a Pizza", MenuItem.DietaryRequirement.NONE);
-        Ingredients ingredients = new Ingredients("Cheese", "This is cheese");
-        Ingredients ingredients1 = new Ingredients("Tomato", "This is tomato");
-        System.out.println("Ingredients: " + ingredients.getMetadata().metadata());
-        System.out.println("Ingredients: " + ingredients.getData());
-
-
-        menuItem.addIngredient(ingredients, 2);
-        menuItem.addIngredient(ingredients1, 3);
-        System.out.println("Menu Item: " + menuItem.getMetadata().metadata());
-        System.out.println("Menu Item: " + menuItem.getData());
-        System.out.println("Menu Item: " + menuItem.getIngredients());
 
         /* KEYS */
-        System.out.println("Metadata Keys: ");
-        for (String key : MetadataKeys) {
-            System.out.println(key);
-        }
+//        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
+//        String[] DataKeys = {"description", "notes", "amountOrdered", "ingredients"};
+//
+//        MenuItem menuItem = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "This is a Pizza", MenuItem.DietaryRequirement.NONE);
+//        Ingredients ingredients = new Ingredients("Cheese", "This is cheese");
+//        Ingredients ingredients1 = new Ingredients("Tomato", "This is tomato");
+//        System.out.println("Ingredients: " + ingredients.getMetadata().metadata());
+//        System.out.println("Ingredients: " + ingredients.getData());
+//
+//
+//        menuItem.addIngredient(ingredients, 2);
+//        menuItem.addIngredient(ingredients1, 3);
+//        System.out.println("Menu Item: " + menuItem.getMetadata().metadata());
+//        System.out.println("Menu Item: " + menuItem.getData());
+//        System.out.println("Menu Item: " + menuItem.getIngredients());
+//
+//        /* KEYS */
+//        System.out.println("Metadata Keys: ");
+//        for (String key : MetadataKeys) {
+//            System.out.println(key);
+//        }
+//
+//        System.out.println("Data Keys: ");
+//        for (String key : DataKeys) {
+//            System.out.println(key);
+//        }
+//
+//        System.out.println("Item Name: " + menuItem.getMetadataValue(MetadataKeys[1]));
+//        System.out.println("Price: " + menuItem.getMetadataValue(MetadataKeys[2]));
+//        System.out.println("Item Type: " + menuItem.getMetadataValue(MetadataKeys[3]));
+//        System.out.println("Active Item: " + menuItem.getMetadataValue(MetadataKeys[4]));
+//        System.out.println("Dietary Requirement: " + menuItem.getMetadataValue(MetadataKeys[5]));
+//        System.out.println("Created At: " + menuItem.getMetadataValue(MetadataKeys[6]));
+//        System.out.println("Updated At: " + menuItem.getMetadataValue(MetadataKeys[7]));
+//
+//        System.out.println("Description: " + menuItem.getDataValue(DataKeys[0]));
+//        System.out.println("Notes: " + menuItem.getDataValue(DataKeys[1]));
+//        System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
+//        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
 
-        System.out.println("Data Keys: ");
-        for (String key : DataKeys) {
-            System.out.println(key);
-        }
+        /* Network */
 
-        System.out.println("Item Name: " + menuItem.getMetadataValue(MetadataKeys[1]));
-        System.out.println("Price: " + menuItem.getMetadataValue(MetadataKeys[2]));
-        System.out.println("Item Type: " + menuItem.getMetadataValue(MetadataKeys[3]));
-        System.out.println("Active Item: " + menuItem.getMetadataValue(MetadataKeys[4]));
-        System.out.println("Dietary Requirement: " + menuItem.getMetadataValue(MetadataKeys[5]));
-        System.out.println("Created At: " + menuItem.getMetadataValue(MetadataKeys[6]));
-        System.out.println("Updated At: " + menuItem.getMetadataValue(MetadataKeys[7]));
-
-        System.out.println("Description: " + menuItem.getDataValue(DataKeys[0]));
-        System.out.println("Notes: " + menuItem.getDataValue(DataKeys[1]));
-        System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
-        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
 
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
