@@ -79,6 +79,39 @@ public class DatabaseHelper {
         );
     """;
 
+        String sqlCreateLoginTable = """
+        CREATE TABLE IF NOT EXISTS user_logs (
+            id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            last_login DATETIME DEFAULT CURRENT_TIMESTAMP,
+            last_logout DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    """;
+
+        String sqlCreateSettingsTable = """
+        CREATE TABLE IF NOT EXISTS user_settings (
+            user_id TEXT PRIMARY KEY,
+            theme TEXT,
+            resolution TEXT,
+            language TEXT,
+            currency TEXT,
+            timezone TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    """;
+
+        String sqlCreateGlobalNotesTable = """
+        CREATE TABLE IF NOT EXISTS global_notes (
+            id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            note TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    """;
+
         String sqlCreateMenuItemsTable = """
         CREATE TABLE IF NOT EXISTS menu_items (
             id TEXT PRIMARY KEY,
@@ -160,6 +193,9 @@ public class DatabaseHelper {
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(sqlCreateUsersTable);
+            stmt.execute(sqlCreateLoginTable);
+            stmt.execute(sqlCreateSettingsTable);
+            stmt.execute(sqlCreateGlobalNotesTable);
             stmt.execute(sqlCreateMenuItemsTable);
             stmt.execute(sqlCreateOrdersTable);
             stmt.execute(sqlCreateOrderItemsTable);
