@@ -169,7 +169,6 @@ public class UsersAPI {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
             Class<?> VALUE_TYPE = VALUE.getClass();
-            System.out.println(VALUE_TYPE);
             if (VALUE_TYPE == Boolean.class) {
                 VALUE_TYPE = boolean.class;
             }
@@ -225,7 +224,7 @@ public class UsersAPI {
     }
 
     /**
-     * Transforms an ID into a Users object in memory. Core method for user retrieval.
+     * Transforms a ID into a Users object in memory. Core method for user retrieval.
      * This method is useful when dealing with metadata references in other models.
      *
      * @param ID the query to search for the user
@@ -236,15 +235,6 @@ public class UsersAPI {
                 .filter(user -> user.getMetadata().metadata().get("id").toString().equals(ID))
                 .findFirst()
                 .orElse(null);
-    }
-
-    /**
-     * Gets all users from memory.
-     *
-     * @return list of all users
-     */
-    public List<Users> getUsers() {
-        return dataStore.readUsers();
     }
 
     /**
@@ -529,11 +519,11 @@ public class UsersAPI {
      */
     public List<StatusCode> putUsersStatus(String USERNAME, boolean NEW_STATUS) {
         try {
-            List<StatusCode> VALIDATIONS = new ArrayList<>();
+            Pair<List<StatusCode>, Users> RESULT = validateAndGetUser("Status", NEW_STATUS, USERNAME);
+            List<StatusCode> VALIDATIONS = RESULT.getKey();
+            if (!Exceptions.isSuccessful(VALIDATIONS)) { return VALIDATIONS; }
 
-            String ID = keySearch(USERNAME);
-            if (ID == null) { return List.of(StatusCode.USER_NOT_FOUND); }
-            Users USER = keyTransform(ID);
+            Users USER = RESULT.getValue();
 
             USER.updateMetadata("is_active", NEW_STATUS);
             dataStore.updateUser(USER);
