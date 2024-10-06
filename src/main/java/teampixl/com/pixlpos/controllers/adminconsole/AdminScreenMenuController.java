@@ -125,7 +125,46 @@ public class AdminScreenMenuController
 
     @FXML
     protected void onSubmitButtonClick(){
-
+        if (loadedMenuItem == null) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please select a Menu Item");
+            return;
+        }
+        try{
+            String itemName = menuitemnamefield.getText();
+            Double price;
+            MenuItem.ItemType itemType = itemtypefield.getSelectionModel().getSelectedItem();
+            MenuItem.DietaryRequirement dietaryRequirement = dietaryrequirementsfield.getSelectionModel().getSelectedItem();
+            String description = itemdescriptionfield.getText();
+            if (itemName.isEmpty() || itemType == null || description.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "Item Name, Item Type, Description and Price are required");
+            }else {
+                try{
+                    price = Double.parseDouble(pricefield.getText());
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Please enter a valid price");
+                    return;
+                }
+                if (price < 0){
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Price cannot be negative");
+                    return;
+                }
+                try {
+                    loadedMenuItem.updateMetadata("itemName", itemName);
+                    loadedMenuItem.updateMetadata("price", price);
+                    loadedMenuItem.setDataValue("description", description);
+                    loadedMenuItem.updateMetadata("itemType", itemType);
+                    loadedMenuItem.updateMetadata("dietaryRequirement", dietaryRequirement);
+                    datastore.updateMenuItem(loadedMenuItem);
+                    showAlert(Alert.AlertType.CONFIRMATION, "Updated Menu Item", "Menu Item has been updated");
+                    initialize();
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Updated User", "Unexpected error occured while updating Menu Item: " + e.getMessage());
+                }
+            }
+        }
+        catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
+        }
     }
     @FXML
     protected void onAddMenuItemButtonClick(){
