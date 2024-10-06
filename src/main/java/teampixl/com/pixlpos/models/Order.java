@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.models;
 
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.models.interfaces.IDataManager;
 
 import java.util.*;
@@ -155,6 +156,12 @@ public class Order implements IDataManager {
         deductIngredientsFromStock(item, quantity);
         updateTimestamp();
 
+        MenuItem instanceItem = MenuAPI.getInstance().keyTransform(itemId);
+        int currentOrderTotal = (int) instanceItem.getData().get("amountOrdered");
+        int newOrderTotal = currentOrderTotal + quantity;
+        instanceItem.setDataValue("amountOrdered", newOrderTotal);
+        DataStore.getInstance().updateMenuItem(instanceItem);
+
         DataStore.getInstance().updateOrderItem(this, itemId, newQuantity);
     }
 
@@ -191,6 +198,12 @@ public class Order implements IDataManager {
             updateTotal(-item.getPrice() * quantity);
             restoreIngredientsToStock(item, quantity);
             updateTimestamp();
+
+            MenuItem instanceItem = MenuAPI.getInstance().keyTransform(itemId);
+            int currentOrderTotal = (int) instanceItem.getData().get("amountOrdered");
+            int newOrderTotal = currentOrderTotal - quantity;
+            instanceItem.setDataValue("amountOrdered", newOrderTotal);
+            DataStore.getInstance().updateMenuItem(instanceItem);
         } else {
             throw new IllegalArgumentException("Menu item not found in the order.");
         }

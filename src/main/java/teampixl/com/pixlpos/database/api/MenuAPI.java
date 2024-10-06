@@ -479,6 +479,13 @@ public class MenuAPI {
         return VALIDATIONS;
     }
 
+    /**
+     * Updates the status of an existing menu item.
+     *
+     * @param MENU_ITEM_NAME the name of the menu item
+     * @param ACTIVE_ITEM the new status for the menu item
+     * @return a list of status codes indicating the result of the operation
+     */
     public List<StatusCode> putMenuItemStatus(String MENU_ITEM_NAME, boolean ACTIVE_ITEM) {
         Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Status", ACTIVE_ITEM, MENU_ITEM_NAME);
         List<StatusCode> VALIDATIONS = new ArrayList<>(RESULT.getKey());
