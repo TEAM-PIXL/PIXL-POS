@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import teampixl.com.pixlpos.models.tools.IDataManager;
+import teampixl.com.pixlpos.models.tools.DataManager;
 import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 
 /**
@@ -22,11 +22,11 @@ import teampixl.com.pixlpos.models.tools.MetadataWrapper;
  * Data:
  * - unit: unitType
  * - numeral: numeral
- * @see IDataManager
+ * @see DataManager
  * @see MetadataWrapper
  * @see Ingredients
  */
-public class Stock implements IDataManager {
+public class Stock extends DataManager {
 
     /*======================================================================================================================================================================================================================================================
     Code Description:
@@ -52,9 +52,6 @@ public class Stock implements IDataManager {
         L,
         QTY
     }
-
-    private MetadataWrapper metadata;
-    private final Map<String, Object> data;
 
     /*======================================================================================================================================================================================================================================================
     Code Description:
@@ -82,19 +79,10 @@ public class Stock implements IDataManager {
      * @param onOrder: boolean
      */
     public Stock(Ingredients ingredient, StockStatus stockStatus, UnitType unitType, Object numeral, boolean onOrder) {
+        super(initializeMetadata(ingredient, stockStatus, onOrder));
         if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
             numeral = 0;
         }
-
-        Map<String, Object> metadataMap = new HashMap<>();
-        metadataMap.put("stock_id", UUID.randomUUID().toString());
-        metadataMap.put("ingredient_id", ingredient.getMetadata().metadata().get("ingredient_id"));
-        metadataMap.put("stockStatus", stockStatus);
-        metadataMap.put("onOrder", onOrder);
-        metadataMap.put("created_at", LocalDateTime.now());
-        metadataMap.put("lastUpdated", LocalDateTime.now());
-
-        this.metadata = new MetadataWrapper(metadataMap);
 
         this.data = new HashMap<>();
         data.put("unit", unitType);
@@ -103,45 +91,25 @@ public class Stock implements IDataManager {
         adjustStockStatus(numeral);
     }
 
+    private static MetadataWrapper initializeMetadata(Ingredients ingredient, StockStatus stockStatus, boolean onOrder) {
+        Map<String, Object> metadataMap = new HashMap<>();
+        metadataMap.put("stock_id", UUID.randomUUID().toString());
+        metadataMap.put("ingredient_id", ingredient.getMetadata().metadata().get("ingredient_id"));
+        metadataMap.put("stockStatus", stockStatus);
+        metadataMap.put("onOrder", onOrder);
+        metadataMap.put("created_at", LocalDateTime.now());
+        metadataMap.put("lastUpdated", LocalDateTime.now());
+        return new MetadataWrapper(metadataMap);
+    }
+
     /*======================================================================================================================================================================================================================================================
     Code Description:
     - Getters for metadata and data.
 
     Methods:
-        - getMetadata(): MetadataWrapper
-        - getData(): Map<String, Object>
-        - updateMetadata(String key, Object value): void
-        - setDataValue(String key, Object value): void
         - adjustStockStatus(Object numeral): void
-        - toString(): String
+        - getLowStockThreshold(): double
     ========================================================================================================================================================================================================================================================*/
-
-    public MetadataWrapper getMetadata() {
-        return metadata;
-    }
-
-    public Map<String, Object> getData() {
-        return data;
-    }
-
-    public void updateMetadata(String key, Object value) {
-        Map<String, Object> updatedMetadata = new HashMap<>(metadata.metadata());
-        updatedMetadata.put(key, value);
-        updatedMetadata.put("lastUpdated", LocalDateTime.now());
-        this.metadata = new MetadataWrapper(updatedMetadata);
-    }
-
-    public void setDataValue(String key, Object value) {
-        if ("numeral".equals(key)) {
-            if (value instanceof Integer && (Integer) value < 0) {
-                value = 0;
-            } else if (value instanceof Double && (Double) value < 0) {
-                value = 0.0;
-            }
-            adjustStockStatus(value);
-        }
-        data.put(key, value);
-    }
 
     private void adjustStockStatus(Object numeral) {
         double numeralValue = numeral instanceof Integer ? (Integer) numeral : (Double) numeral;
@@ -156,12 +124,14 @@ public class Stock implements IDataManager {
     }
 
     private double getLowStockThreshold() {
+        if (data.get("unit") == UnitType.KG) {
+            return 5;
+        } else if (data.get("unit") == UnitType.L) {
+            return 5;
+        } else if (data.get("unit") == UnitType.QTY) {
+            return 10;
+        }
         return Double.NaN;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Stock{Metadata: %s, Data: %s}", metadata.metadata(), new HashMap<>(data));
     }
 }
 
