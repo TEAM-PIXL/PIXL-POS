@@ -197,15 +197,15 @@ public class OrderAPI {
     /**
      * Retrieves the order ID based on the order number.
      *
-     * @param orderNumber the order number
+     * @param ORDER_NUMBER the order number
      * @return the order ID
      */
-    public String keySearch(Integer orderNumber) {
-        if (orderNumber == null) {
+    public String keySearch(Integer ORDER_NUMBER) {
+        if (ORDER_NUMBER == null) {
             return null;
         }
         return DATASTORE.readOrders().stream()
-                .filter(order -> Objects.equals(order.getMetadata().metadata().get("order_number"), orderNumber))
+                .filter(order -> Objects.equals(order.getMetadata().metadata().get("order_number"), ORDER_NUMBER))
                 .findFirst()
                 .map(order -> (String) order.getMetadata().metadata().get("order_id"))
                 .orElse(null);
@@ -214,15 +214,15 @@ public class OrderAPI {
     /**
      * Retrieves the order number based on the order ID.
      *
-     * @param orderId the order ID
+     * @param ORDER_ID the order ID
      * @return the order number
      */
-    public Integer reverseKeySearch(String orderId) {
-        if (orderId == null) {
+    public Integer reverseKeySearch(String ORDER_ID) {
+        if (ORDER_ID == null) {
             return null;
         }
         return DATASTORE.readOrders().stream()
-                .filter(order -> orderId.equals(order.getMetadata().metadata().get("order_id")))
+                .filter(order -> ORDER_ID.equals(order.getMetadata().metadata().get("order_id")))
                 .findFirst()
                 .map(order -> (Integer) order.getMetadata().metadata().get("order_number"))
                 .orElse(null);
@@ -231,15 +231,15 @@ public class OrderAPI {
     /**
      * Transforms an order ID into an Order object.
      *
-     * @param orderId the order ID
+     * @param ORDER_ID the order ID
      * @return the Order object
      */
-    public Order keyTransform(String orderId) {
-        if (orderId == null) {
+    public Order keyTransform(String ORDER_ID) {
+        if (ORDER_ID == null) {
             return null;
         }
         return DATASTORE.readOrders().stream()
-                .filter(order -> orderId.equals(order.getMetadata().metadata().get("order_id")))
+                .filter(order -> ORDER_ID.equals(order.getMetadata().metadata().get("order_id")))
                 .findFirst()
                 .orElse(null);
     }
@@ -247,11 +247,11 @@ public class OrderAPI {
     /**
      * Retrieves an Order object based on its order number.
      *
-     * @param orderNumber the order number
+     * @param ORDER_NUMBER the order number
      * @return the Order object
      */
-    public Order getOrderByNumber(Integer orderNumber) {
-        String orderId = keySearch(orderNumber);
+    public Order getOrderByNumber(Integer ORDER_NUMBER) {
+        String orderId = keySearch(ORDER_NUMBER);
         return keyTransform(orderId);
     }
 
@@ -267,29 +267,29 @@ public class OrderAPI {
     /**
      * Retrieves menu items associated with an order ID.
      *
-     * @param orderId the order ID
+     * @param ORDER_ID the order ID
      * @return a map of MenuItem objects and their quantities
      */
-    public Map<MenuItem, Integer> getOrderItemsById(String orderId) {
-        Order order = keyTransform(orderId);
-        if (order == null) {
+    public Map<MenuItem, Integer> getOrderItemsById(String ORDER_ID) {
+        Order ORDER = keyTransform(ORDER_ID);
+        if (ORDER == null) {
             return Collections.emptyMap();
         }
 
-        DATASTORE.loadOrderItems(orderId, order);
+        DATASTORE.loadOrderItems(ORDER_ID, ORDER);
 
         @SuppressWarnings("unchecked")
-        Map<String, Integer> menuItemsMap = (Map<String, Integer>) order.getData().get("menuItems");
-        Map<MenuItem, Integer> menuItemsWithQuantity = new HashMap<>();
+        Map<String, Integer> MENU_ITEMS_MAP = (Map<String, Integer>) ORDER.getData().get("menuItems");
+        Map<MenuItem, Integer> MENU_ITEMS_WITH_QUANTITY = new HashMap<>();
 
-        for (Map.Entry<String, Integer> entry : menuItemsMap.entrySet()) {
-            MenuItem menuItem = MENUAPI.keyTransform(entry.getKey());
-            if (menuItem != null) {
-                menuItemsWithQuantity.put(menuItem, entry.getValue());
+        for (Map.Entry<String, Integer> entry : MENU_ITEMS_MAP.entrySet()) {
+            MenuItem MENU_ITEM = MENUAPI.keyTransform(entry.getKey());
+            if (MENU_ITEM != null) {
+                MENU_ITEMS_WITH_QUANTITY.put(MENU_ITEM, entry.getValue());
             }
         }
 
-        return menuItemsWithQuantity;
+        return MENU_ITEMS_WITH_QUANTITY;
     }
 
     /**
@@ -298,24 +298,24 @@ public class OrderAPI {
      * @return the initialized Order object
      */
     public Order initializeOrder() {
-        String userId = UserStack.getInstance().getCurrentUserId();
-        if (userId == null) {
+        String USER_ID = UserStack.getInstance().getCurrentUserId();
+        if (USER_ID == null) {
             System.out.println("No current user found.");
             return null;
         }
 
-        List<Order> orders = DATASTORE.readOrders();
+        List<Order> ORDERS = DATASTORE.readOrders();
         long startOfToday = LocalDate.now()
                 .atStartOfDay(ZoneId.systemDefault())
                 .toInstant()
                 .toEpochMilli();
-        Optional<Order> pendingOrder = orders.stream()
-                .filter(order -> userId.equals(order.getMetadata().metadata().get("user_id")))
+        Optional<Order> PENDING_ORDER = ORDERS.stream()
+                .filter(order -> USER_ID.equals(order.getMetadata().metadata().get("user_id")))
                 .filter(order -> Order.OrderStatus.PENDING.name().equals(order.getMetadata().metadata().get("order_status")))
                 .filter(order -> {
-                    Object createdAtObj = order.getMetadata().metadata().get("created_at");
-                    if (createdAtObj instanceof Number) {
-                        long createdAt = ((Number) createdAtObj).longValue();
+                    Object CREATE_AT_OBJ = order.getMetadata().metadata().get("created_at");
+                    if (CREATE_AT_OBJ instanceof Number) {
+                        long createdAt = ((Number) CREATE_AT_OBJ).longValue();
                         System.out.println("Order created at: " + createdAt);
                         return createdAt >= startOfToday;
                     } else {
@@ -324,32 +324,32 @@ public class OrderAPI {
                     }
                 })
                 .max(Comparator.comparing(order -> {
-                    Object createdAtObj = order.getMetadata().metadata().get("created_at");
-                    if (createdAtObj instanceof Number) {
-                        System.out.println("Order created at: " + createdAtObj);
-                        return ((Number) createdAtObj).longValue();
+                    Object CREATE_AT_OBJ = order.getMetadata().metadata().get("created_at");
+                    if (CREATE_AT_OBJ instanceof Number) {
+                        System.out.println("Order created at: " + CREATE_AT_OBJ);
+                        return ((Number) CREATE_AT_OBJ).longValue();
                     } else {
                         return 0L;
                     }
                 }));
 
-        if (pendingOrder.isPresent()) {
-            System.out.println("Pending order found for user: " + userId);
-            return pendingOrder.get();
+        if (PENDING_ORDER.isPresent()) {
+            System.out.println("Pending order found for user: " + USER_ID);
+            return PENDING_ORDER.get();
         } else {
-            int orderNumber = 1;
-            if (!orders.isEmpty()) {
-                orderNumber = orders.stream()
+            int ORDER_NUMBER = 1;
+            if (!ORDERS.isEmpty()) {
+                ORDER_NUMBER = ORDERS.stream()
                         .mapToInt(Order::getOrderNumber)
                         .max()
                         .orElse(0) + 1;
             }
 
             try {
-                Order order = new Order(orderNumber, userId);
-                DATASTORE.createOrder(order);
-                System.out.println("New order created for user: " + userId + " with order number: " + orderNumber);
-                return order;
+                Order ORDER = new Order(ORDER_NUMBER, USER_ID);
+                DATASTORE.createOrder(ORDER);
+                System.out.println("New order created for user: " + USER_ID + " with order number: " + ORDER_NUMBER);
+                return ORDER;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -359,20 +359,25 @@ public class OrderAPI {
 
 
 
-
-    public List<StatusCode> postOrder(Order order) {
-        List<StatusCode> validations = validateOrder(order);
-        if (!Exceptions.isSuccessful(validations)) {
+    /**
+     * Posts an order to the database.
+     *
+     * @param ORDER the Order object to post
+     * @return a list of StatusCodes indicating the result of the operation
+     */
+    public List<StatusCode> postOrder(Order ORDER) {
+        List<StatusCode> VALIDATIONS = validateOrder(ORDER);
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
             System.out.println("Order post validation failed.");
-            return validations;
+            return VALIDATIONS;
         }
         System.out.println("Order post validation successful.");
 
         try {
-            order.updateMetadata("order_status", Order.OrderStatus.SENT.name());
-            DATASTORE.updateOrder(order);
+            ORDER.updateMetadata("order_status", Order.OrderStatus.SENT.name());
+            DATASTORE.updateOrder(ORDER);
             System.out.println("Order posted successfully.");
-            return validations;
+            return VALIDATIONS;
         } catch (Exception e) {
             return List.of(StatusCode.POST_ORDER_FAILED);
         }
@@ -381,181 +386,181 @@ public class OrderAPI {
     /**
      * Adds a menu item to an existing order.
      *
-     * @param orderId the order ID
-     * @param menuItemId the menu item ID
-     * @param quantity the quantity to add
+     * @param ORDER_ID the order ID
+     * @param MENU_ITEM_ID the menu item ID
+     * @param QUANTITY the quantity to add
      * @return a list of StatusCodes indicating the result of the operation
      */
-    public List<StatusCode> putOrderItem(String orderId, String menuItemId, Integer quantity) {
-        List<StatusCode> validations = new ArrayList<>();
+    public List<StatusCode> putOrderItem(String ORDER_ID, String MENU_ITEM_ID, Integer QUANTITY) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
-        StatusCode orderValidation = validateOrderById(orderId);
-        validations.add(orderValidation);
-        if (orderValidation != StatusCode.SUCCESS) {
-            return validations;
+        StatusCode ORDER_VALIDATION = validateOrderById(ORDER_ID);
+        VALIDATIONS.add(ORDER_VALIDATION);
+        if (ORDER_VALIDATION != StatusCode.SUCCESS) {
+            return VALIDATIONS;
         }
 
-        MenuItem menuItem = MENUAPI.keyTransform(menuItemId);
+        MenuItem menuItem = MENUAPI.keyTransform(MENU_ITEM_ID);
         if (menuItem == null) {
-            validations.add(StatusCode.MENU_ITEM_NOT_FOUND);
-            return validations;
+            VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
+            return VALIDATIONS;
         }
 
-        if (quantity == null || quantity <= 0) {
-            validations.add(StatusCode.INVALID_QUANTITY);
-            return validations;
+        if (QUANTITY == null || QUANTITY <= 0) {
+            VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
+            return VALIDATIONS;
         }
 
-        Order order = keyTransform(orderId);
+        Order order = keyTransform(ORDER_ID);
         if (order == null) {
-            validations.add(StatusCode.ORDER_NOT_FOUND);
-            return validations;
+            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
+            return VALIDATIONS;
         }
 
         try {
-            order.addMenuItem(menuItem, quantity);
+            order.addMenuItem(menuItem, QUANTITY);
             DATASTORE.updateOrder(order);
-            validations.add(StatusCode.SUCCESS);
+            VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (IllegalArgumentException | IllegalStateException e) {
-            validations.add(StatusCode.ORDER_UPDATE_FAILED);
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
         }
-        return validations;
+        return VALIDATIONS;
     }
 
     /**
      * Updates the status of an existing order.
      *
-     * @param orderId the order ID
-     * @param orderStatus the new order status
+     * @param ORDER_ID the order ID
+     * @param ORDER_STATUS the new order status
      * @return a list of StatusCodes indicating the result of the operation
      */
-    public List<StatusCode> putOrderStatus(String orderId, Order.OrderStatus orderStatus) {
-        List<StatusCode> validations = new ArrayList<>();
+    public List<StatusCode> putOrderStatus(String ORDER_ID, Order.OrderStatus ORDER_STATUS) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
-        validations.add(validateOrderById(orderId));
-        validations.add(validateOrderByStatus(orderStatus));
+        VALIDATIONS.add(validateOrderById(ORDER_ID));
+        VALIDATIONS.add(validateOrderByStatus(ORDER_STATUS));
 
-        if (!Exceptions.isSuccessful(validations)) {
-            return validations;
+        if (!Exceptions.isSuccessful(VALIDATIONS)) {
+            return VALIDATIONS;
         }
 
-        Order order = keyTransform(orderId);
-        if (order == null) {
-            validations.add(StatusCode.ORDER_NOT_FOUND);
-            return validations;
+        Order ORDER = keyTransform(ORDER_ID);
+        if (ORDER == null) {
+            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
+            return VALIDATIONS;
         }
 
         try {
-            order.updateOrderStatus(orderStatus);
-            DATASTORE.updateOrder(order);
-            validations.add(StatusCode.SUCCESS);
+            ORDER.updateOrderStatus(ORDER_STATUS);
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {
-            validations.add(StatusCode.ORDER_UPDATE_FAILED);
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
         }
-        return validations;
+        return VALIDATIONS;
     }
 
     /**
      * Removes a menu item from an existing order.
      *
-     * @param orderId the order ID
-     * @param menuItemId the menu item ID
-     * @param quantity the quantity to remove
+     * @param ORDER_ID the order ID
+     * @param MENU_ITEM_ID the menu item ID
+     * @param QUANTITY the quantity to remove
      * @return a list of StatusCodes indicating the result of the operation
      */
-    public List<StatusCode> deleteOrderItem(String orderId, String menuItemId, Integer quantity) {
-        List<StatusCode> validations = new ArrayList<>();
+    public List<StatusCode> deleteOrderItem(String ORDER_ID, String MENU_ITEM_ID, Integer QUANTITY) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
-        StatusCode orderValidation = validateOrderById(orderId);
-        validations.add(orderValidation);
-        if (orderValidation != StatusCode.SUCCESS) {
-            return validations;
+        StatusCode ORDER_VALIDATION = validateOrderById(ORDER_ID);
+        VALIDATIONS.add(ORDER_VALIDATION);
+        if (ORDER_VALIDATION != StatusCode.SUCCESS) {
+            return VALIDATIONS;
         }
-        MenuItem menuItem = MENUAPI.keyTransform(menuItemId);
+        MenuItem menuItem = MENUAPI.keyTransform(MENU_ITEM_ID);
         if (menuItem == null) {
-            validations.add(StatusCode.MENU_ITEM_NOT_FOUND);
-            return validations;
+            VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
+            return VALIDATIONS;
         }
 
-        if (quantity == null || quantity <= 0) {
-            validations.add(StatusCode.INVALID_QUANTITY);
-            return validations;
+        if (QUANTITY == null || QUANTITY <= 0) {
+            VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
+            return VALIDATIONS;
         }
 
-        Order order = keyTransform(orderId);
-        if (order == null) {
-            validations.add(StatusCode.ORDER_NOT_FOUND);
-            return validations;
+        Order ORDER = keyTransform(ORDER_ID);
+        if (ORDER == null) {
+            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
+            return VALIDATIONS;
         }
 
         try {
-            order.removeMenuItem(menuItem, quantity);
-            DATASTORE.updateOrder(order);
-            validations.add(StatusCode.SUCCESS);
+            ORDER.removeMenuItem(menuItem, QUANTITY);
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (IllegalArgumentException | IllegalStateException e) {
-            validations.add(StatusCode.ORDER_UPDATE_FAILED);
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
         }
-        return validations;
+        return VALIDATIONS;
     }
 
     /**
      * Deletes an order from the database.
      *
-     * @param orderId the order ID
+     * @param ORDER_ID the order ID
      * @return a list of StatusCodes indicating the result of the operation
      */
-    public List<StatusCode> deleteOrder(String orderId) {
-        List<StatusCode> validations = new ArrayList<>();
+    public List<StatusCode> deleteOrder(String ORDER_ID) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
-        StatusCode validation = validateOrderById(orderId);
-        validations.add(validation);
-        if (validation != StatusCode.SUCCESS) {
-            return validations;
+        StatusCode ORDER_VALIDATION = validateOrderById(ORDER_ID);
+        VALIDATIONS.add(ORDER_VALIDATION);
+        if (ORDER_VALIDATION != StatusCode.SUCCESS) {
+            return VALIDATIONS;
         }
 
-        Order order = keyTransform(orderId);
+        Order order = keyTransform(ORDER_ID);
         if (order == null) {
-            validations.add(StatusCode.ORDER_NOT_FOUND);
-            return validations;
+            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
+            return VALIDATIONS;
         }
 
         try {
             DATASTORE.deleteOrder(order);
-            validations.add(StatusCode.SUCCESS);
+            VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {
-            validations.add(StatusCode.ORDER_DELETION_FAILED);
+            VALIDATIONS.add(StatusCode.ORDER_DELETION_FAILED);
         }
-        return validations;
+        return VALIDATIONS;
     }
 
     /**
      * Clears all items from an existing order.
      *
-     * @param orderId the order ID
+     * @param ORDER_ID the order ID
      * @return a list of StatusCodes indicating the result of the operation
      */
-    public List<StatusCode> clearOrderItems(String orderId) {
-        List<StatusCode> validations = new ArrayList<>();
+    public List<StatusCode> clearOrderItems(String ORDER_ID) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
-        StatusCode orderValidation = validateOrderById(orderId);
-        validations.add(orderValidation);
-        if (orderValidation != StatusCode.SUCCESS) {
-            return validations;
+        StatusCode ORDER_VALIDATION = validateOrderById(ORDER_ID);
+        VALIDATIONS.add(ORDER_VALIDATION);
+        if (ORDER_VALIDATION != StatusCode.SUCCESS) {
+            return VALIDATIONS;
         }
 
-        Order order = keyTransform(orderId);
-        if (order == null) {
-            validations.add(StatusCode.ORDER_NOT_FOUND);
-            return validations;
+        Order ORDER = keyTransform(ORDER_ID);
+        if (ORDER == null) {
+            VALIDATIONS.add(StatusCode.ORDER_NOT_FOUND);
+            return VALIDATIONS;
         }
 
         try {
-            order.setDataValue("menuItems", new HashMap<>());
-            DATASTORE.updateOrder(order);
-            validations.add(StatusCode.SUCCESS);
+            ORDER.setDataValue("menuItems", new HashMap<>());
+            DATASTORE.updateOrder(ORDER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {
-            validations.add(StatusCode.ORDER_UPDATE_FAILED);
+            VALIDATIONS.add(StatusCode.ORDER_UPDATE_FAILED);
         }
-        return validations;
+        return VALIDATIONS;
     }
 }
