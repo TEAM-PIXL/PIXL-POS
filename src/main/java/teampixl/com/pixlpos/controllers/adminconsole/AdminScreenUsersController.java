@@ -41,6 +41,7 @@ import teampixl.com.pixlpos.models.tools.DataManager;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import javafx.scene.input.KeyCode;
 
 public class AdminScreenUsersController
 {
@@ -134,6 +135,15 @@ public class AdminScreenUsersController
         roleselect.getItems().clear();
         roleselect.getItems().addAll(new HashSet<>(Arrays.asList(Users.UserRole.values())));
         populateUserGrid();
+
+
+        searchbar.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                searchUser();
+            }
+        });
+
+        searchbar.setOnAction(event -> searchUser());
 
     }
 
@@ -465,6 +475,31 @@ public class AdminScreenUsersController
         emailfield.setText(email.toString());
         roleselect.setValue(Users.UserRole.valueOf(role.toString()));
         loadedUser = User;
+    }
+
+    private void searchUser(){
+        // Handle search button click
+        String searchInput = searchbar.getText();
+        if (searchInput.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a User");
+        }else {
+            try {
+                List<Users> usersList = userAPI.searchUsers(searchInput);
+                if (usersList.isEmpty()) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
+                }else {
+                    if (usersList.size() > 1) {
+                        showAlert(Alert.AlertType.ERROR, "Failed", "Multiple users found. Please refine your search");
+                    } else {
+                        loadedUser = usersList.getFirst();
+                        populateUserParam(loadedUser);
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
+            }
+        }
     }
 
 }

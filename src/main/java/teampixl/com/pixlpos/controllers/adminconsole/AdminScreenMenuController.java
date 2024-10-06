@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
@@ -13,6 +14,7 @@ import javafx.scene.control.ListView;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.geometry.Pos;
 import teampixl.com.pixlpos.database.api.MenuAPI;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.MenuItem;
 import javafx.animation.AnimationTimer;
 import teampixl.com.pixlpos.database.DataStore;
@@ -31,7 +33,6 @@ import java.util.List;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.models.Users;
 import javafx.scene.layout.HBox;
-import teampixl.com.pixlpos.database.DataStore;
 
 public class AdminScreenMenuController
 {
@@ -125,6 +126,15 @@ public class AdminScreenMenuController
         dietaryrequirementsfield.getItems().clear();
         dietaryrequirementsfield.getItems().addAll(MenuItem.DietaryRequirement.values());
         loadedMenuItem = null;
+
+        searchbar.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                searchMenuItem();  // Call your search method
+            }
+        });
+
+        // Handle clicking the search button
+        searchbar.setOnAction(event -> searchMenuItem());  // Call your search method
     }
 
 
@@ -156,7 +166,6 @@ public class AdminScreenMenuController
                     loadedMenuItem.setDataValue("description", description);
                     loadedMenuItem.updateMetadata("itemType", itemType);
                     loadedMenuItem.updateMetadata("dietaryRequirement", dietaryRequirement);
-                    datastore.updateMenuItem(loadedMenuItem);
                     showAlert(Alert.AlertType.CONFIRMATION, "Updated Menu Item", "Menu Item has been updated");
                     initialize();
                 } catch (Exception e) {
@@ -191,10 +200,10 @@ public class AdminScreenMenuController
                     showAlert(Alert.AlertType.ERROR, "Failed", "Price cannot be negative");
                     return;
                 }
-                if (datastore.getMenuItem(itemName) == null) {
-                    MenuItem newMenuItem = new MenuItem(itemName, price, MenuItem.ItemType.MAIN, true, description, null);
-                    datastore.createMenuItem(newMenuItem);
-                    if (datastore.getMenuItem(itemName) != null) {
+                if (menuAPI.getMenuItem(itemName) == null) {
+                    List<StatusCode> postedStatusCodes = menuAPI.postMenuItem(itemName, price, true, MenuItem.ItemType.MAIN,
+                    description, null, dietaryRequirement);
+                    if (menuAPI.getMenuItem(itemName) != null) {
                         initialize();
                         showAlert(Alert.AlertType.CONFIRMATION, "New Menu Item", "New Menu Item has been created");
                     } else {
@@ -459,6 +468,26 @@ public class AdminScreenMenuController
                     dietaryRequirement
             );
 
+        }
+    }
+
+    private void searchMenuItem() {
+        // Handle search button click
+        String searchInput = searchbar.getText();
+        if (searchInput.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a Menu Item");
+        }else {
+            try {
+                loadedMenuItem = menuAPI.getMenuItem(searchInput);
+                if (loadedMenuItem == null) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Menu Item not found");
+                }else {
+                    populateMenuParam(loadedMenuItem);
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
+            }
         }
     }
 }
