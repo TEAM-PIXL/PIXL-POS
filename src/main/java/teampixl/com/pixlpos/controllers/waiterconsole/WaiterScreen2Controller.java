@@ -421,8 +421,23 @@ public class WaiterScreen2Controller
     }
     @FXML
     protected void onVoidItemButtonClick() {
-        labelManager.clearAllLabels(); /*SAMPLEUSE*/
+        if (selectedItem != null) {
+            String itemText = selectedItem.getText();
+            String itemNameWithQuantity = itemText.substring(itemText.indexOf(" ") + 1);
+            String menuItemId = menuAPI.keySearch(itemNameWithQuantity);
+            int quantity = orderItems.get(menuItemId);
+            orderItems.remove(menuItemId);
+            actionStack.push(() -> {
+                orderItems.put(menuItemId, quantity);
+                mainbuttonManager.updateOrderSummary();
+            });
+
+            orderAPI.deleteOrderItem(orderID, menuItemId, quantity);
+
+            mainbuttonManager.updateOrderSummary();
+        }
     }
+
     @FXML
     protected void onRestartButtonClick() {
 
@@ -449,7 +464,7 @@ public class WaiterScreen2Controller
         GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutbutton);
     }
 
-    private void setSelectedItem(Label itemLabel) {
+    private void selectItem(Label itemLabel) {
         if (selectedItem != null) {
             selectedItem.setStyle("");
         }
@@ -550,7 +565,8 @@ public class WaiterScreen2Controller
                     Double price = (Double) menuItem.getMetadataValue("price");
                     Double total = price * quantity;
                     orderTotal += total;
-                    labelManager.addLabel(quantity, itemName);
+                    Label itemLabel = labelManager.addLabel(quantity, itemName);
+                    itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
                 }
             }
             totalprice.setText("$" + String.format("%.2f", orderTotal));
@@ -597,12 +613,13 @@ public class WaiterScreen2Controller
             this.labelListView = labelListView;
         }
 
-        private void addLabel(int amount, String name) {
+        private Label addLabel(int amount, String name) {
             Label newLabel = new Label(amount + "x " + name);
             // Apply a dummy style class
             newLabel.getStyleClass().add("docket-label");
             labelListView.getItems().add(newLabel);
             System.out.println("Added Label with text: " + name);
+            return newLabel;
         }
 
         private void removeLabelByIndex(int index) {
