@@ -28,8 +28,6 @@ public class UserSettings extends DataManager {
     /*============================================================================================================================================================
     Code Description:
     - Enumerations for Theme, Resolution, Currency, Timezone, Language, and AccessLevel.
-    - MetadataWrapper object for metadata
-    - Map object for data
     ============================================================================================================================================================*/
 
     /**
