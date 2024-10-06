@@ -94,6 +94,8 @@ public class AdminScreenUsersController
     private PasswordField passwordfield;
     @FXML
     private ChoiceBox<Users.UserRole> roleselect;
+    @FXML
+    private TextField usernamefield;
 
     @FXML
     private Button submitbutton;
@@ -156,7 +158,7 @@ public class AdminScreenUsersController
                     user.getMetadataValue("id").toString(),
                     userAPI.getUsersFirstNameByUsername(username),
                     (userAPI.getUsersFirstNameByUsername(username) + " " + userAPI.getUsersLastNameByUsername(username)),
-                    userAPI.getUsersEmailByUsername(username),
+                    username,
                     toReadableDate(user.getMetadataValue("created_at").toString()),
                     userAPI.getUsersRoleByUsername(username).toString());
 
@@ -167,11 +169,8 @@ public class AdminScreenUsersController
     @FXML
     protected void onSubmitButtonClick(){
         // Handle submit changes button click
-        if (loadedUser == null) {
-            showAlert(Alert.AlertType.ERROR, "New User", "Please select a user");
-            return;
-        }
         try{
+
             String firstName = firstnamefield.getText();
             String lastName = lastnamefield.getText();
             String password = passwordfield.getText();
@@ -205,19 +204,32 @@ public class AdminScreenUsersController
     @FXML
     protected void onAddUserButtonClick(){
 
-        if(adding_counter == 0){
-            addUserToListView(userslist,String.valueOf(adding_counter),"steve steven","steve@gmail.com","Graycat45","20/20/2033","Waiter");
+        try {
+            String firstName = firstnamefield.getText();
+            String lastName = lastnamefield.getText();
+            String password = passwordfield.getText();
+            String username = usernamefield.getText();
+            String email = emailfield.getText();
+            Users.UserRole role = roleselect.getSelectionModel().getSelectedItem();
+
+            if (username.isEmpty()|| firstName.isEmpty() || lastName.isEmpty()  || password.isEmpty() || email.isEmpty() || role == null) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
+            } else {
+                if (loadedUser == null) {
+                    boolean registerUser = AuthenticationManager.register(firstName, lastName, username, password, email, role);
+                    if (registerUser) {
+                        initialize();
+                        showAlert(Alert.AlertType.CONFIRMATION, "New User", "New User has been created");
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "New User", "Registration Failed");
+                    }
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New User", "User already exists");
+                }
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "New User", "Unexpected error occured: " + e.getMessage());
         }
-        else if(adding_counter == 1){
-            addUserToListView(userslist,String.valueOf(adding_counter),"paul Allen","Paul@gmail.com","Blackcat45","20/30/2033","Cook");
-        }
-        else if(adding_counter == 2){
-            addUserToListView(userslist,String.valueOf(adding_counter),"Rachael Black","rachael@gmail.com","bird45","70/30/2033","Admin");
-        }
-        else{
-            addUserToListView(userslist,String.valueOf(adding_counter),"you get it","meow@gmail.com","meow","meow","meow");
-        }
-        adding_counter++;
 
     }
     @FXML
@@ -426,12 +438,14 @@ public class AdminScreenUsersController
     }
 
     private void populateUserParam(Users User) {
+        Object username = User.getMetadataValue("username");
         Object password = User.getData().get("password");
         Object email = User.getData().get("email");
         Object role = User.getMetadata().metadata().get("role");
         Object fistName = User.getMetadata().metadata().get("first_name");
         Object lastName = User.getMetadata().metadata().get("last_name");
 
+        usernamefield.setText(username.toString());
         firstnamefield.setText(fistName.toString());
         lastnamefield.setText(lastName.toString());
         passwordfield.setText(password.toString());
