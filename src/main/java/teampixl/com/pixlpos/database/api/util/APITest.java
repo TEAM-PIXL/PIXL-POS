@@ -26,7 +26,7 @@ import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) throws Exception {
-
+        UserStack.getInstance().setCurrentUser("admin");
         UserLogs userLogs = new UserLogs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
         System.out.println("User Logs: " + userLogs.getMetadata().metadata());
         System.out.println("User Logs: " + userLogs.getData());
@@ -74,18 +74,6 @@ public class APITest {
 //        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
 
         /* Network */
-
-        String IP;
-        try {
-            IP = Util.getIp();
-            System.out.println("IP: " + IP);
-            System.out.println("Location: " + Util.getLocation(IP));
-            System.out.println("OS: " + Util.checkOS());
-            System.out.println("Device Info: " + Util.getDeviceInfo());
-            System.out.println("Mac Address: " + Util.getMacAddress());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 
 //    public static void main(String[] args) {
