@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import teampixl.com.pixlpos.models.tools.DataManager;
 
 import javafx.scene.layout.HBox;
 
@@ -218,15 +219,15 @@ public class WaiterScreen2Controller
                     case SEARCH:
                         searchbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
-                            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                             id++;
                         }
                         break;
                     case ENTREE:
                         entreebuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
-                            if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.ENTREE)) {
-                                entreebuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                            if (Objects.equals(menuItem.getMetadataValue("itemType"), MenuItem.ItemType.ENTREE)) {
+                                entreebuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                                 id++;
                             }
                         }
@@ -234,8 +235,8 @@ public class WaiterScreen2Controller
                     case MAIN:
                         mainbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
-                            if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.MAIN)) {
-                                mainbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                            if (Objects.equals(menuItem.getMetadataValue("itemType"), MenuItem.ItemType.MAIN)) {
+                                mainbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                                 id++;
                             }
                         }
@@ -243,8 +244,8 @@ public class WaiterScreen2Controller
                     case DRINKS:
                         drinksbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
-                            if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.DRINK)) {
-                                drinksbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                            if (Objects.equals(menuItem.getMetadataValue("itemType"), MenuItem.ItemType.DRINK)) {
+                                drinksbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                                 id++;
                             }
                         }
@@ -252,8 +253,8 @@ public class WaiterScreen2Controller
                     case DESSERT:
                         dessertbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
-                            if (Objects.equals(menuItem.getMetadata().metadata().get("itemType"), MenuItem.ItemType.DESSERT)) {
-                                dessertbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                            if (Objects.equals(menuItem.getMetadataValue("itemType"), MenuItem.ItemType.DESSERT)) {
+                                dessertbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                                 id++;
                             }
                         }
@@ -271,12 +272,12 @@ public class WaiterScreen2Controller
         if (queryMenuItems.isEmpty()) {
             showErrorDialog(searchText);
             for (MenuItem menuItem : menuItems) {
-                searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                 id++;
             }
         } else {
             for (MenuItem menuItem : queryMenuItems) {
-                searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+                searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                 id++;
             }
         }
@@ -303,9 +304,9 @@ public class WaiterScreen2Controller
         searchbuttonManager.clearAllButtons();
         List<MenuItem> menuItems = queryMenuItems;
         for (MenuItem menuItem : menuItems) {
-            if (menuItem.getMetadata().metadata().get("price") instanceof Double) {
-                if ((Double) menuItem.getMetadata().metadata().get("price") <= maxPrice) {
-                    searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+            if (menuItem.getMetadataValue("price") instanceof Double) {`
+                if ((Double) menuItem.getMetadataValue("price") <= maxPrice) {
+                    searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
                     id++;
                 }
             }
@@ -355,7 +356,7 @@ public class WaiterScreen2Controller
         int id = 1;
         ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
         for (MenuItem menuItem : menuItems){
-            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadata().metadata().get("itemName")), "$" + menuItem.getMetadata().metadata().get("price").toString());
+            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
             id++;
         }
     }
