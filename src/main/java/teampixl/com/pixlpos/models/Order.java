@@ -65,6 +65,7 @@ public class Order implements IDataManager {
         - is_completed: false
         - order_type: OrderType.DINE_IN
         - table_number: 0
+        - customers: 1
         - created_at: timestamp for creation
         - updated_at: timestamp for last update
 

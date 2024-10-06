@@ -7,6 +7,14 @@ import java.util.function.Function;
 
 
 public class Util {
+
+    /**
+     * Validate that a string is not null or empty.
+     * @param value The string to validate.
+     * @param nullStatusCode The status code to return if the string is null.
+     * @param emptyStatusCode The status code to return if the string is empty.
+     * @return The status code.
+     */
     public static StatusCode validateNotNullOrEmpty(String value, StatusCode nullStatusCode, StatusCode emptyStatusCode) {
         if (value == null) {
             return nullStatusCode;
@@ -17,6 +25,16 @@ public class Util {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validate and retrieve an object.
+     * @param validationFunction The function to validate the object.
+     * @param retrievalFunction The function to retrieve the object.
+     * @param value The object to validate.
+     * @param id The ID of the object.
+     * @param notFoundStatusCode The status code to return if the object is not found.
+     * @param <T> The type of the object.
+     * @return A pair containing the status codes and the object.
+     */
     public static <T> Pair<List<StatusCode>, T> validateAndGetObject(
             Function<Object, StatusCode> validationFunction,
             Function<String, T> retrievalFunction,
