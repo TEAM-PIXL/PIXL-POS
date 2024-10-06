@@ -235,7 +235,14 @@ public class AdminScreenUsersController
     }
     @FXML
     protected void onCancelButtonClick(){
-
+        // Handle clear button click
+        firstnamefield.clear();
+        lastnamefield.clear();
+        usernamefield.clear();
+        passwordfield.clear();
+        emailfield.clear();
+        roleselect.setValue(null);
+        loadedUser = null;
     }
 
     @FXML
