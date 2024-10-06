@@ -1,6 +1,5 @@
 package teampixl.com.pixlpos.database.api.util;
 
-import org.apache.commons.logging.Log;
 import teampixl.com.pixlpos.database.api.*;
 import teampixl.com.pixlpos.models.logs.Logs;
 import teampixl.com.pixlpos.models.logs.UserLogs;
@@ -10,7 +9,7 @@ import teampixl.com.pixlpos.models.logs.definitions.Type;
 import teampixl.com.pixlpos.models.logs.definitions.Status;
 import teampixl.com.pixlpos.models.logs.definitions.Action;
 import teampixl.com.pixlpos.models.*;
-import teampixl.com.pixlpos.models.logs.network.LogTask;
+import teampixl.com.pixlpos.models.logs.LogTask;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

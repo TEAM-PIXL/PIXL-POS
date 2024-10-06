@@ -1,7 +1,6 @@
-package teampixl.com.pixlpos.models.logs.network;
+package teampixl.com.pixlpos.models.logs;
 
 import teampixl.com.pixlpos.models.logs.definitions.*;
-import teampixl.com.pixlpos.models.logs.Logs;
 
 public class LogTask implements Runnable {
     private final Action ACTION;
