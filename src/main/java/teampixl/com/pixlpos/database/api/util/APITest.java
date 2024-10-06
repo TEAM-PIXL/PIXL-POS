@@ -24,6 +24,10 @@ public class APITest {
         MenuItem menuItem = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "This is a Pizza", MenuItem.DietaryRequirement.NONE);
         Ingredients ingredients = new Ingredients("Cheese", "This is cheese");
         Ingredients ingredients1 = new Ingredients("Tomato", "This is tomato");
+        System.out.println("Ingredients: " + ingredients.getMetadata().metadata());
+        System.out.println("Ingredients: " + ingredients.getData());
+
+
         menuItem.addIngredient(ingredients, 2);
         menuItem.addIngredient(ingredients1, 3);
         System.out.println("Menu Item: " + menuItem.getMetadata().metadata());
