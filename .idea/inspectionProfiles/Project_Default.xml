@@ -18,16 +18,25 @@
       <option name="ignoredModules">
         <list>
           <option value="PIXL-POS" />
+          <option value="PIXL-POS" />
+          <option value="PIXL-POS" />
+          <option value="PIXL-POS" />
         </list>
       </option>
       <option name="ignoredPackages">
         <list>
           <option value="com.fasterxml.jackson.core:jackson-databind:2.11.2" />
+          <option value="com.google.guava:guava:31.0.1-jre" />
+          <option value="commons-io:commons-io:2.6" />
+          <option value="org.yaml:snakeyaml:1.29" />
         </list>
       </option>
       <option name="ignoredReasons">
         <list>
           <option value="In progress" />
+          <option value="In progress" />
+          <option value="Other" />
+          <option value="Not exploitable" />
         </list>
       </option>
     </inspection_tool>

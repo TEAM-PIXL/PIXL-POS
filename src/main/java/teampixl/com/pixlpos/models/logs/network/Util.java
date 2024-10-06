@@ -31,4 +31,25 @@ public class Util {
             case Other -> "Unknown";
         };
     }
+
+    public static String getDeviceInfo() {
+        String deviceInfo = "Unknown";
+        try {
+            deviceInfo = DeviceInfoRetriever.getDeviceModel();
+        } catch (Exception e) {
+            return deviceInfo;
+        }
+        return deviceInfo;
+    }
+
+    public static String getMacAddress() {
+        String macAddress = "Unknown";
+        try {
+            macAddress = MacAddressRetriever.getMacAddress();
+        } catch (Exception e) {
+            return macAddress;
+        }
+        return macAddress;
+    }
+
 }
