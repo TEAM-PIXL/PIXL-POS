@@ -89,7 +89,7 @@ public class MenuAPI {
     }
 
     /**
-     * Validates the item type of a menu item.
+     * Validates the item type of menu item.
      *
      * @param MENU_ITEM_TYPE the item type to validate
      * @return the status code indicating the result of the validation
@@ -155,6 +155,28 @@ public class MenuAPI {
         VALIDATIONS.add(validateMenuItemByNotes(MENU_ITEM_NOTES));
 
         return VALIDATIONS;
+    }
+
+    /**
+     * Validates a menu item object for order.
+     *
+     * @param menuItem the menu item to validate
+     * @return the status code indicating the result of the validation
+     */
+    public StatusCode validateMenuItemForOrder(MenuItem menuItem) {
+        if (menuItem == null) {
+            return StatusCode.INVALID_MENU_ITEM;
+        }
+        String menuItemId = (String) menuItem.getMetadata().metadata().get("id");
+        MenuItem storedMenuItem = keyTransform(menuItemId);
+        if (storedMenuItem == null) {
+            return StatusCode.MENU_ITEM_NOT_FOUND;
+        }
+        Boolean isActive = (Boolean) storedMenuItem.getMetadata().metadata().get("active");
+        if (isActive != null && !isActive) {
+            return StatusCode.MENU_ITEM_INACTIVE;
+        }
+        return StatusCode.SUCCESS;
     }
 
     /**
@@ -323,10 +345,9 @@ public class MenuAPI {
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putMenuItemName(String MENU_ITEM_NAME, String NEW_MENU_ITEM_NAME) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
         Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Name", NEW_MENU_ITEM_NAME, MENU_ITEM_NAME);
-        VALIDATIONS.addAll(RESULT.getKey());
+        List<StatusCode> VALIDATIONS = new ArrayList<>(RESULT.getKey());
         if (!Exceptions.isSuccessful(VALIDATIONS)) {
             return VALIDATIONS;
         }
@@ -351,10 +372,9 @@ public class MenuAPI {
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putMenuItemPrice(String MENU_ITEM_NAME, Double NEW_MENU_ITEM_PRICE) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
         Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Price", NEW_MENU_ITEM_PRICE, MENU_ITEM_NAME);
-        VALIDATIONS.addAll(RESULT.getKey());
+        List<StatusCode> VALIDATIONS = new ArrayList<>(RESULT.getKey());
         if (!Exceptions.isSuccessful(VALIDATIONS)) {
             return VALIDATIONS;
         }
@@ -372,17 +392,16 @@ public class MenuAPI {
     }
 
     /**
-     * Updates the item type of an existing menu item.
+     * Updates the item type of existing menu item.
      *
      * @param MENU_ITEM_NAME the name of the menu item
      * @param NEW_MENU_ITEM_TYPE the new item type for the menu item
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putMenuItemItemType(String MENU_ITEM_NAME, MenuItem.ItemType NEW_MENU_ITEM_TYPE) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
         Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("ItemType", NEW_MENU_ITEM_TYPE, MENU_ITEM_NAME);
-        VALIDATIONS.addAll(RESULT.getKey());
+        List<StatusCode> VALIDATIONS = new ArrayList<>(RESULT.getKey());
         if (!Exceptions.isSuccessful(VALIDATIONS)) {
             return VALIDATIONS;
         }
@@ -407,10 +426,9 @@ public class MenuAPI {
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putMenuItemDescription(String MENU_ITEM_NAME, String NEW_MENU_ITEM_DESCRIPTION) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
         Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Description", NEW_MENU_ITEM_DESCRIPTION, MENU_ITEM_NAME);
-        VALIDATIONS.addAll(RESULT.getKey());
+        List<StatusCode> VALIDATIONS = new ArrayList<>(RESULT.getKey());
         if (!Exceptions.isSuccessful(VALIDATIONS)) {
             return VALIDATIONS;
         }
@@ -435,10 +453,9 @@ public class MenuAPI {
      * @return a list of status codes indicating the result of the operation
      */
     public List<StatusCode> putMenuItemNotes(String MENU_ITEM_NAME, String NEW_MENU_ITEM_NOTES) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
         Pair<List<StatusCode>, MenuItem> RESULT = validateAndGetMenuItem("Notes", NEW_MENU_ITEM_NOTES, MENU_ITEM_NAME);
-        VALIDATIONS.addAll(RESULT.getKey());
+        List<StatusCode> VALIDATIONS = new ArrayList<>(RESULT.getKey());
         if (!Exceptions.isSuccessful(VALIDATIONS)) {
             return VALIDATIONS;
         }

@@ -135,23 +135,25 @@ public class OrderAPI {
      * @return a list of StatusCodes indicating the validation results
      */
     public List<StatusCode> validateOrderByItems(Map<MenuItem, Integer> MENU_ITEMS) {
-        ArrayList<StatusCode> VALIDATIONS = new ArrayList<>();
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
         if (MENU_ITEMS == null || MENU_ITEMS.isEmpty()) {
-            return List.of(StatusCode.NO_ORDER_ITEMS);
-        }
-        if (MENU_ITEMS.keySet().stream().anyMatch(Objects::isNull)) {
-            VALIDATIONS.add(StatusCode.UNKNOWN_MENU_ITEM);
-        }
-        if (MENU_ITEMS.values().stream().anyMatch(quantity -> quantity <= 0)) {
-            VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
-        }
-        if (MENU_ITEMS.keySet().stream().anyMatch(menuItem -> MENUAPI.keyTransform(menuItem.getMetadata().metadata().get("id").toString()) == null)) {
-            VALIDATIONS.add(StatusCode.MENU_ITEM_NOT_FOUND);
+            VALIDATIONS.add(StatusCode.NO_ORDER_ITEMS);
+            return VALIDATIONS;
         }
         for (Map.Entry<MenuItem, Integer> entry : MENU_ITEMS.entrySet()) {
-            List<StatusCode> MENU_ITEM_CHECK = MENUAPI.validateMenuItem(entry.getKey());
-            if (!Exceptions.isSuccessful(MENU_ITEM_CHECK)) {
-                VALIDATIONS.addAll(MENU_ITEM_CHECK);
+            MenuItem MENU_ITEM = entry.getKey();
+            Integer QUANTITY = entry.getValue();
+
+            if (MENU_ITEM == null) {
+                VALIDATIONS.add(StatusCode.UNKNOWN_MENU_ITEM);
+                continue;
+            }
+            if (QUANTITY == null || QUANTITY <= 0) {
+                VALIDATIONS.add(StatusCode.INVALID_QUANTITY);
+            }
+            StatusCode MENU_ITEM_VALIDATION = MENUAPI.validateMenuItemForOrder(MENU_ITEM);
+            if (MENU_ITEM_VALIDATION != StatusCode.SUCCESS) {
+                VALIDATIONS.add(MENU_ITEM_VALIDATION);
             }
         }
         return VALIDATIONS;
@@ -185,7 +187,7 @@ public class OrderAPI {
         VALIDATIONS.add(validateOrderByCustomers(customers));
         VALIDATIONS.add(validateOrderBySpecialRequests(specialRequests));
         VALIDATIONS.addAll(validateOrderByItems(getOrderItemsById(orderId)));
-
+        System.out.println("Order validation results: " + VALIDATIONS);
         return VALIDATIONS;
     }
 
@@ -385,7 +387,6 @@ public class OrderAPI {
      * @return a list of StatusCodes indicating the result of the operation
      */
     public List<StatusCode> putOrderItem(String ORDER_ID, String MENU_ITEM_ID, Integer QUANTITY) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
         Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
                 this::validateOrderById,
@@ -394,7 +395,7 @@ public class OrderAPI {
                 ORDER_ID,
                 StatusCode.ORDER_NOT_FOUND
         );
-        VALIDATIONS.addAll(orderResult.getKey());
+        List<StatusCode> VALIDATIONS = new ArrayList<>(orderResult.getKey());
         if (!Exceptions.isSuccessful(VALIDATIONS)) {
             return VALIDATIONS;
         }
@@ -436,7 +437,6 @@ public class OrderAPI {
      * @return a list of StatusCodes indicating the result of the operation
      */
     public List<StatusCode> putOrderStatus(String ORDER_ID, Order.OrderStatus NEW_ORDER_STATUS) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
 
         Pair<List<StatusCode>, Order> orderResult = Util.validateAndGetObject(
                 status -> validateOrderByStatus(NEW_ORDER_STATUS),
@@ -445,7 +445,7 @@ public class OrderAPI {
                 ORDER_ID,
                 StatusCode.ORDER_NOT_FOUND
         );
-        VALIDATIONS.addAll(orderResult.getKey());
+        List<StatusCode> VALIDATIONS = new ArrayList<>(orderResult.getKey());
         if (!Exceptions.isSuccessful(VALIDATIONS)) {
             return VALIDATIONS;
         }
