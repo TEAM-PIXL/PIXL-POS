@@ -22,6 +22,7 @@ module PIXL.POS {
     requires org.junit.platform.commons;
     requires org.junit.jupiter;
     requires java.compiler;
+    requires geoip2;
 
     opens teampixl.com.pixlpos.database;
     opens teampixl.com.pixlpos.authentication;

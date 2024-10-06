@@ -518,17 +518,18 @@ public class WaiterScreen2Controller
         }
 
         private void updateOrderSummary() {
+            labelManager.clearAllLabels();
             for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
                 String menuItemId = entry.getKey();
+                String itemName = menuAPI.reverseKeySearch(menuItemId);
                 int quantity = entry.getValue();
-                MenuItem menuItem = menuAPI.getMenuItem(menuItemId);
+                MenuItem menuItem = menuAPI.getMenuItem(itemName);
                 if (menuItem != null) {
-                    String itemName = menuItem.getMetadataValue("itemName").toString();
                     Double price = (Double) menuItem.getMetadataValue("price");
                     Double total = price * quantity;
                     orderTotal += total;
                     totalprice.setText("$" + orderTotal);
-                    labelManager.addLabel(itemName);
+                    labelManager.addLabel(quantity, itemName);
                 }
             }
         }
@@ -574,8 +575,8 @@ public class WaiterScreen2Controller
             this.labelListView = labelListView;
         }
 
-        private void addLabel(String name) {
-            Label newLabel = new Label("1x " + name);
+        private void addLabel(int amount, String name) {
+            Label newLabel = new Label(amount + "x " + name);
             // Apply a dummy style class
             newLabel.getStyleClass().add("docket-label");
             labelListView.getItems().add(newLabel);
