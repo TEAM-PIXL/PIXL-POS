@@ -141,12 +141,9 @@ public class AdminScreenStockController
             } else {
                 //TODO: Complete Posted Order Once API updated
                 List<StatusCode> statusCodes = ingredientsAPI.postIngredient(ingredientName, ingredientDescription);
-                System.out.println(statusCodes);
-                String Ingredient = ingredientsAPI.keySearch(ingredientName);
-                String IngredientName = ingredientsAPI.reverseKeySearch(Ingredient);
-                System.out.println(Ingredient);
-                System.out.println(IngredientName);
-                List<StatusCode> statusCodesStock = stockAPI.postStock(ingredientsAPI.reverseKeySearch(ingredientName), Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, false);
+                String IngredientID = ingredientsAPI.keySearch(ingredientName);
+                initialize();
+                List<StatusCode> statusCodesStock = stockAPI.postStock(IngredientID, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, false);
                 statusCodes.addAll(statusCodesStock);
                 if (Exceptions.isSuccessful(statusCodes)) {
                     initialize();
@@ -321,7 +318,7 @@ public class AdminScreenStockController
             Double actualQuantity = 0.00;
             Double price = 0.00;
             String ingredientID = stock.getMetadataValue("ingredient_id").toString();
-            String ingredientName = menuAPI.reverseKeySearch(ingredientID);
+            String ingredientName = ingredientsAPI.reverseKeySearch(ingredientID);
             addInventoryItemToListView(
                     itemlist,
                     ingredientID,
