@@ -81,6 +81,7 @@ public class CookScreen2Controller {
     }
 
     private void loadOrdersFromDatabase() {
+        orderAPI.reloadOrders();
         List<Order> activeOrders = orderAPI.getOrders().stream().filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.SENT).toList();
 
         orderObservableList.clear();
