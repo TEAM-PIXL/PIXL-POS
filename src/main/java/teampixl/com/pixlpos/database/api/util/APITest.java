@@ -1,12 +1,18 @@
 package teampixl.com.pixlpos.database.api.util;
 
 import teampixl.com.pixlpos.database.api.*;
+import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.logs.Logs;
 import teampixl.com.pixlpos.models.logs.definitions.Priority;
 import teampixl.com.pixlpos.models.logs.definitions.Category;
 import teampixl.com.pixlpos.models.logs.definitions.Type;
 import teampixl.com.pixlpos.models.logs.definitions.Status;
 import teampixl.com.pixlpos.models.logs.definitions.Action;
+
+import java.util.List;
+
+import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
+import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
 
 public class APITest {
     public static void main(String[] args) throws Exception {
@@ -15,6 +21,27 @@ public class APITest {
         System.out.println("User Logs: " + logs.getMetadata().metadata());
         System.out.println("User Logs: " + logs.getData());
 
+        OrderAPI orderAPI = OrderAPI.getInstance();
+
+        Order order = orderAPI.initializeOrder();
+
+        System.out.println("Order Contents: " + order.getMetadata().metadata());
+
+        List<StatusCode> Stat = orderAPI.putOrderItem(order.getMetadataValue("order_id").toString(), MenuAPI.getInstance().keySearch("Pizza"), 4);
+        if (isSuccessful(Stat)) {
+            System.out.println("Order placed successfully.");
+        } else {
+            System.out.println(returnStatus("Order items could not be added with the following errors:", Stat));
+        }
+
+        orderAPI.putOrderSpecialRequests(order.getMetadataValue("order_id").toString(), "No cheese, extra tomato");
+
+        List<StatusCode> Status = orderAPI.postOrder(order);
+        if (isSuccessful(Status)) {
+            System.out.println("Order placed successfully.");
+        } else {
+            System.out.println(returnStatus("Order could not be placed with the following errors:", Status));
+        }
 
         /* KEYS */
 //        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
