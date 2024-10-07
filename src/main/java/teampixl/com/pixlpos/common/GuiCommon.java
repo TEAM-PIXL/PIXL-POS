@@ -78,7 +78,7 @@ public class GuiCommon {
     public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage.fxml";
 
     public static final String WAITER_SCREEN_TITLE = "Waiter Screen";
-    public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage.fxml";
+    public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage2.fxml";
 
     /**
      * Loads a new stage with the given FXML file and title.
@@ -142,13 +142,17 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
             Parent root = fxmlLoader.load();
+            stage.hide();
 
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
-            stage.getIcons().add(new Image(Objects.requireNonNull(String.valueOf(GuiCommon.class.getResource(ICON_PATH)))));
-            stage.centerOnScreen();
-            stage.show();
+            stage.getIcons().add(new Image(Objects.requireNonNull(GuiCommon.class.getResourceAsStream(ICON_PATH))));
+
+            Platform.runLater(() -> {
+                stage.centerOnScreen();
+                stage.show();
+            });
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
             e.printStackTrace();

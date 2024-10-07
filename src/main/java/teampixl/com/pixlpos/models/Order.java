@@ -47,7 +47,7 @@ public class Order extends DataManager {
     public enum PaymentMethod {
         CASH,
         CARD,
-        MOBILE
+        NOT_PAID, MOBILE
     }
 
     /*============================================================================================================================================================

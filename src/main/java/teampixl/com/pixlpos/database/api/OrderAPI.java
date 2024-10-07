@@ -84,9 +84,6 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderByStatus(Object ORDER_STATUS) {
-        if (!(ORDER_STATUS instanceof Order.OrderStatus)) {
-            return StatusCode.INVALID_ORDER_STATUS;
-        }
         return StatusCode.SUCCESS;
     }
 
@@ -110,7 +107,7 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderByCustomers(Integer CUSTOMERS) {
-        if (CUSTOMERS == null || CUSTOMERS <= 0) {
+        if (CUSTOMERS == null || CUSTOMERS < 0) {
             return StatusCode.INVALID_CUSTOMERS;
         }
         return StatusCode.SUCCESS;
@@ -123,9 +120,6 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderBySpecialRequests(String SPECIAL_REQUESTS) {
-        if (SPECIAL_REQUESTS != null && SPECIAL_REQUESTS.length() > 255) {
-            return StatusCode.SPECIAL_REQUESTS_TOO_LONG;
-        }
         return StatusCode.SUCCESS;
     }
 
@@ -395,6 +389,7 @@ public class OrderAPI {
 
         try {
             ORDER.updateMetadata("order_status", Order.OrderStatus.SENT.name());
+            System.out.println("Order: " + ORDER);
             DATASTORE.updateOrder(ORDER);
             System.out.println("Order posted successfully.");
             return VALIDATIONS;
@@ -624,7 +619,7 @@ public class OrderAPI {
         }
 
         try {
-            ORDER.updateMetadata("special_requests", SPECIAL_REQUESTS);
+            ORDER.setDataValue("special_requests", SPECIAL_REQUESTS);
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {
