@@ -67,13 +67,9 @@ public class CookScreen2Controller {
         orderList.setItems(orderObservableList);
         dynamicLabelManager = new DynamicLabelManager(completedOrders);
 
-
-
         loadOrdersFromDatabase();
 
         orders.setText(orderObservableList.size() + " Orders");
-
-         scheduleOrderRefresh();
 
         for (Order order : orderAPI.getOrders()) {
             if (order.getMetadataValue("order_status") == Order.OrderStatus.COMPLETED) {
@@ -82,16 +78,6 @@ public class CookScreen2Controller {
                 dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm")));
             }
         }
-    }
-
-    private void scheduleOrderRefresh() {
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                loadOrdersFromDatabase();
-            }
-        }, 0, 5000);
     }
 
     private void loadOrdersFromDatabase() {
