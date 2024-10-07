@@ -132,7 +132,7 @@ public class LoginScreenController extends GuiCommon {
                     break;
                 case COOK:
                     System.out.println("Loading Cook Page");
-                    GuiCommon.loadNewRoot(GuiCommon.COOK_SCREEN_FXML, GuiCommon.COOK_SCREEN_TITLE, loginButton);
+                    GuiCommon.loadRoot(GuiCommon.COOK_SCREEN_FXML, GuiCommon.COOK_SCREEN_TITLE, loginButton);
                     break;
                 case WAITER:
                     System.out.println("Loading Waiter Page");
