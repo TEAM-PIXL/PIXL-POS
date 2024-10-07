@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.database;
 
+import teampixl.com.pixlpos.controllers.adminconsole.NotesApp;
 import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
@@ -53,6 +54,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     private final ObservableList<Users> users;
     private final ObservableList<Ingredients> ingredients;
     private final ObservableList<Stock> stockItems;
+    private final ObservableList<UserSettings> userSettings;
 
     private DataStore() {
         menuItems = FXCollections.observableArrayList();
@@ -60,6 +62,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         users = FXCollections.observableArrayList();
         ingredients = FXCollections.observableArrayList();
         stockItems = FXCollections.observableArrayList();
+        userSettings = FXCollections.observableArrayList();
 
         loadMenuItemsFromDatabase();
         loadOrdersFromDatabase();
@@ -557,6 +560,60 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     public Stock getStockItem(String itemName) {
         String checkIngredientId = getIngredientIdByIngredientName(itemName);
         return getStockItemByIngredientId(checkIngredientId);
+    }
+
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for UserSettings. It includes methods for creating, reading, updating, and deleting user settings.
+
+    Methods:
+        - createUserSettings(UserSettings userSettings): void - Adds a new user settings to the list of user settings.
+        - readUserSettings(): ObservableList<UserSettings> - Returns a list of all user settings.
+        - updateUserSettings(UserSettings userSettings): void - Updates an existing user settings in the list of user settings.
+        - deleteUserSettings(UserSettings userSettings): void - Removes an existing user settings from the list of user settings.
+    ====================================================================================================================================================================*/
+
+
+
+    /**
+     * Returns a list of all user settings.
+     * @return ObservableList<UserSettings> - A list of all user settings.
+     */
+    public ObservableList<UserSettings> readUserSettings() {
+        return userSettings;
+    }
+
+
+
+    /**
+     * Adds a new user settings to the list of user settings.
+     * @param userSettings UserSettings - The user settings to add.
+     */
+    public void createUserSettings(UserSettings userSettings) {
+        this.userSettings.add(userSettings);
+        saveUserSettingsToDatabase(userSettings);
+    }
+
+
+
+    /**
+     * Updates an existing user settings in the list of user settings.
+     * @param userSettings UserSettings - The user settings to update.
+     */
+    public void updateUserSettings(UserSettings userSettings) {
+        updateUserSettingsInDatabase(userSettings);
+    }
+
+
+
+    /**
+     * Removes an existing user settings from the list of user settings.
+     * @param userSettings UserSettings - The user settings to remove.
+     */
+    public void deleteUserSettings(UserSettings userSettings) {
+        this.userSettings.remove(userSettings);
+        deleteUserSettingsFromDatabase(userSettings);
     }
 
 
@@ -1597,6 +1654,117 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             }
         }
         return null;
+    }
+
+
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for User Settings. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadUserSettingsFromDatabase(): void - Loads user settings from the database.
+        - saveUserSettingsToDatabase(UserSettings userSettings): void - Saves user settings to the database.
+        - updateUserSettingsInDatabase(UserSettings userSettings): void - Updates user settings in the database.
+        - deleteUserSettingsFromDatabase(UserSettings userSettings): void - Deletes user settings from the database.
+    ====================================================================================================================================================================*/
+
+
+
+    private void loadUserSettingsFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM user_settings")) {
+
+            while (rs.next()) {
+                String userId = rs.getString("user_id");
+                String theme = rs.getString("theme");
+                String language = rs.getString("language");
+                String currency = rs.getString("currency");
+                String resolution = rs.getString("resolution");
+                String timezone = rs.getString("timezone");
+                String access_level = rs.getString("access_level");
+
+                UserSettings USER_SETTINGS = new UserSettings(userId);
+                USER_SETTINGS.updateMetadata("theme", theme);
+                USER_SETTINGS.updateMetadata("currency", currency);
+                USER_SETTINGS.updateMetadata("resolution", resolution);
+                USER_SETTINGS.updateMetadata("timezone", timezone);
+                USER_SETTINGS.setDataValue("access_level", access_level);
+                USER_SETTINGS.setDataValue("language", language);
+
+                userSettings.add(USER_SETTINGS);
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void saveUserSettingsToDatabase(UserSettings userSettings) {
+        String sql = "INSERT INTO user_settings(user_id, theme, language, currency, resolution, timezone, access_level) VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) userSettings.getMetadata().metadata().get("user_id"));
+            pstmt.setString(2, (String) userSettings.getMetadata().metadata().get("theme"));
+            pstmt.setString(3, (String) userSettings.getData().get("language"));
+            pstmt.setString(4, (String) userSettings.getMetadata().metadata().get("currency"));
+            pstmt.setString(5, (String) userSettings.getMetadata().metadata().get("resolution"));
+            pstmt.setString(6, (String) userSettings.getMetadata().metadata().get("timezone"));
+            pstmt.setString(7, (String) userSettings.getData().get("access_level"));
+
+            pstmt.executeUpdate();
+            System.out.println("User settings saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void updateUserSettingsInDatabase(UserSettings userSettings) {
+        String sql = "UPDATE user_settings SET theme = ?, language = ?, currency = ?, resolution = ?, timezone = ?, access_level = ? WHERE user_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) userSettings.getMetadata().metadata().get("theme"));
+            pstmt.setString(2, (String) userSettings.getData().get("language"));
+            pstmt.setString(3, (String) userSettings.getMetadata().metadata().get("currency"));
+            pstmt.setString(4, (String) userSettings.getMetadata().metadata().get("resolution"));
+            pstmt.setString(5, (String) userSettings.getMetadata().metadata().get("timezone"));
+            pstmt.setString(6, (String) userSettings.getData().get("access_level"));
+            pstmt.setString(7, (String) userSettings.getMetadata().metadata().get("user_id"));
+
+            pstmt.executeUpdate();
+            System.out.println("User settings updated in database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void deleteUserSettingsFromDatabase(UserSettings userSettings) {
+        String sql = "DELETE FROM user_settings WHERE user_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) userSettings.getMetadata().metadata().get("user_id"));
+            pstmt.executeUpdate();
+            System.out.println("User settings deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 
