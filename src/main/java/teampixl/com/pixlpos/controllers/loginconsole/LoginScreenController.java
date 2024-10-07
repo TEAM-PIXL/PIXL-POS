@@ -10,9 +10,11 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.common.GuiCommon;
-import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.models.Users;
+import teampixl.com.pixlpos.models.logs.UserLogTask;
+
+import java.util.Objects;
 
 public class LoginScreenController extends GuiCommon {
 
@@ -72,9 +74,9 @@ public class LoginScreenController extends GuiCommon {
         isPasswordVisible.set(!isPasswordVisible.get());
 
         if (isPasswordVisible.get()) {
-            eyeIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/EYE_OPEN_ICON.png")));
+            eyeIcon.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/EYE_OPEN_ICON.png"))));
         } else {
-            eyeIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/EYE_CLOSED_ICON.png")));
+            eyeIcon.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/EYE_CLOSED_ICON.png"))));
         }
     }
 
@@ -86,18 +88,18 @@ public class LoginScreenController extends GuiCommon {
 
         // Change the icon of the theme toggle button based on the current theme ->> Dark mode is on when the icon is TOGGLE_ON.png
         if (isDarkMode) {
-            themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/TOGGLE_ON.png")));
+            themeToggleIcon.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/TOGGLE_ON.png"))));
         } else {
-            themeToggleIcon.setImage(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/TOGGLE_OFF.png")));
+            themeToggleIcon.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/fxml/loginconsole/icons/TOGGLE_OFF.png"))));
         }
     }
 
     private void applyTheme(Scene scene) {
         scene.getStylesheets().clear();
         if (isDarkMode) {
-            scene.getStylesheets().add(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/stylesheets/loginstage-dark.css").toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/stylesheets/loginstage-dark.css")).toExternalForm());
         } else {
-            scene.getStylesheets().add(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/stylesheets/loginstage.css").toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/teampixl/com/pixlpos/fxml/loginconsole/stylesheets/loginstage.css")).toExternalForm());
         }
     }
 
@@ -109,20 +111,20 @@ public class LoginScreenController extends GuiCommon {
         alert.showAndWait();
     }
 
-    private final AuthenticationManager authManager = new AuthenticationManager();
-    private final DataStore dataStore = DataStore.getInstance();
     private final UserStack userStack = UserStack.getInstance();
 
     @FXML
     protected void onLoginButtonClick() {
         String username = usernameField.getText();
         String password = passwordField.isVisible() ? passwordField.getText() : passwordVisibleField.getText();
-        boolean auth = authManager.login(username, password);
+        boolean auth = AuthenticationManager.login(username, password);
         System.out.println("Auth: " + auth);
         if (auth) {
             userStack.setCurrentUser(username);
+            GuiCommon.settings();
             Users user = userStack.getCurrentUser();
             Users.UserRole role = (Users.UserRole) user.getMetadata().metadata().get("role");
+            UserLogTask.login();
             switch (role) {
                 case ADMIN:
                     System.out.println("Loading Admin Page");

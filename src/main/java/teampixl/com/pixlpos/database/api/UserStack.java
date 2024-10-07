@@ -30,12 +30,12 @@ public class UserStack extends UsersAPI {
     /**
      * Stack for the current user.
      */
-    private Users currentUser;
+    private static Users currentUser;
 
     /**
      * Stack for the current user id.
      */
-    private String currentUserId;
+    private static String currentUserId;
 
     /**
      * Sets the current user.
@@ -68,7 +68,7 @@ public class UserStack extends UsersAPI {
     /**
      * Clears the current user.
      */
-    public void clearCurrentUser() {
+    public static void clearCurrentUser() {
         currentUser = null;
         currentUserId = null;
     }

@@ -264,7 +264,7 @@ public class WaiterScreenController extends GuiCommon {
 
     @FXML
     private void onLogoutButtonClick() {
-        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutButton);
+        GuiCommon.logout(logoutButton);
     }
 
     @FXML
