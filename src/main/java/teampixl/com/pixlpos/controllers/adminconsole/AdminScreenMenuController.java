@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
@@ -12,6 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.geometry.Pos;
+import teampixl.com.pixlpos.database.api.MenuAPI;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.MenuItem;
 import javafx.animation.AnimationTimer;
 import teampixl.com.pixlpos.database.DataStore;
@@ -40,6 +43,9 @@ public class AdminScreenMenuController
     private final UserStack userStack = UserStack.getInstance();
     Users currentuser = userStack.getCurrentUser();
     String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
+    private MenuItem loadedMenuItem;
+    private MenuAPI menuAPI;
+    private DataStore datastore;
     /*
     Shared Components
      */
@@ -104,41 +110,122 @@ public class AdminScreenMenuController
         }
     };
 
+
+
     @FXML
     public void initialize() {
         datetime.start();
         adding_counter = 0;
         menuitemlist.getItems().clear();
         greeting.setText("Hello, " + firstName);
+        menuAPI = MenuAPI.getInstance();
+        datastore = DataStore.getInstance();
+        populateMenuGrid();
+        itemtypefield.getItems().clear();
+        itemtypefield.getItems().addAll(MenuItem.ItemType.values());
+        dietaryrequirementsfield.getItems().clear();
+        dietaryrequirementsfield.getItems().addAll(MenuItem.DietaryRequirement.values());
+        loadedMenuItem = null;
+
+        searchbar.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                searchMenuItem();  // Call your search method
+            }
+        });
+
+        // Handle clicking the search button
+        searchbar.setOnAction(event -> searchMenuItem());  // Call your search method
     }
 
 
 
     @FXML
     protected void onSubmitButtonClick(){
-
+        try{
+            String itemName = menuitemnamefield.getText();
+            Double price;
+            MenuItem.ItemType itemType = itemtypefield.getSelectionModel().getSelectedItem();
+            MenuItem.DietaryRequirement dietaryRequirement = dietaryrequirementsfield.getSelectionModel().getSelectedItem();
+            String description = itemdescriptionfield.getText();
+            if (itemName.isEmpty() || itemType == null || description.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "Item Name, Item Type, Description and Price are required");
+            }else {
+                try{
+                    price = Double.parseDouble(pricefield.getText());
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Please enter a valid price");
+                    return;
+                }
+                if (price < 0){
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Price cannot be negative");
+                    return;
+                }
+                try {
+                    loadedMenuItem.updateMetadata("itemName", itemName);
+                    loadedMenuItem.updateMetadata("price", price);
+                    loadedMenuItem.setDataValue("description", description);
+                    loadedMenuItem.updateMetadata("itemType", itemType);
+                    loadedMenuItem.updateMetadata("dietaryRequirement", dietaryRequirement);
+                    showAlert(Alert.AlertType.CONFIRMATION, "Updated Menu Item", "Menu Item has been updated");
+                    initialize();
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Updated User", "Unexpected error occured while updating Menu Item: " + e.getMessage());
+                }
+            }
+        }
+        catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
+        }
+        onCancelButtonClick();
     }
     @FXML
     protected void onAddMenuItemButtonClick(){
+        try {
+            Double price;
+            String itemName = menuitemnamefield.getText();
+            MenuItem.ItemType itemType = itemtypefield.getSelectionModel().getSelectedItem();
+            MenuItem.DietaryRequirement dietaryRequirement = dietaryrequirementsfield.getValue();
+            String description = itemdescriptionfield.getText();
 
-
-        if(adding_counter == 0){
-            addMenuItemToListView(menuitemlist,String.valueOf(adding_counter),"Foo Burger","$20.98","MAIN","VEGAN");
+            if (itemName.isEmpty() || itemType == null || description.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "Item Name, Item Type, Description and Price are required");
+            } else {
+                try {
+                    price = Double.parseDouble(pricefield.getText());
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Please enter a valid price");
+                    return;
+                }
+                if (price < 0){
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Price cannot be negative");
+                    return;
+                }
+                if (menuAPI.getMenuItem(itemName) == null) {
+                    List<StatusCode> postedStatusCodes = menuAPI.postMenuItem(itemName, price, true, MenuItem.ItemType.MAIN,
+                    description, null, dietaryRequirement);
+                    if (menuAPI.getMenuItem(itemName) != null) {
+                        initialize();
+                        showAlert(Alert.AlertType.CONFIRMATION, "New Menu Item", "New Menu Item has been created");
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "New Menu Item", "Menu Item creation failed");
+                    }
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New Menu Item", "Menu Item already exists");
+                }
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "New Menu Item", "Unexpected error occurred: " + e.getMessage());
         }
-        else if(adding_counter == 1){
-            addMenuItemToListView(menuitemlist,String.valueOf(adding_counter),"American Burger","$20.98","MAIN","NULL");
-        }
-        else if(adding_counter == 2){
-            addMenuItemToListView(menuitemlist,String.valueOf(adding_counter),"CHEESE BURGER","$14.98","MAIN","NULL");
-        }
-        else{
-            addMenuItemToListView(menuitemlist,String.valueOf(adding_counter),"you get it","$999","MAIN","meow");
-        }
-        adding_counter++;
     }
     @FXML
     protected void onCancelButtonClick(){
-
+        // Handle clear button click
+        pricefield.clear();
+        menuitemnamefield.clear();
+        itemtypefield.setValue(null);
+        dietaryrequirementsfield.setValue(null);
+        itemdescriptionfield.clear();
+        loadedMenuItem = null;
     }
     @FXML
     protected void onEditButtonClick(){
@@ -190,6 +277,16 @@ public class AdminScreenMenuController
     // Placeholder methods for button actions
     private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
         // Implement edit menu item logic here
+        try{
+            loadedMenuItem = menuAPI.keyTransform(id);
+            if (loadedMenuItem == null) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Please select a user from the table");
+            } else{
+                populateMenuParam(loadedMenuItem);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
     private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
@@ -201,7 +298,15 @@ public class AdminScreenMenuController
             HBox hbox = items.get(i);
 
             if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
-                items.remove(i);  // Remove the HBox at the found index
+                try{
+                    items.remove(i);  // Remove the HBox at the found index
+                    // Handle delete user button click
+                    datastore.deleteMenuItem(menuAPI.getMenuItem(menuAPI.reverseKeySearch(id)));
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "Deleted Menu Item", "Menu Item has been deleted");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Deleted Menu Item", "Unexpected error occured: " + e.getMessage());
+                }
                 break;            // Exit the loop once the HBox is removed
             }
         }
@@ -309,5 +414,78 @@ public class AdminScreenMenuController
 
         // Add the HBox to the ListView
         listView.getItems().add(hbox);
+    }
+
+    private void populateMenuParam(MenuItem menuItem) {
+        Object price = menuItem.getMetadataValue("price");
+        Object itemName = menuItem.getMetadataValue("itemName");
+        Object itemType = menuItem.getMetadataValue("itemType");
+        pricefield.setText(Double.toString((double) price));
+        menuitemnamefield.setText(itemName.toString());
+        itemtypefield.setValue(MenuItem.ItemType.valueOf(itemType.toString()));
+        try {
+            Object dietaryRequirement = menuItem.getMetadataValue("dietaryRequirement");
+            dietaryrequirementsfield.setValue(MenuItem.DietaryRequirement.valueOf(dietaryRequirement.toString()));
+        } catch (Exception e) {
+            System.out.println(("No Dietary Requirement"));
+        }
+        try {
+            Object description = menuItem.getData().get("description");
+            itemdescriptionfield.setText(description.toString());
+        } catch (Exception e) {
+            System.out.println(("No Description"));
+        }
+        loadedMenuItem = menuItem;
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void populateMenuGrid() {
+
+        ObservableList<MenuItem> listOfMenuItems = datastore.readMenuItems();
+        String dietaryRequirement;
+        for (MenuItem menuItem : listOfMenuItems) {
+            String menuItemName = menuItem.getMetadataValue("itemName").toString();
+            if (menuItem.getMetadataValue("dietaryRequirement") == null){
+                 dietaryRequirement = "";
+            } else {
+                 dietaryRequirement = menuItem.getMetadataValue("dietaryRequirement").toString();
+            }
+            addMenuItemToListView(
+                    menuitemlist,
+                    menuItem.getMetadataValue("id").toString(),
+                    menuItemName,
+                    menuItem.getMetadataValue("price").toString(),
+                    menuItem.getMetadataValue("itemType").toString(),
+                    dietaryRequirement
+            );
+
+        }
+    }
+
+    private void searchMenuItem() {
+        // Handle search button click
+        String searchInput = searchbar.getText();
+        if (searchInput.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a Menu Item");
+        }else {
+            try {
+                loadedMenuItem = menuAPI.getMenuItem(searchInput);
+                if (loadedMenuItem == null) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Menu Item not found");
+                }else {
+                    populateMenuParam(loadedMenuItem);
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
+            }
+        }
     }
 }

@@ -1,9 +1,11 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
@@ -22,7 +24,7 @@ import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.UsersAPI;
-
+import javafx.scene.control.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -31,8 +33,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.Users;
 import javafx.scene.layout.HBox;
+import teampixl.com.pixlpos.models.tools.DataManager;
+
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import javafx.scene.input.KeyCode;
 
 public class AdminScreenUsersController
 {
@@ -43,6 +52,10 @@ public class AdminScreenUsersController
     private final UserStack userStack = UserStack.getInstance();
     Users currentuser = userStack.getCurrentUser();
     String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
+    private DataStore dataStore;
+    private UsersAPI userAPI;
+    private DataManager dataManager;
+    private Users loadedUser;
     /*
     Shared Components
      */
@@ -82,6 +95,8 @@ public class AdminScreenUsersController
     private PasswordField passwordfield;
     @FXML
     private ChoiceBox<Users.UserRole> roleselect;
+    @FXML
+    private TextField usernamefield;
 
     @FXML
     private Button submitbutton;
@@ -107,86 +122,143 @@ public class AdminScreenUsersController
         }
     };
 
+
     @FXML
     public void initialize() {
         datetime.start();
         adding_counter = 0;
         userslist.getItems().clear();
         greeting.setText("Hello, " + firstName);
+        dataStore = DataStore.getInstance();
+        userAPI = UsersAPI.getInstance();
+
+        roleselect.getItems().clear();
+        roleselect.getItems().addAll(new HashSet<>(Arrays.asList(Users.UserRole.values())));
+        populateUserGrid();
+
+
+        searchbar.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                searchUser();
+            }
+        });
+
+        searchbar.setOnAction(event -> searchUser());
 
     }
 
+    private String toReadableDate(String dateString){
 
+        long createAt = Long.parseLong(dateString);
 
+        LocalDateTime createdAtDateTime = Instant.ofEpochMilli(createAt).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+        return createdAtDateTime.format(formatter);
+    }
 
+    private void populateUserGrid() {
+        int id_counter = 0;
 
+        ObservableList<Users> listOfUsers = dataStore.readUsers();
 
+        for (Users user : listOfUsers) {
+            String username = user.getMetadataValue("username").toString();
 
+            addUserToListView(
+                    userslist,
+                    user.getMetadataValue("id").toString(),
+                    userAPI.getUsersFirstNameByUsername(username),
+                    (userAPI.getUsersFirstNameByUsername(username) + " " + userAPI.getUsersLastNameByUsername(username)),
+                    username,
+                    toReadableDate(user.getMetadataValue("created_at").toString()),
+                    userAPI.getUsersRoleByUsername(username).toString());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            id_counter++;
+        }
+    }
 
     @FXML
     protected void onSubmitButtonClick(){
+        // Handle submit changes button click
+        try{
+            String username = usernamefield.getText();
+            String firstName = firstnamefield.getText();
+            String lastName = lastnamefield.getText();
+            String password = passwordfield.getText();
+            String email = emailfield.getText();
+            Users.UserRole role = roleselect.getSelectionModel().getSelectedItem();
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || firstName.isEmpty() ||
+                    lastName.isEmpty() || role == null) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
+            }else {
 
+
+                try {
+                    loadedUser.updateMetadata("username", username);
+                    loadedUser.updateMetadata("first_name", firstName);
+                    loadedUser.updateMetadata("last_name", lastName);
+                    loadedUser.updateMetadata("role", role);
+                    loadedUser.setDataValue("password", password);
+                    loadedUser.setDataValue("email", email);
+                    loadedUser.updateMetadata("updated_at", System.currentTimeMillis());
+                    dataStore.updateUser(loadedUser);
+                    showAlert(Alert.AlertType.CONFIRMATION, "Updated User", "User has been updated");
+                    initialize();
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Updated User", "Unexpected error occured while updating user: " + e.getMessage());
+                }
+            }
+        }
+        catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Empty Field", "Unexpected error occured: " + e.getMessage());
+        }
+        onCancelButtonClick();
     }
     @FXML
-        protected void onAddUserButtonClick(){
+    protected void onAddUserButtonClick(){
 
-        if(adding_counter == 0){
-            addUserToListView(userslist,String.valueOf(adding_counter),"steve steven","steve@gmail.com","Graycat45","20/20/2033","Waiter");
+        try {
+            String firstName = firstnamefield.getText();
+            String lastName = lastnamefield.getText();
+            String password = passwordfield.getText();
+            String username = usernamefield.getText();
+            String email = emailfield.getText();
+            Users.UserRole role = roleselect.getSelectionModel().getSelectedItem();
+
+            if (username.isEmpty()|| firstName.isEmpty() || lastName.isEmpty()  || password.isEmpty() || email.isEmpty() || role == null) {
+                showAlert(Alert.AlertType.ERROR, "Empty Field", "All fields are required");
+            } else {
+                if (userAPI.getUser(username) == null) {
+                    boolean registerUser = AuthenticationManager.register(firstName, lastName, username, password, email, role);
+                    try {
+                        userAPI.postUsers(firstName, lastName, username, password, email, role);
+                        initialize();
+                        showAlert(Alert.AlertType.CONFIRMATION, "New User", "New User has been created");
+                    }catch (Exception e) {
+                        showAlert(Alert.AlertType.ERROR, "New User", "Registration Failed");
+                    }
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New User", "User already exists");
+                }
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "New User", "Unexpected error occured: " + e.getMessage());
         }
-        else if(adding_counter == 1){
-            addUserToListView(userslist,String.valueOf(adding_counter),"paul Allen","Paul@gmail.com","Blackcat45","20/30/2033","Cook");
-        }
-        else if(adding_counter == 2){
-            addUserToListView(userslist,String.valueOf(adding_counter),"Rachael Black","rachael@gmail.com","bird45","70/30/2033","Admin");
-        }
-        else{
-            addUserToListView(userslist,String.valueOf(adding_counter),"you get it","meow@gmail.com","meow","meow","meow");
-        }
-        adding_counter++;
+        onCancelButtonClick();
 
     }
     @FXML
     protected void onCancelButtonClick(){
-
+        // Handle clear button click
+        firstnamefield.clear();
+        lastnamefield.clear();
+        usernamefield.clear();
+        passwordfield.clear();
+        emailfield.clear();
+        roleselect.setValue(null);
+        loadedUser = null;
     }
-
-    @FXML
-    protected void onEditButtonClick(){
-
-    }
-
-    @FXML
-    protected void onRemoveButtonClick(){
-
-    }
-
-
-
 
 
     @FXML
@@ -226,11 +298,21 @@ public class AdminScreenUsersController
 
 
     // Placeholder methods for button actions
-    private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
+    private void onEditButtonClick(ActionEvent event, String id) {
         // Implement edit menu item logic here
+        try{
+            loadedUser = userAPI.keyTransform(id);
+            if (loadedUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Please select a user from the table");
+            } else{
+                populateUserParam(loadedUser);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected error occured: " + e.getMessage());
+        }
     }
 
-    private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
+    private void onRemoveButtonClick(ActionEvent event, String id) {
         // Implement remove menu item logic here
 
         ObservableList<HBox> items = userslist.getItems(); // Get the items of the ListView
@@ -240,7 +322,15 @@ public class AdminScreenUsersController
             HBox hbox = items.get(i);
 
             if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
-                items.remove(i);  // Remove the HBox at the found index
+                try{
+                    items.remove(i);  // Remove the HBox at the found index
+                    // Handle delete user button click
+                    dataStore.deleteUser(userAPI.getUser(userAPI.reverseKeySearch(id)));
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "Deleted User", "User has been deleted");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Deleted User", "Unexpected error occured: " + e.getMessage());
+                }
                 break;            // Exit the loop once the HBox is removed
             }
         }
@@ -267,11 +357,11 @@ public class AdminScreenUsersController
         // Name and Email
         AnchorPane nameEmailPane = new AnchorPane();
         Label nameLabel = new Label(name);
-        nameLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        nameLabel.setAlignment(Pos.CENTER);
         nameLabel.setContentDisplay(ContentDisplay.BOTTOM);
         nameLabel.setPrefSize(83.2, 50.4);
         Label emailLabel = new Label(email);
-        emailLabel.setTextFill(javafx.scene.paint.Color.web("#918e8e"));
+        emailLabel.setTextFill(Color.web("#918e8e"));
         nameLabel.setGraphic(emailLabel);
         AnchorPane.setTopAnchor(nameLabel, 0.0);
         AnchorPane.setRightAnchor(nameLabel, 0.0);
@@ -283,7 +373,7 @@ public class AdminScreenUsersController
         // Username
         AnchorPane usernamePane = new AnchorPane();
         Label usernameLabel = new Label(username);
-        usernameLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        usernameLabel.setAlignment(Pos.CENTER);
         usernameLabel.setContentDisplay(ContentDisplay.CENTER);
         usernameLabel.setPrefSize(111.2, 50.4);
         AnchorPane.setTopAnchor(usernameLabel, 0.0);
@@ -296,7 +386,7 @@ public class AdminScreenUsersController
         // User Since Date
         AnchorPane datePane = new AnchorPane();
         Label dateLabel = new Label(userSince);
-        dateLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        dateLabel.setAlignment(Pos.CENTER);
         dateLabel.setPrefSize(89.6, 50.4);
         AnchorPane.setTopAnchor(dateLabel, 0.0);
         AnchorPane.setRightAnchor(dateLabel, 0.0);
@@ -308,10 +398,10 @@ public class AdminScreenUsersController
         // Role
         AnchorPane rolePane = new AnchorPane();
         Label roleLabel = new Label(role);
-        roleLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        roleLabel.setAlignment(Pos.CENTER);
         roleLabel.setPrefSize(83.2, 50.4);
         roleLabel.setStyle("-fx-background-color: #0095FF; -fx-background-radius: 10;");
-        roleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+        roleLabel.setTextFill(Color.WHITE);
         AnchorPane.setTopAnchor(roleLabel, 0.0);
         AnchorPane.setRightAnchor(roleLabel, 0.0);
         AnchorPane.setBottomAnchor(roleLabel, 0.0);
@@ -358,6 +448,56 @@ public class AdminScreenUsersController
 
         // Add the HBox to the ListView
         listView.getItems().add(hbox);
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void populateUserParam(Users User) {
+        Object username = User.getMetadataValue("username");
+        Object password = User.getData().get("password");
+        Object email = User.getData().get("email");
+        Object role = User.getMetadata().metadata().get("role");
+        Object fistName = User.getMetadata().metadata().get("first_name");
+        Object lastName = User.getMetadata().metadata().get("last_name");
+
+        usernamefield.setText(username.toString());
+        firstnamefield.setText(fistName.toString());
+        lastnamefield.setText(lastName.toString());
+        passwordfield.setText(password.toString());
+        emailfield.setText(email.toString());
+        roleselect.setValue(Users.UserRole.valueOf(role.toString()));
+        loadedUser = User;
+    }
+
+    private void searchUser(){
+        // Handle search button click
+        String searchInput = searchbar.getText();
+        if (searchInput.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a User");
+        }else {
+            try {
+                List<Users> usersList = userAPI.searchUsers(searchInput);
+                if (usersList.isEmpty()) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "User not found");
+                }else {
+                    if (usersList.size() > 1) {
+                        showAlert(Alert.AlertType.ERROR, "Failed", "Multiple users found. Please refine your search");
+                    } else {
+                        loadedUser = usersList.getFirst();
+                        populateUserParam(loadedUser);
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Failed", "Unexpected Error: " + e.getMessage());
+            }
+        }
     }
 
 }

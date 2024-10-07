@@ -1,14 +1,12 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import javafx.geometry.Pos;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,22 +14,20 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
 import javafx.animation.AnimationTimer;
+import teampixl.com.pixlpos.database.api.IngredientsAPI;
+import teampixl.com.pixlpos.database.api.MenuAPI;
+import teampixl.com.pixlpos.database.api.StockAPI;
+import teampixl.com.pixlpos.database.api.util.Exceptions;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
+import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
-import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
-import teampixl.com.pixlpos.database.api.UsersAPI;
 import teampixl.com.pixlpos.database.api.UserStack;
-import teampixl.com.pixlpos.models.Users;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import teampixl.com.pixlpos.models.logs.definitions.Status;
 
-import javafx.scene.layout.HBox;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class AdminScreenStockController
 {
@@ -42,6 +38,10 @@ public class AdminScreenStockController
     private final UserStack userStack = UserStack.getInstance();
     Users currentuser = userStack.getCurrentUser();
     String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
+    private StockAPI stockAPI;
+    private DataStore dataStore;
+    private MenuAPI menuAPI;
+    private IngredientsAPI ingredientsAPI;
     /*
     Shared Components
      */
@@ -112,16 +112,12 @@ public class AdminScreenStockController
         adding_counter = 0;
         itemlist.getItems().clear();
         greeting.setText("Hello, " + firstName);
+        stockAPI = StockAPI.getInstance();
+        menuAPI = MenuAPI.getInstance();
+        dataStore = DataStore.getInstance();
+        ingredientsAPI = IngredientsAPI.getInstance();
+        populateStockGrid();
     }
-
-
-
-
-
-
-
-
-
 
     @FXML
     protected void onSubmitButtonClick(){
@@ -129,33 +125,69 @@ public class AdminScreenStockController
     }
     @FXML
     protected void onAddItemButtonClick(){
+        try {
+            Double desiredQuantity = Double.parseDouble(desiredquantityfield.getText());
+            Double actualQuantity = Double.parseDouble(actualquantityfield.getText());
+            Double price = Double.parseDouble(itempricefield.getText());
+            String ingredientName = itemnamefield.getText();
+            String ingredientDescription = itemdescriptionfield.getText();
 
+            if (price < 0 || desiredQuantity < 0 || actualQuantity < 0) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Price and Quantities cannot be negative");
+                return;
+            }
 
-        if(adding_counter == 0){
-            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"cheese","20","23","$10.0");
+            if (ingredientName.isEmpty() || price == null || desiredQuantity == null || actualQuantity == null) {
+                showAlert(Alert.AlertType.ERROR, "EmptyField", "Item Name, Item Price, Desired Quantity and Actual Quantity are required");
+            } else {
+                //TODO: Complete Posted Order Once API updated
+                List<StatusCode> statusCodes = ingredientsAPI.postIngredient(ingredientName, ingredientDescription);
+                String IngredientID = ingredientsAPI.keySearch(ingredientName);
+                initialize();
+                List<StatusCode> statusCodesStock = stockAPI.postStock(IngredientID, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, false);
+                statusCodes.addAll(statusCodesStock);
+                if (Exceptions.isSuccessful(statusCodes)) {
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "New Stock Item", "New Stock Item has been created");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New Stock Item", "Stock Item creation failed with the error codes: " + statusCodes);
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please enter valid numerals");
+            return;
         }
-        else if(adding_counter == 1){
-            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"lettuce","10","2","$5.0");
-        }
-        else if(adding_counter == 2){
-            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"buns","54","40","$2.5");
-        }
-        else{
-            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"you get it","999","999","fiddybucks");
-        }
-        adding_counter++;
     }
+
     @FXML
     protected void onCancelButtonClick(){
-
     }
+
     @FXML
     protected void onEditButtonClick(){
 
     }
     @FXML
-    protected void onRemoveButtonClick(){
+    protected void onRemoveButtonClick(String id){
+        ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
 
+        for (int i = 0; i < items.size(); i++) {
+            HBox hbox = items.get(i);
+
+            if (id.equals(hbox.getId())) {
+                try {
+                    items.remove(i);
+                    stockAPI.deleteStock(id);
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "Stock Item", "Stock Item has been removed");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Stock Item", "Stock Item removal failed");
+                }
+                break;
+            }// Compare the ID of the HBox
+            break;
+        }
     }
 
 
@@ -292,6 +324,33 @@ public class AdminScreenStockController
 
         // Add the HBox to the ListView
         listView.getItems().add(hbox);
+    }
+
+    private void populateStockGrid() {
+        ObservableList<Stock> listOfStockItems = dataStore.readStock();
+        for (Stock stock : listOfStockItems) {
+            Double desiredQuantity = 0.00;
+            Double actualQuantity = 0.00;
+            Double price = 0.00;
+            String ingredientID = stock.getMetadataValue("ingredient_id").toString();
+            String ingredientName = ingredientsAPI.reverseKeySearch(ingredientID);
+            addInventoryItemToListView(
+                    itemlist,
+                    ingredientID,
+                    ingredientName,
+                    desiredQuantity.toString(),
+                    actualQuantity.toString(),
+                    price.toString()
+            );
+        }
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     // Placeholder methods for button actions

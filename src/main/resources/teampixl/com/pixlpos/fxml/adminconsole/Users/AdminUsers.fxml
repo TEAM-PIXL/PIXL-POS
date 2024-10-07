@@ -179,6 +179,8 @@
                            </font>
                         </Label>
                          <HBox prefHeight="0.0" prefWidth="0.0" styleClass="line" />
+                         <Label text="Username:" />
+                         <TextField fx:id="usernamefield" prefHeight="30.0" promptText="Username *" />
                         <Label text="First Name:" />
                         <TextField fx:id="firstnamefield" prefHeight="30.0" promptText="Firstname *" />
                         <Label layoutX="21.0" layoutY="78.0" text="Last Name:" />
