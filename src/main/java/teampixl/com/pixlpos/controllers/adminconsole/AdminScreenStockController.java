@@ -1,6 +1,7 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
@@ -161,7 +162,6 @@ public class AdminScreenStockController
 
     @FXML
     protected void onCancelButtonClick(){
-
     }
 
     @FXML
@@ -169,8 +169,25 @@ public class AdminScreenStockController
 
     }
     @FXML
-    protected void onRemoveButtonClick(){
+    protected void onRemoveButtonClick(String id){
+        ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
 
+        for (int i = 0; i < items.size(); i++) {
+            HBox hbox = items.get(i);
+
+            if (id.equals(hbox.getId())) {
+                try {
+                    items.remove(i);
+                    stockAPI.deleteStock(id);
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "Stock Item", "Stock Item has been removed");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Stock Item", "Stock Item removal failed");
+                }
+                break;
+            }// Compare the ID of the HBox
+            break;
+        }
     }
 
 
