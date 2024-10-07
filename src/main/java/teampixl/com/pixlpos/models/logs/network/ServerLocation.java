@@ -1,4 +1,3 @@
-// ServerLocation.java
 package teampixl.com.pixlpos.models.logs.network;
 
 public class ServerLocation {

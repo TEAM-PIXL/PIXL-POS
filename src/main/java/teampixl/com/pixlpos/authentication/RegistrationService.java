@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.authentication;
 
+import teampixl.com.pixlpos.models.UserSettings;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
 
@@ -27,6 +28,9 @@ public class RegistrationService {
             String hashedPassword = PasswordUtils.hashPassword(plainPassword);
             Users newUser = new Users(firstName, lastName, username, hashedPassword, email, role);
             dataStore.createUser(newUser);
+            UserSettings settings = new UserSettings(newUser.getMetadataValue("id").toString());
+            dataStore.createUserSettings(settings);
+            System.out.println("UserSettings created successfully");
             return true;
         }
         catch (Exception e) {

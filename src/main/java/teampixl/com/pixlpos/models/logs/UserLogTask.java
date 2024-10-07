@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.models.logs;
 
+import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.logs.UserLogs.LogType;
 
 
@@ -14,6 +15,7 @@ public class UserLogTask implements Runnable {
     public void run() {
         try {
             UserLogs userLogs = new UserLogs(LOG_TYPE);
+            DataStore.getInstance().createUserLogs(userLogs);
             System.out.println("The log has the contents: " + userLogs);
         } catch (Exception e) {
             e.printStackTrace();
