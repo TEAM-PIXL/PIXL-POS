@@ -503,7 +503,6 @@ public class WaiterScreen2Controller {
 
     @FXML
     protected void onFilterButtonClick() {
-        // Filter functionality (if needed)
     }
 
     @FXML
