@@ -34,6 +34,8 @@ public class RegistrationService {
             return true;
         }
         catch (Exception e) {
+            System.out.println("User could not be created with the following errors:");
+            e.printStackTrace();
             return false;
         }
     }
