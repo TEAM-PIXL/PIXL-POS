@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import teampixl.com.pixlpos.models.interfaces.IDataManager;
-import teampixl.com.pixlpos.database.MetadataWrapper;
+import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.models.logs.UserLogs;
+import teampixl.com.pixlpos.models.tools.DataManager;
+import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 
 /**
  * Users class is a construct for creating Users object. Implements IDataManager.
@@ -24,10 +26,10 @@ import teampixl.com.pixlpos.database.MetadataWrapper;
  * - password: password
  * - email: email
  * - additional_info: null
- * @see IDataManager
+ * @see DataManager
  * @see MetadataWrapper
  */
-public class Users implements IDataManager {
+public class Users extends DataManager {
 
     /*============================================================================================================================================================
     Code Description:
@@ -44,9 +46,6 @@ public class Users implements IDataManager {
         COOK,
         ADMIN
     }
-
-    private MetadataWrapper metadata;
-    private final Map<String, Object> data;
 
     /*============================================================================================================================================================
     Code Description:
@@ -78,6 +77,18 @@ public class Users implements IDataManager {
      * @param role role
      */
     public Users(String firstName, String lastName, String username, String plainPassword, String email, UserRole role) {
+        super(initializeMetadata(firstName, lastName, username, role));
+
+        if (plainPassword == null || plainPassword.isEmpty()) {
+            throw new IllegalArgumentException("password cannot be null or empty");
+        }
+
+        this.data.put("password", plainPassword);
+        this.data.put("email", email);
+        this.data.put("additional_info", null);
+    }
+
+    private static MetadataWrapper initializeMetadata(String firstName, String lastName, String username, UserRole role) {
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("username cannot be null or empty");
         }
@@ -86,9 +97,6 @@ public class Users implements IDataManager {
         }
         if (lastName == null || lastName.isEmpty()) {
             throw new IllegalArgumentException("last name cannot be null or empty");
-        }
-        if (plainPassword == null || plainPassword.isEmpty()) {
-            throw new IllegalArgumentException("password cannot be null or empty");
         }
         if (role == null) {
             throw new IllegalArgumentException("role cannot be null");
@@ -104,51 +112,8 @@ public class Users implements IDataManager {
         metadataMap.put("updated_at", System.currentTimeMillis());
         metadataMap.put("is_active", true);
 
-        this.metadata = new MetadataWrapper(metadataMap);
-
-        this.data = new HashMap<>();
-        this.data.put("password", plainPassword);
-        this.data.put("email", email);
-        this.data.put("additional_info", null);
-    }
-
-    /*============================================================================================================================================================
-    Code Description:
-    - Method to get metadata, data, update metadata, and set data value.
-
-    Methods:
-        - getMetadata(): MetadataWrapper
-        - getData(): Map<String, Object>
-        - updateMetadata(String key, Object value): void
-        - setDataValue(String key, Object value): void
-        - toString(): String
-    ============================================================================================================================================================*/
-
-    public MetadataWrapper getMetadata() {
-        return metadata;
-    }
-
-    public Map<String, Object> getData() {
-        return data;
-    }
-
-    public void updateMetadata(String key, Object value) {
-        Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
-        if (value != null) {
-            modifiableMetadata.put(key, value);
-        } else {
-            modifiableMetadata.remove(key);
-        }
-        this.metadata = new MetadataWrapper(modifiableMetadata);
-    }
-
-    public void setDataValue(String key, Object value) {
-        data.put(key, value);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Users{Metadata: %s, Data: %s}", new HashMap<>(metadata.metadata()), new HashMap<>(data));
+        return new MetadataWrapper(metadataMap);
     }
 }
+
 

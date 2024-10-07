@@ -527,6 +527,7 @@ public class UsersAPI {
 
             USER.updateMetadata("is_active", NEW_STATUS);
             dataStore.updateUser(USER);
+            VALIDATIONS.add(StatusCode.SUCCESS);
             return VALIDATIONS;
         } catch (Exception e) {
             return List.of(StatusCode.USER_PUT_FAILED);
