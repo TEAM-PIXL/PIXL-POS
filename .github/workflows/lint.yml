@@ -1,0 +1,79 @@
+name: Java Linter
+
+on:
+  workflow_call:
+    outputs:
+      success:
+        description: 'Whether the lint job succeeded.'
+        value: ${{ jobs.lint.outputs.success }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    outputs:
+      success: ${{ job.status == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Amazon Corretto)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Install Checkstyle
+        run: |
+          curl -LJO https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.0/checkstyle-10.12.0-all.jar
+          mv checkstyle-10.12.0-all.jar /usr/local/bin/checkstyle.jar
+
+      - name: Download Checkstyle Configuration
+        run: |
+          curl -LJO https://raw.githubusercontent.com/checkstyle/checkstyle/checkstyle-10.12.0/src/main/resources/google_checks.xml
+          mv google_checks.xml /usr/local/bin/google_checks.xml
+
+      - name: Verify Checkstyle JAR File
+        run: |
+          ls -l /usr/local/bin/checkstyle.jar
+
+      - name: Verify Checkstyle Configuration File
+        run: |
+          ls -l /usr/local/bin/google_checks.xml
+
+      - name: List Source Directory
+        run: |
+          ls -la src/
+
+      - name: Run Checkstyle and save output
+        run: |
+          java -jar /usr/local/bin/checkstyle.jar -c /usr/local/bin/google_checks.xml src/ > checkstyle-result.txt 2>&1
+        continue-on-error: true
+
+      - name: Output Checkstyle Result
+        run: |
+          cat checkstyle-result.txt
+
+      - name: Parse Checkstyle output for warnings and errors
+        id: parse_checkstyle
+        run: |
+          errors=$(grep -c '^\[ERROR\]' checkstyle-result.txt || true)
+          warnings=$(grep -c '^\[WARN\]' checkstyle-result.txt || true)
+          echo "Warnings: $warnings"
+          echo "Errors: $errors"
+          echo "errors=$errors" >> $GITHUB_ENV
+
+      - name: Display Checkstyle Errors
+        if: env.errors != '0'
+        run: |
+          echo "### Checkstyle Errors:"
+          grep '^\[ERROR\]' checkstyle-result.txt
+
+      - name: Fail if any errors
+        run: |
+          if [ ${{ env.errors }} -gt 0 ]; then
+            echo "Errors found. Failing the job."
+            exit 1
+          fi
+
