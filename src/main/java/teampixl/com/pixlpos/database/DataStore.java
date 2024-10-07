@@ -1,6 +1,6 @@
 package teampixl.com.pixlpos.database;
 
-import teampixl.com.pixlpos.controllers.adminconsole.NotesApp;
+import teampixl.com.pixlpos.controllers.adminconsole.Notes;
 import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
@@ -56,7 +56,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     private final ObservableList<Ingredients> ingredients;
     private final ObservableList<Stock> stockItems;
     private final ObservableList<UserSettings> userSettings;
-    private final ObservableList<NotesApp> notesApp;
+    private final ObservableList<Notes> notes;
     private final ObservableList<UserLogs> userLogs;
 
     private DataStore() {
@@ -66,7 +66,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         ingredients = FXCollections.observableArrayList();
         stockItems = FXCollections.observableArrayList();
         userSettings = FXCollections.observableArrayList();
-        notesApp = FXCollections.observableArrayList();
+        notes = FXCollections.observableArrayList();
         userLogs = FXCollections.observableArrayList();
 
         loadMenuItemsFromDatabase();
@@ -627,36 +627,36 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /**
      * Adds a new note to the list of notes.
-     * @param notesApp NotesApp - The note to add.
+     * @param notes NotesApp - The note to add.
      */
-    public void createNotesApp(NotesApp notesApp) {
-        this.notesApp.add(notesApp);
-        saveGlobalNotesToDatabase(notesApp);
+    public void createNotesApp(Notes notes) {
+        this.notes.add(notes);
+        saveGlobalNotesToDatabase(notes);
     }
 
     /**
      * Returns a list of all notes.
      * @return ObservableList<NotesApp> - A list of all notes.
      */
-    public ObservableList<NotesApp> readNotesApp() {
-        return notesApp;
+    public ObservableList<Notes> readNotesApp() {
+        return notes;
     }
 
     /**
      * Updates an existing note in the list of notes.
-     * @param notesApp NotesApp - The note to update.
+     * @param notes NotesApp - The note to update.
      */
-    public void updateNotesApp(NotesApp notesApp) {
-        updateGlobalNotesInDatabase(notesApp);
+    public void updateNotesApp(Notes notes) {
+        updateGlobalNotesInDatabase(notes);
     }
 
     /**
      * Removes an existing note from the list of notes.
-     * @param notesApp NotesApp - The note to remove.
+     * @param notes NotesApp - The note to remove.
      */
-    public void deleteNotesApp(NotesApp notesApp) {
-        this.notesApp.remove(notesApp);
-        deleteGlobalNotesFromDatabase(notesApp);
+    public void deleteNotesApp(Notes notes) {
+        this.notes.remove(notes);
+        deleteGlobalNotesFromDatabase(notes);
     }
 
     /*====================================================================================================================================================================
@@ -1871,14 +1871,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String noteTitle = rs.getString("note_title");
                 String noteContent = rs.getString("note_content");
 
-                NotesApp Notes = new NotesApp(noteContent, noteTitle);
+                Notes Notes = new Notes(noteContent, noteTitle);
                 Notes.updateMetadata("note_id", noteId);
                 Notes.updateMetadata("user_id", userId);
                 Notes.updateMetadata("timestamp", timestamp);
                 Notes.setDataValue("note_title", noteTitle);
                 Notes.setDataValue("note_content", noteContent);
 
-                notesApp.add(Notes);
+                notes.add(Notes);
             }
 
         } catch (SQLException e) {
@@ -1888,7 +1888,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
-    private void saveGlobalNotesToDatabase(NotesApp Notes) {
+    private void saveGlobalNotesToDatabase(Notes Notes) {
         String sql = "INSERT INTO global_notes(note_id, user_id, timestamp, note_title, note_content) VALUES(?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
@@ -1910,7 +1910,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
-    private void updateGlobalNotesInDatabase(NotesApp Notes) {
+    private void updateGlobalNotesInDatabase(Notes Notes) {
         String sql = "UPDATE global_notes SET note_title = ?, note_content = ? WHERE note_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
@@ -1930,7 +1930,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
-    private void deleteGlobalNotesFromDatabase(NotesApp Notes) {
+    private void deleteGlobalNotesFromDatabase(Notes Notes) {
         String sql = "DELETE FROM global_notes WHERE note_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
