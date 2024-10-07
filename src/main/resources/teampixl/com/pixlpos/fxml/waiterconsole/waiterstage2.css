@@ -1,0 +1,282 @@
+/*
+ * Container styling
+ */
+.root-anchor {
+    -fx-background-color: #f5f5f5;
+}
+
+.top-container {
+    -fx-background-color: #F5F5F5;
+}
+
+
+
+.search-box {
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+.search-bar {
+    -fx-background-radius: 15px;
+    -fx-background-color: #FFFFFF;
+}
+
+.logout-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #4A85F6;
+    -fx-font-size: 17px;
+    -fx-cursor: hand;
+}
+
+.logout-button:hover {
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+}
+
+.order-container, .button-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10px;
+}
+.order-highlevel-container {
+    -fx-background-color: #EFF4FA;
+}
+
+.list-pane {
+    -fx-background-color: white;
+    -fx-border-color: #white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10px;
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}
+
+#orderitemslistview .list-cell:selected {
+    -fx-background-color: #8f9bb3;
+    -fx-text-fill: black;
+}
+
+#orderitemslistview .list-cell {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
+/* Style for the "+ Add Note" label */
+.add-note-label {
+    -fx-text-fill: blue;
+    -fx-cursor: hand;
+}
+
+/* Style for the TextField inside the ListCell */
+.list-cell .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-text-fill: black;
+    -fx-padding: 0;
+}
+
+.list-pane .scroll-bar:horizontal {
+    -fx-opacity: 0;      /* Makes the scrollbar invisible */
+
+}
+/**
+    * Button Styling
+ */
+.submit-button {
+    -fx-background-color: #A5CC72;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
+}
+
+.customize-button, .item-correct, .filter-button{
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.restart-button, .voiditem-button {
+    -fx-background-color: #dc4242;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
+}
+
+
+.item-button{
+    -fx-background-color: #EFF4FA;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-font-family: "Open Sans";
+}
+
+/**
+    * Text Styling
+ */
+.heading {
+    -fx-text-fill: #4A85F6;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.order-label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 20px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.order-number {
+    -fx-text-fill: #000000;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.customers-label, .table-label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 15px;
+    -fx-font-family: "Open Sans";
+}
+
+.amount-label {
+    -fx-text-fill: #0095FF;
+    -fx-font-size: 20px;
+    -fx-font-family: "Open Sans";
+}
+
+.buttonprice-label {
+    -fx-text-fill: #8f9bb3;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.docket-label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.combo-box .list-cell {
+    -fx-text-overrun: ellipsis;  /* Truncate text with ellipsis if it's too long */
+    -fx-max-width: 0;
+}
+
+
+.combo-box-base .text{
+    -fx-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Open Sans";
+}
+
+.combo-box{
+    -fx-text-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+    -fx-background-color: transparent;
+}
+.combo-box .arrow-button
+{
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.0em 0em 0.0em 0.0em; /* 0 3 0 0 */
+}
+
+.combo-box .arrow-button .arrow
+{
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 0 0 0 0, 0;
+    -fx-padding: 0em 0em 0em 0em; /* 3 3.75 3 3.75 */
+    /*
+        -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+    */
+    -fx-shape: null;
+}
+
+/**
+    * Tab Styling
+ */
+
+/* TabPane styling */
+.tab-pane {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-border-radius: 10;
+
+
+}
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #F5F5F5;
+    /*-fx-opacity: 0;*/
+}
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-effect: null;
+
+}
+.tab-pane > .tab-header-area > .headers-region > .tab{
+    -fx-background-radius: 10px 10px 10px 10px;
+}
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
+    -fx-alignment: center;
+    -fx-text-fill: #4A85F6;
+}
+.tab-pane > .tab-header-area > .headers-region > .tab:selected
+{
+    -fx-focus-color:  transparent;  //red;
+}
+
+.tab-pane .tab-header-area .tab-label {
+    -fx-alignment: center;   /* Centers the text */
+}
+.tab {
+    -fx-background-color: white;
+    /*-fx-pref-width: 170;*/
+    -fx-pref-height: 50;
+    -fx-text-alignment: center;
+    -fx-font-size: 20px;
+    -fx-border-radius: 10 10 10 10;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    /*-fx-background-insets: 0 3 0 3;*/
+
+}
+.searchtab {
+    /*-fx-pref-width: 45;*/
+    /*-fx-background-insets: 0 3 0 3;*/
+}
+
+.tab:selected {
+    -fx-text-fill: #4A85F6;
+}
+
+.tab:hover {
+    -fx-background-color: #3B6FD1;
+}
+
+.pane-style{
+    -fx-background-radius: 10;
+    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-border-radius: 10;
+}
+
+.scroll-pane > .viewport {
+     -fx-background-color: transparent;
+ }
+
+.scroll-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10;
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}

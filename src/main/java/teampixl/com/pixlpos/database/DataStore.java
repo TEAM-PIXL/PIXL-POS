@@ -1,9 +1,11 @@
 package teampixl.com.pixlpos.database;
 
+import teampixl.com.pixlpos.controllers.adminconsole.Notes;
 import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import teampixl.com.pixlpos.models.logs.UserLogs;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -53,6 +55,9 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     private final ObservableList<Users> users;
     private final ObservableList<Ingredients> ingredients;
     private final ObservableList<Stock> stockItems;
+    private final ObservableList<UserSettings> userSettings;
+    private final ObservableList<Notes> notes;
+    private final ObservableList<UserLogs> userLogs;
 
     private DataStore() {
         menuItems = FXCollections.observableArrayList();
@@ -60,19 +65,23 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         users = FXCollections.observableArrayList();
         ingredients = FXCollections.observableArrayList();
         stockItems = FXCollections.observableArrayList();
+        userSettings = FXCollections.observableArrayList();
+        notes = FXCollections.observableArrayList();
+        userLogs = FXCollections.observableArrayList();
 
         loadMenuItemsFromDatabase();
         loadOrdersFromDatabase();
         loadUsersFromDatabase();
         loadIngredientsFromDatabase();
         loadStockFromDatabase();
+        loadUserSettingsFromDatabase();
     }
 
     /**
      * Returns the singleton instance of the DataStore class.
      * @return DataStore - The singleton instance of the DataStore class.
      */
-    public static DataStore getInstance() {
+    public static synchronized DataStore getInstance() {
         if (instance == null) {
             instance = new DataStore();
         }
@@ -560,6 +569,131 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
 
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for UserSettings. It includes methods for creating, reading, updating, and deleting user settings.
+
+    Methods:
+        - createUserSettings(UserSettings userSettings): void - Adds a new user settings to the list of user settings.
+        - readUserSettings(): ObservableList<UserSettings> - Returns a list of all user settings.
+        - updateUserSettings(UserSettings userSettings): void - Updates an existing user settings in the list of user settings.
+        - deleteUserSettings(UserSettings userSettings): void - Removes an existing user settings from the list of user settings.
+    ====================================================================================================================================================================*/
+
+    /**
+     * Adds a new user settings to the list of user settings.
+     * @param settings UserSettings - The user settings to add.
+     */
+    public void createUserSettings(UserSettings settings) {
+        userSettings.add(settings);
+        saveUserSettingsToDatabase(settings);
+    }
+
+    /**
+     * Returns a list of all user settings.
+     * @return ObservableList<UserSettings> - A list of all user settings.
+     */
+    public ObservableList<UserSettings> readUserSettings() {
+        return userSettings;
+    }
+
+    /**
+     * Updates an existing user settings in the list of user settings.
+     * @param settings UserSettings - The user settings to update.
+     */
+    public void updateUserSettings(UserSettings settings) {
+        updateUserSettingsInDatabase(settings);
+    }
+
+    /**
+     * Removes an existing user settings from the list of user settings.
+     * @param settings UserSettings - The user settings to remove.
+     */
+    public void deleteUserSettings(UserSettings settings) {
+        userSettings.remove(settings);
+        deleteUserSettingsFromDatabase(settings);
+    }
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for NotesApp. It includes methods for creating, reading, updating, and deleting notes.
+
+    Methods:
+        - createNotesApp(NotesApp notesApp): void - Adds a new note to the list of notes.
+        - readNotesApp(): ObservableList<NotesApp> - Returns a list of all notes.
+        - updateNotesApp(NotesApp notesApp): void - Updates an existing note in the list of notes.
+        - deleteNotesApp(NotesApp notesApp): void - Removes an existing note from the list of notes.
+    ====================================================================================================================================================================*/
+
+    /**
+     * Adds a new note to the list of notes.
+     * @param NOTES NotesApp - The note to add.
+     */
+    public void createNotesApp(Notes NOTES) {
+        notes.add(NOTES);
+        saveGlobalNotesToDatabase(NOTES);
+    }
+
+    /**
+     * Returns a list of all notes.
+     * @return ObservableList<NotesApp> - A list of all notes.
+     */
+    public ObservableList<Notes> readNotesApp() {
+        return notes;
+    }
+
+    /**
+     * Updates an existing note in the list of notes.
+     * @param NOTES NotesApp - The note to update.
+     */
+    public void updateNotesApp(Notes NOTES) {
+        updateGlobalNotesInDatabase(NOTES);
+    }
+
+    /**
+     * Removes an existing note from the list of notes.
+     * @param NOTES NotesApp - The note to remove.
+     */
+    public void deleteNotesApp(Notes NOTES) {
+        notes.remove(NOTES);
+        deleteGlobalNotesFromDatabase(NOTES);
+    }
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for UserLogs. It includes methods for creating, reading, updating, and deleting user logs.
+
+    Methods:
+        - createUserLogs(UserLogs userLogs): void - Adds a new user log to the list of user logs.
+        - readUserLogs(): ObservableList<UserLogs> - Returns a list of all user logs.
+        - deleteUserLogs(UserLogs userLogs): void - Removes an existing user log from the list of user logs.
+    ====================================================================================================================================================================*/
+
+    /**
+     * Adds a new user log to the list of user logs.
+     * @param USER_LOGS UserLogs - The user log to add.
+     */
+    public void createUserLogs(UserLogs USER_LOGS) {
+        userLogs.add(USER_LOGS);
+        saveUserLogsToDatabase(USER_LOGS);
+    }
+
+    /**
+     * Returns a list of all user logs.
+     * @return ObservableList<UserLogs> - A list of all user logs.
+     */
+    public ObservableList<UserLogs> readUserLogs() {
+        return userLogs;
+    }
+
+    /**
+     * Removes an existing user log from the list of user logs.
+     * @param USER_LOGS UserLogs - The user log to remove.
+     */
+    public void deleteUserLogs(UserLogs USER_LOGS) {
+        this.userLogs.remove(USER_LOGS);
+        deleteUserLogsFromDatabase(USER_LOGS);
+    }
 
 /*====================================================================================================================================================================================
 
@@ -604,9 +738,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String dietaryRequirementStr = rs.getString("dietary_requirement");
                 MenuItem.DietaryRequirement dietaryRequirement = dietaryRequirementStr != null ? MenuItem.DietaryRequirement.valueOf(dietaryRequirementStr) : null;
                 String description = rs.getString("description");
+                String notes = rs.getString("notes");
+                Integer amountOrdered = rs.getInt("amount_ordered");
 
                 MenuItem item = new MenuItem(itemName, price, itemType, activeItem, description, dietaryRequirement);
                 item.updateMetadata("id", id);
+                item.setDataValue("notes", notes);
+                item.setDataValue("amountOrdered", amountOrdered);
                 menuItems.add(item);
             }
 
@@ -714,8 +852,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
-                double numeral = rs.getDouble("numeral");  // Assuming that numeral is stored as REAL in SQLite
-                Ingredients ingredient = getIngredientById(ingredientId);  // You'll need a method to fetch ingredient by ID
+                double numeral = rs.getDouble("numeral");
+                Ingredients ingredient = getIngredientById(ingredientId);
 
                 assert ingredient != null;
                 ingredientsMap.put(ingredient.getMetadata().metadata().get("itemName").toString(), numeral);
@@ -801,9 +939,101 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
     private void loadOrdersFromDatabase() {
+        long twentyFourHoursAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
+
+        String sql = "SELECT * FROM orders WHERE updated_at >= ?";
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, twentyFourHoursAgo);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String orderId = rs.getString("order_id");
+                    int orderNumber = rs.getInt("order_number");
+                    String userId = rs.getString("user_id");
+                    Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
+                    boolean isCompleted = rs.getInt("is_completed") == 1;
+                    Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                    int tableNumber = rs.getInt("table_number");
+                    int customers = rs.getInt("customers");
+                    long createdAt = rs.getLong("created_at");
+                    long updatedAt = rs.getLong("updated_at");
+                    double total = rs.getDouble("total");
+                    String specialRequests = rs.getString("special_requests");
+                    Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
+
+                    Order order = new Order(orderNumber, userId);
+                    order.updateMetadata("order_id", orderId);
+                    order.updateMetadata("order_status", orderStatus);
+                    order.updateMetadata("is_completed", isCompleted);
+                    order.updateMetadata("order_type", orderType);
+                    order.updateMetadata("table_number", tableNumber);
+                    order.updateMetadata("customers", customers);
+                    order.updateMetadata("created_at", createdAt);
+                    order.updateMetadata("updated_at", updatedAt);
+                    order.setDataValue("total", total);
+                    order.setDataValue("special_requests", specialRequests);
+                    order.setDataValue("payment_method", paymentMethod);
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void loadOrdersFromDatabase(long startTime, long endTime) {
+        String sql = "SELECT * FROM orders WHERE updated_at BETWEEN ? AND ?";
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, startTime);
+            pstmt.setLong(2, endTime);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String orderId = rs.getString("order_id");
+                    int orderNumber = rs.getInt("order_number");
+                    String userId = rs.getString("user_id");
+                    Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
+                    boolean isCompleted = rs.getInt("is_completed") == 1;
+                    Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                    int tableNumber = rs.getInt("table_number");
+                    int customers = rs.getInt("customers");
+                    long createdAt = rs.getLong("created_at");
+                    long updatedAt = rs.getLong("updated_at");
+                    double total = rs.getDouble("total");
+                    String specialRequests = rs.getString("special_requests");
+                    Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
+
+                    Order order = new Order(orderNumber, userId);
+                    order.updateMetadata("order_id", orderId);
+                    order.updateMetadata("order_status", orderStatus);
+                    order.updateMetadata("is_completed", isCompleted);
+                    order.updateMetadata("order_type", orderType);
+                    order.updateMetadata("table_number", tableNumber);
+                    order.updateMetadata("customers", customers);
+                    order.updateMetadata("created_at", createdAt);
+                    order.updateMetadata("updated_at", updatedAt);
+                    order.setDataValue("total", total);
+                    order.setDataValue("special_requests", specialRequests);
+                    order.setDataValue("payment_method", paymentMethod);
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void loadAllOrdersFromDatabase() {
+        String sql = "SELECT * FROM orders";
         try (Connection conn = DatabaseHelper.connect();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM orders")) {
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 String orderId = rs.getString("order_id");
@@ -811,25 +1041,35 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String userId = rs.getString("user_id");
                 Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(rs.getString("order_status"));
                 boolean isCompleted = rs.getInt("is_completed") == 1;
+                Order.OrderType orderType = Order.OrderType.valueOf(rs.getString("order_type"));
+                int tableNumber = rs.getInt("table_number");
+                int customers = rs.getInt("customers");
                 long createdAt = rs.getLong("created_at");
                 long updatedAt = rs.getLong("updated_at");
                 double total = rs.getDouble("total");
+                String specialRequests = rs.getString("special_requests");
+                Order.PaymentMethod paymentMethod = Order.PaymentMethod.valueOf(rs.getString("payment_method"));
 
                 Order order = new Order(orderNumber, userId);
                 order.updateMetadata("order_id", orderId);
                 order.updateMetadata("order_status", orderStatus);
                 order.updateMetadata("is_completed", isCompleted);
+                order.updateMetadata("order_type", orderType);
+                order.updateMetadata("table_number", tableNumber);
+                order.updateMetadata("customers", customers);
                 order.updateMetadata("created_at", createdAt);
                 order.updateMetadata("updated_at", updatedAt);
                 order.setDataValue("total", total);
+                order.setDataValue("special_requests", specialRequests);
+                order.setDataValue("payment_method", paymentMethod);
 
                 orders.add(order);
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
 
     public void loadOrderItems(String orderId, Order order) {
         ObservableList<Map<String, Object>> orderItemsList = FXCollections.observableArrayList();
@@ -916,7 +1156,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void saveOrderToDatabase(Order order) {
-        String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, total, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, order_type, table_number, customers, total, special_requests, payment_method, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -926,9 +1166,14 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setString(3, (String) order.getMetadata().metadata().get("user_id"));
             pstmt.setString(4, order.getMetadata().metadata().get("order_status").toString());
             pstmt.setInt(5, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
-            pstmt.setDouble(6, (Double) order.getData().get("total"));
-            pstmt.setLong(7, (Long) order.getMetadata().metadata().get("created_at"));
-            pstmt.setLong(8, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(6, order.getMetadata().metadata().get("order_type").toString());
+            pstmt.setInt(7, (Integer) order.getMetadata().metadata().get("table_number"));
+            pstmt.setInt(8, (Integer) order.getMetadata().metadata().get("customers"));
+            pstmt.setDouble(9, (Double) order.getData().get("total"));
+            pstmt.setString(10, (String) order.getData().get("special_requests"));
+            pstmt.setString(11, order.getData().get("payment_method").toString());
+            pstmt.setLong(12, (Long) order.getMetadata().metadata().get("created_at"));
+            pstmt.setLong(13, (Long) order.getMetadata().metadata().get("updated_at"));
 
             pstmt.executeUpdate();
             System.out.println("Order saved to database.");
@@ -998,16 +1243,20 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     }
 
     private void updateOrderInDatabase(Order order) {
-        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, total = ?, updated_at = ? WHERE order_id = ?";
+        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, order_type = ?, table_number = ?, total = ?, special_requests = ?, payment_method = ?, updated_at = ? WHERE order_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, order.getMetadata().metadata().get("order_status").toString());
             pstmt.setInt(2, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
-            pstmt.setDouble(3, (Double) order.getData().get("total"));
-            pstmt.setLong(4, (Long) order.getMetadata().metadata().get("updated_at"));
-            pstmt.setString(5, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setString(3, order.getMetadata().metadata().get("order_type").toString());
+            pstmt.setInt(4, (Integer) order.getMetadata().metadata().get("table_number"));
+            pstmt.setDouble(5, (Double) order.getData().get("total"));
+            pstmt.setString(6, (String) order.getData().get("special_requests"));
+            pstmt.setString(7, order.getData().get("payment_method").toString());
+            pstmt.setLong(8, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(9, (String) order.getMetadata().metadata().get("order_id"));
 
             pstmt.executeUpdate();
             System.out.println("Order updated in database.");
@@ -1106,8 +1355,10 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String email = rs.getString("email");
                 String password = rs.getString("password");
                 String additionalInfo = rs.getString("additional_info");
+                Boolean isActive = rs.getInt("is_active") == 1;
                 Users user = new Users(firstName, lastName,username, password, email, role);
                 user.updateMetadata("id", id);
+                user.updateMetadata("is_active", isActive);
                 user.setDataValue("additional_info", additionalInfo);
                 users.add(user);
             }
@@ -1209,7 +1460,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
                 String notes = rs.getString("notes");
 
                 Ingredients ingredient = new Ingredients(itemName, notes);
-                ingredient.updateMetadata("ingredient_id", ingredientId); // Set the ingredient ID from the database
+                ingredient.updateMetadata("ingredient_id", ingredientId);
 
                 ingredients.add(ingredient);
             }
@@ -1296,7 +1547,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
             while (rs.next()) {
                 String ingredientId = rs.getString("ingredient_id");
-                Ingredients ingredient = getIngredientById(ingredientId);  // Fetch the ingredient by its ID
+                Ingredients ingredient = getIngredientById(ingredientId);
 
                 if (ingredient != null) {
                     Stock.StockStatus stockStatus = Stock.StockStatus.valueOf(rs.getString("stock_status"));
@@ -1480,6 +1731,294 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             }
         }
         return null;
+    }
+
+
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for User Settings. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadUserSettingsFromDatabase(): void - Loads user settings from the database.
+        - saveUserSettingsToDatabase(UserSettings userSettings): void - Saves user settings to the database.
+        - updateUserSettingsInDatabase(UserSettings userSettings): void - Updates user settings in the database.
+        - deleteUserSettingsFromDatabase(UserSettings userSettings): void - Deletes user settings from the database.
+    ====================================================================================================================================================================*/
+
+
+
+    private void loadUserSettingsFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM user_settings")) {
+
+            while (rs.next()) {
+                UserSettings.Theme theme = UserSettings.Theme.valueOf(rs.getString("theme"));
+                UserSettings.Currency currency = UserSettings.Currency.valueOf(rs.getString("currency"));
+                UserSettings.Resolution resolution = UserSettings.Resolution.valueOf(rs.getString("resolution"));
+                UserSettings.Timezone timezone = UserSettings.Timezone.valueOf(rs.getString("timezone"));
+                UserSettings.AccessLevel access_level = UserSettings.AccessLevel.valueOf(rs.getString("access_level"));
+                UserSettings.Language language = UserSettings.Language.valueOf(rs.getString("language"));
+                String userId = rs.getString("user_id");
+
+                UserSettings USER_SETTINGS = new UserSettings(userId);
+                USER_SETTINGS.updateMetadata("theme", theme);
+                USER_SETTINGS.updateMetadata("currency", currency);
+                USER_SETTINGS.updateMetadata("resolution", resolution);
+                USER_SETTINGS.updateMetadata("timezone", timezone);
+                USER_SETTINGS.setDataValue("access_level", access_level);
+                USER_SETTINGS.setDataValue("language", language);
+
+                userSettings.add(USER_SETTINGS);
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void saveUserSettingsToDatabase(UserSettings settings) {
+        String sql = "INSERT INTO user_settings(user_id, theme, language, currency, resolution, timezone, access_level) VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) settings.getMetadata().metadata().get("user_id"));
+            pstmt.setString(2, settings.getMetadata().metadata().get("theme").toString());
+            pstmt.setString(3, settings.getData().get("language").toString());
+            pstmt.setString(4, settings.getMetadata().metadata().get("currency").toString());
+            pstmt.setString(5, settings.getMetadata().metadata().get("resolution").toString());
+            pstmt.setString(6, settings.getMetadata().metadata().get("timezone").toString());
+            pstmt.setString(7, settings.getData().get("access_level").toString());
+
+            pstmt.executeUpdate();
+            System.out.println("User settings saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void updateUserSettingsInDatabase(UserSettings settings) {
+        String sql = "UPDATE user_settings SET theme = ?, language = ?, currency = ?, resolution = ?, timezone = ?, access_level = ? WHERE user_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, settings.getMetadata().metadata().get("theme").toString());
+            pstmt.setString(2, settings.getData().get("language").toString());
+            pstmt.setString(3, settings.getMetadata().metadata().get("currency").toString());
+            pstmt.setString(4, settings.getMetadata().metadata().get("resolution").toString());
+            pstmt.setString(5, settings.getMetadata().metadata().get("timezone").toString());
+            pstmt.setString(6, settings.getData().get("access_level").toString());
+            pstmt.setString(7, (String) settings.getMetadata().metadata().get("user_id"));
+
+            pstmt.executeUpdate();
+            System.out.println("User settings updated in database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void deleteUserSettingsFromDatabase(UserSettings settings) {
+        String sql = "DELETE FROM user_settings WHERE user_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) settings.getMetadata().metadata().get("user_id"));
+            pstmt.executeUpdate();
+            System.out.println("User settings deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for Global Notes. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadGlobalNotesFromDatabase(): void - Loads global notes from the database.
+        - saveGlobalNotesToDatabase(NotesApp Notes): void - Saves a global note to the database.
+        - updateGlobalNotesInDatabase(NotesApp Notes): void - Updates a global note in the database.
+        - deleteGlobalNotesFromDatabase(NotesApp Notes): void - Deletes a global note from the database.
+    ====================================================================================================================================================================*/
+
+
+
+    private void loadGlobalNotesFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM global_notes")) {
+
+            while (rs.next()) {
+                String noteId = rs.getString("note_id");
+                String userId = rs.getString("user_id");
+                long timestamp = rs.getLong("timestamp");
+                String noteTitle = rs.getString("note_title");
+                String noteContent = rs.getString("note_content");
+
+                Notes Notes = new Notes(noteContent, noteTitle);
+                Notes.updateMetadata("note_id", noteId);
+                Notes.updateMetadata("user_id", userId);
+                Notes.updateMetadata("timestamp", timestamp);
+                Notes.setDataValue("note_title", noteTitle);
+                Notes.setDataValue("note_content", noteContent);
+
+                notes.add(Notes);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void saveGlobalNotesToDatabase(Notes Notes) {
+        String sql = "INSERT INTO global_notes(note_id, user_id, timestamp, note_title, note_content) VALUES(?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) Notes.getMetadata().metadata().get("note_id"));
+            pstmt.setString(2, (String) Notes.getMetadata().metadata().get("user_id"));
+            pstmt.setLong(3, (Long) Notes.getMetadata().metadata().get("timestamp"));
+            pstmt.setString(4, (String) Notes.getData().get("note_title"));
+            pstmt.setString(5, (String) Notes.getData().get("note_content"));
+
+            pstmt.executeUpdate();
+            System.out.println("Global note saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void updateGlobalNotesInDatabase(Notes Notes) {
+        String sql = "UPDATE global_notes SET note_title = ?, note_content = ? WHERE note_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) Notes.getData().get("note_title"));
+            pstmt.setString(2, (String) Notes.getData().get("note_content"));
+            pstmt.setString(3, (String) Notes.getMetadata().metadata().get("note_id"));
+
+            pstmt.executeUpdate();
+            System.out.println("Global note updated in database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void deleteGlobalNotesFromDatabase(Notes Notes) {
+        String sql = "DELETE FROM global_notes WHERE note_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) Notes.getMetadata().metadata().get("note_id"));
+            pstmt.executeUpdate();
+            System.out.println("Global note deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for User Logs. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadUserLogsFromDatabase(): void - Loads user logs from the database.
+        - saveUserLogsToDatabase(UserLogs userLogs): void - Saves a user log to the database.
+        - deleteUserLogsFromDatabase(UserLogs userLogs): void - Deletes a user log from the database.
+    ====================================================================================================================================================================*/
+
+
+
+    private void loadUserLogsFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM user_logs")) {
+
+            while (rs.next()) {
+                String id = rs.getString("id");
+                String userId = rs.getString("user_id");
+                String log_type = rs.getString("log_type");
+                long timestamp = rs.getLong("created_at");
+
+                UserLogs USER_LOGS = new UserLogs(UserLogs.LogType.valueOf(log_type));
+                USER_LOGS.updateMetadata("id", id);
+                USER_LOGS.updateMetadata("user_id", userId);
+                USER_LOGS.updateMetadata("created_at", timestamp);
+
+                userLogs.add(USER_LOGS);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void saveUserLogsToDatabase(UserLogs USER_LOGS) {
+        String sql = "INSERT INTO user_logs(id, user_id, log_type, created_at) VALUES(?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, USER_LOGS.getMetadata().metadata().get("id").toString());
+            pstmt.setString(2, (String) USER_LOGS.getMetadata().metadata().get("user_id"));
+            pstmt.setString(3, USER_LOGS.getMetadata().metadata().get("log_type").toString());
+            pstmt.setLong(4, (Long) USER_LOGS.getMetadata().metadata().get("created_at"));
+
+            pstmt.executeUpdate();
+            System.out.println("User log saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void deleteUserLogsFromDatabase(UserLogs USER_LOGS) {
+        String sql = "DELETE FROM user_logs WHERE id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, USER_LOGS.getMetadata().metadata().get("id").toString());
+            pstmt.executeUpdate();
+            System.out.println("User log deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 

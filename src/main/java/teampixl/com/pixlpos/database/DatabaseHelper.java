@@ -79,6 +79,60 @@ public class DatabaseHelper {
         );
     """;
 
+        String sqlCreateLoginTable = """
+        CREATE TABLE IF NOT EXISTS user_logs (
+            id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            log_type TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    """;
+
+        String sqlCreateLogsTable = """
+        CREATE TABLE IF NOT EXISTS global_logs (
+            log_id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            log_timestamp INTEGER NOT NULL,
+            log_action TEXT NOT NULL,
+            log_status TEXT NOT NULL,
+            log_type TEXT NOT NULL,
+            log_category TEXT NOT NULL,
+            log_priority TEXT NOT NULL,
+            log_description TEXT NOT NULL,
+            log_location TEXT,
+            log_device TEXT,
+            log_ip TEXT,
+            log_mac TEXT,
+            log_os TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+        """;
+
+        String sqlCreateSettingsTable = """
+        CREATE TABLE IF NOT EXISTS user_settings (
+            user_id TEXT PRIMARY KEY,
+            theme TEXT,
+            resolution TEXT,
+            currency TEXT,
+            timezone TEXT,
+            language TEXT,
+            access_level TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    """;
+
+        String sqlCreateGlobalNotesTable = """
+        CREATE TABLE IF NOT EXISTS global_notes (
+            note_id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            note_title TEXT NOT NULL,
+            note_content TEXT NOT NULL,
+            timestamp INTEGER NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    """;
+
         String sqlCreateMenuItemsTable = """
         CREATE TABLE IF NOT EXISTS menu_items (
             id TEXT PRIMARY KEY,
@@ -102,7 +156,12 @@ public class DatabaseHelper {
             user_id TEXT NOT NULL,
             order_status TEXT NOT NULL,
             is_completed INTEGER NOT NULL DEFAULT 0,
+            order_type TEXT NOT NULL,
+            table_number INTEGER,
+            customers INTEGER,
             total REAL NOT NULL,
+            special_requests TEXT,
+            payment_method TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
@@ -155,6 +214,10 @@ public class DatabaseHelper {
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(sqlCreateUsersTable);
+            stmt.execute(sqlCreateLoginTable);
+            stmt.execute(sqlCreateLogsTable);
+            stmt.execute(sqlCreateSettingsTable);
+            stmt.execute(sqlCreateGlobalNotesTable);
             stmt.execute(sqlCreateMenuItemsTable);
             stmt.execute(sqlCreateOrdersTable);
             stmt.execute(sqlCreateOrderItemsTable);
