@@ -142,6 +142,9 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
             Parent root = fxmlLoader.load();
+            if (root == null) {
+                throw new IOException("Failed to load FXML file: " + fxmlPath);
+            }
 
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
@@ -227,7 +230,6 @@ public class GuiCommon {
         }
         return root;
     }
-
     /**
      * Loads a new scene into the stage associated with the given node.
      *
