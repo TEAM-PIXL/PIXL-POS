@@ -181,9 +181,7 @@ public class AdminScreenMenuController
     }
     @FXML
     protected void onLogoutButtonClick() {
-        // Handle exit button click
-        Stage stage = (Stage) logoutbutton.getScene().getWindow();
-        GuiCommon.loadScene(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, stage);
+        GuiCommon.logout(logoutbutton);
     }
 
 

@@ -26,7 +26,8 @@ public class UserLogs extends DataManager {
      */
     public enum LogType {
         LOGIN,
-        LOGOUT
+        LOGOUT,
+        SYSTEM
     }
 
     /**
@@ -43,9 +44,23 @@ public class UserLogs extends DataManager {
     }
 
     private static MetadataWrapper initializeMetadata(LogType logType) {
+        if (logType == null) {
+            throw new IllegalArgumentException("LogType cannot be null");
+        }
+        String userId;
+        try {
+            userId = UserStack.getInstance().getCurrentUserId();
+            if (userId == null) {
+                userId = "System";
+                logType = LogType.SYSTEM;
+            }
+        } catch (Exception e) {
+            userId = "00000000-0000-0000-0000-000000000000";
+        }
+        System.out.println("LogType = " + logType);
         Map<String, Object> metadataMap = new HashMap<>();
         metadataMap.put("id", UUID.randomUUID());
-        metadataMap.put("user_id", UserStack.getInstance().getCurrentUserId());
+        metadataMap.put("user_id", userId);
         metadataMap.put("log_type", logType);
         metadataMap.put("created_at", System.currentTimeMillis());
         return new MetadataWrapper(metadataMap);

@@ -22,6 +22,12 @@ public class POSApplication extends Application {
     }
 
     /**
+     * Stops the JavaFX application.
+     */
+    @Override
+    public void stop() { GuiCommon.exit(); }
+
+    /**
      * Launches the JavaFX application.
      *
      * @param args the command line arguments
