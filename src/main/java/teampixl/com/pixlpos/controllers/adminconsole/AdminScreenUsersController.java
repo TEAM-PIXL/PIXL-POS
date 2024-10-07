@@ -363,12 +363,17 @@ public class AdminScreenUsersController
             usersince.setText(userSince);
             rolefield.setText(role);
             // Set action handlers for buttons (if they exist in your FXML)
+
             Button editbutton = (Button) hbox.lookup("#editbutton");
             editbutton.setOnAction(event -> onEditButtonClick(event, id));
+
             Button removebutton = (Button) hbox.lookup("#removebutton");
             removebutton.setOnAction(event -> onRemoveButtonClick(event, id));
 
-
+            Tooltip tooltip = new Tooltip("Edit User");
+            Tooltip tooltip2 = new Tooltip("Remove User");
+            editbutton.setTooltip(tooltip);
+            removebutton.setTooltip(tooltip2);
             // Add the HBox to the ListView
             listView.getItems().add(hbox);
 

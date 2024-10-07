@@ -12,27 +12,27 @@
     <children>
         <AnchorPane HBox.hgrow="ALWAYS">
             <children>
-                <Label id="namefield" fx:id="namefield" alignment="CENTER" prefHeight="70.0" prefWidth="109.0" text="Item Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <Label id="namefield" fx:id="namefield" alignment="CENTER" prefHeight="70.0" prefWidth="123.0" text="Item Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </children>
         </AnchorPane>
         <AnchorPane layoutX="452.0" layoutY="10.0" HBox.hgrow="ALWAYS">
             <children>
-                <Label id="qtyfield" fx:id="qtyfield" alignment="CENTER" prefHeight="70.0" prefWidth="56.0" text="Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <Label id="qtyfield" fx:id="qtyfield" alignment="CENTER" prefHeight="70.0" prefWidth="68.0" text="Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </children>
         </AnchorPane>
         <AnchorPane layoutX="530.0" layoutY="10.0" HBox.hgrow="ALWAYS">
             <children>
-                <Label id="orderstatfield" fx:id="orderstatfield" alignment="CENTER" prefHeight="70.0" prefWidth="107.0" text="Order Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <Label id="orderstatfield" fx:id="orderstatfield" alignment="CENTER" prefHeight="70.0" prefWidth="117.0" text="Order Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </children>
         </AnchorPane>
         <AnchorPane layoutX="501.0" layoutY="10.0" HBox.hgrow="ALWAYS">
             <children>
-                <Label id="lastupfield" fx:id="lastupfield" alignment="CENTER" prefHeight="70.0" prefWidth="107.0" text="Last Updated" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <Label id="lastupfield" fx:id="lastupfield" alignment="CENTER" prefHeight="70.0" prefWidth="115.0" text="Last Updated" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </children>
         </AnchorPane>
         <AnchorPane layoutX="386.0" layoutY="10.0" HBox.hgrow="ALWAYS">
             <children>
-                  <Label id="stocklvlfield" fx:id="stocklvlfield" alignment="CENTER" prefHeight="70.0" prefWidth="51.0" style="-fx-background-color: #0095FF; -fx-background-radius: 10;" text="LOW" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Label id="stocklvlfield" fx:id="stocklvlfield" alignment="CENTER" prefHeight="70.0" prefWidth="58.0" style="-fx-background-color: #0095FF; -fx-background-radius: 10;" text="LOW" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </children>
          <HBox.margin>
             <Insets />
@@ -41,9 +41,9 @@
             <Insets bottom="20.0" top="20.0" />
          </padding>
         </AnchorPane>
-        <AnchorPane layoutX="108.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS">
+        <AnchorPane layoutX="108.0" layoutY="10.0" maxWidth="50.0" minWidth="50.0" HBox.hgrow="ALWAYS">
             <children>
-                <Button id="editbutton" fx:id="editbutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" prefHeight="70.0" prefWidth="68.0" style="-fx-background-color: transparent;" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <Button id="editbutton" fx:id="editbutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" prefHeight="70.0" prefWidth="74.0" style="-fx-background-color: transparent;" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -54,9 +54,9 @@
                 </Button>
             </children>
         </AnchorPane>
-        <AnchorPane layoutX="488.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS">
+        <AnchorPane layoutX="488.0" layoutY="10.0" maxWidth="50.0" minWidth="50.0" HBox.hgrow="ALWAYS">
             <children>
-                <Button id="removebutton" fx:id="removebutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" prefHeight="70.0" prefWidth="65.0" style="-fx-background-color: transparent;" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <Button id="removebutton" fx:id="removebutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" prefHeight="70.0" prefWidth="70.0" style="-fx-background-color: transparent;" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                             <image>

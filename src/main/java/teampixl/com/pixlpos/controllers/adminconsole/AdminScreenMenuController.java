@@ -357,7 +357,10 @@ public class AdminScreenMenuController
             editbutton.setOnAction(event -> onEditButtonClick(event, id));
             Button removebutton = (Button) hbox.lookup("#removebutton");
             removebutton.setOnAction(event -> onRemoveButtonClick(event, id));
-
+            Tooltip tooltip = new Tooltip("Edit Item");
+            Tooltip tooltip2 = new Tooltip("Remove Item");
+            editbutton.setTooltip(tooltip);
+            removebutton.setTooltip(tooltip2);
 
             // Add the HBox to the ListView
             listView.getItems().add(hbox);
