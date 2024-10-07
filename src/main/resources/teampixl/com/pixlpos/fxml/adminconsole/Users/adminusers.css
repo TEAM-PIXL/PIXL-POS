@@ -155,6 +155,9 @@
 .table-header {
     -fx-background-color: #EFF4FA;
 }
+.table-header-exclusive {
+    -fx-background-color: #FFFFFF;
+}
 /* database label text styling */
 .database-label {
     -fx-text-fill: #8f9bb3;

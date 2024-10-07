@@ -38,7 +38,7 @@
                     <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../../../images/search_icon.png" />
+                                <Image url="@../../../images/adminicons/search_icon.png" />
                             </image>
                             <HBox.margin>
                                 <Insets left="15.0" top="7.0" />
@@ -82,7 +82,7 @@
                     <children>
                         <ImageView fitHeight="74.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="5.0">
                             <image>
-                                <Image url="@../../../images/account_user_icon.png" />
+                                <Image url="@../../../images/adminicons/account_user_icon.png" />
                             </image>
                         </ImageView>
                         <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
@@ -97,7 +97,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/home_icon.png" />
+                                        <Image url="@../../../images/adminicons/home_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -109,7 +109,7 @@
                             <graphic>
                                 <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/users_icon.png" />
+                                        <Image url="@../../../images/adminicons/users_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -118,7 +118,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/blue_menu_icon.png" />
+                                        <Image url="@../../../images/adminicons/blue_menu_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -127,7 +127,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/box_icon.png" />
+                                        <Image url="@../../../images/adminicons/box_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -136,7 +136,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/analytics_icon.png" />
+                                        <Image url="@../../../images/adminicons/analytics_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -149,7 +149,7 @@
                             <graphic>
                                 <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/logout_icon.png" />
+                                        <Image url="@../../../images/adminicons/logout_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -238,26 +238,80 @@
                      <children>
                         <AnchorPane HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.4" prefWidth="111.2" styleClass="database-label" text="Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="database-label" text="Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="10.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.4" prefWidth="86.4" styleClass="database-label" text="Price" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="database-label" text="Price" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="329.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane layoutX="468.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.4" prefWidth="72.8" styleClass="database-label" text="Type" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="database-label" text="Type" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="436.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane layoutX="210.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.4" prefWidth="80.0" styleClass="database-label" text="Dietary" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="database-label" text="Dietary" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="489.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="100.0" HBox.hgrow="ALWAYS" />
-                        <AnchorPane layoutX="521.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+                        <AnchorPane layoutX="488.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
+                        <AnchorPane layoutX="520.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="11.0" layoutY="65.0" prefHeight="50.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" text="Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="10.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" text="Price" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="468.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" text="Type" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="210.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <Label alignment="CENTER" prefHeight="25.0" prefWidth="75.0" style="-fx-background-color: #0095FF; -fx-background-radius: 10;" text="DIETARY" textFill="WHITE" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="488.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button contentDisplay="GRAPHIC_ONLY" layoutX="-5.0" layoutY="12.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: transparent;" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../images/adminicons/green_edit_write_pen_icon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="520.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button contentDisplay="GRAPHIC_ONLY" layoutX="-5.0" layoutY="12.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: transparent;" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../images/adminicons/red_trash_2_icon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </AnchorPane>
                      </children>
                   </HBox>
                   <ListView fx:id="menuitemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />

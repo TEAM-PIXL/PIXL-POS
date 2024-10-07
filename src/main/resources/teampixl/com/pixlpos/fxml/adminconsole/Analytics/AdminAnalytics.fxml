@@ -37,7 +37,7 @@
                     <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../../../images/search_icon.png" />
+                                <Image url="@../../../images/adminicons/search_icon.png" />
                             </image>
                             <HBox.margin>
                                 <Insets left="15.0" top="7.0" />
@@ -81,7 +81,7 @@
                     <children>
                         <ImageView fitHeight="74.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="5.0">
                             <image>
-                                <Image url="@../../../images/account_user_icon.png" />
+                                <Image url="@../../../images/adminicons/account_user_icon.png" />
                             </image>
                         </ImageView>
                         <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
@@ -96,7 +96,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/home_icon.png" />
+                                        <Image url="@../../../images/adminicons/home_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -108,7 +108,7 @@
                             <graphic>
                                 <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/users_icon.png" />
+                                        <Image url="@../../../images/adminicons/users_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -117,7 +117,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/menu_icon.png" />
+                                        <Image url="@../../../images/adminicons/menu_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -126,7 +126,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/box_icon.png" />
+                                        <Image url="@../../../images/adminicons/box_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -135,7 +135,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/blue_analytics_icon.png" />
+                                        <Image url="@../../../images/adminicons/blue_analytics_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -148,7 +148,7 @@
                             <graphic>
                                 <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/logout_icon.png" />
+                                        <Image url="@../../../images/adminicons/logout_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

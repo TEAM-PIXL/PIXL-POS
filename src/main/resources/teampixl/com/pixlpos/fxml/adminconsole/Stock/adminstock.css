@@ -140,6 +140,8 @@
 .table-header {
     -fx-background-color: #EFF4FA;
 }
+
+
 /* database label text styling */
 .database-label {
     -fx-text-fill: #8f9bb3;
