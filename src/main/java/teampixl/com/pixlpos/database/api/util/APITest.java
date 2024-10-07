@@ -1,49 +1,29 @@
 package teampixl.com.pixlpos.database.api.util;
 
 import teampixl.com.pixlpos.database.api.*;
-import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.logs.Logs;
+import teampixl.com.pixlpos.models.logs.UserLogs;
 import teampixl.com.pixlpos.models.logs.definitions.Priority;
 import teampixl.com.pixlpos.models.logs.definitions.Category;
 import teampixl.com.pixlpos.models.logs.definitions.Type;
 import teampixl.com.pixlpos.models.logs.definitions.Status;
 import teampixl.com.pixlpos.models.logs.definitions.Action;
+import teampixl.com.pixlpos.models.*;
+import teampixl.com.pixlpos.models.logs.LogTask;
 
 import java.util.List;
-
-import static teampixl.com.pixlpos.database.api.util.Exceptions.isSuccessful;
-import static teampixl.com.pixlpos.database.api.util.Exceptions.returnStatus;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class APITest {
     public static void main(String[] args) throws Exception {
-        UserStack.getInstance().setCurrentUser("admin");
-        Logs logs = new Logs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
-        System.out.println("User Logs: " + logs.getMetadata().metadata());
-        System.out.println("User Logs: " + logs.getData());
-
-        OrderAPI orderAPI = OrderAPI.getInstance();
-
-        Order order = orderAPI.initializeOrder();
-
-        System.out.println("Order Contents: " + order.getMetadata().metadata());
-
-        List<StatusCode> Stat = orderAPI.putOrderItem(order.getMetadataValue("order_id").toString(), MenuAPI.getInstance().keySearch("Pizza"), 4);
-        if (isSuccessful(Stat)) {
-            System.out.println("Order placed successfully.");
-        } else {
-            System.out.println(returnStatus("Order items could not be added with the following errors:", Stat));
-        }
-
-        orderAPI.putOrderSpecialRequests(order.getMetadataValue("order_id").toString(), "No cheese, extra tomato");
-
-        List<StatusCode> Status = orderAPI.postOrder(order);
-        if (isSuccessful(Status)) {
-            System.out.println("Order placed successfully.");
-        } else {
-            System.out.println(returnStatus("Order could not be placed with the following errors:", Status));
-        }
-
-        /* KEYS */
+//        UserStack.getInstance().setCurrentUser("admin");
+//        Logs logs = new Logs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
+//        System.out.println("User Logs: " + logs.getMetadata().metadata());
+//        System.out.println("User Logs: " + logs.getData());
+//
+//
+//        /* KEYS */
 //        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
 //        String[] DataKeys = {"description", "notes", "amountOrdered", "ingredients"};
 //
@@ -83,9 +63,42 @@ public class APITest {
 //        System.out.println("Notes: " + menuItem.getDataValue(DataKeys[1]));
 //        System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
 //        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
+//
+//        /* Network */
+//
+//        /* ---> Init stack <---- */
+//        UserStack.getInstance().setCurrentUser("admin");
+//
+//        String ID = UserStack.getInstance().getCurrentUserId();
+//        System.out.println("The current user has the ID: " + ID);
+//
+//        /* ---> Init API <---- */
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+//        executor.submit(new LogTask(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW));
+//        executor.shutdown();
+//
+//        UserLogs USER_LOGS = new UserLogs(UserLogs.LogType.LOGIN);
+//        System.out.println("The user log has the contents: " + USER_LOGS);
 
-        /* Network */
 
+        UsersAPI usersAPI = UsersAPI.getInstance();
+
+        /* ---> POST USERS <---- */
+        System.out.println("POST USERS");
+        System.out.println("--------------------------------------------------");
+        List<StatusCode> STATUS = usersAPI.postUsers("john", "doe", "johnnyboy", "Goo7yLu%%y", "email@email.com", Users.UserRole.WAITER);
+        if (!Exceptions.isSuccessful(STATUS)) {
+            System.out.println(Exceptions.returnStatus("User could not be created with the following errors:", STATUS));
+        } else {
+            System.out.println("User created successfully.");
+        }
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
 
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();

@@ -1,6 +1,7 @@
 package teampixl.com.pixlpos.application;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.stage.Stage;
 
@@ -18,7 +19,17 @@ public class POSApplication extends Application {
      */
     @Override
     public void start(Stage stage) {
-        GuiCommon.loadStage(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE);
+        GuiCommon.loadStage(stage, GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE);
+    }
+
+    /**
+     * Stops the JavaFX application.
+     */
+    @Override
+    public void stop() {
+        GuiCommon.exit();
+        Platform.exit();
+        System.exit(0);
     }
 
     /**

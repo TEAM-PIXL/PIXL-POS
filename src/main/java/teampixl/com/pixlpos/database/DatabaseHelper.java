@@ -83,8 +83,8 @@ public class DatabaseHelper {
         CREATE TABLE IF NOT EXISTS user_logs (
             id TEXT PRIMARY KEY,
             user_id TEXT NOT NULL,
-            last_login DATETIME DEFAULT CURRENT_TIMESTAMP,
-            last_logout DATETIME DEFAULT CURRENT_TIMESTAMP,
+            log_type TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
     """;
@@ -124,11 +124,11 @@ public class DatabaseHelper {
 
         String sqlCreateGlobalNotesTable = """
         CREATE TABLE IF NOT EXISTS global_notes (
-            id TEXT PRIMARY KEY,
+            note_id TEXT PRIMARY KEY,
             user_id TEXT NOT NULL,
-            note TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            note_title TEXT NOT NULL,
+            note_content TEXT NOT NULL,
+            timestamp INTEGER NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
     """;

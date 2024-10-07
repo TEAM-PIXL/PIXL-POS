@@ -108,7 +108,7 @@ public class Logs extends DataManager {
 
     private static MetadataWrapper initializeMetadata(Action action) {
         Map<String, Object> metadataMap = new HashMap<>();
-        String ID = null;
+        String ID;
         try {
             ID = UserStack.getInstance().getCurrentUserId();
         } catch (Exception e) {

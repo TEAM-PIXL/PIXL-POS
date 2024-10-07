@@ -22,15 +22,15 @@ import java.util.UUID;
  * @see DataManager
  * @see MetadataWrapper
  */
-public class NotesApp extends DataManager {
-    public NotesApp(String NoteTitle, String NoteContent) {
+public class Notes extends DataManager {
+    public Notes(String NoteTitle, String NoteContent) {
         super(initializeMetadata());
 
         this.data.put("note_title", NoteTitle);
         this.data.put("note_content", NoteContent);
     }
 
-    public NotesApp(String NoteContent) {
+    public Notes(String NoteContent) {
         super(initializeMetadata());
 
         this.data.put("note_title", "Untitled");

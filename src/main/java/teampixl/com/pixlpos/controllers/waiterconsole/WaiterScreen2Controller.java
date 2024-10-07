@@ -1,6 +1,8 @@
 package teampixl.com.pixlpos.controllers.waiterconsole;
 
 import javafx.animation.AnimationTimer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -21,6 +23,7 @@ import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.common.OrderUtil;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
 
@@ -33,6 +36,9 @@ public class WaiterScreen2Controller {
     private Label date;
     @FXML
     private Label time;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
     @FXML
     private Label ordernumber;
     @FXML
@@ -80,6 +86,8 @@ public class WaiterScreen2Controller {
     private FlowPane drinkspane;
     @FXML
     private FlowPane dessertpane;
+
+
 
     private DynamicTabManager tabManager;
     private DynamicLabelManager labelManager;
@@ -177,17 +185,18 @@ public class WaiterScreen2Controller {
         }
     }
 
-    AnimationTimer datetime = new AnimationTimer() {
-        @Override
-        public void handle(long now) {
-            date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-        }
-    };
-
     @FXML
     private void initialize() {
-        datetime.start();
+        scheduler.scheduleAtFixedRate(() -> {
+            LocalDateTime now = LocalDateTime.now();
+            String formattedDate = now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String formattedTime = now.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+            Platform.runLater(() -> {
+                date.setText(formattedDate);
+                time.setText(formattedTime);
+            });
+        }, 0, 1, TimeUnit.SECONDS);
 
         tabManager = new DynamicTabManager(itemtab);
         labelManager = new DynamicLabelManager(orderitemslistview);
@@ -507,7 +516,7 @@ public class WaiterScreen2Controller {
 
     @FXML
     protected void onLogoutButtonClick() {
-        GuiCommon.loadRoot(GuiCommon.LOGIN_SCREEN_FXML, GuiCommon.LOGIN_SCREEN_TITLE, logoutbutton);
+        GuiCommon.logout(logoutbutton);
     }
 
     protected void initsearch() {
@@ -830,5 +839,11 @@ public class WaiterScreen2Controller {
             vbox.getChildren().set(indexInVBox, textField);
             textField.requestFocus();
         }
+    }
+
+
+    @FXML
+    public void stop() {
+        scheduler.shutdown();
     }
 }
