@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
@@ -159,7 +160,7 @@
         </AnchorPane>
     </left>
     <right>
-        <AnchorPane prefWidth="400.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
+        <AnchorPane prefWidth="380.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="20.0" left="10.0" right="20.0" top="20.0" />
             </padding>
@@ -233,94 +234,41 @@
                         <Insets bottom="10.0" left="20.0" top="10.0" />
                      </padding>
                   </Label>
-                  <HBox prefHeight="50.0" prefWidth="200.0" styleClass="table-header">
+                  <HBox prefHeight="50.0" prefWidth="658.0" styleClass="table-header">
                      <children>
-                        <AnchorPane prefWidth="200.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="107.0" styleClass="database-label" text="Item Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="111.0" styleClass="database-label" text="Item Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="452.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane layoutX="452.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="107.0" styleClass="database-label" text="Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="52.0" styleClass="database-label" text="Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="530.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane layoutX="530.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="108.0" styleClass="database-label" text="Order Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="113.0" styleClass="database-label" text="Order Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="501.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane layoutX="501.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="108.0" styleClass="database-label" text="Last Updated" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="80.0" styleClass="database-label" text="Updated" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="386.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane layoutX="386.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="108.0" styleClass="database-label" text="Stock Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="108.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
-                        <AnchorPane layoutX="488.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
-                     </children>
-                  </HBox>
-                  <HBox layoutX="11.0" layoutY="65.0" prefHeight="50.0" prefWidth="200.0">
-                     <children>
-                        <AnchorPane prefWidth="200.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="107.0" text="Item Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="452.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="107.0" text="Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="530.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="108.0" text="Order Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="501.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="108.0" text="Last Updated" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="386.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="108.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <graphic>
-                                    <Label alignment="CENTER" prefHeight="25.0" prefWidth="75.0" style="-fx-background-color: #0095FF; -fx-background-radius: 10;" text="LOW" textFill="WHITE" />
-                                 </graphic>
-                              </Label>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="102.0" styleClass="database-label" text="Stock Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="108.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: transparent;" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <graphic>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../images/adminicons/green_edit_write_pen_icon.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </AnchorPane>
+                              <Pane prefHeight="50.0" prefWidth="64.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children></AnchorPane>
                         <AnchorPane layoutX="488.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: transparent;" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <graphic>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../images/adminicons/red_trash_2_icon.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </AnchorPane>
+                              <Pane prefHeight="50.0" prefWidth="62.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children></AnchorPane>
                      </children>
                   </HBox>
                   <ListView fx:id="itemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
