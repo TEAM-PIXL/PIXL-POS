@@ -11,7 +11,6 @@ module PIXL.POS {
 
     requires java.sql;
     requires java.desktop;
-    requires java.base;
     requires java.logging;
     requires java.xml;
     requires javafx.controls;
@@ -22,8 +21,8 @@ module PIXL.POS {
     requires org.junit.jupiter.engine;
     requires org.junit.platform.commons;
     requires org.junit.jupiter;
+    requires java.compiler;
     requires geoip2;
-    requires java.xml.crypto;
 
     opens teampixl.com.pixlpos.database;
     opens teampixl.com.pixlpos.authentication;
@@ -35,10 +34,6 @@ module PIXL.POS {
     opens teampixl.com.pixlpos.database.api;
     opens teampixl.com.pixlpos.database.api.util;
     opens teampixl.com.pixlpos.models;
-    opens teampixl.com.pixlpos.models.tools;
-    opens teampixl.com.pixlpos.models.logs;
-    opens teampixl.com.pixlpos.models.logs.definitions;
-
 
     exports teampixl.com.pixlpos;
     exports teampixl.com.pixlpos.application;
@@ -52,6 +47,5 @@ module PIXL.POS {
     exports teampixl.com.pixlpos.database.api.util;
     exports teampixl.com.pixlpos.models;
     exports teampixl.com.pixlpos.models.tools;
-    exports teampixl.com.pixlpos.models.logs;
-    exports teampixl.com.pixlpos.models.logs.definitions;
+    opens teampixl.com.pixlpos.models.tools;
 }

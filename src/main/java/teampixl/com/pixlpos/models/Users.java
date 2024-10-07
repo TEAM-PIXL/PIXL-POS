@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.logs.UserLogs;
 import teampixl.com.pixlpos.models.tools.DataManager;
 import teampixl.com.pixlpos.models.tools.MetadataWrapper;
@@ -85,12 +86,6 @@ public class Users extends DataManager {
         this.data.put("password", plainPassword);
         this.data.put("email", email);
         this.data.put("additional_info", null);
-
-        try {
-            new UserSettings(this.getMetadataValue("id").toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private static MetadataWrapper initializeMetadata(String firstName, String lastName, String username, UserRole role) {
