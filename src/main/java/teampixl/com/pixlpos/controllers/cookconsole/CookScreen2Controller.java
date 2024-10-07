@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.common.OrderUtil;
 import teampixl.com.pixlpos.database.api.MenuAPI;
@@ -21,7 +20,9 @@ import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -45,10 +46,9 @@ public class CookScreen2Controller {
     private final OrderAPI orderAPI = OrderAPI.getInstance();
     private final MenuAPI menuAPI = MenuAPI.getInstance();
 
-    private ObservableList<VBox> orderObservableList = FXCollections.observableArrayList();
-    private Map<String, VBox> orderMap = new LinkedHashMap<>(); // Use LinkedHashMap to maintain order
-    private List<Order> activeOrders = new ArrayList<>();
-    private Map<String, Integer> orderOriginalPositions = new HashMap<>();
+    private final ObservableList<VBox> orderObservableList = FXCollections.observableArrayList();
+    private final Map<String, VBox> orderMap = new LinkedHashMap<>();
+    private final Map<String, Integer> orderOriginalPositions = new HashMap<>();
 
     private DynamicLabelManager dynamicLabelManager;
 
@@ -67,29 +67,40 @@ public class CookScreen2Controller {
         orderList.setItems(orderObservableList);
         dynamicLabelManager = new DynamicLabelManager(completedOrders);
 
-        // Load orders from the database
+
+
         loadOrdersFromDatabase();
 
-        // Update the orders label
         orders.setText(orderObservableList.size() + " Orders");
 
-        // Optional: Periodic refresh of orders
-        // scheduleOrderRefresh();
+         scheduleOrderRefresh();
+
+        for (Order order : orderAPI.getOrders()) {
+            if (order.getMetadataValue("order_status") == Order.OrderStatus.COMPLETED) {
+                long updatedAt = (long) order.getMetadataValue("updated_at");
+                LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
+                dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+            }
+        }
+    }
+
+    private void scheduleOrderRefresh() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                loadOrdersFromDatabase();
+            }
+        }, 0, 5000);
     }
 
     private void loadOrdersFromDatabase() {
-        // Fetch orders with status SENT
-        activeOrders = orderAPI.getOrders().stream().filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.SENT).toList();
-        if (activeOrders == null) {
-            activeOrders = new ArrayList<>();
-        }
+        List<Order> activeOrders = orderAPI.getOrders().stream().filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.SENT).toList();
 
-        // Clear existing orders
         orderObservableList.clear();
         orderMap.clear();
         orderOriginalPositions.clear();
 
-        // Add orders to the list
         for (int i = 0; i < activeOrders.size(); i++) {
             Order order = activeOrders.get(i);
             addOrderToList(order, i);
@@ -120,7 +131,6 @@ public class CookScreen2Controller {
         orderVBox.getStyleClass().add("order-container");
         VBox.setVgrow(orderVBox, Priority.ALWAYS);
 
-        // Order number HBox
         HBox orderNumberHBox = new HBox();
         orderNumberHBox.setAlignment(Pos.CENTER);
 
@@ -139,7 +149,6 @@ public class CookScreen2Controller {
         orderNumberHBox.getChildren().addAll(anchorPane, orderNumberLabel);
         orderNumberHBox.setPadding(new Insets(0, 10, 0, 0));
 
-        // Customer and Table info
         AnchorPane infoPane = new AnchorPane();
         infoPane.setPrefHeight(60.0);
         infoPane.getStyleClass().add("order-highlevel-container");
@@ -148,7 +157,7 @@ public class CookScreen2Controller {
         customerLabel.getStyleClass().add("amount-label");
         Label customerInnerLabel = new Label("Customers:");
         customerInnerLabel.getStyleClass().add("customers-label");
-        ImageView customerIcon = new ImageView(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/user_plus_icon.png")));
+        ImageView customerIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/user_plus_icon.png"))));
         customerIcon.setFitHeight(22);
         customerIcon.setFitWidth(22);
         customerIcon.setPreserveRatio(true);
@@ -161,7 +170,7 @@ public class CookScreen2Controller {
         tableLabel.getStyleClass().add("amount-label");
         Label tableInnerLabel = new Label("Table:");
         tableInnerLabel.getStyleClass().add("table-label");
-        ImageView tableIcon = new ImageView(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/hash_icon.png")));
+        ImageView tableIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/hash_icon.png"))));
         tableIcon.setFitHeight(22);
         tableIcon.setFitWidth(22);
         tableIcon.setPreserveRatio(true);
@@ -172,37 +181,32 @@ public class CookScreen2Controller {
 
         infoPane.getChildren().addAll(customerLabel, tableLabel);
 
-        // Order items ListView
         ListView<Label> orderItemsListView = new ListView<>();
         orderItemsListView.getStyleClass().add("list-pane");
         VBox.setVgrow(orderItemsListView, Priority.ALWAYS);
         DynamicLabelManager internaldynamicLabelManager = new DynamicLabelManager(orderItemsListView);
 
-        // Get order items from the order
         Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById(orderId);
         Map<MenuItem, List<String>> itemNotes = OrderUtil.deserializeItemNotes((String) order.getDataValue("special_requests"), menuAPI);
 
-        // Add items to the list view
         for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
             MenuItem menuItem = entry.getKey();
             int quantity = entry.getValue();
             List<String> notes = itemNotes.getOrDefault(menuItem, new ArrayList<>());
             internaldynamicLabelManager.addOrderLabel(quantity + "x " + menuItem.getMetadataValue("itemName"));
 
-            // Add notes under the item
             for (String note : notes) {
                 internaldynamicLabelManager.addOrderLabel("    * " + note);
             }
         }
 
-        // Price HBox
         HBox priceHBox = new HBox();
         priceHBox.setAlignment(Pos.CENTER);
         Label totalPriceLabel = new Label("$ " + String.format("%.2f", totalPrice));
         totalPriceLabel.getStyleClass().add("amount-label");
         Label priceLabel = new Label("Price:");
         priceLabel.getStyleClass().add("customers-label");
-        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png")));
+        ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png"))));
         imageView.setFitHeight(22.0);
         imageView.setFitWidth(22.0);
         imageView.setPickOnBounds(true);
@@ -211,7 +215,6 @@ public class CookScreen2Controller {
         totalPriceLabel.setGraphic(priceLabel);
         priceHBox.getChildren().add(totalPriceLabel);
 
-        // Action buttons
         HBox actionButtonsHBox = new HBox();
         actionButtonsHBox.setAlignment(Pos.CENTER);
         actionButtonsHBox.setSpacing(30.0);
@@ -226,16 +229,14 @@ public class CookScreen2Controller {
             Button button = new Button();
             button.setMnemonicParsing(false);
             button.getStyleClass().add("icon-button");
-            ImageView buttonIcon = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
+            ImageView buttonIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconPath))));
             buttonIcon.setFitHeight(22);
             buttonIcon.setFitWidth(22);
             buttonIcon.setPreserveRatio(true);
             button.setGraphic(buttonIcon);
 
-            // Extract icon name from path
             String iconName = iconPath.substring(iconPath.lastIndexOf("/") + 1);
 
-            // Set action for the button based on the icon name
             switch (iconName) {
                 case "trash_icon.png":
                     button.setOnAction(event -> handleTrashAction(order));
@@ -270,7 +271,6 @@ public class CookScreen2Controller {
 
     private void handleTrashAction(Order order) {
         System.out.println("Trash action for Order #" + order.getOrderNumber());
-        // Remove the order from the database
         List<StatusCode> statusCodes = orderAPI.deleteOrder((String) order.getMetadataValue("order_id"));
         if (Exceptions.isSuccessful(statusCodes)) {
             removeOrderFromList(order);
@@ -285,13 +285,10 @@ public class CookScreen2Controller {
         VBox orderVBox = orderMap.get(orderId);
 
         if (orderObservableList.contains(orderVBox)) {
-            // Check if the order is already at the front
             if (orderObservableList.indexOf(orderVBox) != 0) {
-                // Move order to the front
                 orderObservableList.remove(orderVBox);
-                orderObservableList.add(0, orderVBox);
+                orderObservableList.addFirst(orderVBox);
             } else {
-                // Move order back to its original position
                 int originalPosition = orderOriginalPositions.get(orderId);
                 orderObservableList.remove(orderVBox);
                 orderObservableList.add(originalPosition, orderVBox);
@@ -301,12 +298,9 @@ public class CookScreen2Controller {
 
     private void handleSendAction(Order order) {
         System.out.println("Send action for Order #" + order.getOrderNumber());
-        // Update order status to COMPLETED
         List<StatusCode> statusCodes = orderAPI.putOrderStatus((String) order.getMetadataValue("order_id"), Order.OrderStatus.COMPLETED);
         if (Exceptions.isSuccessful(statusCodes)) {
-            // Remove from current view
             removeOrderFromList(order);
-            // Add to completed orders list
             dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
         } else {
             showErrorDialog(Exceptions.returnStatus("Failed to complete order:", statusCodes));
@@ -328,7 +322,6 @@ public class CookScreen2Controller {
 
     @FXML
     protected void onLogoutButtonClick() {
-        // Handle logout button click
         GuiCommon.logout(logoutbutton);
     }
 
