@@ -1991,7 +1991,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) USER_LOGS.getMetadata().metadata().get("id"));
+            pstmt.setString(1, USER_LOGS.getMetadata().metadata().get("id").toString());
             pstmt.setString(2, (String) USER_LOGS.getMetadata().metadata().get("user_id"));
             pstmt.setString(3, USER_LOGS.getMetadata().metadata().get("log_type").toString());
             pstmt.setLong(4, (Long) USER_LOGS.getMetadata().metadata().get("created_at"));
@@ -2012,7 +2012,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) USER_LOGS.getMetadata().metadata().get("id"));
+            pstmt.setString(1, USER_LOGS.getMetadata().metadata().get("id").toString());
             pstmt.executeUpdate();
             System.out.println("User log deleted from database.");
 

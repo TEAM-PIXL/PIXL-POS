@@ -3,6 +3,8 @@ package teampixl.com.pixlpos.models.logs;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.logs.UserLogs.LogType;
 
+import java.util.concurrent.CompletableFuture;
+
 
 public class UserLogTask implements Runnable {
     private final LogType LOG_TYPE;
@@ -20,5 +22,15 @@ public class UserLogTask implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void login() {
+        new Thread(new UserLogTask(LogType.LOGIN)).start();
+    }
+
+    public static CompletableFuture<Void> logout() {
+        return CompletableFuture.runAsync(() -> {
+            new UserLogTask(LogType.LOGOUT).run();
+        });
     }
 }

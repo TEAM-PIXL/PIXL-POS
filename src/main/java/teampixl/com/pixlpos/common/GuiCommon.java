@@ -1,6 +1,6 @@
-
 package teampixl.com.pixlpos.common;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,10 +9,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.models.UserSettings;
+import teampixl.com.pixlpos.models.logs.UserLogTask;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
+
 
 /**
  * Utility class for common GUI operations in the application.
@@ -20,8 +26,37 @@ import java.util.Objects;
  */
 public class GuiCommon {
     
-    public static final int WIDTH = 1280;
-    public static final int HEIGHT = 720;
+    public static int WIDTH;
+    public static int HEIGHT;
+
+    public static void settings() {
+        String currentUserId = UserStack.getInstance().getCurrentUserId();
+        List<UserSettings> userSettingsList = DataStore.getInstance().readUserSettings();
+
+        userSettingsList.stream()
+                .filter(settings -> currentUserId.equals(settings.getMetadataValue("user_id")))
+                .findFirst()
+                .ifPresentOrElse(settings -> {
+                    String resolution = settings.getMetadataValue("resolution").toString();
+                    switch (resolution) {
+                        case "SD":
+                            WIDTH = 1280;
+                            HEIGHT = 720;
+                            break;
+                        case "HD":
+                            WIDTH = 1920;
+                            HEIGHT = 1028;
+                            break;
+                        default:
+                            WIDTH = 1280;
+                            HEIGHT = 720;
+                            break;
+                    }
+                }, () -> {
+                    WIDTH = 1280;
+                    HEIGHT = 720;
+                });
+    }
     
     public static final String ICON_PATH = "/teampixl/com/pixlpos/app-icon.jpg";
     
@@ -146,6 +181,12 @@ public class GuiCommon {
         loadScene(fxmlPath, title, stage, width, height);
     }
 
+    /**
+     * Loads a new scene into the stage associated with the given node.
+     *
+     * @param fxmlPath the path to the FXML file
+     * @param title the title of the stage
+     */
     public static void loadRoot(String fxmlPath, String title, Stage stage, int width, int height) {
         try {
             URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
@@ -193,6 +234,15 @@ public class GuiCommon {
         loadScene(fxmlPath, title, node, WIDTH, HEIGHT);
     }
 
+    /**
+     * Loads a new scene into the stage associated with the given node, with specified dimensions.
+     *
+     * @param fxmlPath the path to the FXML file
+     * @param title the title of the stage
+     * @param stage the stage to set the scene on
+     * @param width the width of the scene
+     * @param height the height of the scene
+     */
     public static void loadNewRoot(String fxmlPath, String title, Stage stage, int width, int height) {
         try {
             URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
@@ -217,6 +267,13 @@ public class GuiCommon {
         }
     }
 
+    /**
+     * Loads a new scene into the stage associated with the given node.
+     *
+     * @param fxmlPath the path to the FXML file
+     * @param title the title of the stage
+     * @param node a node from the current scene
+     */
     public static void loadNewRoot(String fxmlPath, String title, Node node) {
         if (node == null || node.getScene() == null) {
             System.err.println("Error: Provided node is null or not attached to any scene.");
@@ -235,6 +292,7 @@ public class GuiCommon {
      */
     public static void closeStage(Node node) {
         if (node != null && node.getScene() != null) {
+
             Stage stage = (Stage) node.getScene().getWindow();
             stage.close();
         }
@@ -269,5 +327,45 @@ public class GuiCommon {
             System.err.println("Failed to open modal window: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Logs out the current user and loads the login screen.
+     *
+     * @param node a node from the current scene
+     */
+    public static void logout(Node node) {
+        UserLogTask.logout().thenRunAsync(() -> {
+            Platform.runLater(() -> {
+                UserStack.getInstance();
+                UserStack.clearCurrentUser();
+                Stage stage = (Stage) node.getScene().getWindow();
+                loadScene(LOGIN_SCREEN_FXML, LOGIN_SCREEN_TITLE, stage);
+            });
+        }).exceptionally(ex -> {
+            ex.getCause().printStackTrace();
+            return null;
+
+        }
+        );
+    }
+
+    /**
+     * Exits the application. Runs custom thread to log out the current user before closing.
+     * This ensures that the user's logout is recorded in the database. And the session is properly closed.
+     */
+    public static void exit() {
+        UserLogTask.logout().thenRunAsync(() -> {
+            Platform.runLater(() -> {
+                System.out.println("Application is closing...");
+                Platform.exit();
+                System.exit(0);
+            });
+        }).exceptionally(ex -> {
+                    ex.getCause().printStackTrace();
+                    return null;
+
+        }
+        );
     }
 }
