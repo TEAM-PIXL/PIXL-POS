@@ -11,74 +11,94 @@ import teampixl.com.pixlpos.models.logs.definitions.Action;
 import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.models.logs.LogTask;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class APITest {
     public static void main(String[] args) throws Exception {
-        UserStack.getInstance().setCurrentUser("admin");
-        Logs logs = new Logs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
-        System.out.println("User Logs: " + logs.getMetadata().metadata());
-        System.out.println("User Logs: " + logs.getData());
+//        UserStack.getInstance().setCurrentUser("admin");
+//        Logs logs = new Logs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
+//        System.out.println("User Logs: " + logs.getMetadata().metadata());
+//        System.out.println("User Logs: " + logs.getData());
+//
+//
+//        /* KEYS */
+//        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
+//        String[] DataKeys = {"description", "notes", "amountOrdered", "ingredients"};
+//
+//        MenuItem menuItem = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "This is a Pizza", MenuItem.DietaryRequirement.NONE);
+//        Ingredients ingredients = new Ingredients("Cheese", "This is cheese");
+//        Ingredients ingredients1 = new Ingredients("Tomato", "This is tomato");
+//        System.out.println("Ingredients: " + ingredients.getMetadata().metadata());
+//        System.out.println("Ingredients: " + ingredients.getData());
+//
+//
+//        menuItem.addIngredient(ingredients, 2);
+//        menuItem.addIngredient(ingredients1, 3);
+//        System.out.println("Menu Item: " + menuItem.getMetadata().metadata());
+//        System.out.println("Menu Item: " + menuItem.getData());
+//        System.out.println("Menu Item: " + menuItem.getIngredients());
+//
+//        /* KEYS */
+//        System.out.println("Metadata Keys: ");
+//        for (String key : MetadataKeys) {
+//            System.out.println(key);
+//        }
+//
+//        System.out.println("Data Keys: ");
+//        for (String key : DataKeys) {
+//            System.out.println(key);
+//        }
+//
+//        System.out.println("Item Name: " + menuItem.getMetadataValue(MetadataKeys[1]));
+//        System.out.println("Price: " + menuItem.getMetadataValue(MetadataKeys[2]));
+//        System.out.println("Item Type: " + menuItem.getMetadataValue(MetadataKeys[3]));
+//        System.out.println("Active Item: " + menuItem.getMetadataValue(MetadataKeys[4]));
+//        System.out.println("Dietary Requirement: " + menuItem.getMetadataValue(MetadataKeys[5]));
+//        System.out.println("Created At: " + menuItem.getMetadataValue(MetadataKeys[6]));
+//        System.out.println("Updated At: " + menuItem.getMetadataValue(MetadataKeys[7]));
+//
+//        System.out.println("Description: " + menuItem.getDataValue(DataKeys[0]));
+//        System.out.println("Notes: " + menuItem.getDataValue(DataKeys[1]));
+//        System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
+//        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
+//
+//        /* Network */
+//
+//        /* ---> Init stack <---- */
+//        UserStack.getInstance().setCurrentUser("admin");
+//
+//        String ID = UserStack.getInstance().getCurrentUserId();
+//        System.out.println("The current user has the ID: " + ID);
+//
+//        /* ---> Init API <---- */
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+//        executor.submit(new LogTask(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW));
+//        executor.shutdown();
+//
+//        UserLogs USER_LOGS = new UserLogs(UserLogs.LogType.LOGIN);
+//        System.out.println("The user log has the contents: " + USER_LOGS);
 
 
-        /* KEYS */
-        String[] MetadataKeys = {"id", "itemName", "price", "itemType", "activeItem", "dietaryRequirement", "created_at", "updated_at"};
-        String[] DataKeys = {"description", "notes", "amountOrdered", "ingredients"};
+        UsersAPI usersAPI = UsersAPI.getInstance();
 
-        MenuItem menuItem = new MenuItem("Pizza", 10.99, MenuItem.ItemType.MAIN, true, "This is a Pizza", MenuItem.DietaryRequirement.NONE);
-        Ingredients ingredients = new Ingredients("Cheese", "This is cheese");
-        Ingredients ingredients1 = new Ingredients("Tomato", "This is tomato");
-        System.out.println("Ingredients: " + ingredients.getMetadata().metadata());
-        System.out.println("Ingredients: " + ingredients.getData());
-
-
-        menuItem.addIngredient(ingredients, 2);
-        menuItem.addIngredient(ingredients1, 3);
-        System.out.println("Menu Item: " + menuItem.getMetadata().metadata());
-        System.out.println("Menu Item: " + menuItem.getData());
-        System.out.println("Menu Item: " + menuItem.getIngredients());
-
-        /* KEYS */
-        System.out.println("Metadata Keys: ");
-        for (String key : MetadataKeys) {
-            System.out.println(key);
+        /* ---> POST USERS <---- */
+        System.out.println("POST USERS");
+        System.out.println("--------------------------------------------------");
+        List<StatusCode> STATUS = usersAPI.postUsers("john", "doe", "johnnyboy", "Goo7yLu%%y", "email@email.com", Users.UserRole.WAITER);
+        if (!Exceptions.isSuccessful(STATUS)) {
+            System.out.println(Exceptions.returnStatus("User could not be created with the following errors:", STATUS));
+        } else {
+            System.out.println("User created successfully.");
         }
-
-        System.out.println("Data Keys: ");
-        for (String key : DataKeys) {
-            System.out.println(key);
-        }
-
-        System.out.println("Item Name: " + menuItem.getMetadataValue(MetadataKeys[1]));
-        System.out.println("Price: " + menuItem.getMetadataValue(MetadataKeys[2]));
-        System.out.println("Item Type: " + menuItem.getMetadataValue(MetadataKeys[3]));
-        System.out.println("Active Item: " + menuItem.getMetadataValue(MetadataKeys[4]));
-        System.out.println("Dietary Requirement: " + menuItem.getMetadataValue(MetadataKeys[5]));
-        System.out.println("Created At: " + menuItem.getMetadataValue(MetadataKeys[6]));
-        System.out.println("Updated At: " + menuItem.getMetadataValue(MetadataKeys[7]));
-
-        System.out.println("Description: " + menuItem.getDataValue(DataKeys[0]));
-        System.out.println("Notes: " + menuItem.getDataValue(DataKeys[1]));
-        System.out.println("Amount Ordered: " + menuItem.getDataValue(DataKeys[2]));
-        System.out.println("Ingredients: " + menuItem.getDataValue(DataKeys[3]));
-
-        /* Network */
-
-        /* ---> Init stack <---- */
-        UserStack.getInstance().setCurrentUser("admin");
-
-        String ID = UserStack.getInstance().getCurrentUserId();
-        System.out.println("The current user has the ID: " + ID);
-
-        /* ---> Init API <---- */
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(new LogTask(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW));
-        executor.shutdown();
-
-        UserLogs USER_LOGS = new UserLogs(UserLogs.LogType.LOGIN);
-        System.out.println("The user log has the contents: " + USER_LOGS);
-
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
 
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();

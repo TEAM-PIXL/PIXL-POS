@@ -582,11 +582,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /**
      * Adds a new user settings to the list of user settings.
-     * @param userSettings UserSettings - The user settings to add.
+     * @param settings UserSettings - The user settings to add.
      */
-    public void createUserSettings(UserSettings userSettings) {
-        this.userSettings.add(userSettings);
-        saveUserSettingsToDatabase(userSettings);
+    public void createUserSettings(UserSettings settings) {
+        userSettings.add(settings);
+        saveUserSettingsToDatabase(settings);
     }
 
     /**
@@ -599,19 +599,19 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /**
      * Updates an existing user settings in the list of user settings.
-     * @param userSettings UserSettings - The user settings to update.
+     * @param settings UserSettings - The user settings to update.
      */
-    public void updateUserSettings(UserSettings userSettings) {
-        updateUserSettingsInDatabase(userSettings);
+    public void updateUserSettings(UserSettings settings) {
+        updateUserSettingsInDatabase(settings);
     }
 
     /**
      * Removes an existing user settings from the list of user settings.
-     * @param userSettings UserSettings - The user settings to remove.
+     * @param settings UserSettings - The user settings to remove.
      */
-    public void deleteUserSettings(UserSettings userSettings) {
-        this.userSettings.remove(userSettings);
-        deleteUserSettingsFromDatabase(userSettings);
+    public void deleteUserSettings(UserSettings settings) {
+        userSettings.remove(settings);
+        deleteUserSettingsFromDatabase(settings);
     }
 
     /*====================================================================================================================================================================
@@ -627,11 +627,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /**
      * Adds a new note to the list of notes.
-     * @param notes NotesApp - The note to add.
+     * @param NOTES NotesApp - The note to add.
      */
-    public void createNotesApp(Notes notes) {
-        this.notes.add(notes);
-        saveGlobalNotesToDatabase(notes);
+    public void createNotesApp(Notes NOTES) {
+        notes.add(NOTES);
+        saveGlobalNotesToDatabase(NOTES);
     }
 
     /**
@@ -644,19 +644,19 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /**
      * Updates an existing note in the list of notes.
-     * @param notes NotesApp - The note to update.
+     * @param NOTES NotesApp - The note to update.
      */
-    public void updateNotesApp(Notes notes) {
-        updateGlobalNotesInDatabase(notes);
+    public void updateNotesApp(Notes NOTES) {
+        updateGlobalNotesInDatabase(NOTES);
     }
 
     /**
      * Removes an existing note from the list of notes.
-     * @param notes NotesApp - The note to remove.
+     * @param NOTES NotesApp - The note to remove.
      */
-    public void deleteNotesApp(Notes notes) {
-        this.notes.remove(notes);
-        deleteGlobalNotesFromDatabase(notes);
+    public void deleteNotesApp(Notes NOTES) {
+        notes.remove(NOTES);
+        deleteGlobalNotesFromDatabase(NOTES);
     }
 
     /*====================================================================================================================================================================
@@ -671,11 +671,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /**
      * Adds a new user log to the list of user logs.
-     * @param userLogs UserLogs - The user log to add.
+     * @param USER_LOGS UserLogs - The user log to add.
      */
-    public void createUserLogs(UserLogs userLogs) {
-        this.userLogs.add(userLogs);
-        saveUserLogsToDatabase(userLogs);
+    public void createUserLogs(UserLogs USER_LOGS) {
+        userLogs.add(USER_LOGS);
+        saveUserLogsToDatabase(USER_LOGS);
     }
 
     /**
@@ -688,11 +688,11 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     /**
      * Removes an existing user log from the list of user logs.
-     * @param userLogs UserLogs - The user log to remove.
+     * @param USER_LOGS UserLogs - The user log to remove.
      */
-    public void deleteUserLogs(UserLogs userLogs) {
-        this.userLogs.remove(userLogs);
-        deleteUserLogsFromDatabase(userLogs);
+    public void deleteUserLogs(UserLogs USER_LOGS) {
+        this.userLogs.remove(USER_LOGS);
+        deleteUserLogsFromDatabase(USER_LOGS);
     }
 
 /*====================================================================================================================================================================================
@@ -1754,13 +1754,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
              ResultSet rs = stmt.executeQuery("SELECT * FROM user_settings")) {
 
             while (rs.next()) {
+                UserSettings.Theme theme = UserSettings.Theme.valueOf(rs.getString("theme"));
+                UserSettings.Currency currency = UserSettings.Currency.valueOf(rs.getString("currency"));
+                UserSettings.Resolution resolution = UserSettings.Resolution.valueOf(rs.getString("resolution"));
+                UserSettings.Timezone timezone = UserSettings.Timezone.valueOf(rs.getString("timezone"));
+                UserSettings.AccessLevel access_level = UserSettings.AccessLevel.valueOf(rs.getString("access_level"));
+                UserSettings.Language language = UserSettings.Language.valueOf(rs.getString("language"));
                 String userId = rs.getString("user_id");
-                String theme = rs.getString("theme");
-                String language = rs.getString("language");
-                String currency = rs.getString("currency");
-                String resolution = rs.getString("resolution");
-                String timezone = rs.getString("timezone");
-                String access_level = rs.getString("access_level");
 
                 UserSettings USER_SETTINGS = new UserSettings(userId);
                 USER_SETTINGS.updateMetadata("theme", theme);
@@ -1781,19 +1781,19 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
-    private void saveUserSettingsToDatabase(UserSettings userSettings) {
+    private void saveUserSettingsToDatabase(UserSettings settings) {
         String sql = "INSERT INTO user_settings(user_id, theme, language, currency, resolution, timezone, access_level) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) userSettings.getMetadata().metadata().get("user_id"));
-            pstmt.setString(2, (String) userSettings.getMetadata().metadata().get("theme"));
-            pstmt.setString(3, (String) userSettings.getData().get("language"));
-            pstmt.setString(4, (String) userSettings.getMetadata().metadata().get("currency"));
-            pstmt.setString(5, (String) userSettings.getMetadata().metadata().get("resolution"));
-            pstmt.setString(6, (String) userSettings.getMetadata().metadata().get("timezone"));
-            pstmt.setString(7, (String) userSettings.getData().get("access_level"));
+            pstmt.setString(1, (String) settings.getMetadata().metadata().get("user_id"));
+            pstmt.setString(2, settings.getMetadata().metadata().get("theme").toString());
+            pstmt.setString(3, settings.getData().get("language").toString());
+            pstmt.setString(4, settings.getMetadata().metadata().get("currency").toString());
+            pstmt.setString(5, settings.getMetadata().metadata().get("resolution").toString());
+            pstmt.setString(6, settings.getMetadata().metadata().get("timezone").toString());
+            pstmt.setString(7, settings.getData().get("access_level").toString());
 
             pstmt.executeUpdate();
             System.out.println("User settings saved to database.");
@@ -1805,19 +1805,19 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
-    private void updateUserSettingsInDatabase(UserSettings userSettings) {
+    private void updateUserSettingsInDatabase(UserSettings settings) {
         String sql = "UPDATE user_settings SET theme = ?, language = ?, currency = ?, resolution = ?, timezone = ?, access_level = ? WHERE user_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) userSettings.getMetadata().metadata().get("theme"));
-            pstmt.setString(2, (String) userSettings.getData().get("language"));
-            pstmt.setString(3, (String) userSettings.getMetadata().metadata().get("currency"));
-            pstmt.setString(4, (String) userSettings.getMetadata().metadata().get("resolution"));
-            pstmt.setString(5, (String) userSettings.getMetadata().metadata().get("timezone"));
-            pstmt.setString(6, (String) userSettings.getData().get("access_level"));
-            pstmt.setString(7, (String) userSettings.getMetadata().metadata().get("user_id"));
+            pstmt.setString(1, settings.getMetadata().metadata().get("theme").toString());
+            pstmt.setString(2, settings.getData().get("language").toString());
+            pstmt.setString(3, settings.getMetadata().metadata().get("currency").toString());
+            pstmt.setString(4, settings.getMetadata().metadata().get("resolution").toString());
+            pstmt.setString(5, settings.getMetadata().metadata().get("timezone").toString());
+            pstmt.setString(6, settings.getData().get("access_level").toString());
+            pstmt.setString(7, (String) settings.getMetadata().metadata().get("user_id"));
 
             pstmt.executeUpdate();
             System.out.println("User settings updated in database.");
@@ -1829,13 +1829,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
-    private void deleteUserSettingsFromDatabase(UserSettings userSettings) {
+    private void deleteUserSettingsFromDatabase(UserSettings settings) {
         String sql = "DELETE FROM user_settings WHERE user_id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) userSettings.getMetadata().metadata().get("user_id"));
+            pstmt.setString(1, (String) settings.getMetadata().metadata().get("user_id"));
             pstmt.executeUpdate();
             System.out.println("User settings deleted from database.");
 
@@ -1985,16 +1985,16 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
-    private void saveUserLogsToDatabase(UserLogs userLogs) {
+    private void saveUserLogsToDatabase(UserLogs USER_LOGS) {
         String sql = "INSERT INTO user_logs(id, user_id, log_type, created_at) VALUES(?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) userLogs.getMetadata().metadata().get("id"));
-            pstmt.setString(2, (String) userLogs.getMetadata().metadata().get("user_id"));
-            pstmt.setString(3, userLogs.getMetadata().metadata().get("log_type").toString());
-            pstmt.setLong(4, (Long) userLogs.getMetadata().metadata().get("created_at"));
+            pstmt.setString(1, (String) USER_LOGS.getMetadata().metadata().get("id"));
+            pstmt.setString(2, (String) USER_LOGS.getMetadata().metadata().get("user_id"));
+            pstmt.setString(3, USER_LOGS.getMetadata().metadata().get("log_type").toString());
+            pstmt.setLong(4, (Long) USER_LOGS.getMetadata().metadata().get("created_at"));
 
             pstmt.executeUpdate();
             System.out.println("User log saved to database.");
@@ -2006,13 +2006,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
 
 
-    private void deleteUserLogsFromDatabase(UserLogs userLogs) {
+    private void deleteUserLogsFromDatabase(UserLogs USER_LOGS) {
         String sql = "DELETE FROM user_logs WHERE id = ?";
 
         try (Connection conn = DatabaseHelper.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, (String) userLogs.getMetadata().metadata().get("id"));
+            pstmt.setString(1, (String) USER_LOGS.getMetadata().metadata().get("id"));
             pstmt.executeUpdate();
             System.out.println("User log deleted from database.");
 
