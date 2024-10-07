@@ -2,13 +2,10 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import javafx.geometry.Pos;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,22 +13,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
 import javafx.animation.AnimationTimer;
+import teampixl.com.pixlpos.database.api.MenuAPI;
+import teampixl.com.pixlpos.database.api.StockAPI;
+import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
-import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
-import teampixl.com.pixlpos.database.api.UsersAPI;
 import teampixl.com.pixlpos.database.api.UserStack;
-import teampixl.com.pixlpos.models.Users;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 
-import javafx.scene.layout.HBox;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class AdminScreenStockController
 {
@@ -42,6 +32,9 @@ public class AdminScreenStockController
     private final UserStack userStack = UserStack.getInstance();
     Users currentuser = userStack.getCurrentUser();
     String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
+    private StockAPI stockAPI;
+    private DataStore dataStore;
+    private MenuAPI menuAPI;
     /*
     Shared Components
      */
@@ -112,6 +105,29 @@ public class AdminScreenStockController
         adding_counter = 0;
         itemlist.getItems().clear();
         greeting.setText("Hello, " + firstName);
+        stockAPI = StockAPI.getInstance();
+        menuAPI = MenuAPI.getInstance();
+        dataStore = DataStore.getInstance();
+        populateStockGrid();
+    }
+
+    private void populateStockGrid() {
+        ObservableList<Stock> listOfStockItems = dataStore.readStock();
+        for (Stock stock : listOfStockItems) {
+            Integer desiredQuantity = 0;
+            Integer actualQuantity = 0;
+            Double price = 0.00;
+            String ingredientID = stock.getMetadataValue("ingredient_id").toString();
+            String ingredientName = menuAPI.reverseKeySearch(ingredientID);
+            addInventoryItemToListView(
+                    itemlist,
+                    ingredientID,
+                    ingredientName,
+                    desiredQuantity.toString(),
+                    actualQuantity.toString(),
+                    price.toString()
+                    );
+        }
     }
 
 
@@ -129,8 +145,6 @@ public class AdminScreenStockController
     }
     @FXML
     protected void onAddItemButtonClick(){
-
-
         if(adding_counter == 0){
             addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"cheese","20","23","$10.0");
         }
