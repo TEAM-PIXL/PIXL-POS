@@ -5,6 +5,7 @@ import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.database.interfaces.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import teampixl.com.pixlpos.models.logs.UserLogs;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -55,6 +56,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     private final ObservableList<Ingredients> ingredients;
     private final ObservableList<Stock> stockItems;
     private final ObservableList<UserSettings> userSettings;
+    private final ObservableList<NotesApp> notesApp;
+    private final ObservableList<UserLogs> userLogs;
 
     private DataStore() {
         menuItems = FXCollections.observableArrayList();
@@ -63,12 +66,15 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         ingredients = FXCollections.observableArrayList();
         stockItems = FXCollections.observableArrayList();
         userSettings = FXCollections.observableArrayList();
+        notesApp = FXCollections.observableArrayList();
+        userLogs = FXCollections.observableArrayList();
 
         loadMenuItemsFromDatabase();
         loadOrdersFromDatabase();
         loadUsersFromDatabase();
         loadIngredientsFromDatabase();
         loadStockFromDatabase();
+        loadUserSettingsFromDatabase();
     }
 
     /**
@@ -574,18 +580,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         - deleteUserSettings(UserSettings userSettings): void - Removes an existing user settings from the list of user settings.
     ====================================================================================================================================================================*/
 
-
-
-    /**
-     * Returns a list of all user settings.
-     * @return ObservableList<UserSettings> - A list of all user settings.
-     */
-    public ObservableList<UserSettings> readUserSettings() {
-        return userSettings;
-    }
-
-
-
     /**
      * Adds a new user settings to the list of user settings.
      * @param userSettings UserSettings - The user settings to add.
@@ -595,7 +589,13 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         saveUserSettingsToDatabase(userSettings);
     }
 
-
+    /**
+     * Returns a list of all user settings.
+     * @return ObservableList<UserSettings> - A list of all user settings.
+     */
+    public ObservableList<UserSettings> readUserSettings() {
+        return userSettings;
+    }
 
     /**
      * Updates an existing user settings in the list of user settings.
@@ -604,8 +604,6 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     public void updateUserSettings(UserSettings userSettings) {
         updateUserSettingsInDatabase(userSettings);
     }
-
-
 
     /**
      * Removes an existing user settings from the list of user settings.
@@ -616,7 +614,86 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
         deleteUserSettingsFromDatabase(userSettings);
     }
 
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for NotesApp. It includes methods for creating, reading, updating, and deleting notes.
 
+    Methods:
+        - createNotesApp(NotesApp notesApp): void - Adds a new note to the list of notes.
+        - readNotesApp(): ObservableList<NotesApp> - Returns a list of all notes.
+        - updateNotesApp(NotesApp notesApp): void - Updates an existing note in the list of notes.
+        - deleteNotesApp(NotesApp notesApp): void - Removes an existing note from the list of notes.
+    ====================================================================================================================================================================*/
+
+    /**
+     * Adds a new note to the list of notes.
+     * @param notesApp NotesApp - The note to add.
+     */
+    public void createNotesApp(NotesApp notesApp) {
+        this.notesApp.add(notesApp);
+        saveGlobalNotesToDatabase(notesApp);
+    }
+
+    /**
+     * Returns a list of all notes.
+     * @return ObservableList<NotesApp> - A list of all notes.
+     */
+    public ObservableList<NotesApp> readNotesApp() {
+        return notesApp;
+    }
+
+    /**
+     * Updates an existing note in the list of notes.
+     * @param notesApp NotesApp - The note to update.
+     */
+    public void updateNotesApp(NotesApp notesApp) {
+        updateGlobalNotesInDatabase(notesApp);
+    }
+
+    /**
+     * Removes an existing note from the list of notes.
+     * @param notesApp NotesApp - The note to remove.
+     */
+    public void deleteNotesApp(NotesApp notesApp) {
+        this.notesApp.remove(notesApp);
+        deleteGlobalNotesFromDatabase(notesApp);
+    }
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for UserLogs. It includes methods for creating, reading, updating, and deleting user logs.
+
+    Methods:
+        - createUserLogs(UserLogs userLogs): void - Adds a new user log to the list of user logs.
+        - readUserLogs(): ObservableList<UserLogs> - Returns a list of all user logs.
+        - deleteUserLogs(UserLogs userLogs): void - Removes an existing user log from the list of user logs.
+    ====================================================================================================================================================================*/
+
+    /**
+     * Adds a new user log to the list of user logs.
+     * @param userLogs UserLogs - The user log to add.
+     */
+    public void createUserLogs(UserLogs userLogs) {
+        this.userLogs.add(userLogs);
+        saveUserLogsToDatabase(userLogs);
+    }
+
+    /**
+     * Returns a list of all user logs.
+     * @return ObservableList<UserLogs> - A list of all user logs.
+     */
+    public ObservableList<UserLogs> readUserLogs() {
+        return userLogs;
+    }
+
+    /**
+     * Removes an existing user log from the list of user logs.
+     * @param userLogs UserLogs - The user log to remove.
+     */
+    public void deleteUserLogs(UserLogs userLogs) {
+        this.userLogs.remove(userLogs);
+        deleteUserLogsFromDatabase(userLogs);
+    }
 
 /*====================================================================================================================================================================================
 
@@ -1177,7 +1254,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setInt(4, (Integer) order.getMetadata().metadata().get("table_number"));
             pstmt.setDouble(5, (Double) order.getData().get("total"));
             pstmt.setString(6, (String) order.getData().get("special_requests"));
-            pstmt.setString(7, (String) order.getData().get("payment_method").toString());
+            pstmt.setString(7, order.getData().get("payment_method").toString());
             pstmt.setLong(8, (Long) order.getMetadata().metadata().get("updated_at"));
             pstmt.setString(9, (String) order.getMetadata().metadata().get("order_id"));
 
@@ -1761,6 +1838,183 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             pstmt.setString(1, (String) userSettings.getMetadata().metadata().get("user_id"));
             pstmt.executeUpdate();
             System.out.println("User settings deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for Global Notes. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadGlobalNotesFromDatabase(): void - Loads global notes from the database.
+        - saveGlobalNotesToDatabase(NotesApp Notes): void - Saves a global note to the database.
+        - updateGlobalNotesInDatabase(NotesApp Notes): void - Updates a global note in the database.
+        - deleteGlobalNotesFromDatabase(NotesApp Notes): void - Deletes a global note from the database.
+    ====================================================================================================================================================================*/
+
+
+
+    private void loadGlobalNotesFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM global_notes")) {
+
+            while (rs.next()) {
+                String noteId = rs.getString("note_id");
+                String userId = rs.getString("user_id");
+                long timestamp = rs.getLong("timestamp");
+                String noteTitle = rs.getString("note_title");
+                String noteContent = rs.getString("note_content");
+
+                NotesApp Notes = new NotesApp(noteContent, noteTitle);
+                Notes.updateMetadata("note_id", noteId);
+                Notes.updateMetadata("user_id", userId);
+                Notes.updateMetadata("timestamp", timestamp);
+                Notes.setDataValue("note_title", noteTitle);
+                Notes.setDataValue("note_content", noteContent);
+
+                notesApp.add(Notes);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void saveGlobalNotesToDatabase(NotesApp Notes) {
+        String sql = "INSERT INTO global_notes(note_id, user_id, timestamp, note_title, note_content) VALUES(?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) Notes.getMetadata().metadata().get("note_id"));
+            pstmt.setString(2, (String) Notes.getMetadata().metadata().get("user_id"));
+            pstmt.setLong(3, (Long) Notes.getMetadata().metadata().get("timestamp"));
+            pstmt.setString(4, (String) Notes.getData().get("note_title"));
+            pstmt.setString(5, (String) Notes.getData().get("note_content"));
+
+            pstmt.executeUpdate();
+            System.out.println("Global note saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void updateGlobalNotesInDatabase(NotesApp Notes) {
+        String sql = "UPDATE global_notes SET note_title = ?, note_content = ? WHERE note_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) Notes.getData().get("note_title"));
+            pstmt.setString(2, (String) Notes.getData().get("note_content"));
+            pstmt.setString(3, (String) Notes.getMetadata().metadata().get("note_id"));
+
+            pstmt.executeUpdate();
+            System.out.println("Global note updated in database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void deleteGlobalNotesFromDatabase(NotesApp Notes) {
+        String sql = "DELETE FROM global_notes WHERE note_id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) Notes.getMetadata().metadata().get("note_id"));
+            pstmt.executeUpdate();
+            System.out.println("Global note deleted from database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    /*====================================================================================================================================================================
+    Code Description:
+    This section of code outlines the methods used to interact with the database for User Logs. It includes methods for loading, saving, updating, and deleting data.
+
+    Methods (INTERNAL):
+        - loadUserLogsFromDatabase(): void - Loads user logs from the database.
+        - saveUserLogsToDatabase(UserLogs userLogs): void - Saves a user log to the database.
+        - deleteUserLogsFromDatabase(UserLogs userLogs): void - Deletes a user log from the database.
+    ====================================================================================================================================================================*/
+
+
+
+    private void loadUserLogsFromDatabase() {
+        try (Connection conn = DatabaseHelper.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM user_logs")) {
+
+            while (rs.next()) {
+                String id = rs.getString("id");
+                String userId = rs.getString("user_id");
+                String log_type = rs.getString("log_type");
+                long timestamp = rs.getLong("created_at");
+
+                UserLogs USER_LOGS = new UserLogs(UserLogs.LogType.valueOf(log_type));
+                USER_LOGS.updateMetadata("id", id);
+                USER_LOGS.updateMetadata("user_id", userId);
+                USER_LOGS.updateMetadata("created_at", timestamp);
+
+                userLogs.add(USER_LOGS);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void saveUserLogsToDatabase(UserLogs userLogs) {
+        String sql = "INSERT INTO user_logs(id, user_id, log_type, created_at) VALUES(?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) userLogs.getMetadata().metadata().get("id"));
+            pstmt.setString(2, (String) userLogs.getMetadata().metadata().get("user_id"));
+            pstmt.setString(3, userLogs.getMetadata().metadata().get("log_type").toString());
+            pstmt.setLong(4, (Long) userLogs.getMetadata().metadata().get("created_at"));
+
+            pstmt.executeUpdate();
+            System.out.println("User log saved to database.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    private void deleteUserLogsFromDatabase(UserLogs userLogs) {
+        String sql = "DELETE FROM user_logs WHERE id = ?";
+
+        try (Connection conn = DatabaseHelper.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, (String) userLogs.getMetadata().metadata().get("id"));
+            pstmt.executeUpdate();
+            System.out.println("User log deleted from database.");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
