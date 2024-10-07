@@ -120,9 +120,6 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderBySpecialRequests(String SPECIAL_REQUESTS) {
-        if (SPECIAL_REQUESTS != null && SPECIAL_REQUESTS.length() > 255) {
-            return StatusCode.SPECIAL_REQUESTS_TOO_LONG;
-        }
         return StatusCode.SUCCESS;
     }
 
@@ -392,6 +389,7 @@ public class OrderAPI {
 
         try {
             ORDER.updateMetadata("order_status", Order.OrderStatus.SENT.name());
+            System.out.println("Order: " + ORDER);
             DATASTORE.updateOrder(ORDER);
             System.out.println("Order posted successfully.");
             return VALIDATIONS;
@@ -621,7 +619,7 @@ public class OrderAPI {
         }
 
         try {
-            ORDER.updateMetadata("special_requests", SPECIAL_REQUESTS);
+            ORDER.setDataValue("special_requests", SPECIAL_REQUESTS);
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {

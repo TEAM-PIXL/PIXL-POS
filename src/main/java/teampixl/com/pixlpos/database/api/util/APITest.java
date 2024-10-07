@@ -34,7 +34,7 @@ public class APITest {
             System.out.println(returnStatus("Order items could not be added with the following errors:", Stat));
         }
 
-        order.setDataValue("special_requests", "No cheese");
+        orderAPI.putOrderSpecialRequests(order.getMetadataValue("order_id").toString(), "No cheese, extra tomato");
 
         List<StatusCode> Status = orderAPI.postOrder(order);
         if (isSuccessful(Status)) {
