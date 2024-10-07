@@ -13,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
 import javafx.animation.AnimationTimer;
+import teampixl.com.pixlpos.database.api.IngredientsAPI;
 import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.database.api.StockAPI;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
@@ -21,6 +22,7 @@ import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
+import teampixl.com.pixlpos.models.logs.definitions.Status;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +40,7 @@ public class AdminScreenStockController
     private StockAPI stockAPI;
     private DataStore dataStore;
     private MenuAPI menuAPI;
+    private IngredientsAPI ingredientsAPI;
     /*
     Shared Components
      */
@@ -111,6 +114,7 @@ public class AdminScreenStockController
         stockAPI = StockAPI.getInstance();
         menuAPI = MenuAPI.getInstance();
         dataStore = DataStore.getInstance();
+        ingredientsAPI = IngredientsAPI.getInstance();
         populateStockGrid();
     }
 
@@ -125,6 +129,7 @@ public class AdminScreenStockController
             Double actualQuantity = Double.parseDouble(actualquantityfield.getText());
             Double price = Double.parseDouble(itempricefield.getText());
             String ingredientName = itemnamefield.getText();
+            String ingredientDescription = itemdescriptionfield.getText();
 
             if (price < 0 || desiredQuantity < 0 || actualQuantity < 0) {
                 showAlert(Alert.AlertType.ERROR, "Failed", "Price and Quantities cannot be negative");
@@ -135,12 +140,19 @@ public class AdminScreenStockController
                 showAlert(Alert.AlertType.ERROR, "EmptyField", "Item Name, Item Price, Desired Quantity and Actual Quantity are required");
             } else {
                 //TODO: Complete Posted Order Once API updated
-                List<StatusCode> statusCodes = stockAPI.postStock(menuAPI.keySearch(ingredientName), Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, false);
+                List<StatusCode> statusCodes = ingredientsAPI.postIngredient(ingredientName, ingredientDescription);
+                System.out.println(statusCodes);
+                String Ingredient = ingredientsAPI.keySearch(ingredientName);
+                String IngredientName = ingredientsAPI.reverseKeySearch(Ingredient);
+                System.out.println(Ingredient);
+                System.out.println(IngredientName);
+                List<StatusCode> statusCodesStock = stockAPI.postStock(ingredientsAPI.reverseKeySearch(ingredientName), Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, false);
+                statusCodes.addAll(statusCodesStock);
                 if (Exceptions.isSuccessful(statusCodes)) {
                     initialize();
                     showAlert(Alert.AlertType.CONFIRMATION, "New Stock Item", "New Stock Item has been created");
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "New Stock Item", "Stock Item creation failed");
+                    showAlert(Alert.AlertType.ERROR, "New Stock Item", "Stock Item creation failed with the error codes: " + statusCodes);
                 }
             }
 
