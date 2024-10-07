@@ -132,11 +132,11 @@ public class LoginScreenController extends GuiCommon {
                     break;
                 case COOK:
                     System.out.println("Loading Cook Page");
-                    GuiCommon.loadRoot(GuiCommon.COOK_SCREEN_FXML, GuiCommon.COOK_SCREEN_TITLE, loginButton);
+                    GuiCommon.loadNewRoot(GuiCommon.COOK_SCREEN_FXML, GuiCommon.COOK_SCREEN_TITLE, loginButton);
                     break;
                 case WAITER:
                     System.out.println("Loading Waiter Page");
-                    GuiCommon.loadRoot(GuiCommon.WAITER_SCREEN_FXML, GuiCommon.WAITER_SCREEN_TITLE, loginButton);
+                    GuiCommon.loadNewRoot(GuiCommon.WAITER_SCREEN_FXML, GuiCommon.WAITER_SCREEN_TITLE, loginButton);
                     break;
                 default:
                     showErrorDialog("Invalid user role");

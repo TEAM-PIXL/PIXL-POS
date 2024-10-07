@@ -75,7 +75,7 @@ public class GuiCommon {
     public static final String ADMIN_SCREEN_ANALYTICS_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Analytics/AdminAnalytics.fxml";
 
     public static final String COOK_SCREEN_TITLE = "Cook Screen";
-    public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage2.fxml";
+    public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage.fxml";
 
     public static final String WAITER_SCREEN_TITLE = "Waiter Screen";
     public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage2.fxml";
@@ -142,9 +142,6 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
             Parent root = fxmlLoader.load();
-            if (root == null) {
-                throw new IOException("Failed to load FXML file: " + fxmlPath);
-            }
 
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
@@ -230,6 +227,7 @@ public class GuiCommon {
         }
         return root;
     }
+
     /**
      * Loads a new scene into the stage associated with the given node.
      *
@@ -351,10 +349,10 @@ public class GuiCommon {
                 loadScene(LOGIN_SCREEN_FXML, LOGIN_SCREEN_TITLE, stage);
             });
         }).exceptionally(ex -> {
-            ex.getCause().printStackTrace();
-            return null;
+                    ex.getCause().printStackTrace();
+                    return null;
 
-        }
+                }
         );
     }
 
@@ -373,7 +371,7 @@ public class GuiCommon {
                     ex.getCause().printStackTrace();
                     return null;
 
-        }
+                }
         );
     }
 }
