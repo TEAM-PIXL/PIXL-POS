@@ -318,7 +318,16 @@ public class AdminScreenMenuController
     }
 
 
-
+    /**
+     * Adds a menu item to the specified ListView. The menu item is represented as an HBox containing four AnchorPanes
+     * that display the name, price, type, and dietary information of the item.
+     *
+     * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
+     * @param name the name of the menu item (e.g., the dish name), displayed in the first column of the HBox.
+     * @param price the price of the menu item, displayed in the second column of the HBox.
+     * @param type the type of the menu item (e.g., appetizer, main course), displayed in the third column of the HBox.
+     * @param dietary dietary information for the menu item (e.g., vegan, gluten-free), displayed in the fourth column of the HBox.
+     */
     public void addMenuItemToListView(ListView<HBox> listView, String id, String name, String price, String type, String dietary) {
         try {
             // Load HBox from FXML
@@ -357,109 +366,6 @@ public class AdminScreenMenuController
             e.printStackTrace();
         }
     }
-        /**
-         * Adds a menu item to the specified ListView. The menu item is represented as an HBox containing four AnchorPanes
-         * that display the name, price, type, and dietary information of the item.
-         *
-         * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
-         * @param name the name of the menu item (e.g., the dish name), displayed in the first column of the HBox.
-         * @param price the price of the menu item, displayed in the second column of the HBox.
-         * @param type the type of the menu item (e.g., appetizer, main course), displayed in the third column of the HBox.
-         * @param dietary dietary information for the menu item (e.g., vegan, gluten-free), displayed in the fourth column of the HBox.
-         */
-//    public void addMenuItemToListView(ListView<HBox> listView, String id, String name, String price, String type, String dietary) {
-//        HBox hbox = new HBox();
-//        hbox.setPrefHeight(50.0);
-//        hbox.setPrefWidth(200.0);
-//        hbox.setId(id);
-//
-//        // Name
-//        AnchorPane namePane = new AnchorPane();
-//        Label nameLabel = new Label(name);
-//        nameLabel.setAlignment(javafx.geometry.Pos.CENTER);
-//        nameLabel.setPrefSize(111.2, 50.4);
-//        AnchorPane.setTopAnchor(nameLabel, 0.0);
-//        AnchorPane.setRightAnchor(nameLabel, 0.0);
-//        AnchorPane.setBottomAnchor(nameLabel, 0.0);
-//        AnchorPane.setLeftAnchor(nameLabel, 0.0);
-//        namePane.getChildren().add(nameLabel);
-//        HBox.setHgrow(namePane, Priority.ALWAYS);
-//
-//        // Price
-//        AnchorPane pricePane = new AnchorPane();
-//        Label priceLabel = new Label(price);
-//        priceLabel.setAlignment(javafx.geometry.Pos.CENTER);
-//        priceLabel.setPrefSize(86.4, 50.4);
-//        AnchorPane.setTopAnchor(priceLabel, 0.0);
-//        AnchorPane.setRightAnchor(priceLabel, 0.0);
-//        AnchorPane.setBottomAnchor(priceLabel, 0.0);
-//        AnchorPane.setLeftAnchor(priceLabel, 0.0);
-//        pricePane.getChildren().add(priceLabel);
-//        HBox.setHgrow(pricePane, Priority.ALWAYS);
-//
-//        // Type
-//        AnchorPane typePane = new AnchorPane();
-//        Label typeLabel = new Label(type);
-//        typeLabel.setAlignment(javafx.geometry.Pos.CENTER);
-//        typeLabel.setPrefSize(72.8, 50.4);
-//        AnchorPane.setTopAnchor(typeLabel, 0.0);
-//        AnchorPane.setRightAnchor(typeLabel, 0.0);
-//        AnchorPane.setBottomAnchor(typeLabel, 0.0);
-//        AnchorPane.setLeftAnchor(typeLabel, 0.0);
-//        typePane.getChildren().add(typeLabel);
-//        HBox.setHgrow(typePane, Priority.ALWAYS);
-//
-//        // Dietary
-//        AnchorPane dietaryPane = new AnchorPane();
-//        Label dietaryLabel = new Label(dietary);
-//        dietaryLabel.setAlignment(javafx.geometry.Pos.CENTER);
-//        dietaryLabel.setPrefSize(80.0, 50.4);
-//        AnchorPane.setTopAnchor(dietaryLabel, 0.0);
-//        AnchorPane.setRightAnchor(dietaryLabel, 0.0);
-//        AnchorPane.setBottomAnchor(dietaryLabel, 0.0);
-//        AnchorPane.setLeftAnchor(dietaryLabel, 0.0);
-//        dietaryPane.getChildren().add(dietaryLabel);
-//        HBox.setHgrow(dietaryPane, Priority.ALWAYS);
-//
-//        // Edit Button
-//        AnchorPane editButtonPane = new AnchorPane();
-//        editButtonPane.setMaxWidth(100.0);
-//        editButtonPane.setMinWidth(100.0);
-//        Button editButton = new Button("Edit");
-//        editButton.setId("editbutton");
-//        editButton.setLayoutX(35.0);
-//        editButton.setLayoutY(12.0);
-//        editButton.setMinHeight(26.4);
-//        editButton.setMaxHeight(26.4);
-//        editButton.setPrefHeight(26.4);
-//        editButton.setMinWidth(50.0);
-//        editButton.getStyleClass().add("edit-button");
-//        editButton.setOnAction(event -> onEditButtonClick(event,id));
-//        editButtonPane.getChildren().add(editButton);
-//        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
-//
-//        // Remove Button
-//        AnchorPane removeButtonPane = new AnchorPane();
-//        removeButtonPane.setMaxWidth(100.0);
-//        removeButtonPane.setMinWidth(100.0);
-//        Button removeButton = new Button("Remove");
-//        removeButton.setId("removebutton");
-//        removeButton.setLayoutX(11.0);
-//        removeButton.setLayoutY(12.0);
-//        removeButton.setMinHeight(26.4);
-//        removeButton.setPrefHeight(26.4);
-//        removeButton.setMinWidth(50.0);
-//        removeButton.getStyleClass().add("remove-button");
-//        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
-//        removeButtonPane.getChildren().add(removeButton);
-//        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
-//
-//        // Add all components to the HBox
-//        hbox.getChildren().addAll(namePane, pricePane, typePane, dietaryPane, editButtonPane, removeButtonPane);
-//
-//        // Add the HBox to the ListView
-//        listView.getItems().add(hbox);
-//    }
 
     private void populateMenuParam(MenuItem menuItem) {
         Object price = menuItem.getMetadataValue("price");

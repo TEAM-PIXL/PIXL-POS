@@ -201,7 +201,17 @@ public class AdminScreenStockController
 
 
 
-
+    /**
+     * Adds an item to the specified ListView. The item is represented as an HBox containing four AnchorPanes
+     * that display the name, price, type, and dietary information of the item.
+     *
+     * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
+     * @param itemName the name of the item (e.g., the patty), displayed in the first column of the HBox.
+     * @param lastupdated the last time the item was updated
+     * @param actualQty the actual number of items in stock
+     * @param stocklvl the stock level of the item
+     * @param orderstatus the order status of the item
+     */
     public void addInventoryItemToListView(ListView<HBox> listView, String id, String itemName, String actualQty, String orderstatus, String lastupdated, String stocklvl) {
         try {
             // Load HBox from FXML
@@ -242,105 +252,6 @@ public class AdminScreenStockController
             e.printStackTrace();
         }
     }
-    /**
-     * Adds an item to the specified ListView. The item is represented as an HBox containing four AnchorPanes
-     * that display the name, price, type, and dietary information of the item.
-     *
-     * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
-     * @param itemName the name of the item (e.g., the patty), displayed in the first column of the HBox.
-     * @param desiredQty the desired number of stock
-     * @param actualQty the actual number of items in stock
-     * @param price the price per item reported
-     */
-//    public void addInventoryItemToListView(ListView<HBox> listView, String id, String itemName, String desiredQty, String actualQty, String price) {
-//        HBox hbox = new HBox();
-//        hbox.setPrefHeight(50.0);
-//        hbox.setPrefWidth(200.0);
-//
-//        // Item Name
-//        AnchorPane itemNamePane = new AnchorPane();
-//        Label itemNameLabel = new Label(itemName);
-//        itemNameLabel.setAlignment(javafx.geometry.Pos.CENTER);
-//        itemNameLabel.setPrefSize(88.0, 50.4);
-//        AnchorPane.setTopAnchor(itemNameLabel, 0.0);
-//        AnchorPane.setRightAnchor(itemNameLabel, 0.0);
-//        AnchorPane.setBottomAnchor(itemNameLabel, 0.0);
-//        AnchorPane.setLeftAnchor(itemNameLabel, 0.0);
-//        itemNamePane.getChildren().add(itemNameLabel);
-//        HBox.setHgrow(itemNamePane, Priority.ALWAYS);
-//
-//        // Desired Quantity
-//        AnchorPane desiredQtyPane = new AnchorPane();
-//        Label desiredQtyLabel = new Label(desiredQty);
-//        desiredQtyLabel.setAlignment(javafx.geometry.Pos.CENTER);
-//        desiredQtyLabel.setPrefSize(127.2, 50.4);
-//        AnchorPane.setTopAnchor(desiredQtyLabel, 0.0);
-//        AnchorPane.setRightAnchor(desiredQtyLabel, 0.0);
-//        AnchorPane.setBottomAnchor(desiredQtyLabel, 0.0);
-//        AnchorPane.setLeftAnchor(desiredQtyLabel, 0.0);
-//        desiredQtyPane.getChildren().add(desiredQtyLabel);
-//        HBox.setHgrow(desiredQtyPane, Priority.ALWAYS);
-//
-//        // Actual Quantity
-//        AnchorPane actualQtyPane = new AnchorPane();
-//        Label actualQtyLabel = new Label(actualQty);
-//        actualQtyLabel.setAlignment(javafx.geometry.Pos.CENTER);
-//        actualQtyLabel.setPrefSize(112.8, 50.4);
-//        AnchorPane.setTopAnchor(actualQtyLabel, 0.0);
-//        AnchorPane.setRightAnchor(actualQtyLabel, 0.0);
-//        AnchorPane.setBottomAnchor(actualQtyLabel, 0.0);
-//        AnchorPane.setLeftAnchor(actualQtyLabel, 0.0);
-//        actualQtyPane.getChildren().add(actualQtyLabel);
-//        HBox.setHgrow(actualQtyPane, Priority.ALWAYS);
-//
-//        // Price
-//        AnchorPane pricePane = new AnchorPane();
-//        Label priceLabel = new Label(price);
-//        priceLabel.setAlignment(javafx.geometry.Pos.CENTER);
-//        priceLabel.setPrefSize(108.8, 50.4);
-//        AnchorPane.setTopAnchor(priceLabel, 0.0);
-//        AnchorPane.setRightAnchor(priceLabel, 0.0);
-//        AnchorPane.setBottomAnchor(priceLabel, 0.0);
-//        AnchorPane.setLeftAnchor(priceLabel, 0.0);
-//        pricePane.getChildren().add(priceLabel);
-//        HBox.setHgrow(pricePane, Priority.ALWAYS);
-//
-//        // Edit Button
-//        AnchorPane editButtonPane = new AnchorPane();
-//        editButtonPane.setMaxWidth(100.0);
-//        editButtonPane.setMinWidth(100.0);
-//        editButtonPane.setPrefWidth(100.0);
-//        Button editButton = new Button("Edit");
-//        editButton.setId("editbutton");
-//        editButton.setLayoutX(25.0);
-//        editButton.setLayoutY(9.0);
-//        editButton.setMinWidth(50.0);
-//        editButton.getStyleClass().add("edit-button");
-//        editButton.setOnAction(event -> onEditButtonClick(event,id));
-//        editButtonPane.getChildren().add(editButton);
-//        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
-//
-//        // Remove Button
-//        AnchorPane removeButtonPane = new AnchorPane();
-//        removeButtonPane.setMaxWidth(100.0);
-//        removeButtonPane.setMinWidth(100.0);
-//        removeButtonPane.setPrefWidth(100.0);
-//        Button removeButton = new Button("Remove");
-//        removeButton.setId("removebutton");
-//        removeButton.setLayoutX(11.0);
-//        removeButton.setLayoutY(9.0);
-//        removeButton.setMinWidth(50.0);
-//        removeButton.getStyleClass().add("remove-button");
-//        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
-//        removeButtonPane.getChildren().add(removeButton);
-//        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
-//
-//        // Add all components to the HBox
-//        hbox.getChildren().addAll(itemNamePane, desiredQtyPane, actualQtyPane, pricePane, editButtonPane, removeButtonPane);
-//
-//        // Add the HBox to the ListView
-//        listView.getItems().add(hbox);
-//    }
 
     // Placeholder methods for button actions
     private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
