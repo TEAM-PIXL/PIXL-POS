@@ -21,12 +21,9 @@ import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.common.OrderUtil;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import javafx.util.Callback;
+
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 public class WaiterScreen2Controller {
 
     @FXML
@@ -226,7 +223,7 @@ public class WaiterScreen2Controller {
 
             if (newTab != null) {
                 TabType tabType = TabType.fromId(newTab.getId());
-                switch (tabType) {
+                switch (Objects.requireNonNull(tabType)) {
                     case SEARCH:
                         searchbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
@@ -284,16 +281,9 @@ public class WaiterScreen2Controller {
             }
         });
 
-        orderitemslistview.setCellFactory(new Callback<ListView<OrderItem>, ListCell<OrderItem>>() {
-            @Override
-            public ListCell<OrderItem> call(ListView<OrderItem> param) {
-                return new OrderItemCell();
-            }
-        });
+        orderitemslistview.setCellFactory(param -> new OrderItemCell());
 
-        orderitemslistview.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedItem = newValue;
-        });
+        orderitemslistview.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> selectedItem = newValue);
     }
 
     private void handleSearchBarEnter() {
@@ -326,10 +316,10 @@ public class WaiterScreen2Controller {
             System.out.println("Failed to initialize order.");
             return;
         }
-        Integer orderNumber = currentOrder.getOrderNumber();
+        int orderNumber = currentOrder.getOrderNumber();
 
         System.out.println("Order initialized: " + currentOrder);
-        ordernumber.setText(orderNumber.toString());
+        ordernumber.setText(Integer.toString(orderNumber));
         orderID = (String) currentOrder.getMetadataValue("order_id");
 
         Map<MenuItem, Integer> existingItems = orderAPI.getOrderItemsById(orderID);
@@ -430,15 +420,13 @@ public class WaiterScreen2Controller {
 
         selectedItem.setAddNoteRequested(true);
 
-        // Use Platform.runLater to ensure the refresh happens after current events
-        Platform.runLater(() -> {
-            orderitemslistview.refresh();
-        });
+        Platform.runLater(() -> orderitemslistview.refresh());
     }
 
     private ListCell<OrderItem> getCell(int index) {
         for (Object obj : orderitemslistview.lookupAll(".list-cell")) {
             if (obj instanceof ListCell) {
+                @SuppressWarnings("unchecked")
                 ListCell<OrderItem> cell = (ListCell<OrderItem>) obj;
                 if (cell.getIndex() == index) {
                     return cell;
@@ -483,7 +471,7 @@ public class WaiterScreen2Controller {
             MenuItem menuItem = entry.getKey();
             int quantity = entry.getValue();
             Double price = (Double) menuItem.getMetadataValue("price");
-            Double total = price * quantity;
+            double total = price * quantity;
             orderTotal += total;
 
             List<String> notes = itemNotes.getOrDefault(menuItem, new ArrayList<>());
@@ -492,6 +480,7 @@ public class WaiterScreen2Controller {
         }
         totalprice.setText("$" + String.format("%.2f", orderTotal));
     }
+
 
     @FXML
     protected void onRestartButtonClick() {
@@ -537,11 +526,9 @@ public class WaiterScreen2Controller {
         private int buttonCount = 0;
         private final FlowPane buttonPane;
         private final Map<String, Button> buttons;
-        private final DynamicLabelManager labelManager;
 
         private DynamicButtonManager(FlowPane buttonPane, DynamicLabelManager labelManager) {
             this.buttonPane = buttonPane;
-            this.labelManager = labelManager;
             this.buttons = new HashMap<>();
         }
 
@@ -608,32 +595,27 @@ public class WaiterScreen2Controller {
         }
     }
 
-    private class DynamicLabelManager {
-        private final ListView<OrderItem> listView;
-
-        private DynamicLabelManager(ListView<OrderItem> listView) {
-            this.listView = listView;
-        }
+    private record DynamicLabelManager(ListView<OrderItem> listView) {
 
         private void addItem(OrderItem orderItem) {
-            listView.getItems().add(orderItem);
+                listView.getItems().add(orderItem);
+            }
+
+            private void clearAllItems() {
+                listView.getItems().clear();
+            }
         }
 
-        private void clearAllItems() {
-            listView.getItems().clear();
-        }
-    }
-
-    public class OrderItem {
-        private MenuItem menuItem;
-        private int quantity;
-        private List<String> specialRequests;
+    public static class OrderItem {
+        private final MenuItem menuItem;
+        private final int quantity;
+        private final List<String> specialRequests;
         private transient boolean addNoteRequested = false;
 
         public OrderItem(MenuItem menuItem, int quantity, List<String> specialRequests) {
             this.menuItem = menuItem;
             this.quantity = quantity;
-            this.specialRequests = specialRequests;
+            this.specialRequests = new ArrayList<>(specialRequests);
         }
 
         public MenuItem getMenuItem() {
@@ -659,8 +641,8 @@ public class WaiterScreen2Controller {
 
     private class OrderItemCell extends ListCell<OrderItem> {
 
-        private VBox vbox;
-        private Label addNoteLabel;
+        private final VBox vbox;
+        private final Label addNoteLabel;
         private TextField editingTextField;
 
         public OrderItemCell() {
@@ -668,12 +650,11 @@ public class WaiterScreen2Controller {
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 
             addNoteLabel = new Label("    + Add Note");
-            addNoteLabel.setVisible(false); // Initially invisible
-            addNoteLabel.setManaged(false); // Exclude from layout when invisible
+            addNoteLabel.setVisible(false);
+            addNoteLabel.setManaged(false);
 
             addNoteLabel.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 1) {
-                    // Start adding a new note inline
                     addNoteInline(getItem(), vbox, addNoteLabel);
                 }
             });
@@ -705,7 +686,6 @@ public class WaiterScreen2Controller {
 
                         noteLabel.setOnMouseClicked(event -> {
                             if (event.getClickCount() == 2) {
-                                // Double-clicked: start editing the note
                                 editNoteInline(item, index, noteLabel);
                             }
                         });
@@ -714,7 +694,6 @@ public class WaiterScreen2Controller {
                     }
                 }
 
-                // Add the "Add Note" label at the end
                 vbox.getChildren().add(addNoteLabel);
 
                 setText(null);
@@ -723,10 +702,7 @@ public class WaiterScreen2Controller {
                 if (item.isAddNoteRequested()) {
                     item.setAddNoteRequested(false);
 
-                    // Use Platform.runLater to ensure the TextField gains focus
-                    Platform.runLater(() -> {
-                        addNoteInline(item, vbox, addNoteLabel);
-                    });
+                    Platform.runLater(() -> addNoteInline(item, vbox, addNoteLabel));
                 }
             }
         }
@@ -736,13 +712,10 @@ public class WaiterScreen2Controller {
             TextField textField = new TextField(currentNote);
             textField.selectAll();
 
-            // Remove existing listeners if any
             textField.setOnAction(null);
             textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
 
-            textField.setOnAction(event -> {
-                finishEditing(item, noteIndex, textField);
-            });
+            textField.setOnAction(event -> finishEditing(item, noteIndex, textField));
 
             textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
                 if (!isNowFocused) {
@@ -755,68 +728,22 @@ public class WaiterScreen2Controller {
             textField.requestFocus();
         }
 
-        private void finishEditing(OrderItem item, int noteIndex, TextField textField) {
-            // Remove listeners
-            textField.setOnAction(null);
-            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
-
-            String newNote = textField.getText();
-            if (newNote == null || newNote.trim().isEmpty()) {
-                item.getSpecialRequests().remove(noteIndex);
-                itemNotes.put(item.getMenuItem(), item.getSpecialRequests());
-                // Remove the TextField
-                vbox.getChildren().remove(textField);
-            } else {
-                item.getSpecialRequests().set(noteIndex, newNote);
-                itemNotes.put(item.getMenuItem(), item.getSpecialRequests());
-
-                // Replace the TextField with the updated Label
-                Label updatedNoteLabel = new Label("    * " + newNote);
-                updatedNoteLabel.setOnMouseClicked(event -> {
-                    if (event.getClickCount() == 2) {
-                        editNoteInline(item, noteIndex, updatedNoteLabel);
-                    }
-                });
-
-                int indexInVBox = vbox.getChildren().indexOf(textField);
-                vbox.getChildren().set(indexInVBox, updatedNoteLabel);
-            }
-        }
-
-        private void addNoteInline(OrderItem item, VBox vbox, Label addNoteLabel) {
-            TextField textField = new TextField();
-            textField.setPromptText("Enter note");
-
-            // Remove existing listeners if any
-            textField.setOnAction(null);
-            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
-
-            textField.setOnAction(event -> {
-                finishAdding(item, vbox, addNoteLabel, textField);
-            });
-
-            textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                if (!isNowFocused) {
-                    finishAdding(item, vbox, addNoteLabel, textField);
-                }
-            });
-
-            int indexInVBox = vbox.getChildren().indexOf(addNoteLabel);
-            vbox.getChildren().set(indexInVBox, textField);
-            textField.requestFocus();
-        }
-
         private void finishAdding(OrderItem item, VBox vbox, Label addNoteLabel, TextField textField) {
-            // Remove listeners to prevent multiple calls
+            if (Boolean.TRUE.equals(textField.getProperties().get("finished"))) {
+                return;
+            }
+            textField.getProperties().put("finished", true);
+
             textField.setOnAction(null);
             textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
 
             String newNote = textField.getText();
             if (newNote != null && !newNote.trim().isEmpty()) {
-                item.getSpecialRequests().add(newNote);
-                itemNotes.put(item.getMenuItem(), item.getSpecialRequests());
+                if (!item.getSpecialRequests().contains(newNote)) {
+                    item.getSpecialRequests().add(newNote);
+                    itemNotes.put(item.getMenuItem(), new ArrayList<>(item.getSpecialRequests()));
+                }
 
-                // Create new note label
                 Label noteLabel = new Label("    * " + newNote);
                 int noteIndex = item.getSpecialRequests().size() - 1;
 
@@ -827,19 +754,82 @@ public class WaiterScreen2Controller {
                 });
 
                 int indexInVBox = vbox.getChildren().indexOf(textField);
-                vbox.getChildren().set(indexInVBox, noteLabel);
-                // Re-add the addNoteLabel if it's not already there
-                if (!vbox.getChildren().contains(addNoteLabel)) {
-                    vbox.getChildren().add(addNoteLabel);
+                if (indexInVBox >= 0) {
+                    vbox.getChildren().set(indexInVBox, noteLabel);
+                } else {
+                    vbox.getChildren().add(noteLabel);
+                }
+
+            } else {
+                int indexInVBox = vbox.getChildren().indexOf(textField);
+                if (indexInVBox >= 0) {
+                    vbox.getChildren().remove(indexInVBox);
+                }
+
+            }
+            if (!vbox.getChildren().contains(addNoteLabel)) {
+                vbox.getChildren().add(addNoteLabel);
+            }
+        }
+
+        private void finishEditing(OrderItem item, int noteIndex, TextField textField) {
+            if (Boolean.TRUE.equals(textField.getProperties().get("finished"))) {
+                return;
+            }
+            textField.getProperties().put("finished", true);
+
+            textField.setOnAction(null);
+            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
+
+            String newNote = textField.getText();
+            if (newNote == null || newNote.trim().isEmpty()) {
+                item.getSpecialRequests().remove(noteIndex);
+            } else {
+                item.getSpecialRequests().set(noteIndex, newNote);
+            }
+            itemNotes.put(item.getMenuItem(), new ArrayList<>(item.getSpecialRequests()));
+
+            if (newNote != null && !newNote.trim().isEmpty()) {
+                Label updatedNoteLabel = new Label("    * " + newNote);
+                updatedNoteLabel.setOnMouseClicked(event -> {
+                    if (event.getClickCount() == 2) {
+                        editNoteInline(item, noteIndex, updatedNoteLabel);
+                    }
+                });
+
+                int indexInVBox = vbox.getChildren().indexOf(textField);
+                if (indexInVBox >= 0) {
+                    vbox.getChildren().set(indexInVBox, updatedNoteLabel);
+                } else {
+                    vbox.getChildren().add(updatedNoteLabel);
                 }
             } else {
-                // If the note is empty, just remove the TextField and re-add the addNoteLabel
                 int indexInVBox = vbox.getChildren().indexOf(textField);
-                vbox.getChildren().remove(textField);
-                if (!vbox.getChildren().contains(addNoteLabel)) {
-                    vbox.getChildren().add(addNoteLabel);
+                if (indexInVBox >= 0) {
+                    vbox.getChildren().remove(indexInVBox);
                 }
             }
+        }
+
+
+        private void addNoteInline(OrderItem item, VBox vbox, Label addNoteLabel) {
+            TextField textField = new TextField();
+            textField.setPromptText("Enter note");
+
+            textField.setOnAction(null);
+            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
+
+            textField.setOnAction(event -> finishAdding(item, vbox, addNoteLabel, textField));
+
+            textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused) {
+                    finishAdding(item, vbox, addNoteLabel, textField);
+                }
+            });
+
+            int indexInVBox = vbox.getChildren().indexOf(addNoteLabel);
+            vbox.getChildren().set(indexInVBox, textField);
+            textField.requestFocus();
         }
     }
 }
