@@ -330,7 +330,7 @@ public class AdminScreenUsersController
     public void addUserToListView(ListView<HBox> listView, String id, String name, String email, String username, String userSince, String role) {
         try {
             // Load HBox from FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/teampixl/com/pixlpos/fxml/adminconsole/userdynamic.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/teampixl/com/pixlpos/fxml/adminconsole/dynamics/userdynamic.fxml"));
             HBox hbox = loader.load();
 
             // Set the ID of the HBox
