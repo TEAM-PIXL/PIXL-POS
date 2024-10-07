@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.control.Button;
 import teampixl.com.pixlpos.common.GuiCommon;
 
 import java.util.*;
@@ -98,6 +97,7 @@ public class WaiterScreen2Controller {
     private Tooltip priceTooltip;
 
     private final Map<MenuItem, Integer> orderItems = new HashMap<>();
+    private final Map<MenuItem, String> itemNotes = new HashMap<>();
     private Label selectedItem = null;
     private final Stack<Runnable> actionStack = new Stack<>();
     private Order currentOrder;
@@ -183,17 +183,19 @@ public class WaiterScreen2Controller {
 
     @FXML
     private void initialize() {
-        initialiseOrder();
         datetime.start();
         tabManager = new DynamicTabManager(itemtab);
-        labelManager = new DynamicLabelManager(orderitemslistview);
-        searchbuttonManager = new DynamicButtonManager(searchpane, labelManager);
-        entreebuttonManager = new DynamicButtonManager(entreepane, labelManager);
-        mainbuttonManager = new DynamicButtonManager(mainpane, labelManager);
-        drinksbuttonManager = new DynamicButtonManager(drinkspane, labelManager);
-        dessertbuttonManager = new DynamicButtonManager(dessertpane, labelManager);
+        labelManager = new DynamicLabelManager(orderitemslistview); // Initialize labelManager here
+        searchbuttonManager = new DynamicButtonManager(searchpane);
+        entreebuttonManager = new DynamicButtonManager(entreepane);
+        mainbuttonManager = new DynamicButtonManager(mainpane);
+        drinksbuttonManager = new DynamicButtonManager(drinkspane);
+        dessertbuttonManager = new DynamicButtonManager(dessertpane);
         initialiseSlider();
         comboinitialize();
+
+        // Initialize order after labelManager to avoid NullPointerException
+        initialiseOrder();
 
         searchbar.setOnAction(event -> handleSearchBarEnter());
         priceslider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -313,6 +315,13 @@ public class WaiterScreen2Controller {
         System.out.println("Order initialized: " + currentOrder);
         ordernumber.setText(Integer.toString(orderNumber));
         orderID = (String) currentOrder.getMetadataValue("order_id");
+
+        String specialRequests = (String) currentOrder.getMetadataValue("special_requests");
+        if (specialRequests != null) {
+            itemNotes.putAll(deserializeItemNotes(specialRequests));
+        }
+
+        updateOrderSummary();
     }
 
     private void initialiseSlider() {
@@ -371,6 +380,9 @@ public class WaiterScreen2Controller {
         statusCodes.addAll(orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.valueOf(paymentstatus.getValue())));
         statusCodes.addAll(orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT));
 
+        String specialRequests = serializeItemNotes(itemNotes);
+        statusCodes.addAll(orderAPI.putOrderSpecialRequests(orderID, specialRequests));
+
         if (!Exceptions.isSuccessful(statusCodes)) {
             showErrorDialog(Exceptions.returnStatus("Failed to apply order details:", statusCodes));
             return;
@@ -379,8 +391,8 @@ public class WaiterScreen2Controller {
         List<StatusCode> postStatus = orderAPI.postOrder(currentOrder);
         if (Exceptions.isSuccessful(postStatus)) {
             System.out.println("Order placed successfully.");
-            initialiseOrder();
             onRestartButtonClick();
+            initialiseOrder();
         } else {
             showErrorDialog(Exceptions.returnStatus("Order could not be placed:", postStatus));
         }
@@ -388,7 +400,39 @@ public class WaiterScreen2Controller {
 
     @FXML
     protected void onCustomizeButtonClick() {
-        itemtab.getSelectionModel().select(searchtab);
+        if (selectedItem == null) {
+            showErrorDialog("No item selected to customize.");
+            return;
+        }
+
+        String itemText = selectedItem.getText();
+        String[] lines = itemText.split("\n");
+        String firstLine = lines[0];
+        String itemNameWithQuantity = firstLine.substring(firstLine.indexOf("x ") + 2);
+        String itemName = itemNameWithQuantity.trim();
+
+        MenuItem menuItem = menuAPI.getMenuItem(itemName);
+        if (menuItem == null) {
+            showErrorDialog("Menu item not found: " + itemName);
+            return;
+        }
+
+        String currentNote = itemNotes.getOrDefault(menuItem, "");
+
+        TextInputDialog dialog = new TextInputDialog(currentNote);
+        dialog.setTitle("Customize Item");
+        dialog.setHeaderText("Add a special request for " + itemName);
+        dialog.setContentText("Special Request:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(note -> {
+            if (note.isEmpty()) {
+                itemNotes.remove(menuItem);
+            } else {
+                itemNotes.put(menuItem, note);
+            }
+            updateOrderSummary();
+        });
     }
 
     @FXML
@@ -402,7 +446,9 @@ public class WaiterScreen2Controller {
     protected void onVoidItemButtonClick() {
         if (selectedItem != null) {
             String itemText = selectedItem.getText();
-            String itemNameWithQuantity = itemText.substring(itemText.indexOf("x ") + 2);
+            String[] lines = itemText.split("\n");
+            String firstLine = lines[0];
+            String itemNameWithQuantity = firstLine.substring(firstLine.indexOf("x ") + 2);
             String itemName = itemNameWithQuantity.trim();
 
             MenuItem menuItem = menuAPI.getMenuItem(itemName);
@@ -413,6 +459,7 @@ public class WaiterScreen2Controller {
 
             int quantity = orderItems.get(menuItem);
             orderItems.remove(menuItem);
+            itemNotes.remove(menuItem);
 
             actionStack.push(() -> {
                 orderItems.put(menuItem, quantity);
@@ -437,7 +484,14 @@ public class WaiterScreen2Controller {
             orderTotal += total;
 
             String itemName = (String) menuItem.getMetadataValue("itemName");
-            Label itemLabel = labelManager.addLabel(quantity, itemName);
+            String note = itemNotes.get(menuItem);
+
+            String labelText = quantity + "x " + itemName;
+            if (note != null && !note.isEmpty()) {
+                labelText += "\n    * " + note;
+            }
+
+            Label itemLabel = labelManager.addLabel(labelText);
             itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
         }
         totalprice.setText("$" + String.format("%.2f", orderTotal));
@@ -446,21 +500,24 @@ public class WaiterScreen2Controller {
     @FXML
     protected void onRestartButtonClick() {
         Map<MenuItem, Integer> currentOrderItems = new HashMap<>(orderItems);
+        Map<MenuItem, String> currentItemNotes = new HashMap<>(itemNotes);
 
         actionStack.push(() -> {
             orderItems.putAll(currentOrderItems);
+            itemNotes.putAll(currentItemNotes);
             updateOrderSummary();
         });
 
         orderItems.clear();
+        itemNotes.clear();
 
         orderAPI.deleteOrder(orderID);
-        initialiseOrder();
         updateOrderSummary();
     }
 
     @FXML
     protected void onFilterButtonClick() {
+        // Implement filter functionality if needed
     }
 
     @FXML
@@ -491,11 +548,9 @@ public class WaiterScreen2Controller {
         private int buttonCount = 0;
         private final FlowPane buttonPane;
         private final Map<String, Button> buttons;
-        private final DynamicLabelManager labelManager;
 
-        private DynamicButtonManager(FlowPane buttonPane, DynamicLabelManager labelManager) {
+        private DynamicButtonManager(FlowPane buttonPane) {
             this.buttonPane = buttonPane;
-            this.labelManager = labelManager;
             this.buttons = new HashMap<>();
         }
 
@@ -517,10 +572,10 @@ public class WaiterScreen2Controller {
             buttons.put(itemName, newButton);
 
             newButton.setUserData(menuItem);
-            newButton.setOnAction(e -> addtoorder(menuItem));
+            newButton.setOnAction(e -> addToOrder(menuItem));
         }
 
-        private void addtoorder(MenuItem menuItem) {
+        private void addToOrder(MenuItem menuItem) {
             if (menuItem == null) {
                 showErrorDialog("Menu item not found.");
                 return;
@@ -531,6 +586,7 @@ public class WaiterScreen2Controller {
             actionStack.push(() -> {
                 if (orderItems.get(menuItem) == 1) {
                     orderItems.remove(menuItem);
+                    itemNotes.remove(menuItem);
                 } else {
                     orderItems.put(menuItem, orderItems.get(menuItem) - 1);
                 }
@@ -538,24 +594,6 @@ public class WaiterScreen2Controller {
             });
 
             updateOrderSummary();
-        }
-
-        private void updateOrderSummary() {
-            labelManager.clearAllLabels();
-            orderTotal = 0.00;
-
-            for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
-                MenuItem menuItem = entry.getKey();
-                int quantity = entry.getValue();
-                Double price = (Double) menuItem.getMetadataValue("price");
-                double total = price * quantity;
-                orderTotal += total;
-
-                String itemName = (String) menuItem.getMetadataValue("itemName");
-                Label itemLabel = labelManager.addLabel(quantity, itemName);
-                itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
-            }
-            totalprice.setText("$" + String.format("%.2f", orderTotal));
         }
 
         private void clearAllButtons() {
@@ -567,30 +605,67 @@ public class WaiterScreen2Controller {
     private record DynamicTabManager(TabPane tabPane) {
 
         private void adjustTabWidths() {
-                double totalWidth = tabPane.getWidth();
-                int numberOfTabs = tabPane.getTabs().size();
+            double totalWidth = tabPane.getWidth();
+            int numberOfTabs = tabPane.getTabs().size();
 
-                if (numberOfTabs > 0) {
-                    double tabWidth = totalWidth / numberOfTabs;
-                    tabWidth = tabWidth - 24.5;
-                    tabPane.setTabMinWidth(tabWidth);
-                    tabPane.setTabMaxWidth(tabWidth);
-                }
+            if (numberOfTabs > 0) {
+                double tabWidth = totalWidth / numberOfTabs;
+                tabWidth = tabWidth - 24.5;
+                tabPane.setTabMinWidth(tabWidth);
+                tabPane.setTabMaxWidth(tabWidth);
             }
         }
+    }
 
     private record DynamicLabelManager(ListView<Label> labelListView) {
 
-        private Label addLabel(int amount, String name) {
-                Label newLabel = new Label(amount + "x " + name);
-                newLabel.getStyleClass().add("docket-label");
-                labelListView.getItems().add(newLabel);
-                return newLabel;
-            }
+        private Label addLabel(String text) {
+            Label newLabel = new Label(text);
+            newLabel.getStyleClass().add("docket-label");
+            labelListView.getItems().add(newLabel);
+            return newLabel;
+        }
 
-            private void clearAllLabels() {
-                labelListView.getItems().clear();
+        private void clearAllLabels() {
+            labelListView.getItems().clear();
+        }
+    }
+
+    private String serializeItemNotes(Map<MenuItem, String> itemNotes) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<MenuItem, String> entry : itemNotes.entrySet()) {
+            MenuItem menuItem = entry.getKey();
+            String note = entry.getValue();
+            if (note != null && !note.isEmpty()) {
+                String itemId = (String) menuItem.getMetadataValue("item_id");
+                sb.append(itemId).append(":").append(note.replace(":", "\\:").replace("|", "\\|")).append("|");
             }
         }
+        if (!sb.isEmpty()) {
+            sb.setLength(sb.length() - 1); // Remove last "|"
+        }
+        return sb.toString();
+    }
+
+    private Map<MenuItem, String> deserializeItemNotes(String specialRequests) {
+        Map<MenuItem, String> itemNotes = new HashMap<>();
+        if (specialRequests == null || specialRequests.isEmpty()) {
+            return itemNotes;
+        }
+
+        String[] items = specialRequests.split("(?<!\\\\)\\|");
+        for (String item : items) {
+            String[] parts = item.split("(?<!\\\\):", 2);
+            if (parts.length == 2) {
+                String itemId = parts[0];
+                String note = parts[1].replace("\\|", "|").replace("\\:", ":");
+                MenuItem menuItem = menuAPI.keyTransform(itemId);
+                if (menuItem != null) {
+                    itemNotes.put(menuItem, note);
+                }
+            }
+        }
+        return itemNotes;
+    }
 }
 
