@@ -369,11 +369,11 @@ public class AdminScreenUsersController
         HBox.setHgrow(rolePane, Priority.ALWAYS);
 
         // Edit Button
-        AnchorPane editButtonPane = createButtonAnchorPane("teampixl/com/pixlpos/images/adminicons/green_edit_write_pen_icon.png", event -> onEditButtonClick(event, id));
+        AnchorPane editButtonPane = createButtonAnchorPane("/teampixl/com/pixlpos/images/adminicons/green_edit_write_pen_icon.png", event -> onEditButtonClick(event, id));
         HBox.setHgrow(editButtonPane, Priority.ALWAYS);
 
         // Remove Button
-        AnchorPane removeButtonPane = createButtonAnchorPane("../../../images/adminicons/red_trash_2_icon.png", event -> onRemoveButtonClick(event, id));
+        AnchorPane removeButtonPane = createButtonAnchorPane("/teampixl/com/pixlpos/images/adminicons/red_trash_2_icon.png", event -> onRemoveButtonClick(event, id));
         HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
 
         // Add all components to the HBox
@@ -446,7 +446,7 @@ public class AdminScreenUsersController
         button.setStyle("-fx-background-color: transparent;");
         button.setPrefSize(50.0, 50.0);
 
-        ImageView imageView = new ImageView(new Image(imagePath));
+        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
         imageView.setFitHeight(22.0);
         imageView.setFitWidth(22.0);
         imageView.setPreserveRatio(true);
