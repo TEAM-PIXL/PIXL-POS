@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.common;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +10,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.models.UserSettings;
@@ -25,7 +27,7 @@ import java.util.Objects;
  * This class provides methods to load different stages and scenes using FXML files.
  */
 public class GuiCommon {
-    
+
     public static int WIDTH;
     public static int HEIGHT;
 
@@ -48,18 +50,14 @@ public class GuiCommon {
                             HEIGHT = 1050;
                             break;
                         default:
-                            WIDTH = 1280;
-                            HEIGHT = 720;
                             break;
                     }
                 }, () -> {
-                    WIDTH = 1280;
-                    HEIGHT = 720;
                 });
     }
-    
+
     public static final String ICON_PATH = "/teampixl/com/pixlpos/app-icon.jpg";
-    
+
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
     public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml";
 
@@ -103,15 +101,16 @@ public class GuiCommon {
 
             stage.setScene(scene);
             stage.setTitle(title);
+
+            stage.centerOnScreen();
             stage.show();
 
-            Platform.runLater(stage::centerOnScreen);
+            applyFadeTransition(root);
         } catch (IOException e) {
             System.err.println("Failed to load stage: " + e.getMessage());
             e.printStackTrace();
         }
     }
-
 
     /**
      * Loads a new scene into the given stage using the specified FXML file and title.
@@ -142,21 +141,32 @@ public class GuiCommon {
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
             Parent root = fxmlLoader.load();
-            stage.hide();
 
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
             stage.getIcons().add(new Image(Objects.requireNonNull(GuiCommon.class.getResourceAsStream(ICON_PATH))));
 
-            Platform.runLater(() -> {
-                stage.centerOnScreen();
-                stage.show();
-            });
+            stage.centerOnScreen();
+            stage.show();
+
+            applyFadeTransition(root);
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Applies a fade-in transition to the given root node.
+     *
+     * @param root the root node to apply the fade-in transition to
+     */
+    private static void applyFadeTransition(Parent root) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(100), root);
+        fadeTransition.setFromValue(0.8);
+        fadeTransition.setToValue(1.0);
+        fadeTransition.play();
     }
 
     /**
@@ -204,7 +214,7 @@ public class GuiCommon {
             stage.setScene(scene);
             stage.setTitle(title);
             stage.centerOnScreen();
-            stage.show();
+            applyFadeTransition(root);
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
             e.printStackTrace();
@@ -270,7 +280,7 @@ public class GuiCommon {
             stage.setScene(scene);
             stage.setTitle(title);
             stage.centerOnScreen();
-            stage.show();
+            applyFadeTransition(root);
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
             e.printStackTrace();
