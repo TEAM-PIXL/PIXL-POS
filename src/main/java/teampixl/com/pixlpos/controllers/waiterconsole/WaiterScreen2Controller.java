@@ -141,14 +141,12 @@ public class WaiterScreen2Controller
     private Integer orderNumber = 0;
     private Double orderTotal = 0.00;
 
-
     //ComboBoxes for inputs
     public void comboinitialize() {
-        // Define options for each ComboBox
         String[] customerAmounts = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
-        String[] orderTypes = {"DINEIN", "TAKEAWAY", "DELIVERY"};
+        String[] orderTypes = {"DINE_IN", "TAKE_OUT", "DELIVERY"};
         String[] tableNumbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
-        String[] paymentStatuses = {"PAID", "PENDING", "NOT PAID"};
+        String[] paymentStatuses = {"CARD", "CASH", "MOBILE"};
 
         // Initialize ComboBoxes with options
         customernumber.getItems().setAll(customerAmounts);
@@ -157,10 +155,10 @@ public class WaiterScreen2Controller
         paymentstatus.getItems().setAll(paymentStatuses);
 
         // Set default selections (optional)
-        customernumber.setValue("1");
-        ordertype.setValue("Dine In");
-        tablenumber.setValue("1");
-        paymentstatus.setValue("Not PAID");
+        customernumber.setValue(customerAmounts[0]);
+        ordertype.setValue(orderTypes[0]);
+        tablenumber.setValue(tableNumbers[0]);
+        paymentstatus.setValue(paymentStatuses[0]);
 
         // Event Handlers using Lambdas
         customernumber.setOnAction(event -> handleCustomerNumberSelection());
@@ -248,6 +246,7 @@ public class WaiterScreen2Controller
         dessertbuttonManager = new DynamicButtonManager(dessertpane,labelManager);
         initialiseSlider();
         comboinitialize();
+        totalprice.setText(orderTotal + "");
 
         searchbar.setOnAction(event -> handleSearchBarEnter());
         priceslider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -427,21 +426,15 @@ public class WaiterScreen2Controller
             }
         }
 
-        // TODO: Fix the Drop downs to actually work
-
         List<StatusCode> statusCodes = new ArrayList<>();
         List<StatusCode> statusCodesCustomer = orderAPI.putOrderCustomers(orderID, Integer.valueOf(customernumber.getValue()));
         statusCodes.addAll(statusCodesCustomer);
-        System.out.println(statusCodesCustomer);
         List<StatusCode> statusCodesTableNum = orderAPI.putOrderTableNumber(orderID, Integer.valueOf(tablenumber.getValue()));
         statusCodes.addAll(statusCodesTableNum);
-        System.out.println(statusCodesTableNum);
-        List<StatusCode> statusCodesOrderType = orderAPI.putOrderType(orderID, Order.OrderType.DINE_IN);
+        List<StatusCode> statusCodesOrderType = orderAPI.putOrderType(orderID, Order.OrderType.valueOf(ordertype.getValue()));
         statusCodes.addAll(statusCodesOrderType);
-        System.out.println(statusCodesOrderType);
-        List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.CARD);
+        List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.valueOf(paymentstatus.getValue()));
         statusCodes.addAll(statusCodesPaymentSelection);
-        System.out.println(statusCodesPaymentSelection);
 
         if (!Exceptions.isSuccessful(statusCodes)) {
             showErrorDialog(Exceptions.returnStatus("Failed to Apply Order Details to order:", statusCodes));
@@ -453,7 +446,7 @@ public class WaiterScreen2Controller
             initialiseOrder();
             onRestartButtonClick();
         } else {
-            showErrorDialog(Exceptions.returnStatus("Order could not be placed with the following erros:", statusCodes));
+            showErrorDialog(Exceptions.returnStatus("Order could not be placed with the following errors:", statusCodes));
         }
     }
 
