@@ -238,26 +238,26 @@
                      <children>
                         <AnchorPane HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="database-label" text="Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="139.0" styleClass="database-label" text="Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="10.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="database-label" text="Price" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="155.0" styleClass="database-label" text="Price" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="468.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="database-label" text="Type" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="166.0" styleClass="database-label" text="Type" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="210.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="database-label" text="Dietary" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="175.0" styleClass="database-label" text="Dietary" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="488.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
-                        <AnchorPane layoutX="520.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
+                        <AnchorPane layoutX="488.0" layoutY="10.0" maxWidth="50.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
+                        <AnchorPane layoutX="520.0" layoutY="10.0" maxWidth="50.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                   <ListView fx:id="menuitemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
