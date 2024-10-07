@@ -429,29 +429,29 @@ public class WaiterScreen2Controller
 
         // TODO: Fix the Drop downs to actually work
 
-//        List<StatusCode> statusCodes = new ArrayList<>();
-//        List<StatusCode> statusCodesCustomer = orderAPI.putOrderCustomers(orderID, Integer.valueOf(customernumber.getValue()));
-//        statusCodes.addAll(statusCodesCustomer);
-//        List<StatusCode> statusCodesTableNum = orderAPI.putOrderTableNumber(orderID, Integer.valueOf(tablenumber.getValue()));
-//        statusCodes.addAll(statusCodesTableNum);
-//        List<StatusCode> statusCodesOrderType = orderAPI.putOrderType(orderID, Order.OrderType.DINE_IN);
-//        statusCodes.addAll(statusCodesOrderType);
-//        List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.CARD);
-//        statusCodes.addAll(statusCodesPaymentSelection);
-//        List<StatusCode> statusCodesOrderStatus = orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT);
-//        statusCodes.addAll(statusCodesOrderStatus);
-//
-//        if (!Exceptions.isSuccessful(statusCodes)) {
-//            showErrorDialog(Exceptions.returnStatus("Failed to Apply Order Details to order:", statusCodes));
-//        }
+        List<StatusCode> statusCodes = new ArrayList<>();
+        List<StatusCode> statusCodesCustomer = orderAPI.putOrderCustomers(orderID, Integer.valueOf(customernumber.getValue()));
+        statusCodes.addAll(statusCodesCustomer);
+        List<StatusCode> statusCodesTableNum = orderAPI.putOrderTableNumber(orderID, Integer.valueOf(tablenumber.getValue()));
+        statusCodes.addAll(statusCodesTableNum);
+        List<StatusCode> statusCodesOrderType = orderAPI.putOrderType(orderID, Order.OrderType.DINE_IN);
+        statusCodes.addAll(statusCodesOrderType);
+        List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.CARD);
+        statusCodes.addAll(statusCodesPaymentSelection);
+        List<StatusCode> statusCodesOrderStatus = orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT);
+        statusCodes.addAll(statusCodesOrderStatus);
 
-        List<StatusCode> statusCodes = orderAPI.postOrder(currentOrder);
-        if (Exceptions.isSuccessful(statusCodes)){
+        if (!Exceptions.isSuccessful(statusCodes)) {
+            showErrorDialog(Exceptions.returnStatus("Failed to Apply Order Details to order:", statusCodes));
+        }
+
+        List<StatusCode> statusCodes2 = orderAPI.postOrder(currentOrder);
+        if (Exceptions.isSuccessful(statusCodes2)){
             System.out.println("Order Placed Successfully");
             initialiseOrder();
             onRestartButtonClick();
         } else {
-            showErrorDialog(Exceptions.returnStatus("Order could not be placed with the following erros:", statusCodes));
+            showErrorDialog(Exceptions.returnStatus("Order could not be placed with the following errors:", statusCodes));
         }
     }
 
