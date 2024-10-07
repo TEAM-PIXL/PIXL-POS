@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
@@ -27,17 +28,17 @@
                         <Label layoutX="39.0" layoutY="16.0" styleClass="logo" text="PIXL Services" />
                     </children>
                 </AnchorPane>
-            <Label styleClass="heading" text="Inventory Dashboard">
-               <HBox.margin>
-                  <Insets top="20.0" />
-               </HBox.margin>
-            </Label>
+                <Label styleClass="heading" text="Inventory Dashboard">
+                    <HBox.margin>
+                        <Insets top="20.0" />
+                    </HBox.margin>
+                </Label>
                 <Region HBox.hgrow="ALWAYS" />
                 <HBox prefWidth="538.0" styleClass="search-bar" HBox.hgrow="ALWAYS">
                     <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../../../images/search_icon.png" />
+                                <Image url="@../../../images/adminicons/search_icon.png" />
                             </image>
                             <HBox.margin>
                                 <Insets left="15.0" top="7.0" />
@@ -81,7 +82,7 @@
                     <children>
                         <ImageView fitHeight="74.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="5.0">
                             <image>
-                                <Image url="@../../../images/account_user_icon.png" />
+                                <Image url="@../../../images/adminicons/account_user_icon.png" />
                             </image>
                         </ImageView>
                         <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
@@ -96,7 +97,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/home_icon.png" />
+                                        <Image url="@../../../images/adminicons/home_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -108,7 +109,7 @@
                             <graphic>
                                 <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/users_icon.png" />
+                                        <Image url="@../../../images/adminicons/users_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -117,7 +118,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/menu_icon.png" />
+                                        <Image url="@../../../images/adminicons/menu_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -126,7 +127,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/blue_box_icon.png" />
+                                        <Image url="@../../../images/adminicons/blue_box_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -135,7 +136,7 @@
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/analytics_icon.png" />
+                                        <Image url="@../../../images/adminicons/analytics_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -148,7 +149,7 @@
                             <graphic>
                                 <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../../images/logout_icon.png" />
+                                        <Image url="@../../../images/adminicons/logout_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -159,57 +160,57 @@
         </AnchorPane>
     </left>
     <right>
-        <AnchorPane prefWidth="400.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
+        <AnchorPane prefWidth="380.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="20.0" left="10.0" right="20.0" top="20.0" />
             </padding>
-         <children>
-            <BorderPane prefHeight="654.4" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 10;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <center>
+            <children>
+                <BorderPane prefHeight="654.4" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 10;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <center>
                         <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" styleClass="manage-stock-container" BorderPane.alignment="CENTER">
-                     <children>
-                        <Label prefHeight="34.0" prefWidth="198.0" styleClass="container-label" text="Item Information">
-                           <padding>
-                              <Insets left="10.0" top="10.0" />
-                           </padding>
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Label>
-                        <HBox prefHeight="0.0" prefWidth="0.0" styleClass="line" />
-                        <Label text="Item Name:" />
-                        <TextField fx:id="itemnamefield" prefHeight="30.0" promptText="Item Name*" />
-                        <Label layoutX="21.0" layoutY="78.0" text="Desired Quantity:" />
-                        <TextField fx:id="desiredquantityfield" layoutX="20.0" layoutY="98.0" prefHeight="30.0" promptText="Desired Quantity*" />
-                        <Label layoutX="21.0" layoutY="144.0" text="Actual Quantity:" />
-                        <TextField fx:id="actualquantityfield" layoutX="20.0" layoutY="139.0" prefHeight="30.0" promptText="Actual Quantity" />
-                        <Label text="Item Price:" />
-                        <TextField fx:id="itempricefield" layoutX="20.0" layoutY="180.0" prefHeight="30.0" promptText="Item Price*" />
-                        <Label text="Item Description:" />
-                        <TextArea fx:id="itemdescriptionfield" prefHeight="200.0" prefWidth="200.0" promptText="Description*" />
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </VBox>
-               </center>
-               <bottom>
-                  <ButtonBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 10;" BorderPane.alignment="CENTER">
-                    <buttons>
-                      <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" styleClass="submit-button" text="Submit" />
-                        <Button fx:id="additembutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddItemButtonClick" styleClass="add-button" text="Add Item +" />
-                        <Button fx:id="cancelbutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" styleClass="cancel-button" text="Cancel" />
-                    </buttons>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <padding>
-                        <Insets right="30.0" />
-                     </padding>
-                  </ButtonBar>
-               </bottom>
-            </BorderPane>
-         </children></AnchorPane>
+                            <children>
+                                <Label prefHeight="34.0" prefWidth="198.0" styleClass="container-label" text="Item Information">
+                                    <padding>
+                                        <Insets left="10.0" top="10.0" />
+                                    </padding>
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Label>
+                                <HBox prefHeight="0.0" prefWidth="0.0" styleClass="line" />
+                                <Label text="Item Name:" />
+                                <TextField fx:id="itemnamefield" prefHeight="30.0" promptText="Item Name*" />
+                                <Label layoutX="21.0" layoutY="78.0" text="Desired Quantity:" />
+                                <TextField fx:id="desiredquantityfield" layoutX="20.0" layoutY="98.0" prefHeight="30.0" promptText="Desired Quantity*" />
+                                <Label layoutX="21.0" layoutY="144.0" text="Actual Quantity:" />
+                                <TextField fx:id="actualquantityfield" layoutX="20.0" layoutY="139.0" prefHeight="30.0" promptText="Actual Quantity" />
+                                <Label text="Order Status:" />
+                                <TextField fx:id="itempricefield" layoutX="20.0" layoutY="180.0" prefHeight="30.0" promptText="Order Status*" />
+                                <Label text="Item Description:" />
+                                <TextArea fx:id="itemdescriptionfield" prefHeight="200.0" prefWidth="200.0" promptText="Description*" />
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </center>
+                    <bottom>
+                        <ButtonBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 10;" BorderPane.alignment="CENTER">
+                            <buttons>
+                                <Button fx:id="submitbutton" mnemonicParsing="false" onAction="#onSubmitButtonClick" styleClass="submit-button" text="Submit" />
+                                <Button fx:id="additembutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onAddItemButtonClick" styleClass="add-button" text="Add Item +" />
+                                <Button fx:id="cancelbutton" layoutX="196.0" layoutY="15.0" mnemonicParsing="false" onAction="#onCancelButtonClick" styleClass="cancel-button" text="Cancel" />
+                            </buttons>
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                            <padding>
+                                <Insets right="30.0" />
+                            </padding>
+                        </ButtonBar>
+                    </bottom>
+                </BorderPane>
+            </children></AnchorPane>
     </right>
     <bottom>
         <AnchorPane maxHeight="0.0" maxWidth="0.0" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
@@ -219,53 +220,64 @@
             <padding>
                 <Insets bottom="10.0" left="20.0" right="10.0" top="20.0" />
             </padding>
-         <children>
+            <children>
                 <VBox prefHeight="654.4" prefWidth="669.6" styleClass="list-stock-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <Label styleClass="container-label" text="Stocked Item Details">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <padding>
-                        <Insets bottom="10.0" left="20.0" top="10.0" />
-                     </padding>
-                  </Label>
-                  <HBox prefHeight="50.0" prefWidth="200.0" styleClass="table-header">
-                     <children>
-                        <AnchorPane HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="94.0" styleClass="database-label" text="Item Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="10.0" layoutY="10.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="135.0" styleClass="database-label" text="Desired Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="329.0" layoutY="10.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="122.0" styleClass="database-label" text="Actual Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="436.0" layoutY="10.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="121.0" styleClass="database-label" text="Price" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="489.0" layoutY="10.0" maxWidth="50.0" minWidth="100.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
-                        <AnchorPane layoutX="521.0" layoutY="10.0" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
-                     </children>
-                  </HBox>
-                  <ListView fx:id="itemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
-               </children>
-               <padding>
-                  <Insets top="10.0" />
-               </padding>
-            </VBox>
-         </children>
+                    <children>
+                        <Label styleClass="container-label" text="Stocked Item Details">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <padding>
+                                <Insets bottom="10.0" left="20.0" top="10.0" />
+                            </padding>
+                        </Label>
+                        <HBox prefHeight="50.0" prefWidth="658.0" styleClass="table-header">
+                            <children>
+                                <AnchorPane HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="111.0" styleClass="database-label" text="Item Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane layoutX="452.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="52.0" styleClass="database-label" text="Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane layoutX="530.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="113.0" styleClass="database-label" text="Order Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane layoutX="501.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="80.0" styleClass="database-label" text="Updated" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane layoutX="386.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="102.0" styleClass="database-label" text="Stock Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane layoutX="108.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Pane prefHeight="50.0" prefWidth="64.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children></AnchorPane>
+                                <AnchorPane layoutX="488.0" layoutY="10.0" minWidth="50.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Pane prefHeight="50.0" prefWidth="62.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children></AnchorPane>
+                            </children>
+                        </HBox>
+                        <ListView fx:id="itemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                    </children>
+                    <padding>
+                        <Insets top="10.0" />
+                    </padding>
+                </VBox>
+            </children>
         </AnchorPane>
     </center>
 </BorderPane>
