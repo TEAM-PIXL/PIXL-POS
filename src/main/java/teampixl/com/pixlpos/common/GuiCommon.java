@@ -45,7 +45,7 @@ public class GuiCommon {
                             break;
                         case "HD":
                             WIDTH = 1920;
-                            HEIGHT = 1028;
+                            HEIGHT = 1050;
                             break;
                         default:
                             WIDTH = 1280;
@@ -83,10 +83,11 @@ public class GuiCommon {
     /**
      * Loads a new stage with the given FXML file and title.
      *
+     * @param stage the stage to load the FXML file onto
      * @param fxmlPath the path to the FXML file
      * @param title the title of the stage
      */
-    public static void loadStage(String fxmlPath, String title) {
+    public static void loadStage(Stage stage, String fxmlPath, String title) {
         try {
             URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
             if (fxmlURL == null) {
@@ -96,7 +97,6 @@ public class GuiCommon {
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
             Parent root = fxmlLoader.load();
 
-            Stage stage = new Stage();
             Scene scene = new Scene(root, WIDTH, HEIGHT);
 
             stage.getIcons().add(new Image(Objects.requireNonNull(GuiCommon.class.getResourceAsStream(ICON_PATH))));
@@ -104,11 +104,14 @@ public class GuiCommon {
             stage.setScene(scene);
             stage.setTitle(title);
             stage.show();
+
+            Platform.runLater(stage::centerOnScreen);
         } catch (IOException e) {
             System.err.println("Failed to load stage: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
 
     /**
      * Loads a new scene into the given stage using the specified FXML file and title.
@@ -144,6 +147,7 @@ public class GuiCommon {
             stage.setScene(scene);
             stage.setTitle(title);
             stage.getIcons().add(new Image(Objects.requireNonNull(String.valueOf(GuiCommon.class.getResource(ICON_PATH)))));
+            stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
@@ -195,6 +199,7 @@ public class GuiCommon {
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
+            stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
@@ -260,6 +265,7 @@ public class GuiCommon {
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
+            stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
             System.err.println("Failed to load scene: " + e.getMessage());
