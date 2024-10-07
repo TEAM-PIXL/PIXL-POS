@@ -84,9 +84,6 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderByStatus(Object ORDER_STATUS) {
-        if (!(ORDER_STATUS instanceof Order.OrderStatus)) {
-            return StatusCode.INVALID_ORDER_STATUS;
-        }
         return StatusCode.SUCCESS;
     }
 
@@ -110,7 +107,7 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderByCustomers(Integer CUSTOMERS) {
-        if (CUSTOMERS == null || CUSTOMERS <= 0) {
+        if (CUSTOMERS == null || CUSTOMERS < 0) {
             return StatusCode.INVALID_CUSTOMERS;
         }
         return StatusCode.SUCCESS;
