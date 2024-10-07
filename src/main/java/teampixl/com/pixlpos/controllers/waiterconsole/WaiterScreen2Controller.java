@@ -141,6 +141,8 @@ public class WaiterScreen2Controller
     private Integer orderNumber = 0;
     private Double orderTotal = 0.00;
 
+    String OrderNotes = "";
+
     //ComboBoxes for inputs
     public void comboinitialize() {
         String[] customerAmounts = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -452,7 +454,11 @@ public class WaiterScreen2Controller
 
     @FXML
     protected void onCustomizeButtonClick() {
-        itemtab.getSelectionModel().select(searchtab); /** this brings you to the tab and runs selection code*/
+        TextInputDialog inputdialog = new TextInputDialog(OrderNotes);
+        inputdialog.setContentText("Notes: ");
+        inputdialog.setHeaderText("Add Order Notes");
+        inputdialog.showAndWait();
+        OrderNotes = inputdialog.getEditor().getText();
     }
 
     @FXML
