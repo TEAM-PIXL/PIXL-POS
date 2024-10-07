@@ -18,7 +18,9 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
-
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.event.EventHandler;
 import javafx.scene.layout.VBox;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
@@ -339,6 +341,128 @@ public class AdminScreenUsersController
     }
 
 
+    public void addUserToListView(ListView<HBox> listView, String id, String name, String username, String userSince, String email, String role) {
+        HBox hbox = new HBox();
+        hbox.setId(id);
+        hbox.setLayoutX(11.0);
+        hbox.setLayoutY(65.0);
+        hbox.setPrefHeight(50.0);
+
+        // Name
+        AnchorPane namePane = createLabeledAnchorPane("Name", name, "database-label");
+        HBox.setHgrow(namePane, Priority.ALWAYS);
+
+        // Username
+        AnchorPane usernamePane = createLabeledAnchorPane("Username", username, null);
+        HBox.setHgrow(usernamePane, Priority.ALWAYS);
+
+        // User Since
+        AnchorPane userSincePane = createLabeledAnchorPane("Usersince", userSince, null);
+        HBox.setHgrow(userSincePane, Priority.ALWAYS);
+
+        // Email
+        AnchorPane emailPane = createLabeledAnchorPane("Email", email, null);
+        HBox.setHgrow(emailPane, Priority.ALWAYS);
+
+        // Role
+        AnchorPane rolePane = createRoleAnchorPane(role);
+        HBox.setHgrow(rolePane, Priority.ALWAYS);
+
+        // Edit Button
+        AnchorPane editButtonPane = createButtonAnchorPane("teampixl/com/pixlpos/images/adminicons/green_edit_write_pen_icon.png", event -> onEditButtonClick(event, id));
+        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+
+        // Remove Button
+        AnchorPane removeButtonPane = createButtonAnchorPane("../../../images/adminicons/red_trash_2_icon.png", event -> onRemoveButtonClick(event, id));
+        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
+
+        // Add all components to the HBox
+        hbox.getChildren().addAll(namePane, usernamePane, userSincePane, emailPane, rolePane, editButtonPane, removeButtonPane);
+
+        // Add the HBox to the ListView
+        listView.getItems().add(hbox);
+    }
+
+    private AnchorPane createLabeledAnchorPane(String title, String value, String styleClass) {
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setPrefWidth(200.0);
+        if (styleClass != null) {
+            anchorPane.getStyleClass().add(styleClass);
+        }
+
+        Label label = new Label(title);
+        label.setAlignment(Pos.CENTER);
+        label.setPrefSize(200.0, 50.4);
+
+        if (title.equals("Name")) {
+            Label valueLabel = new Label(value);
+            label.setContentDisplay(ContentDisplay.BOTTOM);
+            label.setGraphic(valueLabel);
+        } else {
+            label.setText(value);
+        }
+
+        AnchorPane.setTopAnchor(label, 0.0);
+        AnchorPane.setRightAnchor(label, 0.0);
+        AnchorPane.setBottomAnchor(label, 0.0);
+        AnchorPane.setLeftAnchor(label, 0.0);
+
+        anchorPane.getChildren().add(label);
+        return anchorPane;
+    }
+
+    private AnchorPane createRoleAnchorPane(String role) {
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setPrefWidth(200.0);
+        anchorPane.getStyleClass().add("database-label");
+
+        Label outerLabel = new Label();
+        outerLabel.setAlignment(Pos.CENTER);
+        outerLabel.setPrefSize(200.0, 50.0);
+
+        Label innerLabel = new Label(role);
+        innerLabel.setAlignment(Pos.CENTER);
+        innerLabel.setPrefSize(75.0, 25.0);
+        innerLabel.setStyle("-fx-background-radius: 10; -fx-background-color: #0095FF;");
+        innerLabel.setTextFill(Color.WHITE);
+
+        outerLabel.setGraphic(innerLabel);
+
+        AnchorPane.setTopAnchor(outerLabel, 0.0);
+        AnchorPane.setRightAnchor(outerLabel, 0.0);
+        AnchorPane.setBottomAnchor(outerLabel, 0.0);
+        AnchorPane.setLeftAnchor(outerLabel, 0.0);
+
+        anchorPane.getChildren().add(outerLabel);
+        return anchorPane;
+    }
+
+    private AnchorPane createButtonAnchorPane(String imagePath, EventHandler<ActionEvent> onAction) {
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setMinWidth(50.0);
+
+        Button button = new Button();
+        button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        button.setStyle("-fx-background-color: transparent;");
+        button.setPrefSize(50.0, 50.0);
+
+        ImageView imageView = new ImageView(new Image(imagePath));
+        imageView.setFitHeight(22.0);
+        imageView.setFitWidth(22.0);
+        imageView.setPreserveRatio(true);
+        imageView.setPickOnBounds(true);
+
+        button.setGraphic(imageView);
+        button.setOnAction(onAction);
+
+        AnchorPane.setTopAnchor(button, 0.0);
+        AnchorPane.setRightAnchor(button, 0.0);
+        AnchorPane.setBottomAnchor(button, 0.0);
+        AnchorPane.setLeftAnchor(button, 0.0);
+
+        anchorPane.getChildren().add(button);
+        return anchorPane;
+    }
 
     /**
      * Adds a user item to the specified ListView. The user is represented as an HBox containing four AnchorPanes
@@ -351,106 +475,106 @@ public class AdminScreenUsersController
      * @param userSince time the account was made, displayed in the fourth column of the HBox.
      * @param role the role of the user
      */
-    public void addUserToListView(ListView<HBox> listView, String id, String name, String email, String username, String userSince, String role) {
-        HBox hbox = new HBox();
-        hbox.setId(id);
-        hbox.setPrefHeight(50.0);
-
-        // Name and Email
-        AnchorPane nameEmailPane = new AnchorPane();
-        Label nameLabel = new Label(name);
-        nameLabel.setAlignment(Pos.CENTER);
-        nameLabel.setContentDisplay(ContentDisplay.BOTTOM);
-        nameLabel.setPrefSize(83.2, 50.4);
-        Label emailLabel = new Label(email);
-        emailLabel.setTextFill(Color.web("#918e8e"));
-        nameLabel.setGraphic(emailLabel);
-        AnchorPane.setTopAnchor(nameLabel, 0.0);
-        AnchorPane.setRightAnchor(nameLabel, 0.0);
-        AnchorPane.setBottomAnchor(nameLabel, 0.0);
-        AnchorPane.setLeftAnchor(nameLabel, 0.0);
-        nameEmailPane.getChildren().add(nameLabel);
-        HBox.setHgrow(nameEmailPane, Priority.ALWAYS);
-
-        // Username
-        AnchorPane usernamePane = new AnchorPane();
-        Label usernameLabel = new Label(username);
-        usernameLabel.setAlignment(Pos.CENTER);
-        usernameLabel.setContentDisplay(ContentDisplay.CENTER);
-        usernameLabel.setPrefSize(111.2, 50.4);
-        AnchorPane.setTopAnchor(usernameLabel, 0.0);
-        AnchorPane.setRightAnchor(usernameLabel, 0.0);
-        AnchorPane.setBottomAnchor(usernameLabel, 0.0);
-        AnchorPane.setLeftAnchor(usernameLabel, 0.0);
-        usernamePane.getChildren().add(usernameLabel);
-        HBox.setHgrow(usernamePane, Priority.ALWAYS);
-
-        // User Since Date
-        AnchorPane datePane = new AnchorPane();
-        Label dateLabel = new Label(userSince);
-        dateLabel.setAlignment(Pos.CENTER);
-        dateLabel.setPrefSize(89.6, 50.4);
-        AnchorPane.setTopAnchor(dateLabel, 0.0);
-        AnchorPane.setRightAnchor(dateLabel, 0.0);
-        AnchorPane.setBottomAnchor(dateLabel, 0.0);
-        AnchorPane.setLeftAnchor(dateLabel, 0.0);
-        datePane.getChildren().add(dateLabel);
-        HBox.setHgrow(datePane, Priority.ALWAYS);
-
-        // Role
-        AnchorPane rolePane = new AnchorPane();
-        Label roleLabel = new Label(role);
-        roleLabel.setAlignment(Pos.CENTER);
-        roleLabel.setPrefSize(83.2, 50.4);
-        roleLabel.setStyle("-fx-background-color: #0095FF; -fx-background-radius: 10;");
-        roleLabel.setTextFill(Color.WHITE);
-        AnchorPane.setTopAnchor(roleLabel, 0.0);
-        AnchorPane.setRightAnchor(roleLabel, 0.0);
-        AnchorPane.setBottomAnchor(roleLabel, 0.0);
-        AnchorPane.setLeftAnchor(roleLabel, 0.0);
-        rolePane.getChildren().add(roleLabel);
-        rolePane.setPadding(new Insets(10, 0, 10, 0));
-        HBox.setHgrow(rolePane, Priority.ALWAYS);
-
-        // Edit Button
-        AnchorPane editButtonPane = new AnchorPane();
-        editButtonPane.setMaxWidth(100.0);
-        editButtonPane.setMinWidth(100.0);
-        Button editButton = new Button("Edit");
-        editButton.setId("editbutton");
-        editButton.setLayoutX(35.0);
-        editButton.setLayoutY(12.0);
-        editButton.setMinHeight(26.4);
-        editButton.setMaxHeight(26.4);
-        editButton.setPrefHeight(26.4);
-        editButton.setMinWidth(50.0);
-        editButton.getStyleClass().add("edit-button");
-        editButton.setOnAction(event -> onEditButtonClick(event,id));
-        editButtonPane.getChildren().add(editButton);
-        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
-
-        // Remove Button
-        AnchorPane removeButtonPane = new AnchorPane();
-        removeButtonPane.setMaxWidth(100.0);
-        removeButtonPane.setMinWidth(100.0);
-        Button removeButton = new Button("Remove");
-        removeButton.setId("removebutton");
-        removeButton.setLayoutX(11.0);
-        removeButton.setLayoutY(12.0);
-        removeButton.setMinHeight(26.4);
-        removeButton.setPrefHeight(26.4);
-        removeButton.setMinWidth(50.0);
-        removeButton.getStyleClass().add("remove-button");
-        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
-        removeButtonPane.getChildren().add(removeButton);
-        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
-
-        // Add all components to the HBox
-        hbox.getChildren().addAll(nameEmailPane, usernamePane, datePane, rolePane, editButtonPane, removeButtonPane);
-
-        // Add the HBox to the ListView
-        listView.getItems().add(hbox);
-    }
+//    public void addUserToListView(ListView<HBox> listView, String id, String name, String email, String username, String userSince, String role) {
+//        HBox hbox = new HBox();
+//        hbox.setId(id);
+//        hbox.setPrefHeight(50.0);
+//
+//        // Name and Email
+//        AnchorPane nameEmailPane = new AnchorPane();
+//        Label nameLabel = new Label(name);
+//        nameLabel.setAlignment(Pos.CENTER);
+//        nameLabel.setContentDisplay(ContentDisplay.BOTTOM);
+//        nameLabel.setPrefSize(83.2, 50.4);
+//        Label emailLabel = new Label(email);
+//        emailLabel.setTextFill(Color.web("#918e8e"));
+//        nameLabel.setGraphic(emailLabel);
+//        AnchorPane.setTopAnchor(nameLabel, 0.0);
+//        AnchorPane.setRightAnchor(nameLabel, 0.0);
+//        AnchorPane.setBottomAnchor(nameLabel, 0.0);
+//        AnchorPane.setLeftAnchor(nameLabel, 0.0);
+//        nameEmailPane.getChildren().add(nameLabel);
+//        HBox.setHgrow(nameEmailPane, Priority.ALWAYS);
+//
+//        // Username
+//        AnchorPane usernamePane = new AnchorPane();
+//        Label usernameLabel = new Label(username);
+//        usernameLabel.setAlignment(Pos.CENTER);
+//        usernameLabel.setContentDisplay(ContentDisplay.CENTER);
+//        usernameLabel.setPrefSize(111.2, 50.4);
+//        AnchorPane.setTopAnchor(usernameLabel, 0.0);
+//        AnchorPane.setRightAnchor(usernameLabel, 0.0);
+//        AnchorPane.setBottomAnchor(usernameLabel, 0.0);
+//        AnchorPane.setLeftAnchor(usernameLabel, 0.0);
+//        usernamePane.getChildren().add(usernameLabel);
+//        HBox.setHgrow(usernamePane, Priority.ALWAYS);
+//
+//        // User Since Date
+//        AnchorPane datePane = new AnchorPane();
+//        Label dateLabel = new Label(userSince);
+//        dateLabel.setAlignment(Pos.CENTER);
+//        dateLabel.setPrefSize(89.6, 50.4);
+//        AnchorPane.setTopAnchor(dateLabel, 0.0);
+//        AnchorPane.setRightAnchor(dateLabel, 0.0);
+//        AnchorPane.setBottomAnchor(dateLabel, 0.0);
+//        AnchorPane.setLeftAnchor(dateLabel, 0.0);
+//        datePane.getChildren().add(dateLabel);
+//        HBox.setHgrow(datePane, Priority.ALWAYS);
+//
+//        // Role
+//        AnchorPane rolePane = new AnchorPane();
+//        Label roleLabel = new Label(role);
+//        roleLabel.setAlignment(Pos.CENTER);
+//        roleLabel.setPrefSize(83.2, 50.4);
+//        roleLabel.setStyle("-fx-background-color: #0095FF; -fx-background-radius: 10;");
+//        roleLabel.setTextFill(Color.WHITE);
+//        AnchorPane.setTopAnchor(roleLabel, 0.0);
+//        AnchorPane.setRightAnchor(roleLabel, 0.0);
+//        AnchorPane.setBottomAnchor(roleLabel, 0.0);
+//        AnchorPane.setLeftAnchor(roleLabel, 0.0);
+//        rolePane.getChildren().add(roleLabel);
+//        rolePane.setPadding(new Insets(10, 0, 10, 0));
+//        HBox.setHgrow(rolePane, Priority.ALWAYS);
+//
+//        // Edit Button
+//        AnchorPane editButtonPane = new AnchorPane();
+//        editButtonPane.setMaxWidth(100.0);
+//        editButtonPane.setMinWidth(100.0);
+//        Button editButton = new Button("Edit");
+//        editButton.setId("editbutton");
+//        editButton.setLayoutX(35.0);
+//        editButton.setLayoutY(12.0);
+//        editButton.setMinHeight(26.4);
+//        editButton.setMaxHeight(26.4);
+//        editButton.setPrefHeight(26.4);
+//        editButton.setMinWidth(50.0);
+//        editButton.getStyleClass().add("edit-button");
+//        editButton.setOnAction(event -> onEditButtonClick(event,id));
+//        editButtonPane.getChildren().add(editButton);
+//        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+//
+//        // Remove Button
+//        AnchorPane removeButtonPane = new AnchorPane();
+//        removeButtonPane.setMaxWidth(100.0);
+//        removeButtonPane.setMinWidth(100.0);
+//        Button removeButton = new Button("Remove");
+//        removeButton.setId("removebutton");
+//        removeButton.setLayoutX(11.0);
+//        removeButton.setLayoutY(12.0);
+//        removeButton.setMinHeight(26.4);
+//        removeButton.setPrefHeight(26.4);
+//        removeButton.setMinWidth(50.0);
+//        removeButton.getStyleClass().add("remove-button");
+//        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
+//        removeButtonPane.getChildren().add(removeButton);
+//        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
+//
+//        // Add all components to the HBox
+//        hbox.getChildren().addAll(nameEmailPane, usernamePane, datePane, rolePane, editButtonPane, removeButtonPane);
+//
+//        // Add the HBox to the ListView
+//        listView.getItems().add(hbox);
+//    }
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
