@@ -15,6 +15,8 @@ import javafx.scene.control.ListView;
 import javafx.animation.AnimationTimer;
 import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.database.api.StockAPI;
+import teampixl.com.pixlpos.database.api.util.Exceptions;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
@@ -22,6 +24,7 @@ import teampixl.com.pixlpos.database.api.UserStack;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class AdminScreenStockController
 {
@@ -111,58 +114,47 @@ public class AdminScreenStockController
         populateStockGrid();
     }
 
-    private void populateStockGrid() {
-        ObservableList<Stock> listOfStockItems = dataStore.readStock();
-        for (Stock stock : listOfStockItems) {
-            Integer desiredQuantity = 0;
-            Integer actualQuantity = 0;
-            Double price = 0.00;
-            String ingredientID = stock.getMetadataValue("ingredient_id").toString();
-            String ingredientName = menuAPI.reverseKeySearch(ingredientID);
-            addInventoryItemToListView(
-                    itemlist,
-                    ingredientID,
-                    ingredientName,
-                    desiredQuantity.toString(),
-                    actualQuantity.toString(),
-                    price.toString()
-                    );
-        }
-    }
-
-
-
-
-
-
-
-
-
-
     @FXML
     protected void onSubmitButtonClick(){
 
     }
     @FXML
     protected void onAddItemButtonClick(){
-        if(adding_counter == 0){
-            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"cheese","20","23","$10.0");
+        try {
+            Double desiredQuantity = Double.parseDouble(desiredquantityfield.getText());
+            Double actualQuantity = Double.parseDouble(actualquantityfield.getText());
+            Double price = Double.parseDouble(itempricefield.getText());
+            String ingredientName = itemnamefield.getText();
+
+            if (price < 0 || desiredQuantity < 0 || actualQuantity < 0) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Price and Quantities cannot be negative");
+                return;
+            }
+
+            if (ingredientName.isEmpty() || price == null || desiredQuantity == null || actualQuantity == null) {
+                showAlert(Alert.AlertType.ERROR, "EmptyField", "Item Name, Item Price, Desired Quantity and Actual Quantity are required");
+            } else {
+                //TODO: Complete Posted Order Once API updated
+                List<StatusCode> statusCodes = stockAPI.postStock(menuAPI.keySearch(ingredientName), Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, false);
+                if (Exceptions.isSuccessful(statusCodes)) {
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "New Stock Item", "New Stock Item has been created");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New Stock Item", "Stock Item creation failed");
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please enter valid numerals");
+            return;
         }
-        else if(adding_counter == 1){
-            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"lettuce","10","2","$5.0");
-        }
-        else if(adding_counter == 2){
-            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"buns","54","40","$2.5");
-        }
-        else{
-            addInventoryItemToListView(itemlist,String.valueOf(adding_counter),"you get it","999","999","fiddybucks");
-        }
-        adding_counter++;
     }
+
     @FXML
     protected void onCancelButtonClick(){
 
     }
+
     @FXML
     protected void onEditButtonClick(){
 
@@ -308,6 +300,33 @@ public class AdminScreenStockController
 
         // Add the HBox to the ListView
         listView.getItems().add(hbox);
+    }
+
+    private void populateStockGrid() {
+        ObservableList<Stock> listOfStockItems = dataStore.readStock();
+        for (Stock stock : listOfStockItems) {
+            Double desiredQuantity = 0.00;
+            Double actualQuantity = 0.00;
+            Double price = 0.00;
+            String ingredientID = stock.getMetadataValue("ingredient_id").toString();
+            String ingredientName = menuAPI.reverseKeySearch(ingredientID);
+            addInventoryItemToListView(
+                    itemlist,
+                    ingredientID,
+                    ingredientName,
+                    desiredQuantity.toString(),
+                    actualQuantity.toString(),
+                    price.toString()
+            );
+        }
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     // Placeholder methods for button actions
