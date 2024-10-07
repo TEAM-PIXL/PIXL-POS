@@ -437,6 +437,8 @@ public class WaiterScreen2Controller
         statusCodes.addAll(statusCodesOrderType);
         List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.valueOf(paymentstatus.getValue()));
         statusCodes.addAll(statusCodesPaymentSelection);
+        List<StatusCode> statusCodesOrderNotes = orderAPI.putOrderSpecialRequests(orderID, OrderNotes);
+        statusCodes.addAll(statusCodesOrderNotes);
 
         if (!Exceptions.isSuccessful(statusCodes)) {
             showErrorDialog(Exceptions.returnStatus("Failed to Apply Order Details to order:", statusCodes));
