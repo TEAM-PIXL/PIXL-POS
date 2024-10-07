@@ -3,57 +3,29 @@ package teampixl.com.pixlpos.controllers.waiterconsole;
 import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.animation.AnimationTimer;
-import teampixl.com.pixlpos.common.GuiCommon;
-import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.control.Button;
+import teampixl.com.pixlpos.common.GuiCommon;
 
 import java.util.*;
 
 import teampixl.com.pixlpos.models.Order;
-import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
-import teampixl.com.pixlpos.database.api.UsersAPI;
 import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.database.api.OrderAPI;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import teampixl.com.pixlpos.models.tools.DataManager;
 
-import javafx.scene.layout.HBox;
+public class WaiterScreen2Controller {
 
-import javax.lang.model.type.NullType;
-
-
-
-public class WaiterScreen2Controller
-{
-
-    /*
-    Textfields
-     */
     @FXML
     private TextField searchbar;
 
-    private String searchText;
-
-    /*
-    labels
-     */
     @FXML
     private Label date;
     @FXML
@@ -70,15 +42,10 @@ public class WaiterScreen2Controller
     private ComboBox<String> ordertype;
     @FXML
     private Label totalprice;
-    /*
-    listviews
-     */
+
     @FXML
     private ListView<Label> orderitemslistview;
 
-    /*
-    buttons
-     */
     @FXML
     private Button logoutbutton;
     @FXML
@@ -96,9 +63,6 @@ public class WaiterScreen2Controller
     @FXML
     private Slider priceslider;
 
-    /*
-    containers
-     */
     @FXML
     private TabPane itemtab;
     @FXML
@@ -133,68 +97,54 @@ public class WaiterScreen2Controller
     private List<MenuItem> queryMenuItems;
     private Tooltip priceTooltip;
 
-    private final Map<String, Integer> orderItems = new HashMap<>();
+    private final Map<MenuItem, Integer> orderItems = new HashMap<>();
     private Label selectedItem = null;
     private final Stack<Runnable> actionStack = new Stack<>();
     private Order currentOrder;
     private String orderID;
-    private Integer orderNumber = 0;
     private Double orderTotal = 0.00;
 
-
-    //ComboBoxes for inputs
     public void comboinitialize() {
-        // Define options for each ComboBox
         String[] customerAmounts = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
-        String[] orderTypes = {"DINEIN", "TAKEAWAY", "DELIVERY"};
-        String[] tableNumbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
-        String[] paymentStatuses = {"PAID", "PENDING", "NOT PAID"};
+        String[] orderTypes = Arrays.stream(Order.OrderType.values()).map(Enum::name).toArray(String[]::new);
+        String[] tableNumbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        String[] paymentStatuses = Arrays.stream(Order.PaymentMethod.values()).map(Enum::name).toArray(String[]::new);
 
-        // Initialize ComboBoxes with options
         customernumber.getItems().setAll(customerAmounts);
         ordertype.getItems().setAll(orderTypes);
         tablenumber.getItems().setAll(tableNumbers);
         paymentstatus.getItems().setAll(paymentStatuses);
 
-        // Set default selections (optional)
-        customernumber.setValue("00");
-        ordertype.setValue("Dine In");
+        customernumber.setValue("1");
+        ordertype.setValue(Order.OrderType.DINE_IN.name());
         tablenumber.setValue("1");
-        paymentstatus.setValue("Not PAID");
+        paymentstatus.setValue(Order.PaymentMethod.NOT_PAID.name());
 
-        // Event Handlers using Lambdas
         customernumber.setOnAction(event -> handleCustomerNumberSelection());
         ordertype.setOnAction(event -> handleOrderTypeSelection());
         tablenumber.setOnAction(event -> handleTableNumberSelection());
         paymentstatus.setOnAction(event -> handlePaymentStatusSelection());
     }
 
-    // Event handler methods
     private void handleCustomerNumberSelection() {
         String selectedCustomerNumber = customernumber.getValue();
-        // Add logic to update the database or perform other actions
         System.out.println("Customer Number selected: " + selectedCustomerNumber);
     }
 
     private void handleOrderTypeSelection() {
         String selectedOrderType = ordertype.getValue();
-        // Add logic here
         System.out.println("Order Type selected: " + selectedOrderType);
     }
 
     private void handleTableNumberSelection() {
         String selectedTableNumber = tablenumber.getValue();
-        // Add logic here
         System.out.println("Table Number selected: " + selectedTableNumber);
     }
 
     private void handlePaymentStatusSelection() {
         String selectedPaymentStatus = paymentstatus.getValue();
-        // Add logic here
         System.out.println("Payment Status selected: " + selectedPaymentStatus);
     }
-
-
 
     private enum TabType {
         SEARCH("search"),
@@ -223,9 +173,6 @@ public class WaiterScreen2Controller
         }
     }
 
-    /**
-     * Animation timer to update the date and time
-     */
     AnimationTimer datetime = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -240,12 +187,11 @@ public class WaiterScreen2Controller
         datetime.start();
         tabManager = new DynamicTabManager(itemtab);
         labelManager = new DynamicLabelManager(orderitemslistview);
-        /*these managers allow for adding and removing buttons*/
-        searchbuttonManager = new DynamicButtonManager(searchpane,labelManager);
-        entreebuttonManager = new DynamicButtonManager(entreepane,labelManager);
-        mainbuttonManager = new DynamicButtonManager(mainpane,labelManager);
-        drinksbuttonManager = new DynamicButtonManager(drinkspane,labelManager);
-        dessertbuttonManager = new DynamicButtonManager(dessertpane,labelManager);
+        searchbuttonManager = new DynamicButtonManager(searchpane, labelManager);
+        entreebuttonManager = new DynamicButtonManager(entreepane, labelManager);
+        mainbuttonManager = new DynamicButtonManager(mainpane, labelManager);
+        drinksbuttonManager = new DynamicButtonManager(drinkspane, labelManager);
+        dessertbuttonManager = new DynamicButtonManager(dessertpane, labelManager);
         initialiseSlider();
         comboinitialize();
 
@@ -255,41 +201,31 @@ public class WaiterScreen2Controller
             priceTooltip.setText(String.format("$%.2f", newValue.doubleValue()));
         });
 
-        priceslider.setOnMouseMoved(event -> {
-            priceTooltip.show(priceslider, event.getScreenX(), event.getScreenY() + 10);
-        });
+        priceslider.setOnMouseMoved(event -> priceTooltip.show(priceslider, event.getScreenX(), event.getScreenY() + 10));
 
-        priceslider.setOnMouseDragged(event -> {
-            priceTooltip.show(priceslider, event.getScreenX(), event.getScreenY() + 10);
-        });
+        priceslider.setOnMouseDragged(event -> priceTooltip.show(priceslider, event.getScreenX(), event.getScreenY() + 10));
 
-        // Hide the tooltip when the mouse is released
-        priceslider.setOnMouseReleased(event -> {
-            priceTooltip.hide();
-        });
+        priceslider.setOnMouseReleased(event -> priceTooltip.hide());
 
-        // Hide the tooltip when the mouse exits the slider
-        priceslider.setOnMouseExited(event -> {
-            priceTooltip.hide();
-        });
+        priceslider.setOnMouseExited(event -> priceTooltip.hide());
 
         initsearch();
 
         menuItems = dataStore.readMenuItems();
         queryMenuItems = menuItems;
 
-        /*this line allows for the tabs to scale dynamically as there is no feature for this ...*/
         itemtab.widthProperty().addListener((obs, oldVal, newVal) -> tabManager.adjustTabWidths());
-        /*this allows you to update the buttons when a tab is clicked, does not work on init search tab so that has to be loaded above*/
         itemtab.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
 
             if (newTab != null) {
                 TabType tabType = TabType.fromId(newTab.getId());
-                switch (tabType) {
+                switch (Objects.requireNonNull(tabType)) {
                     case SEARCH:
                         searchbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
-                            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+                            String itemName = (String) menuItem.getMetadataValue("itemName");
+                            String price = menuItem.getMetadataValue("price").toString();
+                            searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
                             id++;
                         }
                         break;
@@ -297,7 +233,9 @@ public class WaiterScreen2Controller
                         entreebuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
                             if (Objects.equals(menuItem.getMetadataValue("itemType"), MenuItem.ItemType.ENTREE)) {
-                                entreebuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+                                String itemName = (String) menuItem.getMetadataValue("itemName");
+                                String price = menuItem.getMetadataValue("price").toString();
+                                entreebuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
                                 id++;
                             }
                         }
@@ -306,7 +244,9 @@ public class WaiterScreen2Controller
                         mainbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
                             if (Objects.equals(menuItem.getMetadataValue("itemType"), MenuItem.ItemType.MAIN)) {
-                                mainbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+                                String itemName = (String) menuItem.getMetadataValue("itemName");
+                                String price = menuItem.getMetadataValue("price").toString();
+                                mainbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
                                 id++;
                             }
                         }
@@ -315,7 +255,9 @@ public class WaiterScreen2Controller
                         drinksbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
                             if (Objects.equals(menuItem.getMetadataValue("itemType"), MenuItem.ItemType.DRINK)) {
-                                drinksbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+                                String itemName = (String) menuItem.getMetadataValue("itemName");
+                                String price = menuItem.getMetadataValue("price").toString();
+                                drinksbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
                                 id++;
                             }
                         }
@@ -324,7 +266,9 @@ public class WaiterScreen2Controller
                         dessertbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
                             if (Objects.equals(menuItem.getMetadataValue("itemType"), MenuItem.ItemType.DESSERT)) {
-                                dessertbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+                                String itemName = (String) menuItem.getMetadataValue("itemName");
+                                String price = menuItem.getMetadataValue("price").toString();
+                                dessertbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
                                 id++;
                             }
                         }
@@ -336,18 +280,22 @@ public class WaiterScreen2Controller
 
     private void handleSearchBarEnter() {
         itemtab.getSelectionModel().select(searchtab);
-        searchText = searchbar.getText();
+        String searchText = searchbar.getText();
         searchbuttonManager.clearAllButtons();
         queryMenuItems = menuAPI.searchMenuItem(searchText);
         if (queryMenuItems.isEmpty()) {
             showErrorDialog("No items were found with the name: " + searchText);
             for (MenuItem menuItem : menuItems) {
-                searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+                String itemName = (String) menuItem.getMetadataValue("itemName");
+                String price = menuItem.getMetadataValue("price").toString();
+                searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
                 id++;
             }
         } else {
             for (MenuItem menuItem : queryMenuItems) {
-                searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+                String itemName = (String) menuItem.getMetadataValue("itemName");
+                String price = menuItem.getMetadataValue("price").toString();
+                searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
                 id++;
             }
         }
@@ -360,11 +308,11 @@ public class WaiterScreen2Controller
             System.out.println("Failed to initialize order.");
             return;
         }
-        orderNumber = currentOrder.getOrderNumber();
+        int orderNumber = currentOrder.getOrderNumber();
 
         System.out.println("Order initialized: " + currentOrder);
-        ordernumber.setText(orderNumber.toString());
-        orderID = currentOrder.getMetadataValue("order_id").toString();
+        ordernumber.setText(Integer.toString(orderNumber));
+        orderID = (String) currentOrder.getMetadataValue("order_id");
     }
 
     private void initialiseSlider() {
@@ -390,7 +338,9 @@ public class WaiterScreen2Controller
         for (MenuItem menuItem : menuItems) {
             if (menuItem.getMetadataValue("price") instanceof Double) {
                 if ((Double) menuItem.getMetadataValue("price") <= maxPrice) {
-                    searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+                    String itemName = (String) menuItem.getMetadataValue("itemName");
+                    String price = menuItem.getMetadataValue("price").toString();
+                    searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
                     id++;
                 }
             }
@@ -408,61 +358,41 @@ public class WaiterScreen2Controller
     @FXML
     protected void onSendOrderButtonClick() {
         if (orderItems.isEmpty()) {
-            System.out.println("No items in order");
+            showErrorDialog("No items in the order.");
             return;
         }
 
-        for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
-            String menuItemId = entry.getKey();
-            int quantity = entry.getValue();
-
-            System.out.println(quantity + "x " + menuItemId);
-
-            List<StatusCode> statusCodes = orderAPI.putOrderItem(orderID, menuItemId, quantity);
-
-            if (!Exceptions.isSuccessful(statusCodes)){
-                System.err.println("Failed to add item to order: " + menuItemId + " Status: " + statusCodes);
-                showErrorDialog(Exceptions.returnStatus("Failed to add item to order:", statusCodes));
-                return;
-            }
-        }
-
-        // TODO: Fix the Drop downs to actually work
-
         List<StatusCode> statusCodes = new ArrayList<>();
-        List<StatusCode> statusCodesCustomer = orderAPI.putOrderCustomers(orderID, Integer.valueOf(customernumber.getValue()));
-        statusCodes.addAll(statusCodesCustomer);
-        List<StatusCode> statusCodesTableNum = orderAPI.putOrderTableNumber(orderID, Integer.valueOf(tablenumber.getValue()));
-        statusCodes.addAll(statusCodesTableNum);
-        List<StatusCode> statusCodesOrderType = orderAPI.putOrderType(orderID, Order.OrderType.DINE_IN);
-        statusCodes.addAll(statusCodesOrderType);
-        List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.CARD);
-        statusCodes.addAll(statusCodesPaymentSelection);
-        List<StatusCode> statusCodesOrderStatus = orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT);
-        statusCodes.addAll(statusCodesOrderStatus);
+
+        statusCodes.addAll(orderAPI.putOrderItems(orderID, orderItems));
+        statusCodes.addAll(orderAPI.putOrderCustomers(orderID, Integer.parseInt(customernumber.getValue())));
+        statusCodes.addAll(orderAPI.putOrderTableNumber(orderID, Integer.parseInt(tablenumber.getValue())));
+        statusCodes.addAll(orderAPI.putOrderType(orderID, Order.OrderType.valueOf(ordertype.getValue())));
+        statusCodes.addAll(orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.valueOf(paymentstatus.getValue())));
+        statusCodes.addAll(orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT));
 
         if (!Exceptions.isSuccessful(statusCodes)) {
-            showErrorDialog(Exceptions.returnStatus("Failed to Apply Order Details to order:", statusCodes));
+            showErrorDialog(Exceptions.returnStatus("Failed to apply order details:", statusCodes));
+            return;
         }
 
-        List<StatusCode> statusCodes2 = orderAPI.postOrder(currentOrder);
-        if (Exceptions.isSuccessful(statusCodes2)){
-            System.out.println("Order Placed Successfully");
+        List<StatusCode> postStatus = orderAPI.postOrder(currentOrder);
+        if (Exceptions.isSuccessful(postStatus)) {
+            System.out.println("Order placed successfully.");
             initialiseOrder();
             onRestartButtonClick();
         } else {
-            showErrorDialog(Exceptions.returnStatus("Order could not be placed with the following errors:", statusCodes));
+            showErrorDialog(Exceptions.returnStatus("Order could not be placed:", postStatus));
         }
     }
 
     @FXML
     protected void onCustomizeButtonClick() {
-        itemtab.getSelectionModel().select(searchtab); /** this brings you to the tab and runs selection code*/
+        itemtab.getSelectionModel().select(searchtab);
     }
 
     @FXML
     protected void onItemCorrectButtonClick() {
-        System.out.println(actionStack);
         if (!actionStack.isEmpty()) {
             actionStack.pop().run();
         }
@@ -472,41 +402,65 @@ public class WaiterScreen2Controller
     protected void onVoidItemButtonClick() {
         if (selectedItem != null) {
             String itemText = selectedItem.getText();
-            String itemNameWithQuantity = itemText.substring(itemText.indexOf(" ") + 1);
-            String menuItemId = menuAPI.keySearch(itemNameWithQuantity);
-            int quantity = orderItems.get(menuItemId);
-            orderItems.remove(menuItemId);
+            String itemNameWithQuantity = itemText.substring(itemText.indexOf("x ") + 2);
+            String itemName = itemNameWithQuantity.trim();
+
+            MenuItem menuItem = menuAPI.getMenuItem(itemName);
+            if (menuItem == null) {
+                showErrorDialog("Menu item not found: " + itemName);
+                return;
+            }
+
+            int quantity = orderItems.get(menuItem);
+            orderItems.remove(menuItem);
+
             actionStack.push(() -> {
-                orderItems.put(menuItemId, quantity);
-                mainbuttonManager.updateOrderSummary();
+                orderItems.put(menuItem, quantity);
+                updateOrderSummary();
             });
 
-            orderAPI.deleteOrderItem(orderID, menuItemId, quantity);
+            orderAPI.deleteOrderItem(orderID, (String) menuItem.getMetadataValue("item_id"), quantity);
 
-            mainbuttonManager.updateOrderSummary();
+            updateOrderSummary();
         }
+    }
+
+    private void updateOrderSummary() {
+        labelManager.clearAllLabels();
+        orderTotal = 0.00;
+
+        for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
+            MenuItem menuItem = entry.getKey();
+            int quantity = entry.getValue();
+            Double price = (Double) menuItem.getMetadataValue("price");
+            double total = price * quantity;
+            orderTotal += total;
+
+            String itemName = (String) menuItem.getMetadataValue("itemName");
+            Label itemLabel = labelManager.addLabel(quantity, itemName);
+            itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
+        }
+        totalprice.setText("$" + String.format("%.2f", orderTotal));
     }
 
     @FXML
     protected void onRestartButtonClick() {
-
-        Map<String, Integer> currentOrderItems = new HashMap<>(orderItems);
+        Map<MenuItem, Integer> currentOrderItems = new HashMap<>(orderItems);
 
         actionStack.push(() -> {
             orderItems.putAll(currentOrderItems);
-            mainbuttonManager.updateOrderSummary();
+            updateOrderSummary();
         });
 
         orderItems.clear();
 
         orderAPI.deleteOrder(orderID);
         initialiseOrder();
-        mainbuttonManager.updateOrderSummary();
-
+        updateOrderSummary();
     }
+
     @FXML
     protected void onFilterButtonClick() {
-        // NOT NEEDED
     }
 
     @FXML
@@ -525,30 +479,30 @@ public class WaiterScreen2Controller
     protected void initsearch() {
         int id = 1;
         ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
-        for (MenuItem menuItem : menuItems){
-            searchbuttonManager.addButton(String.valueOf(id), String.valueOf(menuItem.getMetadataValue("itemName")), "$" + menuItem.getMetadataValue("price"));
+        for (MenuItem menuItem : menuItems) {
+            String itemName = (String) menuItem.getMetadataValue("itemName");
+            String price = menuItem.getMetadataValue("price").toString();
+            searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
             id++;
         }
     }
-    /**
-     * This class is used to manage dynamic buttons
-     */
+
     private class DynamicButtonManager {
-        private int buttonCount = 0; // Keep track of the number of buttons
-        private final FlowPane buttonPane; // FlowPane to hold buttons
-        private final Map<String, Button> buttons; // Map to associate IDs with buttons
+        private int buttonCount = 0;
+        private final FlowPane buttonPane;
+        private final Map<String, Button> buttons;
         private final DynamicLabelManager labelManager;
-        private DynamicButtonManager(FlowPane buttonPane,DynamicLabelManager labelManager) {
+
+        private DynamicButtonManager(FlowPane buttonPane, DynamicLabelManager labelManager) {
             this.buttonPane = buttonPane;
             this.labelManager = labelManager;
             this.buttons = new HashMap<>();
         }
 
-        // Method to add a new button
-        private void addButton(String id,String itemname,String price) {
+        private void addButton(String id, String itemName, String price, MenuItem menuItem) {
             buttonCount++;
-            Button newButton = new Button(itemname);
-            newButton.setId(id); // Set the button's ID
+            Button newButton = new Button(itemName);
+            newButton.setId(id);
             newButton.setPrefSize(225, 120);
             newButton.setContentDisplay(ContentDisplay.BOTTOM);
             newButton.setMnemonicParsing(false);
@@ -558,45 +512,27 @@ public class WaiterScreen2Controller
             priceLabel.getStyleClass().add("buttonprice-label");
 
             newButton.setGraphic(priceLabel);
-            // Add the new button to the FlowPane and the map
+
             buttonPane.getChildren().add(newButton);
-            buttons.put(itemname, newButton); // Associate the button ID with the button
+            buttons.put(itemName, newButton);
 
-            // Add event handler to remove button when clicked
-            newButton.setOnAction(e -> addtoorder(itemname));
+            newButton.setUserData(menuItem);
+            newButton.setOnAction(e -> addtoorder(menuItem));
         }
 
-        // Method to remove a button directly
-        private void removeButton(Button button) {
-            buttonPane.getChildren().remove(button);
-            buttons.remove(button.getId()); // Remove from the map
-        }
-
-        // Method to remove a button by ID
-        private void removeButtonById(String id) {
-            Button buttonToRemove = buttons.get(id);
-            if (buttonToRemove != null) {
-                removeButton(buttonToRemove);
-                System.out.println("Removed Button: " + id);
-            } else {
-                System.out.println("Button with ID '" + id + "' not found.");
+        private void addtoorder(MenuItem menuItem) {
+            if (menuItem == null) {
+                showErrorDialog("Menu item not found.");
+                return;
             }
-        }
 
-        // Method to remove a button directly
-        private void addtoorder(String itemname) {
-            String menuItemId = menuAPI.keySearch(itemname);
-            if (orderItems.containsKey(menuItemId)) {
-                orderItems.put(menuItemId, orderItems.get(menuItemId) + 1);
-            } else {
-                orderItems.put(menuItemId, 1);
-            }
+            orderItems.put(menuItem, orderItems.getOrDefault(menuItem, 0) + 1);
 
             actionStack.push(() -> {
-                if (orderItems.get(menuItemId) == 1) {
-                    orderItems.remove(menuItemId);
+                if (orderItems.get(menuItem) == 1) {
+                    orderItems.remove(menuItem);
                 } else {
-                    orderItems.put(menuItemId, orderItems.get(menuItemId) - 1);
+                    orderItems.put(menuItem, orderItems.get(menuItem) - 1);
                 }
                 updateOrderSummary();
             });
@@ -607,106 +543,54 @@ public class WaiterScreen2Controller
         private void updateOrderSummary() {
             labelManager.clearAllLabels();
             orderTotal = 0.00;
-            for (Map.Entry<String, Integer> entry : orderItems.entrySet()) {
-                String menuItemId = entry.getKey();
-                String itemName = menuAPI.reverseKeySearch(menuItemId);
+
+            for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
+                MenuItem menuItem = entry.getKey();
                 int quantity = entry.getValue();
-                MenuItem menuItem = menuAPI.getMenuItem(itemName);
-                if (menuItem != null) {
-                    Double price = (Double) menuItem.getMetadataValue("price");
-                    Double total = price * quantity;
-                    orderTotal += total;
-                    Label itemLabel = labelManager.addLabel(quantity, itemName);
-                    itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
-                }
+                Double price = (Double) menuItem.getMetadataValue("price");
+                double total = price * quantity;
+                orderTotal += total;
+
+                String itemName = (String) menuItem.getMetadataValue("itemName");
+                Label itemLabel = labelManager.addLabel(quantity, itemName);
+                itemLabel.setOnMouseClicked(event -> selectItem(itemLabel));
             }
             totalprice.setText("$" + String.format("%.2f", orderTotal));
         }
 
-        // Method to clear all buttons
         private void clearAllButtons() {
-            buttonPane.getChildren().clear(); // Clear the FlowPane
-            buttons.clear(); // Clear the map
-            System.out.println("All buttons cleared.");
+            buttonPane.getChildren().clear();
+            buttons.clear();
         }
     }
 
-    /**
-     * This class is used to manage dynamic tabs
-     */
-    private static class DynamicTabManager {
-        private final TabPane tabPane; // TabPane to hold the tabs
-        private DynamicTabManager(TabPane tabPane) {
-            this.tabPane = tabPane;
-        }
+    private record DynamicTabManager(TabPane tabPane) {
 
-        // Method to adjust the widths of the tabs
         private void adjustTabWidths() {
-            double totalWidth = tabPane.getWidth(); // Get the width of the TabPane
-            int numberOfTabs = tabPane.getTabs().size(); // Get the number of tabs
+                double totalWidth = tabPane.getWidth();
+                int numberOfTabs = tabPane.getTabs().size();
 
-            if (numberOfTabs > 0) {
-                double tabWidth = totalWidth / numberOfTabs; // Calculate the width for each tab
-                tabWidth = tabWidth -24.5;
-                tabPane.setTabMinWidth(tabWidth); // Set the minimum width for the tabs
-                tabPane.setTabMaxWidth(tabWidth); // Set the maximum width for the tabs
-            }
-        }
-    }
-
-    /**
-     * This class is used to manage dynamic labels
-     */
-    private static class DynamicLabelManager {
-        private final ListView<Label> labelListView;
-
-        private DynamicLabelManager(ListView<Label> labelListView) {
-            this.labelListView = labelListView;
-        }
-
-        private Label addLabel(int amount, String name) {
-            Label newLabel = new Label(amount + "x " + name);
-            // Apply a dummy style class
-            newLabel.getStyleClass().add("docket-label");
-            labelListView.getItems().add(newLabel);
-            System.out.println("Added Label with text: " + name);
-            return newLabel;
-        }
-
-        private void removeLabelByIndex(int index) {
-            if (index >= 0 && index < labelListView.getItems().size()) {
-                Label removedLabel = labelListView.getItems().remove(index);
-                System.out.println("Removed Label: " + removedLabel.getText());
-            } else {
-                System.out.println("Invalid index: " + index);
-            }
-        }
-
-        private void removeLabelByText(String text) {
-            for (Label label : labelListView.getItems()) {
-                if (label.getText().equals(text)) {
-                    labelListView.getItems().remove(label);
-                    System.out.println("Removed Label: " + text);
-                    return;
+                if (numberOfTabs > 0) {
+                    double tabWidth = totalWidth / numberOfTabs;
+                    tabWidth = tabWidth - 24.5;
+                    tabPane.setTabMinWidth(tabWidth);
+                    tabPane.setTabMaxWidth(tabWidth);
                 }
             }
-            System.out.println("Label with text '" + text + "' not found.");
         }
 
-        private void clearAllLabels() {
-            labelListView.getItems().clear();
-            System.out.println("All labels cleared.");
-        }
+    private record DynamicLabelManager(ListView<Label> labelListView) {
 
-        private Label getLabelByIndex(int index) {
-            if (index >= 0 && index < labelListView.getItems().size()) {
-                return labelListView.getItems().get(index);
+        private Label addLabel(int amount, String name) {
+                Label newLabel = new Label(amount + "x " + name);
+                newLabel.getStyleClass().add("docket-label");
+                labelListView.getItems().add(newLabel);
+                return newLabel;
             }
-            return null;
-        }
 
-        private int getLabelCount() {
-            return labelListView.getItems().size();
+            private void clearAllLabels() {
+                labelListView.getItems().clear();
+            }
         }
-    }
 }
+
