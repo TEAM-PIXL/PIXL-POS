@@ -14,6 +14,7 @@ import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.models.UserSettings;
 import teampixl.com.pixlpos.models.logs.UserLogTask;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -26,8 +27,8 @@ import java.util.Objects;
  */
 public class GuiCommon {
     
-    public static int WIDTH;
-    public static int HEIGHT;
+    public static double WIDTH;
+    public static double HEIGHT;
 
     public static void settings() {
         String currentUserId = UserStack.getInstance().getCurrentUserId();
@@ -39,14 +40,12 @@ public class GuiCommon {
                 .ifPresentOrElse(settings -> {
                     String resolution = settings.getMetadataValue("resolution").toString();
                     switch (resolution) {
-                        case "SD":
-                            WIDTH = 1280;
-                            HEIGHT = 720;
-                            break;
                         case "HD":
-                            WIDTH = 1920;
-                            HEIGHT = 1050;
+                            Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+                            WIDTH = screenSize.getWidth();
+                            HEIGHT = screenSize.getHeight() - 25;
                             break;
+                        case "SD":
                         default:
                             WIDTH = 1280;
                             HEIGHT = 720;
@@ -133,7 +132,7 @@ public class GuiCommon {
      * @param width the width of the scene
      * @param height the height of the scene
      */
-    public static void loadScene(String fxmlPath, String title, Stage stage, int width, int height) {
+    public static void loadScene(String fxmlPath, String title, Stage stage, double width, double height) {
         try {
             URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
             if (fxmlURL == null) {
@@ -175,7 +174,7 @@ public class GuiCommon {
      * @param width the width of the scene
      * @param height the height of the scene
      */
-    public static void loadScene(String fxmlPath, String title, Node node, int width, int height) {
+    public static void loadScene(String fxmlPath, String title, Node node, double width, double height) {
         if (node == null || node.getScene() == null) {
             System.err.println("Error: Provided node is null or not attached to any scene.");
             return;
@@ -248,7 +247,7 @@ public class GuiCommon {
      * @param width the width of the scene
      * @param height the height of the scene
      */
-    public static void loadNewRoot(String fxmlPath, String title, Stage stage, int width, int height) {
+    public static void loadNewRoot(String fxmlPath, String title, Stage stage, double width, double height) {
         try {
             URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
             if (fxmlURL == null) {
@@ -341,14 +340,12 @@ public class GuiCommon {
      * @param node a node from the current scene
      */
     public static void logout(Node node) {
-        UserLogTask.logout().thenRunAsync(() -> {
-            Platform.runLater(() -> {
-                UserStack.getInstance();
-                UserStack.clearCurrentUser();
-                Stage stage = (Stage) node.getScene().getWindow();
-                loadScene(LOGIN_SCREEN_FXML, LOGIN_SCREEN_TITLE, stage);
-            });
-        }).exceptionally(ex -> {
+        UserLogTask.logout().thenRunAsync(() -> Platform.runLater(() -> {
+            UserStack.getInstance();
+            UserStack.clearCurrentUser();
+            Stage stage = (Stage) node.getScene().getWindow();
+            loadScene(LOGIN_SCREEN_FXML, LOGIN_SCREEN_TITLE, stage);
+        })).exceptionally(ex -> {
                     ex.getCause().printStackTrace();
                     return null;
 
@@ -361,13 +358,11 @@ public class GuiCommon {
      * This ensures that the user's logout is recorded in the database. And the session is properly closed.
      */
     public static void exit() {
-        UserLogTask.logout().thenRunAsync(() -> {
-            Platform.runLater(() -> {
-                System.out.println("Application is closing...");
-                Platform.exit();
-                System.exit(0);
-            });
-        }).exceptionally(ex -> {
+        UserLogTask.logout().thenRunAsync(() -> Platform.runLater(() -> {
+            System.out.println("Application is closing...");
+            Platform.exit();
+            System.exit(0);
+        })).exceptionally(ex -> {
                     ex.getCause().printStackTrace();
                     return null;
 
