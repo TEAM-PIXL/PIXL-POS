@@ -157,7 +157,7 @@ public class WaiterScreen2Controller
         paymentstatus.getItems().setAll(paymentStatuses);
 
         // Set default selections (optional)
-        customernumber.setValue("00");
+        customernumber.setValue("1");
         ordertype.setValue("Dine In");
         tablenumber.setValue("1");
         paymentstatus.setValue("Not PAID");
@@ -429,23 +429,25 @@ public class WaiterScreen2Controller
 
         // TODO: Fix the Drop downs to actually work
 
-//        List<StatusCode> statusCodes = new ArrayList<>();
-//        List<StatusCode> statusCodesCustomer = orderAPI.putOrderCustomers(orderID, Integer.valueOf(customernumber.getValue()));
-//        statusCodes.addAll(statusCodesCustomer);
-//        List<StatusCode> statusCodesTableNum = orderAPI.putOrderTableNumber(orderID, Integer.valueOf(tablenumber.getValue()));
-//        statusCodes.addAll(statusCodesTableNum);
-//        List<StatusCode> statusCodesOrderType = orderAPI.putOrderType(orderID, Order.OrderType.DINE_IN);
-//        statusCodes.addAll(statusCodesOrderType);
-//        List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.CARD);
-//        statusCodes.addAll(statusCodesPaymentSelection);
-//        List<StatusCode> statusCodesOrderStatus = orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT);
-//        statusCodes.addAll(statusCodesOrderStatus);
-//
-//        if (!Exceptions.isSuccessful(statusCodes)) {
-//            showErrorDialog(Exceptions.returnStatus("Failed to Apply Order Details to order:", statusCodes));
-//        }
+        List<StatusCode> statusCodes = new ArrayList<>();
+        List<StatusCode> statusCodesCustomer = orderAPI.putOrderCustomers(orderID, Integer.valueOf(customernumber.getValue()));
+        statusCodes.addAll(statusCodesCustomer);
+        System.out.println(statusCodesCustomer);
+        List<StatusCode> statusCodesTableNum = orderAPI.putOrderTableNumber(orderID, Integer.valueOf(tablenumber.getValue()));
+        statusCodes.addAll(statusCodesTableNum);
+        System.out.println(statusCodesTableNum);
+        List<StatusCode> statusCodesOrderType = orderAPI.putOrderType(orderID, Order.OrderType.DINE_IN);
+        statusCodes.addAll(statusCodesOrderType);
+        System.out.println(statusCodesOrderType);
+        List<StatusCode> statusCodesPaymentSelection = orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.CARD);
+        statusCodes.addAll(statusCodesPaymentSelection);
+        System.out.println(statusCodesPaymentSelection);
 
-        List<StatusCode> statusCodes = orderAPI.postOrder(currentOrder);
+        if (!Exceptions.isSuccessful(statusCodes)) {
+            showErrorDialog(Exceptions.returnStatus("Failed to Apply Order Details to order:", statusCodes));
+        }
+
+        statusCodes = orderAPI.postOrder(currentOrder);
         if (Exceptions.isSuccessful(statusCodes)){
             System.out.println("Order Placed Successfully");
             initialiseOrder();

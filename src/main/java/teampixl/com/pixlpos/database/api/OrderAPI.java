@@ -84,9 +84,6 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderByStatus(Object ORDER_STATUS) {
-        if (!(ORDER_STATUS instanceof Order.OrderStatus)) {
-            return StatusCode.INVALID_ORDER_STATUS;
-        }
         return StatusCode.SUCCESS;
     }
 
