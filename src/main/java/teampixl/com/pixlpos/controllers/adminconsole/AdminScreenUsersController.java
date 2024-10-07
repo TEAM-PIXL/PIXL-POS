@@ -3,30 +3,22 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.models.Users;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
 import javafx.animation.AnimationTimer;
-import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
-import javafx.geometry.Insets;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
-import javafx.event.EventHandler;
-import javafx.scene.layout.VBox;
-import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.UsersAPI;
-import javafx.scene.control.*;
+
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -35,14 +27,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import teampixl.com.pixlpos.database.api.UserStack;
-import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.models.Users;
-import javafx.scene.layout.HBox;
 import teampixl.com.pixlpos.models.tools.DataManager;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import javafx.scene.input.KeyCode;
 
 public class AdminScreenUsersController
@@ -170,8 +156,8 @@ public class AdminScreenUsersController
             addUserToListView(
                     userslist,
                     user.getMetadataValue("id").toString(),
-                    userAPI.getUsersFirstNameByUsername(username),
                     (userAPI.getUsersFirstNameByUsername(username) + " " + userAPI.getUsersLastNameByUsername(username)),
+                    userAPI.getUsersEmailByUsername(username),
                     username,
                     toReadableDate(user.getMetadataValue("created_at").toString()),
                     userAPI.getUsersRoleByUsername(username).toString());
@@ -341,127 +327,44 @@ public class AdminScreenUsersController
     }
 
 
-    public void addUserToListView(ListView<HBox> listView, String id, String name, String username, String userSince, String email, String role) {
-        HBox hbox = new HBox();
-        hbox.setId(id);
-        hbox.setLayoutX(11.0);
-        hbox.setLayoutY(65.0);
-        hbox.setPrefHeight(50.0);
+    public void addUserToListView(ListView<HBox> listView, String id, String name, String email, String username, String userSince, String role) {
+        try {
+            // Load HBox from FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/teampixl/com/pixlpos/fxml/adminconsole/userdynamic.fxml"));
+            HBox hbox = loader.load();
 
-        // Name
-        AnchorPane namePane = createLabeledAnchorPane("Name", name, "database-label");
-        HBox.setHgrow(namePane, Priority.ALWAYS);
+            // Set the ID of the HBox
+            hbox.setId(id);
 
-        // Username
-        AnchorPane usernamePane = createLabeledAnchorPane("Username", username, null);
-        HBox.setHgrow(usernamePane, Priority.ALWAYS);
+            // Get the controller associated with the FXML (if you have one)
+            // Optionally, set values via the controller, or directly access the fields
+            // Example: If you have IDs set in FXML for the labels, you can access them like this:
 
-        // User Since
-        AnchorPane userSincePane = createLabeledAnchorPane("Usersince", userSince, null);
-        HBox.setHgrow(userSincePane, Priority.ALWAYS);
+            Label firstnamefield = (Label) hbox.lookup("#firstnameLabel");
+            Label emailfield = (Label) hbox.lookup("#emailLabel");
+            Label usernamefield = (Label) hbox.lookup("#usernameLabel");
+            Label usersince = (Label) hbox.lookup("#userSinceLabel");
+            Label rolefield = (Label) hbox.lookup("#roleLabel");
 
-        // Email
-        AnchorPane emailPane = createLabeledAnchorPane("Email", email, null);
-        HBox.setHgrow(emailPane, Priority.ALWAYS);
+            // Set values dynamically
+            firstnamefield.setText(name);
+            emailfield.setText(email);
+            usernamefield.setText(username);
+            usersince.setText(userSince);
+            rolefield.setText(role);
+            // Set action handlers for buttons (if they exist in your FXML)
+            Button editbutton = (Button) hbox.lookup("#editbutton");
+            editbutton.setOnAction(event -> onEditButtonClick(event, id));
+            Button removebutton = (Button) hbox.lookup("#removebutton");
+            removebutton.setOnAction(event -> onRemoveButtonClick(event, id));
 
-        // Role
-        AnchorPane rolePane = createRoleAnchorPane(role);
-        HBox.setHgrow(rolePane, Priority.ALWAYS);
 
-        // Edit Button
-        AnchorPane editButtonPane = createButtonAnchorPane("/teampixl/com/pixlpos/images/adminicons/green_edit_write_pen_icon.png", event -> onEditButtonClick(event, id));
-        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+            // Add the HBox to the ListView
+            listView.getItems().add(hbox);
 
-        // Remove Button
-        AnchorPane removeButtonPane = createButtonAnchorPane("/teampixl/com/pixlpos/images/adminicons/red_trash_2_icon.png", event -> onRemoveButtonClick(event, id));
-        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
-
-        // Add all components to the HBox
-        hbox.getChildren().addAll(namePane, usernamePane, userSincePane, emailPane, rolePane, editButtonPane, removeButtonPane);
-
-        // Add the HBox to the ListView
-        listView.getItems().add(hbox);
-    }
-
-    private AnchorPane createLabeledAnchorPane(String title, String value, String styleClass) {
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.setPrefWidth(200.0);
-        if (styleClass != null) {
-            anchorPane.getStyleClass().add(styleClass);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        Label label = new Label(title);
-        label.setAlignment(Pos.CENTER);
-        label.setPrefSize(200.0, 50.4);
-
-        if (title.equals("Name")) {
-            Label valueLabel = new Label(value);
-            label.setContentDisplay(ContentDisplay.BOTTOM);
-            label.setGraphic(valueLabel);
-        } else {
-            label.setText(value);
-        }
-
-        AnchorPane.setTopAnchor(label, 0.0);
-        AnchorPane.setRightAnchor(label, 0.0);
-        AnchorPane.setBottomAnchor(label, 0.0);
-        AnchorPane.setLeftAnchor(label, 0.0);
-
-        anchorPane.getChildren().add(label);
-        return anchorPane;
-    }
-
-    private AnchorPane createRoleAnchorPane(String role) {
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.setPrefWidth(200.0);
-        anchorPane.getStyleClass().add("database-label");
-
-        Label outerLabel = new Label();
-        outerLabel.setAlignment(Pos.CENTER);
-        outerLabel.setPrefSize(200.0, 50.0);
-
-        Label innerLabel = new Label(role);
-        innerLabel.setAlignment(Pos.CENTER);
-        innerLabel.setPrefSize(75.0, 25.0);
-        innerLabel.setStyle("-fx-background-radius: 10; -fx-background-color: #0095FF;");
-        innerLabel.setTextFill(Color.WHITE);
-
-        outerLabel.setGraphic(innerLabel);
-
-        AnchorPane.setTopAnchor(outerLabel, 0.0);
-        AnchorPane.setRightAnchor(outerLabel, 0.0);
-        AnchorPane.setBottomAnchor(outerLabel, 0.0);
-        AnchorPane.setLeftAnchor(outerLabel, 0.0);
-
-        anchorPane.getChildren().add(outerLabel);
-        return anchorPane;
-    }
-
-    private AnchorPane createButtonAnchorPane(String imagePath, EventHandler<ActionEvent> onAction) {
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.setMinWidth(50.0);
-
-        Button button = new Button();
-        button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        button.setStyle("-fx-background-color: transparent;");
-        button.setPrefSize(50.0, 50.0);
-
-        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
-        imageView.setFitHeight(22.0);
-        imageView.setFitWidth(22.0);
-        imageView.setPreserveRatio(true);
-        imageView.setPickOnBounds(true);
-
-        button.setGraphic(imageView);
-        button.setOnAction(onAction);
-
-        AnchorPane.setTopAnchor(button, 0.0);
-        AnchorPane.setRightAnchor(button, 0.0);
-        AnchorPane.setBottomAnchor(button, 0.0);
-        AnchorPane.setLeftAnchor(button, 0.0);
-
-        anchorPane.getChildren().add(button);
-        return anchorPane;
     }
 
     /**
