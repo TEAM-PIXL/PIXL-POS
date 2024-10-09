@@ -2,9 +2,7 @@ name: Build and Package JavaFX Application
 
 on:
   push:
-    branches:
-      - main
-
+  
 jobs:
   build-linux:
     runs-on: ubuntu-latest
