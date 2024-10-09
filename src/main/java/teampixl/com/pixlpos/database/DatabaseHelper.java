@@ -21,19 +21,9 @@ public class DatabaseHelper {
     ============================================================================================================================================================*/
     private static final Logger LOGGER = Logger.getLogger(DatabaseHelper.class.getName());
 
-
-    private static final String DB_URL;
-
-    static {
-        DB_URL = "jdbc:sqlite:" + getDatabaseFilePath();
-    }
-
-    private static String getDatabaseFilePath() {
-        File resourceDir = new File("src/main/resources/teampixl/com/pixlpos/database");
-        File dbFile = new File(resourceDir, "pixlpos.db");
-
-        return dbFile.getAbsolutePath();
-    }
+    private static final String URL = "jdbc:sqlserver://pixlpos.database.windows.net:1433;database=pixlpos";
+    private static final String USER = "pixldb_maindb";
+    private static final String PASSWORD = "1j<9iS2q*tpc5B%4mK*]";
 
     /**
      * Establishes a connection to the SQLite database.
@@ -43,7 +33,7 @@ public class DatabaseHelper {
     public static Connection connect() {
         LOGGER.info("Attempting to establish a database connection...");
         try {
-            Connection conn = DriverManager.getConnection(DB_URL);
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
             LOGGER.info("Connection to SQLite has been established.");
             return conn;
         } catch (SQLException e) {
@@ -64,158 +54,171 @@ public class DatabaseHelper {
     - menu_item_ingredients: This table stores the relationship between menu items and ingredients.
     ============================================================================================================================================================*/
 
+
     /**
-     * Initializes the SQLite database and creates the tables if they do not exist.
+     * Initializes the Azure SQL database and creates the tables if they do not exist.
      */
     public static void initializeDatabase() {
         String sqlCreateUsersTable = """
-        CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            first_name TEXT NOT NULL,
-            last_name TEXT NOT NULL,
-            username TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            email TEXT,
-            role TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            is_active INT NOT NULL,
-            additional_info TEXT
-        );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'users')
+                CREATE TABLE users (
+                    id VARCHAR(255) PRIMARY KEY,
+                    first_name VARCHAR(255) NOT NULL,
+                    last_name VARCHAR(255) NOT NULL,
+                    username VARCHAR(255) NOT NULL UNIQUE,
+                    password VARCHAR(255) NOT NULL,
+                    email VARCHAR(255),
+                    role VARCHAR(255) NOT NULL,
+                    created_at BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE())),
+                    updated_at BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE())),
+                    is_active INT NOT NULL,
+                    additional_info TEXT
+                );
+                """;
 
         String sqlCreateLoginTable = """
-        CREATE TABLE IF NOT EXISTS user_logs (
-            id TEXT PRIMARY KEY,
-            user_id TEXT NOT NULL,
-            log_type TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_logs')
+                CREATE TABLE user_logs (
+                    id VARCHAR(255) PRIMARY KEY,
+                    user_id VARCHAR(255) NOT NULL,
+                    log_type VARCHAR(255) NOT NULL,
+                    created_at BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE())),
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                );
+                """;
 
         String sqlCreateLogsTable = """
-        CREATE TABLE IF NOT EXISTS global_logs (
-            log_id TEXT PRIMARY KEY,
-            user_id TEXT NOT NULL,
-            log_timestamp INTEGER NOT NULL,
-            log_action TEXT NOT NULL,
-            log_status TEXT NOT NULL,
-            log_type TEXT NOT NULL,
-            log_category TEXT NOT NULL,
-            log_priority TEXT NOT NULL,
-            log_description TEXT NOT NULL,
-            log_location TEXT,
-            log_device TEXT,
-            log_ip TEXT,
-            log_mac TEXT,
-            log_os TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-        """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'global_logs')
+                CREATE TABLE global_logs (
+                    log_id VARCHAR(255) PRIMARY KEY,
+                    user_id VARCHAR(255) NOT NULL,
+                    log_timestamp BIGINT NOT NULL,
+                    log_action VARCHAR(255) NOT NULL,
+                    log_status VARCHAR(255) NOT NULL,
+                    log_type VARCHAR(255) NOT NULL,
+                    log_category VARCHAR(255) NOT NULL,
+                    log_priority VARCHAR(255) NOT NULL,
+                    log_description VARCHAR(255) NOT NULL,
+                    log_location VARCHAR(255),
+                    log_device VARCHAR(255),
+                    log_ip VARCHAR(255),
+                    log_mac VARCHAR(255),
+                    log_os VARCHAR(255),
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                );
+                """;
 
         String sqlCreateSettingsTable = """
-        CREATE TABLE IF NOT EXISTS user_settings (
-            user_id TEXT PRIMARY KEY,
-            theme TEXT,
-            resolution TEXT,
-            currency TEXT,
-            timezone TEXT,
-            language TEXT,
-            access_level TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_settings')
+                CREATE TABLE user_settings (
+                    user_id VARCHAR(255) PRIMARY KEY,
+                    theme VARCHAR(255),
+                    resolution VARCHAR(255),
+                    currency VARCHAR(255),
+                    timezone VARCHAR(255),
+                    language VARCHAR(255),
+                    access_level VARCHAR(255),
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                );
+                """;
 
         String sqlCreateGlobalNotesTable = """
-        CREATE TABLE IF NOT EXISTS global_notes (
-            note_id TEXT PRIMARY KEY,
-            user_id TEXT NOT NULL,
-            note_title TEXT NOT NULL,
-            note_content TEXT NOT NULL,
-            timestamp INTEGER NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'global_notes')
+                CREATE TABLE global_notes (
+                    note_id VARCHAR(255) PRIMARY KEY,
+                    user_id VARCHAR(255) NOT NULL,
+                    note_title VARCHAR(255) NOT NULL,
+                    note_content TEXT NOT NULL,
+                    timestamp BIGINT NOT NULL,
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                );
+                """;
 
         String sqlCreateMenuItemsTable = """
-        CREATE TABLE IF NOT EXISTS menu_items (
-            id TEXT PRIMARY KEY,
-            item_name TEXT NOT NULL,
-            price REAL NOT NULL,
-            item_type TEXT NOT NULL,
-            active_item INTEGER NOT NULL,
-            dietary_requirement TEXT,
-            description TEXT NOT NULL,
-            notes TEXT,
-            amount_ordered INTEGER NOT NULL DEFAULT 0,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'menu_items')
+                CREATE TABLE menu_items (
+                    id VARCHAR(255) PRIMARY KEY,
+                    item_name VARCHAR(255) NOT NULL,
+                    price REAL NOT NULL,
+                    item_type VARCHAR(255) NOT NULL,
+                    active_item INT NOT NULL,
+                    dietary_requirement VARCHAR(255),
+                    description TEXT NOT NULL,
+                    notes TEXT,
+                    amount_ordered INT NOT NULL DEFAULT 0,
+                    created_at BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE())),
+                    updated_at BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE()))
+                );
+                """;
 
         String sqlCreateOrdersTable = """
-        CREATE TABLE IF NOT EXISTS orders (
-            order_id TEXT PRIMARY KEY,
-            order_number INTEGER NOT NULL,
-            user_id TEXT NOT NULL,
-            order_status TEXT NOT NULL,
-            is_completed INTEGER NOT NULL DEFAULT 0,
-            order_type TEXT NOT NULL,
-            table_number INTEGER,
-            customers INTEGER,
-            total REAL NOT NULL,
-            special_requests TEXT,
-            payment_method TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'orders')
+                CREATE TABLE orders (
+                    order_id VARCHAR(255) PRIMARY KEY,
+                    order_number INT NOT NULL,
+                    user_id VARCHAR(255) NOT NULL,
+                    order_status VARCHAR(255) NOT NULL,
+                    is_completed INT NOT NULL DEFAULT 0,
+                    order_type VARCHAR(255) NOT NULL,
+                    table_number INT,
+                    customers INT,
+                    total REAL NOT NULL,
+                    special_requests TEXT,
+                    payment_method VARCHAR(255) NOT NULL,
+                    created_at BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE())),
+                    updated_at BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE())),
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                );
+                """;
 
         String sqlCreateOrderItemsTable = """
-        CREATE TABLE IF NOT EXISTS order_items (
-            order_id TEXT NOT NULL,
-            menu_item_id TEXT NOT NULL,
-            quantity INTEGER NOT NULL,
-            PRIMARY KEY (order_id, menu_item_id),
-            FOREIGN KEY (order_id) REFERENCES orders(order_id),
-            FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
-        );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'order_items')
+                CREATE TABLE order_items (
+                    order_id VARCHAR(255) NOT NULL,
+                    menu_item_id VARCHAR(255) NOT NULL,
+                    quantity INT NOT NULL,
+                    PRIMARY KEY (order_id, menu_item_id),
+                    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+                    FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
+                );
+                """;
 
         String sqlCreateIngredientsTable = """
-    CREATE TABLE IF NOT EXISTS ingredients (
-        ingredient_id TEXT PRIMARY KEY,
-        item_name TEXT NOT NULL,
-        notes TEXT
-    );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ingredients')
+                CREATE TABLE ingredients (
+                    ingredient_id VARCHAR(255) PRIMARY KEY,
+                    item_name VARCHAR(255) NOT NULL,
+                    notes TEXT
+                );
+                """;
 
         String sqlCreateStockTable = """
-    CREATE TABLE IF NOT EXISTS stock (
-        stock_id TEXT PRIMARY KEY,
-        ingredient_id TEXT NOT NULL,
-        stock_status TEXT NOT NULL,
-        on_order INTEGER NOT NULL,
-        created_at TEXT NOT NULL,
-        last_updated TEXT NOT NULL,
-        unit_type TEXT NOT NULL,
-        numeral REAL NOT NULL,
-        FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
-    );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'stock')
+                CREATE TABLE stock (
+                    stock_id VARCHAR(255) PRIMARY KEY,
+                    ingredient_id VARCHAR(255) NOT NULL,
+                    stock_status VARCHAR(255) NOT NULL,
+                    on_order INT NOT NULL,
+                    created_at BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE())),
+                    last_updated BIGINT DEFAULT (DATEDIFF_BIG(SECOND, '19700101', GETUTCDATE())),
+                    unit_type VARCHAR(255) NOT NULL,
+                    numeral REAL NOT NULL,
+                    FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
+                );
+                """;
 
         String sqlCreateMenuItemIngredientsTable = """
-    CREATE TABLE IF NOT EXISTS menu_item_ingredients (
-        menu_item_id TEXT NOT NULL,
-        ingredient_id TEXT NOT NULL,
-        numeral REAL NOT NULL,
-        PRIMARY KEY (menu_item_id, ingredient_id),
-        FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
-        FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
-    );
-    """;
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'menu_item_ingredients')
+                CREATE TABLE menu_item_ingredients (
+                    menu_item_id VARCHAR(255) NOT NULL,
+                    ingredient_id VARCHAR(255) NOT NULL,
+                    numeral REAL NOT NULL,
+                    PRIMARY KEY (menu_item_id, ingredient_id),
+                    FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
+                    FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
+                );
+                """;
+    }
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(sqlCreateUsersTable);
@@ -234,6 +237,7 @@ public class DatabaseHelper {
             System.out.println(e.getMessage());
         }
     }
+
 }
 
 
