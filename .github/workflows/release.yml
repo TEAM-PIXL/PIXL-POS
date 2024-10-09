@@ -2,6 +2,8 @@ name: Build and Package JavaFX Application
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   build-linux:
@@ -23,22 +25,39 @@ jobs:
           echo "JAVA_FX_HOME=/opt/javafx-sdk-21.0.4" >> $GITHUB_ENV
           echo "$JAVA_FX_HOME/lib" >> $GITHUB_PATH
 
-      - name: List contents of JavaFX lib directory
+      - name: Build with Maven and Shade Plugin
         run: |
-          ls -l $JAVA_FX_HOME/lib
+          mvn clean package
 
-      - name: List available modules
+      - name: Verify JAR creation
         run: |
-          java --module-path $JAVA_FX_HOME/lib --list-modules
+          ls -l target/
 
-      - name: Build with Maven
-        run: mvn clean install
-
-      - name: Create Runtime Image with jlink
+      - name: Create Dynamic Tag
+        id: create_tag
         run: |
-          jlink --module-path $JAVA_HOME/jmods:$JAVA_FX_HOME/lib --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
+          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo "TAG_NAME=release-${BRANCH_NAME}-${COMMIT_HASH}" >> $GITHUB_ENV
 
-  package-windows:
+      - name: Create Release with Dynamic Tag
+        id: create_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ env.TAG_NAME }} target/PIXL-POS-1.0.jar --title "Release ${{ env.TAG_NAME }}" --notes "Automated release of PIXL-POS JAR"
+
+      - name: Upload JAR to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/PIXL-POS-1.0.jar
+          asset_name: PIXL-POS-1.0.jar
+          asset_content_type: application/java-archive
+
+  build-windows:
     needs: build-linux
     runs-on: windows-latest
     steps:
@@ -51,82 +70,25 @@ jobs:
           java-version: '21'
           distribution: 'corretto'
 
-      - name: Build with Maven (Windows)
-        run: mvn clean install
-
-      - name: Download and Setup JavaFX (Windows)
+      - name: Download and Setup JavaFX
         run: |
           curl -L "https://download2.gluonhq.com/openjfx/21.0.4/openjfx-21.0.4_windows-x64_bin-sdk.zip" -o javafx-sdk.zip
           Expand-Archive javafx-sdk.zip -DestinationPath C:\javafx-sdk
+          echo "JAVA_FX_HOME=C:\javafx-sdk" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
 
-      - name: Verify JavaFX SDK extraction (Windows)
+      - name: Build with Maven and Shade Plugin
+        run: mvn clean package
+
+      - name: Verify JAR creation (Windows)
         run: |
-          echo "Listing extracted files in C:\javafx-sdk"
-          Get-ChildItem -Path "C:\javafx-sdk" -Name
+          dir target
 
-      - name: Set JAVA_FX_HOME based on extracted folder (Windows)
-        run: |
-          if (Test-Path "C:\javafx-sdk\lib") {
-            echo "Setting JAVA_FX_HOME to C:\javafx-sdk"
-            echo "JAVA_FX_HOME=C:\javafx-sdk" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
-          } else {
-            $subfolder = Get-ChildItem -Path "C:\javafx-sdk" | Where-Object { $_.PSIsContainer } | Select-Object -First 1
-            if ($subfolder) {
-              $newPath = "C:\javafx-sdk\$($subfolder.Name)"
-              echo "Setting JAVA_FX_HOME to $newPath"
-              echo "JAVA_FX_HOME=$newPath" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
-            } else {
-              throw "Could not find JavaFX lib folder"
-            }
-          }
-
-      - name: List contents of JavaFX lib directory (Windows)
-        run: |
-          Get-ChildItem -Path "${env:JAVA_FX_HOME}\lib" -Name
-
-      - name: List available modules (Windows)
-        run: |
-          java --module-path "${env:JAVA_FX_HOME}\lib" --list-modules
-
-      - name: Create Runtime Image with jlink (Windows)
-        run: |
-          $env:MODULE_PATH="${env:JAVA_HOME}\jmods;${env:JAVA_FX_HOME}\lib"
-          jlink --module-path $env:MODULE_PATH --add-modules java.base,javafx.controls,javafx.fxml --output ./runtime
-
-      - name: Ensure the packages directory exists
-        run: |
-          mkdir packages
-
-      - name: Package Application as exe with jpackage
-        run: |
-          jpackage --input target/ --name PIXL-POS --main-jar PIXL-POS-1.0.jar --main-class teampixl.com.pixlpos.application.POSApplication --type exe --dest ./packages --runtime-image ./runtime
-
-      - name: Verify executable creation
-        run: |
-          echo "Checking for generated executable after jpackage"
-          Get-ChildItem -Path ./packages
-
-      - name: Create Dynamic Tag
-        id: create_tag
-        shell: pwsh
-        run: |
-          $BRANCH_NAME = $env:GITHUB_REF -replace '^refs/heads/', ''
-          $COMMIT_HASH = (git rev-parse --short HEAD).Trim()
-          echo "TAG_NAME=release-$BRANCH_NAME-$COMMIT_HASH" >> $env:GITHUB_ENV
-
-      - name: Create Release with Dynamic Tag
-        id: create_release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create ${{ env.TAG_NAME }} ./packages/PIXL-POS-1.0.exe --title "Release ${{ env.TAG_NAME }}" --notes "Automated release of PIXL-POS.exe" --json upload_url > release.json
-
-      - name: Upload Windows Executable to Release
+      - name: Upload JAR to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./packages/PIXL-POS-1.0.exe
-          asset_name: PIXL-POS-1.0.exe
-          asset_content_type: application/octet-stream
+          asset_path: target/PIXL-POS-1.0.jar
+          asset_name: PIXL-POS-1.0.jar
+          asset_content_type: application/java-archive
