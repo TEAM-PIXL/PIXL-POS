@@ -8,6 +8,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * The DatabaseManager class handles all database operations for the application.
@@ -225,16 +226,76 @@ public class DatabaseManager {
                 order.setDataValue("special_requests", specialRequests);
                 order.setDataValue("payment_method", paymentMethod);
 
-                // Load order items asynchronously
-                getOrderItemsFromDatabase(orderId).thenAccept(orderItems -> order.setDataValue("menuItems", orderItems));
-
+                // Store the order for later processing
                 return order;
             } catch (SQLException e) {
                 System.err.println("Error mapping Order: " + e.getMessage());
                 return null;
             }
+        }).thenCompose(orders -> {
+            // After all orders are loaded, load order items in batches
+            return loadAllOrderItems(orders).thenApply(v -> orders);
         });
     }
+
+    private static CompletableFuture<Void> loadAllOrderItems(List<Order> orders) {
+        // Collect all order IDs
+        List<String> orderIds = orders.stream()
+                .map(order -> (String) order.getMetadataValue("order_id"))
+                .collect(Collectors.toList());
+
+        // Fetch all order items in one query
+        return getAllOrderItemsFromDatabase(orderIds).thenAccept(orderItemsMap -> {
+            for (Order order : orders) {
+                String orderId = (String) order.getMetadataValue("order_id");
+                Map<String, Integer> orderItems = orderItemsMap.get(orderId);
+                if (orderItems != null) {
+                    order.setDataValue("menuItems", orderItems);
+                } else {
+                    order.setDataValue("menuItems", Collections.emptyMap());
+                }
+            }
+        });
+    }
+
+    public static CompletableFuture<Map<String, Map<String, Integer>>> getAllOrderItemsFromDatabase(List<String> orderIds) {
+        if (orderIds.isEmpty()) {
+            return CompletableFuture.completedFuture(Collections.emptyMap());
+        }
+
+        String placeholders = String.join(",", Collections.nCopies(orderIds.size(), "?"));
+        String sql = "SELECT * FROM order_items WHERE order_id IN (" + placeholders + ")";
+
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, Map<String, Integer>> allOrderItemsMap = new HashMap<>();
+
+            try (Connection conn = DatabaseHelper.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                for (int i = 0; i < orderIds.size(); i++) {
+                    pstmt.setString(i + 1, orderIds.get(i));
+                }
+
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    String orderId = rs.getString("order_id");
+                    String menuItemId = rs.getString("menu_item_id");
+                    int quantity = rs.getInt("quantity");
+
+                    allOrderItemsMap
+                            .computeIfAbsent(orderId, k -> new HashMap<>())
+                            .put(menuItemId, quantity);
+                }
+
+            } catch (SQLException e) {
+                System.err.println("Error getting all Order items: " + e.getMessage());
+            }
+            return allOrderItemsMap;
+        });
+    }
+
+
 
     public static CompletableFuture<Void> saveOrderToDatabase(Order order) {
         String sql = "INSERT INTO orders(order_id, order_number, user_id, order_status, is_completed, order_type, table_number, customers, total, special_requests, payment_method, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

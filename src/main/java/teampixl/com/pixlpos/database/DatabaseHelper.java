@@ -1,5 +1,7 @@
 package teampixl.com.pixlpos.database;
 
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,22 +27,22 @@ public class DatabaseHelper {
     private static final String USER = "pixldb_maindb";
     private static final String PASSWORD = "1j<9iS2q*tpc5B%4mK*]";
 
-    /**
-     * Establishes a connection to the SQLite database.
-     *
-     * @return Connection object
-     */
-    public static Connection connect() {
-        LOGGER.info("Attempting to establish a database connection...");
-        try {
-            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            LOGGER.info("Connection to SQLite has been established.");
-            return conn;
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error connecting to database: " + e.getMessage(), e);
-            return null;
-        }
+    private static final HikariDataSource dataSource = new HikariDataSource();
+
+    static {
+        dataSource.setJdbcUrl("jdbc:sqlserver://pixlpos.database.windows.net:1433;database=pixlpos");
+        dataSource.setUsername("pixldb_maindb");
+        dataSource.setPassword("1j<9iS2q*tpc5B%4mK*]");
+        dataSource.addDataSourceProperty("cachePrepStmts", "true");
+        dataSource.addDataSourceProperty("prepStmtCacheSize", "250");
+        dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
     }
+
+    // Modify DatabaseHelper.connect()
+    public static Connection connect() throws SQLException {
+        return dataSource.getConnection();
+    }
+
 
     /*============================================================================================================================================================
     Code Description:
