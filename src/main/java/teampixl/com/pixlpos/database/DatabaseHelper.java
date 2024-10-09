@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class provides methods to establish a connection to the SQLite database and initialize the database.
@@ -17,6 +19,8 @@ public class DatabaseHelper {
     - getDatabaseFilePath(): This method returns the path to the SQLite database file.
     - connect(): This method establishes a connection to the SQLite database.
     ============================================================================================================================================================*/
+    private static final Logger LOGGER = Logger.getLogger(DatabaseHelper.class.getName());
+
 
     private static final String DB_URL;
 
@@ -37,14 +41,15 @@ public class DatabaseHelper {
      * @return Connection object
      */
     public static Connection connect() {
-        Connection conn = null;
+        LOGGER.info("Attempting to establish a database connection...");
         try {
-            conn = DriverManager.getConnection(DB_URL);
-            System.out.println("Connection to SQLite has been established.");
+            Connection conn = DriverManager.getConnection(DB_URL);
+            LOGGER.info("Connection to SQLite has been established.");
+            return conn;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error connecting to database: " + e.getMessage(), e);
+            return null;
         }
-        return conn;
     }
 
     /*============================================================================================================================================================

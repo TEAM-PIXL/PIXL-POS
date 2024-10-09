@@ -46,18 +46,15 @@ public class CookScreen2Controller {
     @FXML
     private ListView<VBox> orderList;
 
-    private final OrderAPI orderAPI = OrderAPI.getInstance();
-    private final MenuAPI menuAPI = MenuAPI.getInstance();
-
-    private final ObservableList<VBox> orderObservableList = FXCollections.observableArrayList();
-    private final Map<String, VBox> orderMap = new LinkedHashMap<>();
-    private final Map<String, Integer> orderOriginalPositions = new HashMap<>();
+    private ObservableList<VBox> orderObservableList = FXCollections.observableArrayList();
+    private Map<String, VBox> orderMap = new LinkedHashMap<>();
+    private Map<String, Integer> orderOriginalPositions = new HashMap<>();
 
     private DynamicLabelManager dynamicLabelManager;
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-    AnimationTimer datetime = new AnimationTimer() {
+    private AnimationTimer datetime = new AnimationTimer() {
         @Override
         public void handle(long now) {
             date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -79,6 +76,9 @@ public class CookScreen2Controller {
         Task<Void> loadOrdersTask = new Task<>() {
             @Override
             protected Void call() {
+                OrderAPI orderAPI = OrderAPI.getInstance();
+                MenuAPI menuAPI = MenuAPI.getInstance();
+
                 orderAPI.reloadOrders();
                 List<Order> activeOrders = orderAPI.getOrders().stream()
                         .filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.SENT)
@@ -93,17 +93,20 @@ public class CookScreen2Controller {
                 for (int i = 0; i < activeOrders.size(); i++) {
                     Order order = activeOrders.get(i);
                     int position = i;
-                    Platform.runLater(() -> addOrderToList(order, position));
+                    Platform.runLater(() -> addOrderToList(order, position, menuAPI, orderAPI));
                 }
 
                 Platform.runLater(() -> orders.setText(orderObservableList.size() + " Orders"));
 
-                for (Order order : orderAPI.getOrders()) {
-                    if (order.getMetadataValue("order_status") == Order.OrderStatus.COMPLETED) {
-                        long updatedAt = (long) order.getMetadataValue("updated_at");
-                        LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
-                        Platform.runLater(() -> dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))));
-                    }
+                List<Order> completedOrdersList = orderAPI.getOrders().stream()
+                        .filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.COMPLETED)
+                        .toList();
+
+                for (Order order : completedOrdersList) {
+                    long updatedAt = (long) order.getMetadataValue("updated_at");
+                    LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
+                    String labelText = "Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+                    Platform.runLater(() -> dynamicLabelManager.addCompletedLabel(labelText));
                 }
 
                 return null;
@@ -113,15 +116,15 @@ public class CookScreen2Controller {
         executorService.submit(loadOrdersTask);
     }
 
-    private void addOrderToList(Order order, int position) {
-        VBox orderVBox = createOrderVBox(order);
+    private void addOrderToList(Order order, int position, MenuAPI menuAPI, OrderAPI orderAPI) {
+        VBox orderVBox = createOrderVBox(order, menuAPI, orderAPI);
         orderObservableList.add(orderVBox);
         String orderId = (String) order.getMetadataValue("order_id");
         orderMap.put(orderId, orderVBox);
         orderOriginalPositions.put(orderId, position);
     }
 
-    private VBox createOrderVBox(Order order) {
+    private VBox createOrderVBox(Order order, MenuAPI menuAPI, OrderAPI orderAPI) {
         String orderId = (String) order.getMetadataValue("order_id");
         int orderNumber = order.getOrderNumber();
         int customerCount = (int) order.getMetadataValue("customers");
@@ -261,13 +264,13 @@ public class CookScreen2Controller {
 
             switch (iconName) {
                 case "trash_icon.png":
-                    button.setOnAction(event -> handleTrashAction(order));
+                    button.setOnAction(event -> handleTrashAction(order, orderAPI));
                     break;
                 case "flag_icon.png":
                     button.setOnAction(event -> handleFlagAction(order));
                     break;
                 case "send_icon.png":
-                    button.setOnAction(event -> handleSendAction(order));
+                    button.setOnAction(event -> handleSendAction(order, orderAPI));
                     break;
             }
 
@@ -279,8 +282,7 @@ public class CookScreen2Controller {
         return orderVBox;
     }
 
-    private void handleTrashAction(Order order) {
-        System.out.println("Trash action for Order #" + order.getOrderNumber());
+    private void handleTrashAction(Order order, OrderAPI orderAPI) {
         Task<Void> deleteOrderTask = new Task<>() {
             @Override
             protected Void call() {
@@ -298,14 +300,13 @@ public class CookScreen2Controller {
     }
 
     private void handleFlagAction(Order order) {
-        System.out.println("Flag action for Order #" + order.getOrderNumber());
         String orderId = (String) order.getMetadataValue("order_id");
         VBox orderVBox = orderMap.get(orderId);
 
         if (orderObservableList.contains(orderVBox)) {
             if (orderObservableList.indexOf(orderVBox) != 0) {
                 orderObservableList.remove(orderVBox);
-                orderObservableList.addFirst(orderVBox);
+                orderObservableList.add(0, orderVBox);
             } else {
                 int originalPosition = orderOriginalPositions.get(orderId);
                 orderObservableList.remove(orderVBox);
@@ -314,8 +315,7 @@ public class CookScreen2Controller {
         }
     }
 
-    private void handleSendAction(Order order) {
-        System.out.println("Send action for Order #" + order.getOrderNumber());
+    private void handleSendAction(Order order, OrderAPI orderAPI) {
         Task<Void> completeOrderTask = new Task<>() {
             @Override
             protected Void call() {
@@ -341,10 +341,7 @@ public class CookScreen2Controller {
         if (orderVBox != null) {
             orderObservableList.remove(orderVBox);
             orderOriginalPositions.remove(orderId);
-            System.out.println("Removed Order: " + orderId);
             orders.setText(orderObservableList.size() + " Orders");
-        } else {
-            System.out.println("Order not found: " + orderId);
         }
     }
 
@@ -354,9 +351,6 @@ public class CookScreen2Controller {
         executorService.shutdown();
     }
 
-    /**
-     * This class is used to manage dynamic labels for completed orders
-     */
     public static class DynamicLabelManager {
         private final ListView<Label> labelListView;
 
@@ -368,14 +362,12 @@ public class CookScreen2Controller {
             Label newLabel = new Label(text);
             newLabel.getStyleClass().add("docket-label");
             labelListView.getItems().add(newLabel);
-            System.out.println("Added completed order label with text: " + text);
         }
 
         public void addOrderLabel(String itemName) {
             Label newLabel = new Label(itemName);
             newLabel.getStyleClass().add("order-label");
             labelListView.getItems().add(newLabel);
-            System.out.println("Added order label with text: " + itemName);
         }
     }
 
