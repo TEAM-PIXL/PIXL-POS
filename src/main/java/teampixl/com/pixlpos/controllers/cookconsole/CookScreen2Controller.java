@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,6 +26,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CookScreen2Controller {
 
@@ -52,6 +55,8 @@ public class CookScreen2Controller {
 
     private DynamicLabelManager dynamicLabelManager;
 
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+
     AnimationTimer datetime = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -67,33 +72,45 @@ public class CookScreen2Controller {
         orderList.setItems(orderObservableList);
         dynamicLabelManager = new DynamicLabelManager(completedOrders);
 
-        loadOrdersFromDatabase();
-
-        orders.setText(orderObservableList.size() + " Orders");
-
-        for (Order order : orderAPI.getOrders()) {
-            if (order.getMetadataValue("order_status") == Order.OrderStatus.COMPLETED) {
-                long updatedAt = (long) order.getMetadataValue("updated_at");
-                LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
-                dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm")));
-            }
-        }
+        loadOrdersFromDatabaseAsync();
     }
 
-    private void loadOrdersFromDatabase() {
-        orderAPI.reloadOrders();
-        List<Order> activeOrders = orderAPI.getOrders().stream().filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.SENT).toList();
+    private void loadOrdersFromDatabaseAsync() {
+        Task<Void> loadOrdersTask = new Task<>() {
+            @Override
+            protected Void call() {
+                orderAPI.reloadOrders();
+                List<Order> activeOrders = orderAPI.getOrders().stream()
+                        .filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.SENT)
+                        .toList();
 
-        orderObservableList.clear();
-        orderMap.clear();
-        orderOriginalPositions.clear();
+                Platform.runLater(() -> {
+                    orderObservableList.clear();
+                    orderMap.clear();
+                    orderOriginalPositions.clear();
+                });
 
-        for (int i = 0; i < activeOrders.size(); i++) {
-            Order order = activeOrders.get(i);
-            addOrderToList(order, i);
-        }
+                for (int i = 0; i < activeOrders.size(); i++) {
+                    Order order = activeOrders.get(i);
+                    int position = i;
+                    Platform.runLater(() -> addOrderToList(order, position));
+                }
 
-        orders.setText(orderObservableList.size() + " Orders");
+                Platform.runLater(() -> orders.setText(orderObservableList.size() + " Orders"));
+
+                for (Order order : orderAPI.getOrders()) {
+                    if (order.getMetadataValue("order_status") == Order.OrderStatus.COMPLETED) {
+                        long updatedAt = (long) order.getMetadataValue("updated_at");
+                        LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
+                        Platform.runLater(() -> dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))));
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        executorService.submit(loadOrdersTask);
     }
 
     private void addOrderToList(Order order, int position) {
@@ -109,7 +126,6 @@ public class CookScreen2Controller {
         int orderNumber = order.getOrderNumber();
         int customerCount = (int) order.getMetadataValue("customers");
         int tableNumber = (int) order.getMetadataValue("table_number");
-        double totalPrice = calculateTotalPrice(order);
 
         VBox orderVBox = new VBox();
         orderVBox.setMaxWidth(300.0);
@@ -173,34 +189,53 @@ public class CookScreen2Controller {
         VBox.setVgrow(orderItemsListView, Priority.ALWAYS);
         DynamicLabelManager internaldynamicLabelManager = new DynamicLabelManager(orderItemsListView);
 
-        Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById(orderId);
-        Map<MenuItem, List<String>> itemNotes = OrderUtil.deserializeItemNotes((String) order.getDataValue("special_requests"), menuAPI);
+        Task<Void> loadOrderItemsTask = new Task<>() {
+            @Override
+            protected Void call() {
+                Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById(orderId);
+                Map<MenuItem, List<String>> itemNotes = OrderUtil.deserializeItemNotes((String) order.getDataValue("special_requests"), menuAPI);
 
-        for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
-            MenuItem menuItem = entry.getKey();
-            int quantity = entry.getValue();
-            List<String> notes = itemNotes.getOrDefault(menuItem, new ArrayList<>());
-            internaldynamicLabelManager.addOrderLabel(quantity + "x " + menuItem.getMetadataValue("itemName"));
+                double totalPrice = 0.0;
 
-            for (String note : notes) {
-                internaldynamicLabelManager.addOrderLabel("    * " + note);
+                for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
+                    MenuItem menuItem = entry.getKey();
+                    int quantity = entry.getValue();
+                    double price = (double) menuItem.getMetadataValue("price");
+                    totalPrice += price * quantity;
+
+                    List<String> notes = itemNotes.getOrDefault(menuItem, new ArrayList<>());
+                    Platform.runLater(() -> internaldynamicLabelManager.addOrderLabel(quantity + "x " + menuItem.getMetadataValue("itemName")));
+
+                    for (String note : notes) {
+                        Platform.runLater(() -> internaldynamicLabelManager.addOrderLabel("    * " + note));
+                    }
+                }
+
+                double finalTotalPrice = totalPrice;
+                Platform.runLater(() -> {
+                    HBox priceHBox = new HBox();
+                    priceHBox.setAlignment(Pos.CENTER);
+                    Label totalPriceLabel = new Label("$ " + String.format("%.2f", finalTotalPrice));
+                    totalPriceLabel.getStyleClass().add("amount-label");
+                    Label priceLabel = new Label("Price:");
+                    priceLabel.getStyleClass().add("customers-label");
+                    ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png"))));
+                    imageView.setFitHeight(22.0);
+                    imageView.setFitWidth(22.0);
+                    imageView.setPickOnBounds(true);
+                    imageView.setPreserveRatio(true);
+                    priceLabel.setGraphic(imageView);
+                    totalPriceLabel.setGraphic(priceLabel);
+                    priceHBox.getChildren().add(totalPriceLabel);
+
+                    orderVBox.getChildren().add(priceHBox);
+                });
+
+                return null;
             }
-        }
+        };
 
-        HBox priceHBox = new HBox();
-        priceHBox.setAlignment(Pos.CENTER);
-        Label totalPriceLabel = new Label("$ " + String.format("%.2f", totalPrice));
-        totalPriceLabel.getStyleClass().add("amount-label");
-        Label priceLabel = new Label("Price:");
-        priceLabel.getStyleClass().add("customers-label");
-        ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png"))));
-        imageView.setFitHeight(22.0);
-        imageView.setFitWidth(22.0);
-        imageView.setPickOnBounds(true);
-        imageView.setPreserveRatio(true);
-        priceLabel.setGraphic(imageView);
-        totalPriceLabel.setGraphic(priceLabel);
-        priceHBox.getChildren().add(totalPriceLabel);
+        executorService.submit(loadOrderItemsTask);
 
         HBox actionButtonsHBox = new HBox();
         actionButtonsHBox.setAlignment(Pos.CENTER);
@@ -239,31 +274,27 @@ public class CookScreen2Controller {
             actionButtonsHBox.getChildren().add(button);
         }
 
-        orderVBox.getChildren().addAll(orderNumberHBox, infoPane, orderItemsListView, priceHBox, actionButtonsHBox);
+        orderVBox.getChildren().addAll(orderNumberHBox, infoPane, orderItemsListView, actionButtonsHBox);
 
         return orderVBox;
     }
 
-    private double calculateTotalPrice(Order order) {
-        double totalPrice = 0.0;
-        Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById((String) order.getMetadataValue("order_id"));
-        for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
-            MenuItem menuItem = entry.getKey();
-            int quantity = entry.getValue();
-            double price = (double) menuItem.getMetadataValue("price");
-            totalPrice += price * quantity;
-        }
-        return totalPrice;
-    }
-
     private void handleTrashAction(Order order) {
         System.out.println("Trash action for Order #" + order.getOrderNumber());
-        List<StatusCode> statusCodes = orderAPI.deleteOrder((String) order.getMetadataValue("order_id"));
-        if (Exceptions.isSuccessful(statusCodes)) {
-            removeOrderFromList(order);
-        } else {
-            showErrorDialog(Exceptions.returnStatus("Failed to delete order:", statusCodes));
-        }
+        Task<Void> deleteOrderTask = new Task<>() {
+            @Override
+            protected Void call() {
+                List<StatusCode> statusCodes = orderAPI.deleteOrder((String) order.getMetadataValue("order_id"));
+                if (Exceptions.isSuccessful(statusCodes)) {
+                    Platform.runLater(() -> removeOrderFromList(order));
+                } else {
+                    Platform.runLater(() -> showErrorDialog(Exceptions.returnStatus("Failed to delete order:", statusCodes)));
+                }
+                return null;
+            }
+        };
+
+        executorService.submit(deleteOrderTask);
     }
 
     private void handleFlagAction(Order order) {
@@ -285,13 +316,23 @@ public class CookScreen2Controller {
 
     private void handleSendAction(Order order) {
         System.out.println("Send action for Order #" + order.getOrderNumber());
-        List<StatusCode> statusCodes = orderAPI.putOrderStatus((String) order.getMetadataValue("order_id"), Order.OrderStatus.COMPLETED);
-        if (Exceptions.isSuccessful(statusCodes)) {
-            removeOrderFromList(order);
-            dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-        } else {
-            showErrorDialog(Exceptions.returnStatus("Failed to complete order:", statusCodes));
-        }
+        Task<Void> completeOrderTask = new Task<>() {
+            @Override
+            protected Void call() {
+                List<StatusCode> statusCodes = orderAPI.putOrderStatus((String) order.getMetadataValue("order_id"), Order.OrderStatus.COMPLETED);
+                if (Exceptions.isSuccessful(statusCodes)) {
+                    Platform.runLater(() -> {
+                        removeOrderFromList(order);
+                        dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+                    });
+                } else {
+                    Platform.runLater(() -> showErrorDialog(Exceptions.returnStatus("Failed to complete order:", statusCodes)));
+                }
+                return null;
+            }
+        };
+
+        executorService.submit(completeOrderTask);
     }
 
     private void removeOrderFromList(Order order) {
@@ -310,6 +351,7 @@ public class CookScreen2Controller {
     @FXML
     protected void onLogoutButtonClick() {
         GuiCommon.logout(logoutbutton);
+        executorService.shutdown();
     }
 
     /**
