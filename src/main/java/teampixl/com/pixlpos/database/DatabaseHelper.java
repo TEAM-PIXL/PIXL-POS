@@ -218,7 +218,6 @@ public class DatabaseHelper {
                     FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
                 );
                 """;
-    }
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(sqlCreateUsersTable);
