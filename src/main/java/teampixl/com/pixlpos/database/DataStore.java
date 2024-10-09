@@ -9,7 +9,6 @@ import teampixl.com.pixlpos.models.logs.UserLogs;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Function;
 
 public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngredientsStore, IStockStore {
 

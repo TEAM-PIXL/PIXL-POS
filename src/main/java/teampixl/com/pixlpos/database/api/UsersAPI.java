@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 /**
  * The UsersAPI class is a singleton class that manages user operations.
  * It handles validation, retrieval, creation, updating, and deletion of users.
+ * Internal operations are optimized for asynchronous execution where applicable.
  */
 public class UsersAPI {
     private static UsersAPI instance;
@@ -41,26 +42,42 @@ public class UsersAPI {
     /* ===================== Validation Methods ===================== */
 
     public StatusCode validateUsersByUsername(String username) {
-        if (username == null) return StatusCode.USERNAME_NULL;
-        if (username.length() < 4) return StatusCode.USERNAME_TOO_SHORT;
-        if (username.length() > 20) return StatusCode.USERNAME_TOO_LONG;
-        if (username.chars().anyMatch(Character::isSpaceChar)) return StatusCode.USERNAME_CONTAINS_SPACES;
-        if (!username.matches("^[a-zA-Z0-9]*$")) return StatusCode.USERNAME_INVALID_CHARACTERS;
-        if (username.chars().allMatch(Character::isDigit)) return StatusCode.USERNAME_ONLY_DIGITS;
+        try {
+            if (username == null) return StatusCode.USERNAME_NULL;
+            if (username.length() < 4) return StatusCode.USERNAME_TOO_SHORT;
+            if (username.length() > 20) return StatusCode.USERNAME_TOO_LONG;
+            if (username.chars().anyMatch(Character::isSpaceChar)) return StatusCode.USERNAME_CONTAINS_SPACES;
+            if (!username.matches("^[a-zA-Z0-9]*$")) return StatusCode.USERNAME_INVALID_CHARACTERS;
+            if (username.chars().allMatch(Character::isDigit)) return StatusCode.USERNAME_ONLY_DIGITS;
 
-        boolean userExists = dataStore.readUsers().stream()
-                .anyMatch(user -> user.getMetadataValue("username").equals(username));
-        return userExists ? StatusCode.USERNAME_TAKEN : StatusCode.SUCCESS;
+            CompletableFuture<Boolean> userExistsFuture = CompletableFuture.supplyAsync(() ->
+                    dataStore.readUsers().stream()
+                            .anyMatch(user -> user.getMetadataValue("username").equals(username)), executorService);
+
+            boolean userExists = userExistsFuture.get(); // Blocking call
+            return userExists ? StatusCode.USERNAME_TAKEN : StatusCode.SUCCESS;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return StatusCode.INTERNAL_FAILURE;
+        }
     }
 
     public StatusCode validateUsersByEmailAddress(String email) {
-        if (email == null) return StatusCode.EMAIL_NULL;
-        if (email.chars().filter(ch -> ch == '@').count() != 1) return StatusCode.EMAIL_INVALID_FORMAT;
-        if (email.chars().anyMatch(Character::isSpaceChar)) return StatusCode.EMAIL_CONTAINS_SPACES;
+        try {
+            if (email == null) return StatusCode.EMAIL_NULL;
+            if (email.chars().filter(ch -> ch == '@').count() != 1) return StatusCode.EMAIL_INVALID_FORMAT;
+            if (email.chars().anyMatch(Character::isSpaceChar)) return StatusCode.EMAIL_CONTAINS_SPACES;
 
-        boolean userExists = dataStore.readUsers().stream()
-                .anyMatch(user -> user.getDataValue("email").equals(email));
-        return userExists ? StatusCode.EMAIL_TAKEN : StatusCode.SUCCESS;
+            CompletableFuture<Boolean> userExistsFuture = CompletableFuture.supplyAsync(() ->
+                    dataStore.readUsers().stream()
+                            .anyMatch(user -> user.getDataValue("email").equals(email)), executorService);
+
+            boolean userExists = userExistsFuture.get(); // Blocking call
+            return userExists ? StatusCode.EMAIL_TAKEN : StatusCode.SUCCESS;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return StatusCode.INTERNAL_FAILURE;
+        }
     }
 
     public StatusCode validateUsersByFirstName(String firstName) {
@@ -74,13 +91,21 @@ public class UsersAPI {
     }
 
     public StatusCode validateUsersByName(String firstName, String lastName) {
-        if (firstName == null || lastName == null) return StatusCode.INVALID_NAME;
-        if (firstName.trim().isEmpty() || lastName.trim().isEmpty()) return StatusCode.INVALID_NAME;
+        try {
+            if (firstName == null || lastName == null) return StatusCode.INVALID_NAME;
+            if (firstName.trim().isEmpty() || lastName.trim().isEmpty()) return StatusCode.INVALID_NAME;
 
-        boolean userExists = dataStore.readUsers().stream()
-                .anyMatch(user -> user.getMetadataValue("first_name").equals(firstName) &&
-                                  user.getMetadataValue("last_name").equals(lastName));
-        return userExists ? StatusCode.USER_ALREADY_EXISTS : StatusCode.SUCCESS;
+            CompletableFuture<Boolean> userExistsFuture = CompletableFuture.supplyAsync(() ->
+                    dataStore.readUsers().stream()
+                            .anyMatch(user -> user.getMetadataValue("first_name").equals(firstName) &&
+                                              user.getMetadataValue("last_name").equals(lastName)), executorService);
+
+            boolean userExists = userExistsFuture.get(); // Blocking call
+            return userExists ? StatusCode.USER_ALREADY_EXISTS : StatusCode.SUCCESS;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return StatusCode.INTERNAL_FAILURE;
+        }
     }
 
     public StatusCode validateUsersByPassword(String password) {
@@ -143,26 +168,50 @@ public class UsersAPI {
     /* ===================== User Retrieval Methods ===================== */
 
     public String keySearch(String username) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getMetadataValue("username").equals(username))
-                .findFirst()
-                .map(user -> (String) user.getMetadataValue("id"))
-                .orElse(null);
+        try {
+            CompletableFuture<String> keyFuture = CompletableFuture.supplyAsync(() ->
+                    dataStore.readUsers().stream()
+                            .filter(user -> user.getMetadataValue("username").equals(username))
+                            .findFirst()
+                            .map(user -> (String) user.getMetadataValue("id"))
+                            .orElse(null), executorService);
+
+            return keyFuture.get(); // Blocking call
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public String reverseKeySearch(String id) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getMetadataValue("id").equals(id))
-                .findFirst()
-                .map(user -> (String) user.getMetadataValue("username"))
-                .orElse(null);
+        try {
+            CompletableFuture<String> usernameFuture = CompletableFuture.supplyAsync(() ->
+                    dataStore.readUsers().stream()
+                            .filter(user -> user.getMetadataValue("id").equals(id))
+                            .findFirst()
+                            .map(user -> (String) user.getMetadataValue("username"))
+                            .orElse(null), executorService);
+
+            return usernameFuture.get(); // Blocking call
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Users keyTransform(String id) {
-        return dataStore.readUsers().stream()
-                .filter(user -> user.getMetadataValue("id").equals(id))
-                .findFirst()
-                .orElse(null);
+        try {
+            CompletableFuture<Users> userFuture = CompletableFuture.supplyAsync(() ->
+                    dataStore.readUsers().stream()
+                            .filter(user -> user.getMetadataValue("id").equals(id))
+                            .findFirst()
+                            .orElse(null), executorService);
+
+            return userFuture.get(); // Blocking call
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Users getUser(String username) {
@@ -200,14 +249,22 @@ public class UsersAPI {
     public List<StatusCode> postUsers(String firstName, String lastName, String username, String password, String email, Users.UserRole role, String additionalInfo) {
         try {
             List<StatusCode> validations = new ArrayList<>();
-            validations.add(validateUsersByFirstName(firstName));
-            validations.add(validateUsersByLastName(lastName));
-            validations.add(validateUsersByName(firstName, lastName));
-            validations.add(validateUsersByUsername(username));
-            validations.add(validateUsersByPassword(password));
-            validations.add(validateUsersByEmailAddress(email));
-            validations.add(validateUsersByRole(role));
-            validations.add(validateUsersByAdditionalInfo(additionalInfo));
+            List<Callable<StatusCode>> validationTasks = new ArrayList<>();
+
+            validationTasks.add(() -> validateUsersByFirstName(firstName));
+            validationTasks.add(() -> validateUsersByLastName(lastName));
+            validationTasks.add(() -> validateUsersByName(firstName, lastName));
+            validationTasks.add(() -> validateUsersByUsername(username));
+            validationTasks.add(() -> validateUsersByPassword(password));
+            validationTasks.add(() -> validateUsersByEmailAddress(email));
+            validationTasks.add(() -> validateUsersByRole(role));
+            validationTasks.add(() -> validateUsersByAdditionalInfo(additionalInfo));
+
+            List<Future<StatusCode>> futures = executorService.invokeAll(validationTasks);
+            for (Future<StatusCode> future : futures) {
+                validations.add(future.get());
+            }
+
             if (!Exceptions.isSuccessful(validations)) {
                 return validations;
             }
@@ -221,7 +278,8 @@ public class UsersAPI {
             user.setDataValue("additional_info", additionalInfo);
             dataStore.updateUser(user);
             return validations;
-        } catch (Exception e) {
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_POST_FAILED);
         }
     }
@@ -244,6 +302,7 @@ public class UsersAPI {
             dataStore.updateUser(user);
             return validations;
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
@@ -260,6 +319,7 @@ public class UsersAPI {
             dataStore.updateUser(user);
             return validations;
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
@@ -276,6 +336,7 @@ public class UsersAPI {
             dataStore.updateUser(user);
             return validations;
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
@@ -292,6 +353,7 @@ public class UsersAPI {
             dataStore.updateUser(user);
             return validations;
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
@@ -309,6 +371,7 @@ public class UsersAPI {
             dataStore.updateUser(user);
             return validations;
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
@@ -325,6 +388,7 @@ public class UsersAPI {
             dataStore.updateUser(user);
             return validations;
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
@@ -342,6 +406,7 @@ public class UsersAPI {
             validations.add(StatusCode.SUCCESS);
             return validations;
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
@@ -358,6 +423,7 @@ public class UsersAPI {
             dataStore.updateUser(user);
             return validations;
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_PUT_FAILED);
         }
     }
@@ -372,6 +438,7 @@ public class UsersAPI {
             dataStore.deleteUser(user);
             return List.of(StatusCode.SUCCESS);
         } catch (Exception e) {
+            e.printStackTrace();
             return List.of(StatusCode.USER_DELETION_FAILED);
         }
     }
@@ -379,29 +446,45 @@ public class UsersAPI {
     /* ===================== User Search Method ===================== */
 
     public List<Users> searchUsers(String query) {
-        String[] tokens = query.trim().split("\\s+");
+        try {
+            CompletableFuture<List<Users>> searchFuture = CompletableFuture.supplyAsync(() -> {
+                String[] tokens = query.trim().split("\\s+");
 
-        if (tokens.length > 2) {
+                if (tokens.length > 2) {
+                    return Collections.emptyList();
+                }
+
+                return dataStore.readUsers().stream()
+                        .filter(user -> {
+                            if (tokens.length == 2) {
+                                String firstName = tokens[0].toLowerCase();
+                                String lastName = tokens[1].toLowerCase();
+                                return user.getMetadataValue("first_name").toString().toLowerCase().contains(firstName) &&
+                                       user.getMetadataValue("last_name").toString().toLowerCase().contains(lastName);
+                            } else {
+                                String singleQuery = tokens[0].toLowerCase();
+                                return user.getMetadata().metadata().values().stream()
+                                               .filter(Objects::nonNull)
+                                               .anyMatch(value -> value.toString().toLowerCase().contains(singleQuery)) ||
+                                       user.getData().values().stream()
+                                               .filter(Objects::nonNull)
+                                               .anyMatch(value -> value.toString().toLowerCase().contains(singleQuery));
+                            }
+                        })
+                        .collect(Collectors.toList());
+            }, executorService);
+
+            return searchFuture.get(); // Blocking call
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
             return Collections.emptyList();
         }
+    }
 
-        return dataStore.readUsers().stream()
-                .filter(user -> {
-                    if (tokens.length == 2) {
-                        String firstName = tokens[0].toLowerCase();
-                        String lastName = tokens[1].toLowerCase();
-                        return user.getMetadataValue("first_name").toString().toLowerCase().contains(firstName) &&
-                               user.getMetadataValue("last_name").toString().toLowerCase().contains(lastName);
-                    } else {
-                        String singleQuery = tokens[0].toLowerCase();
-                        return user.getMetadata().metadata().values().stream()
-                                       .filter(Objects::nonNull)
-                                       .anyMatch(value -> value.toString().toLowerCase().contains(singleQuery)) ||
-                               user.getData().values().stream()
-                                       .filter(Objects::nonNull)
-                                       .anyMatch(value -> value.toString().toLowerCase().contains(singleQuery));
-                    }
-                })
-                .collect(Collectors.toList());
+    /* ===================== Shutdown Executor Service ===================== */
+
+    public void shutdown() {
+        executorService.shutdown();
     }
 }
+
