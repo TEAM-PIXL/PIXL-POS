@@ -166,7 +166,7 @@
                             <graphic>
                                 <ImageView fitHeight="22" fitWidth="22">
                                     <image>
-                                        <Image url="@../../images/search_icon.png" />
+                                        <Image url="@../../images/waitericons/search_icon.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

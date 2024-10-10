@@ -24,9 +24,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+
 
 import javafx.scene.layout.HBox;
 
@@ -73,6 +71,31 @@ public class AdminScreenHomeController
         }
     };
 
+    protected void addtooltips(){
+        Tooltip hometooltip = new Tooltip("home");
+        hometooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(homebutton, hometooltip);
+
+        Tooltip userstooltip = new Tooltip("users");
+        userstooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(usersbutton, userstooltip);
+
+        Tooltip menutooltip = new Tooltip("menu");
+        menutooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(menubutton, menutooltip);
+
+        Tooltip stocktooltip = new Tooltip("stock");
+        stocktooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(stockbutton, stocktooltip);
+
+        Tooltip analyticstooltip = new Tooltip("analytics");
+        analyticstooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(analyticsbutton, analyticstooltip);
+
+        Tooltip logouttooltip = new Tooltip("logout");
+        logouttooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(logoutbutton, logouttooltip);
+    }
 
     @FXML
     public void initialize() {
