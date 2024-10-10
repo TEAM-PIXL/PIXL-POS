@@ -92,7 +92,7 @@
                           <children>
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                   <image>
-                                      <Image url="@../../images/search_icon.png" />
+                                      <Image url="@../../images/waitericons/search_icon.png" />
                                   </image>
                                   <HBox.margin>
                                       <Insets left="15.0" top="7.0" />
@@ -132,7 +132,7 @@
                                   <graphic>
                                       <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                           <image>
-                                              <Image url="@../../images/logout_icon.png" />
+                                              <Image url="@../../images/cookicons/logout_icon.png" />
                                           </image>
                                       </ImageView>
                                   </graphic>
