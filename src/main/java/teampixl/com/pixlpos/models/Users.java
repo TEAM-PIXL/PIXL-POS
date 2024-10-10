@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import teampixl.com.pixlpos.database.DataStore;
+import teampixl.com.pixlpos.models.logs.UserLogs;
 import teampixl.com.pixlpos.models.tools.DataManager;
 import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 

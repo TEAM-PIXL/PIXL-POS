@@ -3,7 +3,7 @@ package teampixl.com.pixlpos.models;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.tools.MetadataWrapper;
 import teampixl.com.pixlpos.database.api.MenuAPI;
-import teampixl.com.pixlpos.models.tools.IDataManager;
+import teampixl.com.pixlpos.models.tools.DataManager;
 
 import java.util.*;
 
@@ -11,14 +11,12 @@ import java.util.*;
  * The Order class represents an order in the system.
  * It contains metadata, data, and methods to manage the order.
  */
-public class Order implements IDataManager {
+public class Order extends DataManager {
 
     /*============================================================================================================================================================
     Code Description:
     - Enumerations for OrderStatus
     - Enumerations for OrderType
-    - MetadataWrapper object for metadata
-    - Map object for data
     ============================================================================================================================================================*/
 
     /**
@@ -30,11 +28,12 @@ public class Order implements IDataManager {
         RECEIVED,
         IN_PROGRESS,
         COMPLETED,
-        CANCELED
+        CANCELED,
+        PAID
     }
 
     /**
-     * Enumerations for the type of an order.
+     * Enumerations for the type of order.
      */
     public enum OrderType {
         DINE_IN,
@@ -48,11 +47,8 @@ public class Order implements IDataManager {
     public enum PaymentMethod {
         CASH,
         CARD,
-        MOBILE
+        NOT_PAID, MOBILE
     }
-
-    private MetadataWrapper metadata;
-    private final Map<String, Object> data;
 
     /*============================================================================================================================================================
     Code Description:
@@ -84,6 +80,16 @@ public class Order implements IDataManager {
      * @param userId The user ID.
      */
     public Order(int orderNumber, String userId) {
+        super(initializeMetadata(orderNumber, userId));
+
+        this.data = new HashMap<>();
+        this.data.put("menuItems", new HashMap<String, Integer>());
+        this.data.put("total", 0.0);
+        this.data.put("special_requests", null);
+        this.data.put("payment_method", PaymentMethod.CARD.name());
+    }
+
+    private static MetadataWrapper initializeMetadata(int orderNumber, String userId) {
         if (orderNumber <= 0) {
             throw new IllegalArgumentException("Order number must be positive.");
         }
@@ -102,14 +108,7 @@ public class Order implements IDataManager {
         metadataMap.put("customers", 1);
         metadataMap.put("created_at", System.currentTimeMillis());
         metadataMap.put("updated_at", System.currentTimeMillis());
-
-        this.metadata = new MetadataWrapper(metadataMap);
-
-        this.data = new HashMap<>();
-        this.data.put("menuItems", new HashMap<String, Integer>());
-        this.data.put("total", 0.0);
-        this.data.put("special_requests", null);
-        this.data.put("payment_method", PaymentMethod.CARD.name());
+        return new MetadataWrapper(metadataMap);
     }
 
     /*============================================================================================================================================================
@@ -277,13 +276,6 @@ public class Order implements IDataManager {
         updateTimestamp();
     }
 
-    /**
-     * Marks the order as completed.
-     */
-    public void completeOrder() {
-        updateOrderStatus(OrderStatus.COMPLETED);
-    }
-
     private void updateTimestamp() {
         updateMetadata("updated_at", System.currentTimeMillis());
     }
@@ -368,44 +360,12 @@ public class Order implements IDataManager {
 
     /*============================================================================================================================================================
     Code Description:
-    - Method to get metadata, update metadata, and provide a string representation of the Order object.
+    - Overridden methods for Order object.
 
     Methods:
-        - getMetadata(): returns the metadata
-        - getData(): returns the data map
-        - updateMetadata(String key, Object value): updates the metadata map
-        - setDataValue(String key, Object value): sets data value in the data map
-        - toString(): returns a string representation of the Order object
         - equals(Object obj): checks if two Order objects are equal
         - hashCode(): returns the hash code of the Order object
     ============================================================================================================================================================*/
-
-    public MetadataWrapper getMetadata() {
-        return metadata;
-    }
-
-    public Map<String, Object> getData() {
-        return data;
-    }
-
-    public void updateMetadata(String key, Object value) {
-        Map<String, Object> modifiableMetadata = new HashMap<>(metadata.metadata());
-        if (value != null) {
-            modifiableMetadata.put(key, value);
-        } else {
-            modifiableMetadata.remove(key);
-        }
-        this.metadata = new MetadataWrapper(modifiableMetadata);
-    }
-
-    public void setDataValue(String key, Object value) {
-        data.put(key, value);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Order{Metadata: %s, Data: %s}", metadata.metadata(), data);
-    }
 
     @Override
     public boolean equals(Object obj) {
