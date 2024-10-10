@@ -8,6 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.w3c.dom.events.Event;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
@@ -123,6 +124,7 @@ public class AdminScreenStockController
         dataStore = DataStore.getInstance();
         ingredientsAPI = IngredientsAPI.getInstance();
         populateStockGrid();
+
     }
 
 
@@ -185,7 +187,7 @@ public class AdminScreenStockController
 
     }
     @FXML
-    protected void onRemoveButtonClick(String id){
+    protected void onRemoveButtonClick(javafx.event.ActionEvent event, String id){
         ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
 
         for (int i = 0; i < items.size(); i++) {
@@ -300,18 +302,20 @@ public class AdminScreenStockController
     private void populateStockGrid() {
         ObservableList<Stock> listOfStockItems = dataStore.readStock();
         for (Stock stock : listOfStockItems) {
-            Double desiredQuantity = 0.00;
-            Double actualQuantity = 0.00;
-            Double price = 0.00;
+            String actualQuantity = stock.getDataValue("numeral").toString();
             String ingredientID = stock.getMetadataValue("ingredient_id").toString();
             String ingredientName = ingredientsAPI.reverseKeySearch(ingredientID);
+            String orderStatus = stock.getMetadataValue("onOrder").toString();
+            String lastUpdated = stock.getMetadataValue("lastUpdated").toString();
+            String stockLevel = stock.getMetadataValue("stockStatus").toString();
             addInventoryItemToListView(
                     itemlist,
                     ingredientID,
                     ingredientName,
-                    desiredQuantity.toString(),
-                    actualQuantity.toString(),
-                    price.toString()
+                    actualQuantity,
+                    orderStatus,
+                    lastUpdated,
+                    stockLevel
             );
         }
     }
@@ -329,19 +333,5 @@ public class AdminScreenStockController
         // Implement edit menu item logic here
     }
 
-    private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
-        // Implement remove menu item logic here
 
-        ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
-
-        // Loop through the list to find the HBox with the matching ID
-        for (int i = 0; i < items.size(); i++) {
-            HBox hbox = items.get(i);
-
-            if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
-                items.remove(i);  // Remove the HBox at the found index
-                break;            // Exit the loop once the HBox is removed
-            }
-        }
-    }
 }

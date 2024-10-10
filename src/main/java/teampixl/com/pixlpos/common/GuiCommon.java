@@ -41,9 +41,11 @@ public class GuiCommon {
                     String resolution = settings.getMetadataValue("resolution").toString();
                     switch (resolution) {
                         case "HD":
-                            Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-                            WIDTH = screenSize.getWidth();
-                            HEIGHT = screenSize.getHeight() - 25;
+//                            Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+//                            WIDTH = screenSize.getWidth();
+//                            HEIGHT = screenSize.getHeight() - 25;
+                            WIDTH = 1280;
+                            HEIGHT = 720;
                             break;
                         case "SD":
                         default:
