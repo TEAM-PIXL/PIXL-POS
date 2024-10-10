@@ -101,6 +101,7 @@ public class AdminScreenHomeController
     public void initialize() {
         datetime.start();
         greeting.setText("Hello, " + firstName);
+        addtooltips();
     }
 
 
