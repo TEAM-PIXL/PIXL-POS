@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -15,24 +14,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../../style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.adminconsole.AdminScreenHomeController">
    <top>
-      <HBox prefHeight="65.0" prefWidth="1280.0" styleClass="top-container" BorderPane.alignment="CENTER">
+      <HBox prefHeight="65.0" prefWidth="1280.0" styleClass="top-container-white" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane prefHeight="60.0" prefWidth="230.0">
-               <children>
-                  <Label layoutX="39.0" layoutY="16.0" styleClass="logo" text="PIXL Services" />
-               </children>
-            </AnchorPane>
+            <AnchorPane prefHeight="60.0" prefWidth="230.0" />
             <Label styleClass="heading" text="Home">
                <HBox.margin>
                   <Insets top="20.0" />
                </HBox.margin>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
-            <HBox prefWidth="538.0" styleClass="search-bar" HBox.hgrow="ALWAYS">
+            <HBox prefWidth="538.0" styleClass="search-bar-admin" HBox.hgrow="ALWAYS">
                <children>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -55,37 +49,37 @@
                   <Insets bottom="13.0" top="13.0" />
                </HBox.margin>
             </HBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <HBox prefWidth="200.0">
+            <Region prefHeight="65.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER" prefHeight="65.0" prefWidth="228.0" spacing="20.0">
                <children>
-                  <Label fx:id="date" text="27-09-2024" textAlignment="CENTER">
-                     <padding>
-                        <Insets left="30.0" top="25.0" />
-                     </padding>
-                  </Label>
-                  <Label fx:id="time" text="10:42 AM">
-                     <padding>
-                        <Insets left="20.0" top="25.0" />
-                     </padding>
-                  </Label>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../images/adminicons/weathericons/moon_icon.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="date" text="27-09-2024" textAlignment="CENTER" />
+                  <Label fx:id="time" text="10:42 AM" />
                </children>
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
             </HBox>
          </children>
       </HBox>
    </top>
    <left>
-      <AnchorPane prefWidth="210.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+      <AnchorPane prefWidth="190.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane layoutY="-5.0" prefHeight="190.0" prefWidth="210.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane layoutY="-5.0" prefHeight="655.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <ImageView fitHeight="74.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="5.0">
+                  <ImageView fitHeight="74.0" fitWidth="68.0" layoutX="77.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="77.0" AnchorPane.rightAnchor="65.0" AnchorPane.topAnchor="14.0">
                      <image>
                         <Image url="@../../../images/adminicons/account_user_icon.png" />
                      </image>
                   </ImageView>
-                  <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
-                  <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
-                  <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Have a nice day" AnchorPane.topAnchor="145.0" />
+                  <Label fx:id="greeting" contentDisplay="CENTER" layoutX="53.0" layoutY="97.0" styleClass="hello-label-admin" text="Hello, Admin" AnchorPane.topAnchor="97.0" />
+                  <Label layoutX="63.0" layoutY="130.0" text="Welcome," AnchorPane.leftAnchor="80.0" />
+                  <Label layoutX="63.0" layoutY="148.0" text="Have a nice day" />
                </children>
             </AnchorPane>
             <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
@@ -141,9 +135,19 @@
                   </Button>
                </children>
             </VBox>
-            <VBox layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+            <Line endX="85.0" layoutX="111.0" layoutY="426.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" />
+            <Button fx:id="settingsbutton" layoutY="435.0" mnemonicParsing="false" onAction="#onSettingsButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Settings">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../images/adminicons/settings_icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <VBox alignment="CENTER" layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
-                  <Button fx:id="logoutbutton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
+                  <Button fx:id="logoutbutton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" styleClass="logout-button-admin" text="Logout">
                      <graphic>
                         <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -152,6 +156,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
+                  <Label styleClass="logo-text" text="© PIXL Services" />
                </children>
             </VBox>
          </children>
@@ -169,36 +174,45 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
          <children>
-            <FlowPane hgap="10.0" prefHeight="876.0" prefWidth="1070.0" prefWrapLength="0.0" vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
+            <FlowPane hgap="10.0" prefHeight="655.0" prefWidth="1070.0" prefWrapLength="1.0E7" vgap="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <VBox minHeight="200.0" minWidth="600.0">
+                  <VBox minHeight="300.0" minWidth="600.0">
                      <children>
                         <Label text="WIDGET NAME" />
                         <VBox styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox prefHeight="50.0" />
                               <HBox prefHeight="100.0" prefWidth="200.0" styleClass="widget-line" />
-                              <ListView prefHeight="200.0" prefWidth="200.0" styleClass="list-pane" />
                            </children>
                         </VBox>
                      </children>
                   </VBox>
-                  <VBox layoutX="20.0" layoutY="20.0" minHeight="200.0" minWidth="420.0">
+                  <VBox minHeight="300.0" minWidth="420.0">
                      <children>
                         <Label text="WIDGET NAME" />
                         <VBox styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox prefHeight="50.0" />
-                              <HBox prefHeight="100.0" prefWidth="200.0" styleClass="widget-line" />
-                              <ListView prefHeight="200.0" prefWidth="200.0" styleClass="list-pane" />
+                              <HBox prefHeight="0.0" styleClass="widget-line" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <VBox layoutX="610.0" layoutY="10.0" minHeight="300.0" minWidth="420.0">
+                     <children>
+                        <Label text="WIDGET NAME" />
+                        <VBox styleClass="widget-container" VBox.vgrow="ALWAYS">
+                           <children>
+                              <HBox prefHeight="50.0" />
+                              <HBox prefHeight="0.0" styleClass="widget-line" />
                            </children>
                         </VBox>
                      </children>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
             </FlowPane>
          </children>
       </AnchorPane>
