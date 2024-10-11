@@ -71,7 +71,7 @@
                      </padding>
                   </HBox>
                   <HBox styleClass="line" />
-                  <ListView fx:id="orderList" orientation="HORIZONTAL" prefHeight="200.0" prefWidth="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                  <ListView fx:id="orderList" orientation="HORIZONTAL" prefHeight="200.0" prefWidth="200.0" styleClass="list-pane-cook" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
          </children>
