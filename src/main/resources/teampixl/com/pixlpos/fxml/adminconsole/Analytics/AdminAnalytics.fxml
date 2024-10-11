@@ -164,7 +164,7 @@
                 <Insets bottom="20.0" left="10.0" right="20.0" top="20.0" />
             </padding>
          <children>
-             <VBox prefHeight="654.4" prefWidth="400.0" spacing="10.0" styleClass="manage-menu-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
+             <VBox prefHeight="654.4" prefWidth="400.0" spacing="10.0" styleClass="manage-analytics-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
                  <children>
                      <Label prefHeight="34.0" prefWidth="234.0" styleClass="container-label" text=" Analytics">
                          <padding>

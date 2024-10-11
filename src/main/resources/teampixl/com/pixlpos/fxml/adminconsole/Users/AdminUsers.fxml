@@ -219,9 +219,9 @@
         <AnchorPane maxHeight="0.0" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
     </bottom>
     <center>
-        <AnchorPane style="-fx-background-color: #f5f5f5;" BorderPane.alignment="TOP_LEFT">
+        <AnchorPane BorderPane.alignment="TOP_LEFT">
             <padding>
-                <Insets bottom="10.0" left="20.0" right="10.0" top="20.0" />
+                <Insets bottom="20.0" left="20.0" right="10.0" top="20.0" />
             </padding>
          <children>
                 <VBox prefHeight="654.4" styleClass="list-user-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
