@@ -123,7 +123,7 @@
                     <bottom>
                         <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0" BorderPane.alignment="CENTER">
                             <children>
-                                <Button fx:id="sendorderbutton" mnemonicParsing="false" onAction="#onSendOrderButtonClick" prefHeight="120.0" prefWidth="120.0" styleClass="submit-button" text="Send Order" />
+                                <Button fx:id="sendorderbutton" mnemonicParsing="false" onAction="#onSendOrderButtonClick" prefHeight="120.0" prefWidth="120.0" styleClass="submit-button-waiter" text="Send Order" />
                                 <VBox spacing="10.0">
                                     <children>
                                         <Button fx:id="customizebutton" mnemonicParsing="false" onAction="#onCustomizeButtonClick" prefHeight="55.0" prefWidth="170.0" styleClass="customize-button" text="Customize" />
@@ -320,7 +320,7 @@
                         </HBox>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                             <children>
-                                <Button fx:id="logoutbutton" layoutX="56.0" layoutY="17.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" styleClass="logout-button" text="Logout">
+                                <Button fx:id="logoutbutton" layoutX="56.0" layoutY="17.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" styleClass="logout-button-waiter-cook" text="Logout">
                                     <graphic>
                                         <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                             <image>

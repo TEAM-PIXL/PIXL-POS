@@ -1,73 +1,12 @@
-/* Constants */
 
-.root {
-    --base-color: #F5F5F5;
-
+/* ============================Container styling============================= */
+.top-container {
+    -fx-background-color: white;
 }
-
-/*var(--base-color)*/
-
-
-
-/* General Styling */
-
-/* SideBar styling */
 .side-container {
     -fx-background-color: white;
 }
 
-.logo-text {
-    -fx-text-fill: #757575;
-    -fx-font-size: 12;
-}
-
-.line {
-    -fx-background-color: #4A85F6;
-    -fx-stroke-width: 0.2;
-}
-
-.message-label {
-    -fx-text-fill: #757575;
-    -fx-font-size: 12px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.hello-label {
-    -fx-text-fill: #0A0A0A;
-    -fx-font-size: 18px;
-    -fx-font-weight: 700;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.side-bar-button, .logout-button-admin {
-    -fx-background-color: white;
-    -fx-text-fill: #4a4a4a;
-    -fx-font-size: 14px;
-    -fx-cursor: hand;
-}
-
-.side-bar-button:hover, .logout-button-admin:hover {
-    -fx-background-color: #4A85F6;
-    -fx-text-fill: white;
-}
-
-.home-button, .menu-button, .user-button, .stock-button, .analytics-button{
-    -fx-text-fill: #4A85F6;
-    -fx-background-color: white;
-}
-
-
-/* TopBar styling */
-.top-container {
-    -fx-background-color: white;
-}
-
-.heading {
-    -fx-text-fill: #4A85F6;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Arial", sans-serif;
-}
 .search-box {
     -fx-background-color: rgba(0, 0, 0, 0);
 }
@@ -76,11 +15,6 @@
     -fx-background-radius: 15px;
     -fx-background-color: #F5F5F5;
 }
-
-/* ADMIN */
-
-/* ============================ HOME ============================ */
-/*  widget styling */
 
 .widget-container {
     -fx-background-color: white;
@@ -100,120 +34,7 @@
     -fx-border-radius: 10px;
 
 }
-.list-cell:filled:selected:focused,
-.list-cell:filled:selected,
-.list-cell:even,
-.list-cell:odd {
-    -fx-background-color: transparent;
-}
-.list-pane .scroll-bar:horizontal {
-    -fx-opacity: 0;      /* Makes the scrollbar invisible */
 
-}
-
-
-.notes-add{
-    -fx-background-color: #DBE7FD;
-    -fx-text-fill: #4A85F6;
-    -fx-font-size: 10;
-    -fx-background-radius: 2;
-    -fx-cursor: hand;
-}
-
-.notes-remove{
-    -fx-background-color: #FCDBDB;
-    -fx-text-fill: #F04B4B;
-    -fx-font-size: 10;
-    -fx-background-radius: 2;
-    -fx-cursor: hand;
-}
-
-.notes-labeltext{
-    -fx-text-fill: #black;
-    -fx-font-weight: 700;
-}
-
-.stockalert-labeltext{
-    -fx-text-fill: #black;
-    -fx-font-weight: 700;
-}
-
-.stockalert-level-no{
-    -fx-background-color: #FCDBDB;
-    -fx-text-fill: #F04B4B;
-    -fx-font-size: 15;
-    -fx-background-radius:5;
-}
-
-.stockalert-level-low{
-    -fx-background-color: #FFF5D9;
-    -fx-text-fill: #F0C54E;
-    -fx-font-size: 15;
-    -fx-background-radius:5;
-}
-
-.stockalert-level-in{
-    -fx-background-color: #E1FFE0;
-    -fx-text-fill: #69C166;
-    -fx-font-size: 15;
-    -fx-background-radius:5;
-}
-
-.stockalert-status-on{
-    -fx-background-color: #E0EEFF;
-    -fx-text-fill: #74AEF4;
-    -fx-font-size: 15;
-    -fx-background-radius:5;
-}
-.stockalert-status-not{
-    -fx-background-color: #ECEEF0;
-    -fx-text-fill: #A2A4A6;
-    -fx-font-size: 15;
-    -fx-background-radius:5;
-}
-
-.userlog-labeltext{
-    -fx-text-fill: #black;
-    -fx-font-weight: 700;
-}
-
-.topseller-labeltext{
-    -fx-text-fill: #black;
-    -fx-font-weight: 700;
-}
-.topseller-container{
-    -fx-background-color: #EFF4FA;
-    -fx-background-radius: 20;
-    -fx-border-color: white;
-    -fx-border-radius: 20;
-}
-/*============================ MENU ============================ */
-/* Root styling */
-
-
-/* ButtonBar styling */
-.button-bar {
-    -fx-background-color: white;
-    -fx-spacing: 20px;
-}
-
-.submit-button, .add-button, .cancel-button{
-    -fx-background-color: #4A85F6;
-    -fx-text-fill: white;
-    -fx-background-radius: 5;
-}
-
-
-/* Tab Content */
-.manage-menu-container, .list-menu-container, .manage-user-container,
-.list-user-container, .manage-stock-container, .list-stock-container, .manage-analytics-container {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-color: white;
-    -fx-border-radius: 10px;
-}
-
-/* ListPane styling */
 .list-pane {
     -fx-background-color: white;
     -fx-border-color: #white;
@@ -221,79 +42,17 @@
     -fx-border-radius: 10px;
 }
 
-/* Database Labels colour */
-.table-header {
-    -fx-background-color: #EFF4FA;
-}
-
-/* Database Label text styling */
-.database-label {
-    -fx-text-fill: #8f9bb3;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-/* Title styling */
-.container-label {
-    -fx-text-fill: #222b45;
-    -fx-font-size: 17px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.container-line {
-    -fx-border-color: #4A85F6;
-    -fx-border-width: 1;
-}
-/*============================ USERS ============================ */
-/* Root styling */
-
-/* database labels colour*/
-.table-header {
-    -fx-background-color: #EFF4FA;
-}
-.table-header-exclusive {
-    -fx-background-color: #FFFFFF;
-}
-
-/*============================ STOCK ============================ */
-/* Root styling */
 
 
-/*============================ ANALYTICS ============================ */
-/* Root styling */
-
-
-/* WAITER =====================================================================================================*/
-/*
- * Container styling
- */
-.root-anchor {
-    -fx-background-color: #f5f5f5;
-}
-
-.logout-button {
+.list-cell:even,
+.list-cell:odd {
     -fx-background-color: transparent;
-    -fx-text-fill: #4A85F6;
-    -fx-font-size: 17px;
-    -fx-cursor: hand;
+}
+.list-pane .scroll-bar:horizontal {
+    -fx-opacity: 0;      /* Makes the scrollbar invisible */
 }
 
-.logout-button:hover {
-    -fx-background-color: #4A85F6;
-    -fx-text-fill: white;
-}
-
-.order-container, .button-container {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-color: white;
-    -fx-border-radius: 10px;
-}
-.order-highlevel-container {
-    -fx-background-color: #EFF4FA;
-}
-
-.list-pane {
+.list-pane-waiter {
     -fx-background-color: white;
     -fx-border-color: #white;
     -fx-background-radius: 10;
@@ -301,7 +60,6 @@
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;
 }
-
 #orderitemslistview .list-cell:selected {
     -fx-background-color: #8f9bb3;
     -fx-text-fill: black;
@@ -332,128 +90,46 @@
     -fx-opacity: 0;      /* Makes the scrollbar invisible */
 
 }
-/**
-    * Button Styling
- */
-.submit-button {
-    -fx-background-color: #A5CC72;
-    -fx-text-fill: white;
-    -fx-font-size: 13px;
-    -fx-cursor: hand;
-    -fx-background-radius: 5;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
-}
 
-.customize-button, .item-correct, .filter-button{
-    -fx-background-color: #4A85F6;
-    -fx-text-fill: white;
-    -fx-background-radius: 5;
-}
-
-.restart-button, .voiditem-button {
-    -fx-background-color: #dc4242;
-    -fx-text-fill: white;
-    -fx-font-size: 13px;
-    -fx-cursor: hand;
-    -fx-background-radius: 5;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
-}
-
-
-.item-button{
+.topseller-container{
     -fx-background-color: #EFF4FA;
-    -fx-text-fill: black;
-    -fx-font-weight: bold;
-    -fx-font-size: 20px;
-    -fx-font-family: "Open Sans";
-}
-
-/**
-    * Text Styling
- */
-.heading {
-    -fx-text-fill: #4A85F6;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.order-label {
-    -fx-text-fill: #000000;
-    -fx-font-size: 20px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.order-number {
-    -fx-text-fill: #000000;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.customers-label, .table-label {
-    -fx-text-fill: #000000;
-    -fx-font-size: 15px;
-    -fx-font-family: "Open Sans";
-}
-
-.amount-label {
-    -fx-text-fill: #0095FF;
-    -fx-font-size: 20px;
-    -fx-font-family: "Open Sans";
-}
-
-.buttonprice-label {
-    -fx-text-fill: #8f9bb3;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.docket-label {
-    -fx-text-fill: #000000;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.combo-box .list-cell {
-    -fx-text-overrun: ellipsis;  /* Truncate text with ellipsis if it's too long */
-    -fx-max-width: 0;
+    -fx-background-radius: 20;
+    -fx-border-color: white;
+    -fx-border-radius: 20;
 }
 
 
-.combo-box-base .text{
-    -fx-fill: #0095FF;
-    -fx-font-size: 15px;
-    -fx-font-family: "Open Sans";
+.manage-menu-container, .list-menu-container, .manage-user-container,
+.list-user-container, .manage-stock-container, .list-stock-container, .manage-analytics-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10px;
 }
 
-.combo-box{
-    -fx-text-fill: #0095FF;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-    -fx-background-color: transparent;
-}
-.combo-box .arrow-button
-{
-    -fx-background-color: null;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-    -fx-padding: 0.0em 0em 0.0em 0.0em; /* 0 3 0 0 */
+.table-header {
+    -fx-background-color: #EFF4FA;
 }
 
-.combo-box .arrow-button .arrow
-{
-    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
-    -fx-background-insets: 0 0 0 0, 0;
-    -fx-padding: 0em 0em 0em 0em; /* 3 3.75 3 3.75 */
-    /*
-        -fx-shape: "M 0 0 h 7 l -3.5 4 z";
-    */
-    -fx-shape: null;
+.button-bar {
+    -fx-background-color: white;
+    -fx-spacing: 20px;
 }
 
-/**
-    * Tab Styling
- */
+.table-header {
+    -fx-background-color: #EFF4FA;
+}
+
+.order-container, .button-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10px;
+}
+
+.order-highlevel-container {
+    -fx-background-color: #EFF4FA;
+}
 
 /* TabPane styling */
 .tab-pane {
@@ -531,109 +207,8 @@
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;
 }
-
-
-
-
-
-/* COOK ========================================================================================= */
-
-/*
- * Container styling
- */
-.root-anchor {
-    -fx-background-color: #f5f5f5;
-}
-
-
-
-.logout-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #4A85F6;
-    -fx-font-size: 17px;
-    -fx-cursor: hand;
-}
-
-.logout-button:hover {
-    -fx-background-color: #4A85F6;
-    -fx-text-fill: white;
-}
-
-.order-container, .button-container {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-color: white;
-    -fx-border-radius: 10px;
-}
-.order-highlevel-container {
-    -fx-background-color: #EFF4FA;
-}
-
-.line {
-    -fx-border-color: #4A85F6;
-    -fx-border-width: 1;
-}
-
-/**
-    * Button Styling
- */
-
-.icon-button {
-    -fx-background-color: transparent;
-    -fx-cursor: hand;
-    -fx-content-display:graphic-only;
-}
-
-
-/**
-    * Text Styling
- */
-.heading {
-    -fx-text-fill: #4A85F6;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.order-label {
-    -fx-text-fill: #000000;
-    -fx-font-size: 20px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.order-number {
-    -fx-text-fill: #000000;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.customers-label, .table-label {
-    -fx-text-fill: #000000;
-    -fx-font-size: 15px;
-    -fx-font-family: "Open Sans";
-}
-
-.amount-label {
-    -fx-text-fill: #0095FF;
-    -fx-font-size: 20px;
-    -fx-font-family: "Open Sans";
-}
-
-.buttonprice-label {
-    -fx-text-fill: #8f9bb3;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-.docket-label {
-    -fx-text-fill: #000000;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-
-}
-/**
-    * Complete Order List Styling
- */
+/* end of tab styling */
+/* Cook styling */
 .list-pane {
     -fx-background-color: white;
     -fx-border-color: transparent;
@@ -684,3 +259,390 @@
 .vbox-order-selected .label-total {
     -fx-text-fill: black;
 }
+/* end of cook styling */
+
+/* ============================Text styling============================= */
+
+.logo-text {
+    -fx-text-fill: #757575;
+    -fx-font-size: 12;
+}
+
+.line {
+    -fx-background-color: #4A85F6;
+    -fx-stroke-width: 0.2;
+}
+.line {
+    -fx-border-color: #4A85F6;
+    -fx-border-width: 1;
+}
+.container-line {
+    -fx-border-color: #4A85F6;
+    -fx-border-width: 1;
+}
+
+.message-label {
+    -fx-text-fill: #757575;
+    -fx-font-size: 12px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.hello-label {
+    -fx-text-fill: #0A0A0A;
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+
+.heading {
+    -fx-text-fill: #4A85F6;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+
+.notes-labeltext{
+    -fx-text-fill: #black;
+    -fx-font-weight: 700;
+}
+
+.stockalert-labeltext{
+    -fx-text-fill: #black;
+    -fx-font-weight: 700;
+}
+
+.stockalert-level-no{
+    -fx-background-color: #FCDBDB;
+    -fx-text-fill: #F04B4B;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+
+.stockalert-level-low{
+    -fx-background-color: #FFF5D9;
+    -fx-text-fill: #F0C54E;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+
+.stockalert-level-in{
+    -fx-background-color: #E1FFE0;
+    -fx-text-fill: #69C166;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+
+.stockalert-status-on{
+    -fx-background-color: #E0EEFF;
+    -fx-text-fill: #74AEF4;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+.stockalert-status-not{
+    -fx-background-color: #ECEEF0;
+    -fx-text-fill: #A2A4A6;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+
+.userlog-labeltext{
+    -fx-text-fill: #black;
+    -fx-font-weight: 700;
+}
+
+.topseller-labeltext{
+    -fx-text-fill: #black;
+    -fx-font-weight: 700;
+}
+
+.database-label {
+    -fx-text-fill: #8f9bb3;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.container-label {
+    -fx-text-fill: #222b45;
+    -fx-font-size: 17px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.order-label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 20px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.order-number {
+    -fx-text-fill: #000000;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.customers-label, .table-label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 15px;
+    -fx-font-family: "Open Sans";
+}
+
+.amount-label {
+    -fx-text-fill: #0095FF;
+    -fx-font-size: 20px;
+    -fx-font-family: "Open Sans";
+}
+
+.buttonprice-label {
+    -fx-text-fill: #8f9bb3;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.docket-label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+
+
+/* ============================Button Styling============================= */
+.side-bar-button, .logout-button {
+    -fx-background-color: white;
+    -fx-text-fill: #4a4a4a;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
+}
+
+.side-bar-button:hover, .logout-button:hover {
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+}
+
+.home-button, .menu-button, .user-button, .stock-button, .analytics-button{
+    -fx-text-fill: #4A85F6;
+    -fx-background-color: white;
+}
+
+
+.notes-add{
+    -fx-background-color: #DBE7FD;
+    -fx-text-fill: #4A85F6;
+    -fx-font-size: 10;
+    -fx-background-radius: 2;
+    -fx-cursor: hand;
+}
+
+.notes-remove{
+    -fx-background-color: #FCDBDB;
+    -fx-text-fill: #F04B4B;
+    -fx-font-size: 10;
+    -fx-background-radius: 2;
+    -fx-cursor: hand;
+}
+
+
+.submit-button, .add-button, .cancel-button{
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.submit-button-waiter {
+    -fx-background-color: #A5CC72;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
+}
+
+.customize-button, .item-correct, .filter-button{
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.restart-button, .voiditem-button {
+    -fx-background-color: #dc4242;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
+}
+
+.item-button{
+    -fx-background-color: #EFF4FA;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-font-family: "Open Sans";
+}
+
+.logout-button-waiter-cook {
+    -fx-background-color: transparent;
+    -fx-text-fill: #4A85F6;
+    -fx-font-size: 17px;
+    -fx-cursor: hand;
+}
+.logout-button-waiter-cook:hover {
+    -fx-background-color: #4A85F6;
+    -fx-text-fill: white;
+}
+
+.combo-box .list-cell {
+    -fx-text-overrun: ellipsis;  /* Truncate text with ellipsis if it's too long */
+    -fx-max-width: 0;
+}
+
+
+.combo-box-base .text{
+    -fx-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Open Sans";
+}
+
+.combo-box{
+    -fx-text-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
+    -fx-background-color: transparent;
+}
+.combo-box .arrow-button
+{
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.0em 0em 0.0em 0.0em; /* 0 3 0 0 */
+}
+
+.combo-box .arrow-button .arrow
+{
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 0 0 0 0, 0;
+    -fx-padding: 0em 0em 0em 0em; /* 3 3.75 3 3.75 */
+    /*
+        -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+    */
+    -fx-shape: null;
+}
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-content-display:graphic-only;
+}
+
+
+/*============================ MENU ============================ */
+/* Root styling */
+
+
+/* ButtonBar styling */
+
+
+
+
+
+/* Tab Content */
+
+
+/* ListPane styling */
+
+
+/* Database Labels colour */
+
+
+/* Database Label text styling */
+
+
+/* Title styling */
+
+
+
+/*============================ USERS ============================ */
+/* Root styling */
+
+/* database labels colour*/
+
+
+
+/*============================ STOCK ============================ */
+/* Root styling */
+
+
+/*============================ ANALYTICS ============================ */
+/* Root styling */
+
+
+/* WAITER =====================================================================================================*/
+/*
+ * Container styling
+ */
+
+
+
+
+
+
+
+
+
+
+/**
+    * Button Styling
+ */
+
+
+
+
+
+
+
+/**
+    * Text Styling
+ */
+
+
+
+
+/**
+    * Tab Styling
+ */
+
+
+
+
+
+
+
+/* COOK ========================================================================================= */
+
+/*
+ * Container styling
+ */
+
+
+
+
+
+
+
+
+
+
+/**
+    * Button Styling
+ */
+
+
+
+/**
+    * Text Styling
+ */
+
+/**
+    * Complete Order List Styling
+ */

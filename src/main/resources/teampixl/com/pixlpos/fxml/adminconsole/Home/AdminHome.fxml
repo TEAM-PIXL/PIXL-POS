@@ -149,7 +149,7 @@
             </Button>
             <VBox alignment="CENTER" layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <children>
-                  <Button fx:id="logoutbutton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" styleClass="logout-button-admin" text="Logout">
+                  <Button fx:id="logoutbutton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" styleClass="logout-button" text="Logout">
                      <graphic>
                         <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                            <image>

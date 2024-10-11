@@ -128,11 +128,11 @@
                       </HBox>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                              <Button fx:id="logoutbutton" layoutX="56.0" layoutY="17.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" styleClass="logout-button" text="Logout">
+                              <Button fx:id="logoutbutton" layoutX="56.0" layoutY="17.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" styleClass="logout-button-waiter-cook" text="Logout">
                                   <graphic>
                                       <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
                                           <image>
-                                              <Image url="@../../images/cookicons/logout_icon.png" />
+                                              <Image url="@../../images/cookicons/blue_logout_icon.png" />
                                           </image>
                                       </ImageView>
                                   </graphic>
