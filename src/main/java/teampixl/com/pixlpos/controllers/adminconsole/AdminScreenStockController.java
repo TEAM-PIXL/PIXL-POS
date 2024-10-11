@@ -136,7 +136,10 @@ public class AdminScreenStockController
 
 
 
-
+    @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
     @FXML
     protected void onSubmitButtonClick(){
 

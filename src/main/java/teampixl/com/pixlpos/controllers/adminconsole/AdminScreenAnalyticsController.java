@@ -109,6 +109,7 @@ public class AdminScreenAnalyticsController
 
 
 
+
     public class ScatterChartController {
 
         private boolean showingDailyData = true; // Track current data type
@@ -212,6 +213,10 @@ public class AdminScreenAnalyticsController
 
     }
 
+    @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
     @FXML
     protected void onUsersButtonClick() {
         // Handle exit button click

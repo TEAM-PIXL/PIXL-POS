@@ -248,7 +248,10 @@ public class AdminScreenUsersController
         loadedUser = null;
     }
 
-
+    @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
     @FXML
     protected void onUsersButtonClick() {
         // Handle exit button click

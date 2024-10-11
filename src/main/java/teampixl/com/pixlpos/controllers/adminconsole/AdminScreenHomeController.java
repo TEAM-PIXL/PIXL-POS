@@ -198,10 +198,7 @@ public class AdminScreenHomeController {
         // Handle exit button click
         addNoteToListView(noteslistview, "1", "John Doe", "This is a note");
     }
-    @FXML
-    protected void onSettingsButtonClick() {
-        // Handle exit button click
-    }
+
 
     @FXML
     protected void onLogoutButtonClick() {

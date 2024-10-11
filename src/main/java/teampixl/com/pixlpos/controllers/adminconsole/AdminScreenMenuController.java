@@ -240,6 +240,10 @@ public class AdminScreenMenuController
     }
 
     @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
+    @FXML
     protected void onUsersButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) usersbutton.getScene().getWindow();
