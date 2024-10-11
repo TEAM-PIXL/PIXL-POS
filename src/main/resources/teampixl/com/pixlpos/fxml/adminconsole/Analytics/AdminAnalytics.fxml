@@ -138,6 +138,16 @@
                         </Button>
                     </children>
                 </VBox>
+            <Line endX="85.0" layoutX="126.0" layoutY="446.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="430.0" />
+            <Button fx:id="settingsbutton" layoutY="463.0" mnemonicParsing="false" onAction="#onSettingsButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Settings" AnchorPane.topAnchor="440.0">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../images/adminicons/settings_icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <VBox alignment="CENTER" layoutX="66.0" layoutY="569.0" prefHeight="50.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                     <children>
                         <Button fx:id="logoutbutton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" prefWidth="230.0" styleClass="logout-button" text="Logout">
