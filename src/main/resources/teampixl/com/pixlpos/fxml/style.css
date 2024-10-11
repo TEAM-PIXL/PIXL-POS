@@ -112,11 +112,86 @@
     -fx-opacity: 0;      /* Makes the scrollbar invisible */
 
 }
+
+
+.notes-add{
+    -fx-background-color: #DBE7FD;
+    -fx-text-fill: #4A85F6;
+    -fx-font-size: 10;
+    -fx-background-radius: 2;
+    -fx-cursor: hand;
+}
+
+.notes-remove{
+    -fx-background-color: #FCDBDB;
+    -fx-text-fill: #F04B4B;
+    -fx-font-size: 10;
+    -fx-background-radius: 2;
+    -fx-cursor: hand;
+}
+
+.notes-labeltext{
+    -fx-text-fill: #black;
+    -fx-font-weight: 700;
+}
+
+.stockalert-labeltext{
+    -fx-text-fill: #black;
+    -fx-font-weight: 700;
+}
+
+.stockalert-level-no{
+    -fx-background-color: #FCDBDB;
+    -fx-text-fill: #F04B4B;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+
+.stockalert-level-low{
+    -fx-background-color: #FFF5D9;
+    -fx-text-fill: #F0C54E;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+
+.stockalert-level-in{
+    -fx-background-color: #E1FFE0;
+    -fx-text-fill: #69C166;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+
+.stockalert-status-on{
+    -fx-background-color: #E0EEFF;
+    -fx-text-fill: #74AEF4;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+.stockalert-status-not{
+    -fx-background-color: #ECEEF0;
+    -fx-text-fill: #A2A4A6;
+    -fx-font-size: 15;
+    -fx-background-radius:5;
+}
+
+.userlog-labeltext{
+    -fx-text-fill: #black;
+    -fx-font-weight: 700;
+}
+
+.topseller-labeltext{
+    -fx-text-fill: #black;
+    -fx-font-weight: 700;
+}
+.topseller-container{
+    -fx-background-color: #EFF4FA;
+    -fx-background-radius: 20;
+    -fx-border-color: white;
+    -fx-border-radius: 20;
+}
 /*============================ MENU ============================ */
 /* Root styling */
-.root {
-    -fx-background-color: #F5F5F5;
-}
+
 
 /* ButtonBar styling */
 .button-bar {
@@ -512,6 +587,7 @@
     -fx-cursor: hand;
     -fx-content-display:graphic-only;
 }
+
 
 /**
     * Text Styling

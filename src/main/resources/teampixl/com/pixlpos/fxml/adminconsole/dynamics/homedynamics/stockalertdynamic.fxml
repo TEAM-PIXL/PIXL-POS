@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox maxWidth="418.0" minWidth="418.0" prefHeight="50.0" stylesheets="@../../../style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <AnchorPane prefHeight="50.0" prefWidth="149.0" HBox.hgrow="ALWAYS">
+            <children>
+                <Label id="stocknamelabel" fx:id="stocknamelabel" layoutX="24.0" layoutY="16.0" styleClass="stockalert-labeltext" text="Stock" />
+            </children>
+        </AnchorPane>
+        <AnchorPane prefHeight="50.0" prefWidth="104.0">
+            <children>
+                <Label id="stocklevellabel" fx:id="stocklevellabel" alignment="CENTER" layoutX="-6.0" layoutY="13.0" prefHeight="24.0" prefWidth="80.0" text="No Stock" />
+            </children>
+        </AnchorPane>
+        <AnchorPane prefHeight="50.0" prefWidth="150.0">
+            <children>
+                <Label id="stockstatuslabel" fx:id="stockstatuslabel" alignment="CENTER" layoutX="6.0" layoutY="13.0" prefHeight="24.0" prefWidth="116.0" text="NOT-ORDER" />
+            </children>
+        </AnchorPane>
+    </children>
+</HBox>

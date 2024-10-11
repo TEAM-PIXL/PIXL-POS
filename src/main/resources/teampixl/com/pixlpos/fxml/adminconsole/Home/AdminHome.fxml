@@ -19,7 +19,7 @@
 
 <BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../../style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teampixl.com.pixlpos.controllers.adminconsole.AdminScreenHomeController">
    <top>
-      <HBox prefHeight="65.0" prefWidth="1280.0" styleClass="top-container-white" BorderPane.alignment="CENTER">
+      <HBox prefHeight="65.0" prefWidth="1280.0" styleClass="top-container" BorderPane.alignment="CENTER">
          <children>
             <AnchorPane prefHeight="60.0" prefWidth="230.0" />
             <Label styleClass="heading" text="Home">
@@ -28,7 +28,7 @@
                </HBox.margin>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
-            <HBox prefWidth="538.0" styleClass="search-bar-admin" HBox.hgrow="ALWAYS">
+            <HBox prefWidth="538.0" styleClass="search-bar" HBox.hgrow="ALWAYS">
                <children>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -79,7 +79,7 @@
                         <Image url="@../../../images/adminicons/account_user_icon.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="greeting" contentDisplay="CENTER" layoutX="53.0" layoutY="97.0" styleClass="hello-label-admin" text="Hello, Admin" AnchorPane.topAnchor="97.0" />
+                  <Label fx:id="greeting" contentDisplay="CENTER" layoutX="71.0" layoutY="103.0" styleClass="hello-label-admin" text="Hello, Admin" AnchorPane.topAnchor="103.0" />
                   <Label layoutX="63.0" layoutY="130.0" text="Welcome," AnchorPane.leftAnchor="80.0" />
                   <Label layoutX="63.0" layoutY="148.0" text="Have a nice day" />
                </children>
@@ -185,7 +185,7 @@
                            <children>
                               <HBox prefHeight="50.0">
                                  <children>
-                                    <AnchorPane prefHeight="200.0" prefWidth="100.0">
+                                    <AnchorPane prefHeight="50.0" prefWidth="100.0">
                                        <children>
                                           <Label layoutX="31.0" layoutY="15.0" styleClass="database-label" text="Date" />
                                        </children>
@@ -200,10 +200,14 @@
                                           <Label layoutX="14.0" layoutY="15.0" styleClass="database-label" text="Note" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane layoutX="410.0" layoutY="10.0" prefHeight="200.0" prefWidth="60.0" />
+                                    <AnchorPane layoutX="410.0" layoutY="10.0" prefHeight="50.0" prefWidth="60.0">
+                                       <children>
+                                          <Button fx:id="addnotebutton" layoutX="20.0" layoutY="15.0" maxHeight="10.0" maxWidth="10.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#onAddNoteButtonClick" prefHeight="10.0" prefWidth="10.0" styleClass="notes-add" text="+" />
+                                       </children>
+                                    </AnchorPane>
                                  </children></HBox>
                               <HBox prefHeight="100.0" prefWidth="200.0" styleClass="widget-line" />
-                              <ListView prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                              <ListView id="noteslistview" fx:id="noteslistview" prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </children>
@@ -215,24 +219,24 @@
                            <children>
                               <HBox prefHeight="50.0">
                                  <children>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                    <AnchorPane prefHeight="50.0" HBox.hgrow="ALWAYS">
                                        <children>
                                           <Label layoutX="36.0" layoutY="15.0" styleClass="database-label" text="Stock" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="50.0" prefWidth="101.0">
+                                    <AnchorPane prefHeight="50.0" prefWidth="104.0">
                                        <children>
                                           <Label layoutX="32.0" layoutY="15.0" styleClass="database-label" text="Level" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="115.0">
+                                    <AnchorPane prefHeight="50.0" prefWidth="150.0">
                                        <children>
-                                          <Label layoutX="36.0" layoutY="15.0" styleClass="database-label" text="Status" />
+                                          <Label layoutX="53.0" layoutY="15.0" styleClass="database-label" text="Status" />
                                        </children>
                                     </AnchorPane>
                                  </children></HBox>
                               <HBox prefHeight="0.0" styleClass="widget-line" />
-                              <ListView prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                              <ListView fx:id="stockalertlistview" prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </children>
@@ -266,7 +270,7 @@
                                     </AnchorPane>
                                  </children></HBox>
                               <HBox prefHeight="0.0" styleClass="widget-line" />
-                              <ListView prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                              <ListView fx:id="userloglistview" prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </children>
@@ -276,7 +280,7 @@
                         <Label text="TOP 5 Sellers" />
                         <VBox styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
-                              <ListView prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                              <ListView fx:id="topsellerslistview" prefHeight="200.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </children>
@@ -286,8 +290,8 @@
                         <Label text="Sales" />
                         <VBox alignment="CENTER" prefHeight="200.0" spacing="20.0" styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
-                              <PieChart prefHeight="222.0" prefWidth="300.0" />
-                              <Label alignment="CENTER" text="Total Sales: 00" />
+                              <PieChart fx:id="piechart" prefHeight="222.0" prefWidth="300.0" />
+                              <Label fx:id="piechartlabel" alignment="CENTER" text="Total Sales: 00" />
                            </children>
                            <padding>
                               <Insets bottom="20.0" />

@@ -35,6 +35,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class AdminScreenStockController
 {
@@ -280,6 +281,26 @@ public class AdminScreenStockController
             orderstatfield.setText(orderstatus);
             lastupfield.setText(lastupdated);
             stocklvlfield.setText(stocklvl);
+
+            if(Objects.equals(stocklvl, "INSTOCK")) {
+                stocklvlfield.setText("In Stock");
+                stocklvlfield.getStyleClass().add("stockalert-level-in");
+            } else if(Objects.equals(stocklvl, "LOWSTOCK")) {
+                stocklvlfield.setText("Low Stock");
+                stocklvlfield.getStyleClass().add("stockalert-level-low");
+            } else if(Objects.equals(stocklvl, "NOSTOCK")) {
+                stocklvlfield.setText("No Stock");
+                stocklvlfield.getStyleClass().add("stockalert-level-no");
+
+            }
+
+            if(Objects.equals(orderstatus, "true")) {
+                orderstatfield.setText("ON-ORDER");
+                orderstatfield.getStyleClass().add("stockalert-status-on");
+            } else {
+                orderstatfield.setText("NOT-ORDERED");
+                orderstatfield.getStyleClass().add("stockalert-status-not");
+            }
 
             // Set action handlers for buttons (if they exist in your FXML)
             Button editbutton = (Button) hbox.lookup("#editbutton");
