@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<HBox maxWidth="230.0" minWidth="230.0" prefHeight="50.0" prefWidth="230.0" styleClass="topseller-container" stylesheets="@../../../style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<HBox maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" prefHeight="50.0" prefWidth="250.0" styleClass="topseller-container" stylesheets="@../../../style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <AnchorPane prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: transparent; -fx-background-radius: 20;">
          <children>
