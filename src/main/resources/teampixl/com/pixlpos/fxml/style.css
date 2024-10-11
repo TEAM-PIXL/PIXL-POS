@@ -1,3 +1,8 @@
+/* ============================Background Colour============================= */
+.background {
+    -fx-background-color: #f5f5f5;
+}
+
 /* ============================Container styling============================= */
 .top-container {
     -fx-background-color: white;
@@ -32,6 +37,11 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10px;
 
+}
+
+.analytics-graph {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
 }
 
 /*.list-pane {*/
