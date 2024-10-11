@@ -9,8 +9,6 @@
 
 
 
-/* Root styling */
-
 /* General Styling */
 
 /* SideBar styling */
@@ -242,7 +240,7 @@
     -fx-font-family: "Arial", sans-serif;
 }
 
-.line {
+.container-line {
     -fx-border-color: #4A85F6;
     -fx-border-width: 1;
 }
@@ -272,8 +270,6 @@
 .root-anchor {
     -fx-background-color: #f5f5f5;
 }
-
-
 
 .logout-button {
     -fx-background-color: transparent;
