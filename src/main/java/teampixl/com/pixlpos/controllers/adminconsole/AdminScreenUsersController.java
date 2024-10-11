@@ -49,7 +49,7 @@ public class AdminScreenUsersController
      */
 
     @FXML
-    private Text greeting;
+    private Label greeting;
     @FXML
     private TextField searchbar;
     @FXML

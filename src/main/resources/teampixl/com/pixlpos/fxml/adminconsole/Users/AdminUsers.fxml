@@ -68,39 +68,36 @@
                <padding>
                   <Insets right="20.0" />
                </padding>
-                </HBox>
-            </children>
-        </HBox>
-    </top>
-    <left>
-        <AnchorPane prefWidth="210.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
-            <children>
-                <AnchorPane layoutY="-5.0" prefHeight="190.0" prefWidth="210.0" AnchorPane.topAnchor="0.0">
-                    <children>
-                        <ImageView fitHeight="74.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="5.0">
-                            <image>
-                                <Image url="@../../../images/adminicons/account_user_icon.png" />
-                            </image>
-                        </ImageView>
-                        <Text fx:id="greeting" layoutX="36.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-label" text="Hello, Admin" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="95.41300010681152" />
-                        <Text fill="#757575" layoutX="81.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome," AnchorPane.leftAnchor="81.0" AnchorPane.topAnchor="130.0" />
-                        <Text fill="#757575" layoutX="66.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Have a nice day" AnchorPane.topAnchor="145.0" />
-                    </children>
-                </AnchorPane>
-                <Line endX="85.0" layoutX="116.0" layoutY="202.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
-                <VBox layoutX="-1.0" layoutY="215.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="215.0">
-                    <children>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <AnchorPane prefWidth="190.0" styleClass="side-container" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane layoutY="-5.0" prefHeight="655.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ImageView fitHeight="74.0" fitWidth="68.0" layoutX="72.0" layoutY="13.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="72.0" AnchorPane.rightAnchor="71.0" AnchorPane.topAnchor="0.0">
+                     <image>
+                        <Image url="@../../../images/adminicons/account_user_icon.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="greeting" contentDisplay="CENTER" layoutX="51.0" layoutY="85.0" styleClass="hello-label" text="Hello, Admin" AnchorPane.topAnchor="85.0" />
+                  <Label layoutX="78.5" layoutY="121.0" styleClass="message-label" text="Welcome," AnchorPane.leftAnchor="78.5" />
+                  <Label layoutX="63.0" layoutY="136.0" styleClass="message-label" text="Have a nice day" AnchorPane.leftAnchor="63.0" />
+                  <VBox layoutY="187.0" prefHeight="200.0" prefWidth="210.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="192.0">
+                     <children>
                         <Button fx:id="homebutton" mnemonicParsing="false" onAction="#onHomeButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Home">
-                            <graphic>
-                                <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../../../images/adminicons/home_icon.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <VBox.margin>
-                                <Insets />
-                            </VBox.margin>
+                           <graphic>
+                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../images/adminicons/home_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                         </Button>
                         <Button fx:id="usersbutton" mnemonicParsing="false" onAction="#onUsersButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="user-button" text="Users">
                             <graphic>
@@ -138,10 +135,13 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                    </children>
-                </VBox>
-            <Line endX="85.0" layoutX="126.0" layoutY="446.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="430.0" />
-            <Button fx:id="settingsbutton" layoutX="1.0" layoutY="462.0" mnemonicParsing="false" onAction="#onSettingsButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Settings" AnchorPane.topAnchor="440.0">
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <Line endX="85.0" layoutX="112.5" layoutY="182.0" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="182.0" />
+            <Line endX="85.0" layoutX="112.5" layoutY="399.5" startX="-100.0" stroke="#4a85f6" strokeWidth="0.5" styleClass="line" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="402.0" />
+            <Button fx:id="settingsbutton" layoutY="414.0" mnemonicParsing="false" onAction="#onSettingsButtonClick" prefHeight="40.0" prefWidth="210.0" styleClass="side-bar-button" text="Settings" AnchorPane.topAnchor="412.0">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>

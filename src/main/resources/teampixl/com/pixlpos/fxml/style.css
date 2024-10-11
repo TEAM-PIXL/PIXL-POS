@@ -414,6 +414,8 @@
 .home-button, .menu-button, .user-button, .stock-button, .analytics-button{
     -fx-text-fill: #4A85F6;
     -fx-background-color: white;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
 }
 
 
