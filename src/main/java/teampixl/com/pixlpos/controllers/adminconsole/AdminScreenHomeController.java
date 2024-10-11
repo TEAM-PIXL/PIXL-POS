@@ -140,6 +140,10 @@ public class AdminScreenHomeController
         GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_ANALYTICS_FXML, GuiCommon.ADMIN_SCREEN_ANALYTICS_TITLE, stage);
     }
     @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
+    @FXML
     protected void onLogoutButtonClick() {
         GuiCommon.logout(logoutbutton);
     }
