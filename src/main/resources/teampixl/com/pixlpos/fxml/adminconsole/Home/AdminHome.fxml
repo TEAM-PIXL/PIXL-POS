@@ -178,9 +178,12 @@
          <children>
             <FlowPane hgap="10.0" prefHeight="655.0" prefWidth="1070.0" prefWrapLength="1.0E7" vgap="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <VBox minHeight="300.0" minWidth="590.0">
+                  <VBox minHeight="300.0" minWidth="589.0">
                      <children>
-                        <Label text="Notes" />
+                        <Label styleClass="widget-name-style" text="Notes">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
                         <VBox styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox prefHeight="50.0">
@@ -214,7 +217,7 @@
                   </VBox>
                   <VBox minHeight="300.0" minWidth="427.0">
                      <children>
-                        <Label text="Stock" />
+                        <Label styleClass="widget-name-style" text="Stock" />
                         <VBox styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox prefHeight="50.0">
@@ -243,7 +246,7 @@
                   </VBox>
                   <VBox layoutX="610.0" layoutY="10.0" minHeight="300.0" minWidth="450.0">
                      <children>
-                        <Label text="User Log" />
+                        <Label styleClass="widget-name-style" text="User Log" />
                         <VBox styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox prefHeight="50.0">
@@ -277,7 +280,7 @@
                   </VBox>
                   <VBox layoutX="20.0" layoutY="340.0" minHeight="300.0" minWidth="254.0">
                      <children>
-                        <Label text="TOP 5 Sellers" />
+                        <Label styleClass="widget-name-style" text="TOP 5 Sellers" />
                         <VBox styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
                               <ListView fx:id="topsellerslistview" prefHeight="281.0" prefWidth="249.0" styleClass="list-pane" VBox.vgrow="ALWAYS" />
@@ -287,7 +290,7 @@
                   </VBox>
                   <VBox layoutX="450.0" layoutY="340.0" minHeight="300.0" minWidth="300.0">
                      <children>
-                        <Label text="Sales" />
+                        <Label styleClass="widget-name-style" text="Sales" />
                         <VBox alignment="CENTER" prefHeight="200.0" spacing="20.0" styleClass="widget-container" VBox.vgrow="ALWAYS">
                            <children>
                               <PieChart fx:id="piechart" prefHeight="222.0" prefWidth="300.0" />
