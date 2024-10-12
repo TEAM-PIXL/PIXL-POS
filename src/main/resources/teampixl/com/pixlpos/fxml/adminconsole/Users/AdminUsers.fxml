@@ -251,31 +251,37 @@
                         </AnchorPane>
                         <AnchorPane layoutX="10.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" layoutX="37.0" layoutY="16.0" prefHeight="50.0" prefWidth="111.0" styleClass="database-label" text="Username" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" layoutX="37.0" layoutY="16.0" prefHeight="50.0" prefWidth="111.0" styleClass="database-label" text="Username" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding></Label>
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="210.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" layoutX="37.0" layoutY="16.0" prefHeight="50.0" prefWidth="112.0" styleClass="database-label" text="Usersince" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" layoutX="37.0" layoutY="16.0" prefHeight="50.0" prefWidth="112.0" styleClass="database-label" text="Usersince" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <padding>
+                                    <Insets left="15.0" />
+                                 </padding></Label>
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="410.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" layoutX="38.0" layoutY="16.0" prefHeight="50.0" prefWidth="112.0" styleClass="database-label" text="Email" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label alignment="CENTER" layoutX="38.0" layoutY="16.0" prefHeight="50.0" prefWidth="112.0" styleClass="database-label" text="Email" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding></Label>
                            </children></AnchorPane>
                         <AnchorPane layoutX="488.0" layoutY="10.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label alignment="CENTER" layoutX="38.0" layoutY="16.0" prefHeight="50.0" prefWidth="112.0" styleClass="database-label" text="Role" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <padding>
-                                    <Insets right="10.0" />
+                                    <Insets left="20.0" />
                                  </padding></Label>
                            </children></AnchorPane>
                         <AnchorPane layoutX="520.0" layoutY="10.0" maxWidth="100.0" minWidth="100.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label alignment="CENTER" prefHeight="50.4" prefWidth="100.0" styleClass="database-label" text="Action" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <padding>
-                                    <Insets right="20.0" />
-                                 </padding></Label>
+                              <Label alignment="CENTER" prefHeight="50.4" prefWidth="100.0" styleClass="database-label" text="Action" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                      </children>
