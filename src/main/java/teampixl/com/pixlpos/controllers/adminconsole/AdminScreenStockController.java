@@ -330,7 +330,8 @@ public class AdminScreenStockController
             String ingredientID = stock.getMetadataValue("ingredient_id").toString();
             String ingredientName = ingredientsAPI.reverseKeySearch(ingredientID);
             String orderStatus = stock.getMetadataValue("onOrder").toString();
-            String lastUpdated = stock.getMetadataValue("lastUpdated").toString();
+
+            String lastUpdated = stock.getMetadataValue("lastUpdated").toString().substring(0, 10);
             String stockLevel = stock.getMetadataValue("stockStatus").toString();
             addInventoryItemToListView(
                     itemlist,
