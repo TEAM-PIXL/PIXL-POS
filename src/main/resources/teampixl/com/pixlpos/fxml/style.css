@@ -154,7 +154,7 @@
 
 }
 .tab-pane > .tab-header-area > .headers-region > .tab{
-    -fx-background-radius: 10px 10px 10px 10px;
+    -fx-background-radius: 10px 10px 0px 0px;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
     -fx-alignment: center;
@@ -190,7 +190,7 @@
 }
 
 .tab:hover {
-    -fx-background-color: #3B6FD1;
+    -fx-background-color: #EFF4FA;
 }
 
 .pane-style{

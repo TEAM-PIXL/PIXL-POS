@@ -235,7 +235,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="50.0" prefWidth="104.0">
                                        <children>
-                                          <Label layoutX="32.0" layoutY="15.0" styleClass="database-label" text="Level" />
+                                          <Label layoutX="26.0" layoutY="15.0" styleClass="database-label" text="Level" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="50.0" prefWidth="150.0">

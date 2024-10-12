@@ -596,7 +596,7 @@ public class WaiterScreen2Controller {
 
             if (numberOfTabs > 0) {
                 double tabWidth = totalWidth / numberOfTabs;
-                tabWidth = tabWidth - 24.5;
+                tabWidth = tabWidth - 25.5;
                 tabPane.setTabMinWidth(tabWidth);
                 tabPane.setTabMaxWidth(tabWidth);
             }
