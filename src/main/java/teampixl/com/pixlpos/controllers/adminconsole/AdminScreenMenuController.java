@@ -410,7 +410,7 @@ public class AdminScreenMenuController
         for (MenuItem menuItem : listOfMenuItems) {
             String menuItemName = menuItem.getMetadataValue("itemName").toString();
             if (menuItem.getMetadataValue("dietaryRequirement") == null){
-                 dietaryRequirement = "";
+                 dietaryRequirement = "NONE";
             } else {
                  dietaryRequirement = menuItem.getMetadataValue("dietaryRequirement").toString();
             }
