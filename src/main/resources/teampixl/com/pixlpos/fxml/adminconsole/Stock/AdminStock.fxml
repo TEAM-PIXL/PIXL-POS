@@ -248,14 +248,17 @@
                                 </AnchorPane>
                                 <AnchorPane layoutX="452.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="73.0" styleClass="database-label" text="Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="73.0" styleClass="database-label" text="Qty" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <padding>
+                                    <Insets right="11.0" />
+                                 </padding></Label>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane layoutX="501.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                                     <children>
                                         <Label alignment="CENTER" prefHeight="50.0" prefWidth="93.0" styleClass="database-label" text="Updated" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <padding>
-                                    <Insets right="10.0" />
+                                    <Insets left="20.0" />
                                  </padding></Label>
                                     </children>
                                 </AnchorPane>
@@ -263,13 +266,16 @@
                                     <children>
                                         <Label alignment="CENTER" prefHeight="50.0" prefWidth="112.0" styleClass="database-label" text="Stock Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <padding>
-                                    <Insets left="15.0" />
+                                    <Insets left="25.0" />
                                  </padding></Label>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane layoutX="530.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="130.0" styleClass="database-label" text="Order Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="130.0" styleClass="database-label" text="Order Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <padding>
+                                    <Insets left="15.0" />
+                                 </padding></Label>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane layoutX="108.0" layoutY="10.0" HBox.hgrow="ALWAYS">
