@@ -3,9 +3,12 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.w3c.dom.events.Event;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
@@ -25,9 +28,14 @@ import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.models.logs.definitions.Status;
 
+import teampixl.com.pixlpos.models.Users;
+
+import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class AdminScreenStockController
 {
@@ -47,7 +55,7 @@ public class AdminScreenStockController
      */
 
     @FXML
-    private Text greeting;
+    private Label greeting;
     @FXML
     private TextField searchbar;
     @FXML
@@ -117,8 +125,21 @@ public class AdminScreenStockController
         dataStore = DataStore.getInstance();
         ingredientsAPI = IngredientsAPI.getInstance();
         populateStockGrid();
+
     }
 
+
+
+
+
+
+
+
+
+    @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
     @FXML
     protected void onSubmitButtonClick(){
 
@@ -158,6 +179,7 @@ public class AdminScreenStockController
             showAlert(Alert.AlertType.ERROR, "Failed", "Please enter valid numerals");
             return;
         }
+        adding_counter++;
     }
 
     @FXML
@@ -169,7 +191,7 @@ public class AdminScreenStockController
 
     }
     @FXML
-    protected void onRemoveButtonClick(String id){
+    protected void onRemoveButtonClick(javafx.event.ActionEvent event, String id){
         ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
 
         for (int i = 0; i < items.size(); i++) {
@@ -232,115 +254,92 @@ public class AdminScreenStockController
      *
      * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
      * @param itemName the name of the item (e.g., the patty), displayed in the first column of the HBox.
-     * @param desiredQty the desired number of stock
+     * @param lastupdated the last time the item was updated
      * @param actualQty the actual number of items in stock
-     * @param price the price per item reported
+     * @param stocklvl the stock level of the item
+     * @param orderstatus the order status of the item
      */
-    public void addInventoryItemToListView(ListView<HBox> listView, String id, String itemName, String desiredQty, String actualQty, String price) {
-        HBox hbox = new HBox();
-        hbox.setPrefHeight(50.0);
-        hbox.setPrefWidth(200.0);
+    public void addInventoryItemToListView(ListView<HBox> listView, String id, String itemName, String actualQty, String orderstatus, String lastupdated, String stocklvl) {
+        try {
+            // Load HBox from FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/teampixl/com/pixlpos/fxml/adminconsole/dynamics/stockdynamic.fxml"));
+            HBox hbox = loader.load();
 
-        // Item Name
-        AnchorPane itemNamePane = new AnchorPane();
-        Label itemNameLabel = new Label(itemName);
-        itemNameLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        itemNameLabel.setPrefSize(88.0, 50.4);
-        AnchorPane.setTopAnchor(itemNameLabel, 0.0);
-        AnchorPane.setRightAnchor(itemNameLabel, 0.0);
-        AnchorPane.setBottomAnchor(itemNameLabel, 0.0);
-        AnchorPane.setLeftAnchor(itemNameLabel, 0.0);
-        itemNamePane.getChildren().add(itemNameLabel);
-        HBox.setHgrow(itemNamePane, Priority.ALWAYS);
+            // Set the ID of the HBox
+            hbox.setId(id);
 
-        // Desired Quantity
-        AnchorPane desiredQtyPane = new AnchorPane();
-        Label desiredQtyLabel = new Label(desiredQty);
-        desiredQtyLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        desiredQtyLabel.setPrefSize(127.2, 50.4);
-        AnchorPane.setTopAnchor(desiredQtyLabel, 0.0);
-        AnchorPane.setRightAnchor(desiredQtyLabel, 0.0);
-        AnchorPane.setBottomAnchor(desiredQtyLabel, 0.0);
-        AnchorPane.setLeftAnchor(desiredQtyLabel, 0.0);
-        desiredQtyPane.getChildren().add(desiredQtyLabel);
-        HBox.setHgrow(desiredQtyPane, Priority.ALWAYS);
+            // Get the controller associated with the FXML (if you have one)
+            // Optionally, set values via the controller, or directly access the fields
+            // Example: If you have IDs set in FXML for the labels, you can access them like this:
 
-        // Actual Quantity
-        AnchorPane actualQtyPane = new AnchorPane();
-        Label actualQtyLabel = new Label(actualQty);
-        actualQtyLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        actualQtyLabel.setPrefSize(112.8, 50.4);
-        AnchorPane.setTopAnchor(actualQtyLabel, 0.0);
-        AnchorPane.setRightAnchor(actualQtyLabel, 0.0);
-        AnchorPane.setBottomAnchor(actualQtyLabel, 0.0);
-        AnchorPane.setLeftAnchor(actualQtyLabel, 0.0);
-        actualQtyPane.getChildren().add(actualQtyLabel);
-        HBox.setHgrow(actualQtyPane, Priority.ALWAYS);
+            Label namefield = (Label) hbox.lookup("#namefield");
+            Label qtyfield = (Label) hbox.lookup("#qtyfield");
+            Label orderstatfield = (Label) hbox.lookup("#orderstatfield");
+            Label lastupfield = (Label) hbox.lookup("#lastupfield");
+            Label stocklvlfield = (Label) hbox.lookup("#stocklvlfield");
 
-        // Price
-        AnchorPane pricePane = new AnchorPane();
-        Label priceLabel = new Label(price);
-        priceLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        priceLabel.setPrefSize(108.8, 50.4);
-        AnchorPane.setTopAnchor(priceLabel, 0.0);
-        AnchorPane.setRightAnchor(priceLabel, 0.0);
-        AnchorPane.setBottomAnchor(priceLabel, 0.0);
-        AnchorPane.setLeftAnchor(priceLabel, 0.0);
-        pricePane.getChildren().add(priceLabel);
-        HBox.setHgrow(pricePane, Priority.ALWAYS);
+            // Set values dynamically
+            namefield.setText(itemName);
+            qtyfield.setText(actualQty);
+            orderstatfield.setText(orderstatus);
+            lastupfield.setText(lastupdated);
+            stocklvlfield.setText(stocklvl);
 
-        // Edit Button
-        AnchorPane editButtonPane = new AnchorPane();
-        editButtonPane.setMaxWidth(100.0);
-        editButtonPane.setMinWidth(100.0);
-        editButtonPane.setPrefWidth(100.0);
-        Button editButton = new Button("Edit");
-        editButton.setId("editbutton");
-        editButton.setLayoutX(25.0);
-        editButton.setLayoutY(9.0);
-        editButton.setMinWidth(50.0);
-        editButton.getStyleClass().add("edit-button");
-        editButton.setOnAction(event -> onEditButtonClick(event,id));
-        editButtonPane.getChildren().add(editButton);
-        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+            if(Objects.equals(stocklvl, "INSTOCK")) {
+                stocklvlfield.setText("In Stock");
+                stocklvlfield.getStyleClass().add("stockalert-level-in");
+            } else if(Objects.equals(stocklvl, "LOWSTOCK")) {
+                stocklvlfield.setText("Low Stock");
+                stocklvlfield.getStyleClass().add("stockalert-level-low");
+            } else if(Objects.equals(stocklvl, "NOSTOCK")) {
+                stocklvlfield.setText("No Stock");
+                stocklvlfield.getStyleClass().add("stockalert-level-no");
 
-        // Remove Button
-        AnchorPane removeButtonPane = new AnchorPane();
-        removeButtonPane.setMaxWidth(100.0);
-        removeButtonPane.setMinWidth(100.0);
-        removeButtonPane.setPrefWidth(100.0);
-        Button removeButton = new Button("Remove");
-        removeButton.setId("removebutton");
-        removeButton.setLayoutX(11.0);
-        removeButton.setLayoutY(9.0);
-        removeButton.setMinWidth(50.0);
-        removeButton.getStyleClass().add("remove-button");
-        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
-        removeButtonPane.getChildren().add(removeButton);
-        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
+            }
 
-        // Add all components to the HBox
-        hbox.getChildren().addAll(itemNamePane, desiredQtyPane, actualQtyPane, pricePane, editButtonPane, removeButtonPane);
+            if(Objects.equals(orderstatus, "true")) {
+                orderstatfield.setText("ON-ORDER");
+                orderstatfield.getStyleClass().add("stockalert-status-on");
+            } else {
+                orderstatfield.setText("NOT-ORDERED");
+                orderstatfield.getStyleClass().add("stockalert-status-not");
+            }
 
-        // Add the HBox to the ListView
-        listView.getItems().add(hbox);
+            // Set action handlers for buttons (if they exist in your FXML)
+            Button editbutton = (Button) hbox.lookup("#editbutton");
+            editbutton.setOnAction(event -> onEditButtonClick(event, id));
+            Button removebutton = (Button) hbox.lookup("#removebutton");
+            removebutton.setOnAction(event -> onRemoveButtonClick(event, id));
+            Tooltip tooltip = new Tooltip("Edit Item");
+            Tooltip tooltip2 = new Tooltip("Remove Item");
+            editbutton.setTooltip(tooltip);
+            removebutton.setTooltip(tooltip2);
+
+            // Add the HBox to the ListView
+            listView.getItems().add(hbox);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void populateStockGrid() {
         ObservableList<Stock> listOfStockItems = dataStore.readStock();
         for (Stock stock : listOfStockItems) {
-            Double desiredQuantity = 0.00;
-            Double actualQuantity = 0.00;
-            Double price = 0.00;
+            String actualQuantity = stock.getDataValue("numeral").toString();
             String ingredientID = stock.getMetadataValue("ingredient_id").toString();
             String ingredientName = ingredientsAPI.reverseKeySearch(ingredientID);
+            String orderStatus = stock.getMetadataValue("onOrder").toString();
+            String lastUpdated = stock.getMetadataValue("lastUpdated").toString();
+            String stockLevel = stock.getMetadataValue("stockStatus").toString();
             addInventoryItemToListView(
                     itemlist,
                     ingredientID,
                     ingredientName,
-                    desiredQuantity.toString(),
-                    actualQuantity.toString(),
-                    price.toString()
+                    actualQuantity,
+                    orderStatus,
+                    lastUpdated,
+                    stockLevel
             );
         }
     }
@@ -358,19 +357,5 @@ public class AdminScreenStockController
         // Implement edit menu item logic here
     }
 
-    private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
-        // Implement remove menu item logic here
 
-        ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
-
-        // Loop through the list to find the HBox with the matching ID
-        for (int i = 0; i < items.size(); i++) {
-            HBox hbox = items.get(i);
-
-            if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
-                items.remove(i);  // Remove the HBox at the found index
-                break;            // Exit the loop once the HBox is removed
-            }
-        }
-    }
 }
