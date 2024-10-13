@@ -1,5 +1,8 @@
 package teampixl.com.pixlpos.database.api.util;
 
+/**
+ * Enum containing status codes for the API.
+ */
 public enum StatusCode {
     /* ---> GENERAL STATUS CODES <---- */
     SUCCESS,
