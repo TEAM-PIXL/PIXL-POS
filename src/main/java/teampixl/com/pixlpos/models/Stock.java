@@ -1,0 +1,138 @@
+package teampixl.com.pixlpos.models;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import teampixl.com.pixlpos.models.tools.DataManager;
+import teampixl.com.pixlpos.models.tools.MetadataWrapper;
+
+/**
+ * The Stock class is a data structure that holds the stock information of an ingredient.
+ * <p>
+ * Metadata:
+ * - stock_id: UUID
+ * - ingredient_id: ingredient.getMetadata().metadata().get("ingredient_id")
+ * - stockStatus: stockStatus
+ * - onOrder: onOrder
+ * - created_at: timestamp for creation
+ * - lastUpdated: timestamp for last update
+ * <p>
+ * Data:
+ * - unit: unitType
+ * - numeral: numeral
+ * @see DataManager
+ * @see MetadataWrapper
+ * @see Ingredients
+ */
+public class Stock extends DataManager {
+
+    /*======================================================================================================================================================================================================================================================
+    Code Description:
+    - Enumerations for StockStatus and UnitType
+    - MetadataWrapper object for metadata
+    - Map object for data
+    ========================================================================================================================================================================================================================================================*/
+
+    /**
+     * Enumerations for StockStatus
+     */
+    public enum StockStatus {
+        INSTOCK,
+        LOWSTOCK,
+        NOSTOCK
+    }
+
+    /**
+     * Enumerations for UnitType
+     */
+    public enum UnitType {
+        KG,
+        L,
+        QTY
+    }
+
+    /*======================================================================================================================================================================================================================================================
+    Code Description:
+    - The Stock class is a data structure that holds the stock information of an ingredient.
+
+    Metadata:
+        - stock_id: UUID
+        - ingredient_id: ingredient.getMetadata().metadata().get("ingredient_id")
+        - stockStatus: stockStatus
+        - onOrder: onOrder
+        - created_at: timestamp for creation
+        - lastUpdated: timestamp for last update
+
+    Data:
+        - unit: unitType
+        - numeral: numeral
+    ========================================================================================================================================================================================================================================================*/
+
+    /**
+     * Constructor for Stock
+     * @param ingredient: Ingredients
+     * @param stockStatus: StockStatus
+     * @param unitType: UnitType
+     * @param numeral: Object
+     * @param onOrder: boolean
+     */
+    public Stock(Ingredients ingredient, StockStatus stockStatus, UnitType unitType, Object numeral, boolean onOrder) {
+        super(initializeMetadata(ingredient, stockStatus, onOrder));
+        if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
+            numeral = 0;
+        }
+
+        this.data = new HashMap<>();
+        data.put("unit", unitType);
+        data.put("numeral", numeral);
+
+        adjustStockStatus(numeral);
+    }
+
+    private static MetadataWrapper initializeMetadata(Ingredients ingredient, StockStatus stockStatus, boolean onOrder) {
+        Map<String, Object> metadataMap = new HashMap<>();
+        metadataMap.put("stock_id", UUID.randomUUID().toString());
+        metadataMap.put("ingredient_id", ingredient.getMetadata().metadata().get("ingredient_id"));
+        metadataMap.put("stockStatus", stockStatus);
+        metadataMap.put("onOrder", onOrder);
+        metadataMap.put("created_at", LocalDateTime.now());
+        metadataMap.put("lastUpdated", LocalDateTime.now());
+        return new MetadataWrapper(metadataMap);
+    }
+
+    /*======================================================================================================================================================================================================================================================
+    Code Description:
+    - Getters for metadata and data.
+
+    Methods:
+        - adjustStockStatus(Object numeral): void
+        - getLowStockThreshold(): double
+    ========================================================================================================================================================================================================================================================*/
+
+    private void adjustStockStatus(Object numeral) {
+        double numeralValue = numeral instanceof Integer ? (Integer) numeral : (Double) numeral;
+
+        if (numeralValue == 0) {
+            updateMetadata("stockStatus", StockStatus.NOSTOCK);
+        } else if (!Double.isNaN(getLowStockThreshold()) && numeralValue <= getLowStockThreshold()) {
+            updateMetadata("stockStatus", StockStatus.LOWSTOCK);
+        } else {
+            updateMetadata("stockStatus", StockStatus.INSTOCK);
+        }
+    }
+
+    private double getLowStockThreshold() {
+        if (data.get("unit") == UnitType.KG) {
+            return 5;
+        } else if (data.get("unit") == UnitType.L) {
+            return 5;
+        } else if (data.get("unit") == UnitType.QTY) {
+            return 10;
+        }
+        return Double.NaN;
+    }
+}
+
+
