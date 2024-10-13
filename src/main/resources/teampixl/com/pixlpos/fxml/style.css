@@ -68,10 +68,11 @@
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;
 }
-/*#orderitemslistview .list-cell:selected {*/
-/*    -fx-background-color: #8f9bb3;*/
-/*    -fx-text-fill: black;*/
-/*}*/
+
+#orderitemslistview .list-cell:selected {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
 
 #orderitemslistview .list-cell {
     -fx-text-fill: black;

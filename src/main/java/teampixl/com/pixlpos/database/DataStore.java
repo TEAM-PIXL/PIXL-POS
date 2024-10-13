@@ -9,6 +9,7 @@ import teampixl.com.pixlpos.models.logs.UserLogs;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngredientsStore, IStockStore {
 
@@ -49,22 +50,37 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
 
     private void loadDataFromDatabase() {
         ExecutorService executorService = Executors.newFixedThreadPool(8);
+        Semaphore semaphore = new Semaphore(4);
+
         try {
             List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-            futures.add(loadMenuItemsFromDatabase());
-            futures.add(loadIngredientsFromDatabase());
-            futures.add(loadStockFromDatabase());
-            futures.add(loadUsersFromDatabase());
-            futures.add(loadOrdersFromDatabase());
-            futures.add(loadUserSettingsFromDatabase());
-            futures.add(loadNotesFromDatabase());
+            futures.add(runWithSemaphore(semaphore, this::loadMenuItemsFromDatabase));
+            futures.add(runWithSemaphore(semaphore, this::loadIngredientsFromDatabase));
+            futures.add(runWithSemaphore(semaphore, this::loadUsersFromDatabase));
+            futures.add(runWithSemaphore(semaphore, this::loadOrdersFromDatabase));
+            futures.add(runWithSemaphore(semaphore, this::loadUserSettingsFromDatabase));
+            futures.add(runWithSemaphore(semaphore, this::loadNotesFromDatabase));
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-            CompletableFuture<Void> userLogsFuture = loadUserLogsFromDatabase();
+            CompletableFuture<Void> stockFuture = runWithSemaphore(semaphore, this::loadStockFromDatabase);
+            CompletableFuture<Void> userLogsFuture = runWithSemaphore(semaphore, this::loadUserLogsFromDatabase);
         } finally {
             executorService.shutdown();
         }
+    }
+
+    private CompletableFuture<Void> runWithSemaphore(Semaphore semaphore, Supplier<CompletableFuture<Void>> taskSupplier) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                semaphore.acquire();
+                taskSupplier.get().join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                semaphore.release();
+            }
+        });
     }
 
     /* ===================== MenuItem Methods ===================== */

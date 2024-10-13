@@ -670,7 +670,7 @@ public class OrderAPI {
         Order ORDER = orderResult.getValue();
 
         try {
-            ORDER.updateMetadata("payment_method", PAYMENT_METHOD);
+            ORDER.setDataValue("payment_method", PAYMENT_METHOD);
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {

@@ -7,8 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class for serializing and deserializing order notes
+ */
 public class OrderUtil {
 
+    /**
+     * Serialize the item notes to a string
+     * @param itemNotes the map of menu items to their notes
+     * @return the serialized string
+     */
     public static String serializeItemNotes(Map<MenuItem, List<String>> itemNotes) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<MenuItem, List<String>> entry : itemNotes.entrySet()) {
@@ -27,12 +35,18 @@ public class OrderUtil {
                 sb.append("|");
             }
         }
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             sb.setLength(sb.length() - 1);
         }
         return sb.toString();
     }
 
+    /**
+     * Deserialize the item notes from a string
+     * @param specialRequests the serialized string
+     * @param menuAPI the menu API to use for key transformation
+     * @return the map of menu items to their notes
+     */
     public static Map<MenuItem, List<String>> deserializeItemNotes(String specialRequests, MenuAPI menuAPI) {
         Map<MenuItem, List<String>> itemNotes = new HashMap<>();
         if (specialRequests == null || specialRequests.isEmpty()) {

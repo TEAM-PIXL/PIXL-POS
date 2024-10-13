@@ -28,13 +28,6 @@ import teampixl.com.pixlpos.models.tools.MetadataWrapper;
  */
 public class Stock extends DataManager {
 
-    /*======================================================================================================================================================================================================================================================
-    Code Description:
-    - Enumerations for StockStatus and UnitType
-    - MetadataWrapper object for metadata
-    - Map object for data
-    ========================================================================================================================================================================================================================================================*/
-
     /**
      * Enumerations for StockStatus
      */
@@ -53,23 +46,6 @@ public class Stock extends DataManager {
         QTY
     }
 
-    /*======================================================================================================================================================================================================================================================
-    Code Description:
-    - The Stock class is a data structure that holds the stock information of an ingredient.
-
-    Metadata:
-        - stock_id: UUID
-        - ingredient_id: ingredient.getMetadata().metadata().get("ingredient_id")
-        - stockStatus: stockStatus
-        - onOrder: onOrder
-        - created_at: timestamp for creation
-        - lastUpdated: timestamp for last update
-
-    Data:
-        - unit: unitType
-        - numeral: numeral
-    ========================================================================================================================================================================================================================================================*/
-
     /**
      * Constructor for Stock
      * @param ingredient: Ingredients
@@ -87,6 +63,9 @@ public class Stock extends DataManager {
         this.data = new HashMap<>();
         data.put("unit", unitType);
         data.put("numeral", numeral);
+        data.put("desired_quantity", 0);
+        data.put("price_per_unit", 0.00);
+        data.put("low_stock_threshold", 0.00);
 
         adjustStockStatus(numeral);
     }
@@ -103,35 +82,23 @@ public class Stock extends DataManager {
     }
 
     /*======================================================================================================================================================================================================================================================
-    Code Description:
-    - Getters for metadata and data.
-
-    Methods:
-        - adjustStockStatus(Object numeral): void
-        - getLowStockThreshold(): double
+    ----------------------------------------------------------------------> STOCK HELPER METHODS <---------------------------------------------------------------------------------------------
     ========================================================================================================================================================================================================================================================*/
 
     private void adjustStockStatus(Object numeral) {
-        double numeralValue = numeral instanceof Integer ? (Integer) numeral : (Double) numeral;
-
-        if (numeralValue == 0) {
-            updateMetadata("stockStatus", StockStatus.NOSTOCK);
-        } else if (!Double.isNaN(getLowStockThreshold()) && numeralValue <= getLowStockThreshold()) {
-            updateMetadata("stockStatus", StockStatus.LOWSTOCK);
-        } else {
-            updateMetadata("stockStatus", StockStatus.INSTOCK);
+        if (numeral instanceof Integer) {
+            if ((Integer) numeral == 0) {
+                this.updateMetadata("stockStatus", StockStatus.NOSTOCK);
+            } else if ((Integer) numeral < this.getLowStockThreshold()) {
+                this.updateMetadata("stockStatus", StockStatus.LOWSTOCK);
+            } else {
+                this.updateMetadata("stockStatus", StockStatus.INSTOCK);
+            }
         }
     }
 
-    private double getLowStockThreshold() {
-        if (data.get("unit") == UnitType.KG) {
-            return 5;
-        } else if (data.get("unit") == UnitType.L) {
-            return 5;
-        } else if (data.get("unit") == UnitType.QTY) {
-            return 10;
-        }
-        return Double.NaN;
+    protected double getLowStockThreshold() {
+        return (double) this.getDataValue("low_stock_threshold");
     }
 }
 

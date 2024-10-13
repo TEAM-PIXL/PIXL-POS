@@ -36,6 +36,9 @@ public class GuiCommon {
 
     private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
+    /**
+     * Load the settings for the current user.
+     */
     public static void settings() {
         String currentUserId = UserStack.getInstance().getCurrentUserId();
         List<UserSettings> userSettingsList = DataStore.getInstance().readUserSettings();
@@ -68,7 +71,6 @@ public class GuiCommon {
 
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
     public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml";
-
     public static final String ADMIN_SCREEN_HOME_TITLE = "Admin Home Screen";
     public static final String ADMIN_SCREEN_HOME_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Home/AdminHome.fxml";
     public static final String ADMIN_SCREEN_USERS_TITLE = "Admin Users Screen";
@@ -129,8 +131,8 @@ public class GuiCommon {
      * Loads a new scene into the given stage using the specified FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param stage    the stage to set the scene on
+     * @param title the title of the stage
+     * @param stage the stage to set the scene on
      */
     public static void loadScene(String fxmlPath, String title, Stage stage) {
         loadScene(fxmlPath, title, stage, WIDTH, HEIGHT);
@@ -140,10 +142,10 @@ public class GuiCommon {
      * Loads a new scene into the given stage using the specified FXML file, title, and dimensions.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param stage    the stage to set the scene on
-     * @param width    the width of the scene
-     * @param height   the height of the scene
+     * @param title the title of the stage
+     * @param stage the stage to set the scene on
+     * @param width the width of the scene
+     * @param height the height of the scene
      */
     public static void loadScene(String fxmlPath, String title, Stage stage, double width, double height) {
         Task<Parent> loadTask = new Task<>() {
@@ -181,8 +183,8 @@ public class GuiCommon {
      * Loads a new scene into the stage associated with the given node.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param node     a node from the current scene
+     * @param title the title of the stage
+     * @param node a node from the current scene
      */
     public static void loadScene(String fxmlPath, String title, Node node) {
         loadScene(fxmlPath, title, node, WIDTH, HEIGHT);
@@ -192,10 +194,10 @@ public class GuiCommon {
      * Loads a new scene into the stage associated with the given node, with specified dimensions.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param node     a node from the current scene
-     * @param width    the width of the scene
-     * @param height   the height of the scene
+     * @param title the title of the stage
+     * @param node a node from the current scene
+     * @param width the width of the scene
+     * @param height the height of the scene
      */
     public static void loadScene(String fxmlPath, String title, Node node, double width, double height) {
         if (node == null || node.getScene() == null) {
@@ -211,10 +213,10 @@ public class GuiCommon {
      * Loads a new scene into the given stage using the specified FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param stage    the stage to set the scene on
-     * @param width    the width of the scene
-     * @param height   the height of the scene
+     * @param title the title of the stage
+     * @param stage the stage to set the scene on
+     * @param width the width of the scene
+     * @param height the height of the scene
      */
     public static void loadRoot(String fxmlPath, String title, Stage stage, int width, int height) {
         Task<Parent> loadTask = new Task<>() {
@@ -268,8 +270,8 @@ public class GuiCommon {
      * Loads a new scene into the stage associated with the given node.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param node     a node from the current scene
+     * @param title the title of the stage
+     * @param node a node from the current scene
      */
     public static void loadRoot(String fxmlPath, String title, Node node) {
         loadScene(fxmlPath, title, node, WIDTH, HEIGHT);
@@ -279,10 +281,10 @@ public class GuiCommon {
      * Loads a new scene into the given stage using the specified FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param stage    the stage to set the scene on
-     * @param width    the width of the scene
-     * @param height   the height of the scene
+     * @param title the title of the stage
+     * @param stage the stage to set the scene on
+     * @param width the width of the scene
+     * @param height the height of the scene
      */
     public static void loadNewRoot(String fxmlPath, String title, Stage stage, double width, double height) {
         Task<Parent> loadTask = new Task<>() {
@@ -324,8 +326,8 @@ public class GuiCommon {
      * Loads a new scene into the stage associated with the given node.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the stage
-     * @param node     a node from the current scene
+     * @param title the title of the stage
+     * @param node a node from the current scene
      */
     public static void loadNewRoot(String fxmlPath, String title, Node node) {
         if (node == null || node.getScene() == null) {
@@ -353,8 +355,8 @@ public class GuiCommon {
      * Opens a new modal window with the specified FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
-     * @param title    the title of the window
-     * @param owner    the owner window for the modal dialog
+     * @param title the title of the window
+     * @param owner the owner window for the modal dialog
      */
     public static void openModalWindow(String fxmlPath, String title, Stage owner) {
         Task<Parent> loadTask = new Task<>() {
@@ -398,14 +400,12 @@ public class GuiCommon {
      * @param node a node from the current scene
      */
     public static void logout(Node node) {
-        UserLogTask.logout().thenRun(() -> {
-            Platform.runLater(() -> {
-                UserStack.getInstance();
-                UserStack.clearCurrentUser();
-                Stage stage = (Stage) node.getScene().getWindow();
-                loadScene(LOGIN_SCREEN_FXML, LOGIN_SCREEN_TITLE, stage);
-            });
-        }).exceptionally(ex -> {
+        UserLogTask.logout().thenRun(() -> Platform.runLater(() -> {
+            UserStack.getInstance();
+            UserStack.clearCurrentUser();
+            Stage stage = (Stage) node.getScene().getWindow();
+            loadScene(LOGIN_SCREEN_FXML, LOGIN_SCREEN_TITLE, stage);
+        })).exceptionally(ex -> {
             ex.getCause().printStackTrace();
             return null;
         });
@@ -416,13 +416,11 @@ public class GuiCommon {
      * This ensures that the user's logout is recorded in the database. And the session is properly closed.
      */
     public static void exit() {
-        UserLogTask.logout().thenRun(() -> {
-            Platform.runLater(() -> {
-                System.out.println("Application is closing...");
-                Platform.exit();
-                System.exit(0);
-            });
-        }).exceptionally(ex -> {
+        UserLogTask.logout().thenRun(() -> Platform.runLater(() -> {
+            System.out.println("Application is closing...");
+            Platform.exit();
+            System.exit(0);
+        })).exceptionally(ex -> {
             ex.getCause().printStackTrace();
             return null;
         });

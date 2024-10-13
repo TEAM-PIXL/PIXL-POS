@@ -41,6 +41,12 @@ public class UsersAPI {
 
     /* ===================== Validation Methods ===================== */
 
+    /**
+     * Validates a username.
+     *
+     * @param username the username to validate
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByUsername(String username) {
         try {
             if (username == null) return StatusCode.USERNAME_NULL;
@@ -62,6 +68,12 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Validates an email address.
+     *
+     * @param email the email address to validate
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByEmailAddress(String email) {
         try {
             if (email == null) return StatusCode.EMAIL_NULL;
@@ -80,16 +92,35 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Validates a first name.
+     *
+     * @param firstName the first name to validate
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByFirstName(String firstName) {
         if (firstName == null || firstName.trim().isEmpty()) return StatusCode.INVALID_FIRST_NAME;
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates a last name.
+     *
+     * @param lastName the last name to validate
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByLastName(String lastName) {
         if (lastName == null || lastName.trim().isEmpty()) return StatusCode.INVALID_LAST_NAME;
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates a user's name.
+     *
+     * @param firstName the first name to validate
+     * @param lastName the last name to validate
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByName(String firstName, String lastName) {
         try {
             if (firstName == null || lastName == null) return StatusCode.INVALID_NAME;
@@ -108,6 +139,12 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Validates a user's password.
+     *
+     * @param password the password to validate
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByPassword(String password) {
         if (password == null) return StatusCode.INVALID_PASSWORD;
         if (password.length() < 8) return StatusCode.PASSWORD_TOO_SHORT;
@@ -119,11 +156,23 @@ public class UsersAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates a user's role.
+     *
+     * @param role the role to validate
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByRole(Users.UserRole role) {
         if (role == null) return StatusCode.INVALID_USER_ROLE;
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates a user's status.
+     *
+     * @param username the username of the user to validate the status of.
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByStatus(String username) {
         Users user = getUser(username);
         if (user == null) return StatusCode.USER_NOT_FOUND;
@@ -131,6 +180,12 @@ public class UsersAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates a user's additional information.
+     *
+     * @param additionalInfo the additional information to validate
+     * @return the status code of the validation
+     */
     public StatusCode validateUsersByAdditionalInfo(String additionalInfo) {
         if (additionalInfo == null) return StatusCode.INVALID_USER_ADDITIONAL_INFO;
         return StatusCode.SUCCESS;
@@ -167,6 +222,12 @@ public class UsersAPI {
 
     /* ===================== User Retrieval Methods ===================== */
 
+    /**
+     * Retrieves a user by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return the user with the specified username
+     */
     public String keySearch(String username) {
         try {
             CompletableFuture<String> keyFuture = CompletableFuture.supplyAsync(() ->
@@ -183,6 +244,12 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Retrieves a username by their ID.
+     *
+     * @param id the ID of the user to retrieve
+     * @return the user with the specified ID
+     */
     public String reverseKeySearch(String id) {
         try {
             CompletableFuture<String> usernameFuture = CompletableFuture.supplyAsync(() ->
@@ -199,6 +266,12 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Transforms a user ID into a user object.
+     *
+     * @param id the ID of the user to transform
+     * @return the user with the specified ID
+     */
     public Users keyTransform(String id) {
         try {
             CompletableFuture<Users> userFuture = CompletableFuture.supplyAsync(() ->
@@ -214,31 +287,67 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Retrieves a user by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return the user with the specified username
+     */
     public Users getUser(String username) {
         String id = keySearch(username);
         return keyTransform(id);
     }
 
+    /**
+     * Retrieves a users first name by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return the first name of the user with the specified username
+     */
     public String getUsersFirstNameByUsername(String username) {
         Users user = getUser(username);
         return user != null ? (String) user.getMetadataValue("first_name") : null;
     }
 
+    /**
+     * Retrieves a users last name by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return the last name of the user with the specified username
+     */
     public String getUsersLastNameByUsername(String username) {
         Users user = getUser(username);
         return user != null ? (String) user.getMetadataValue("last_name") : null;
     }
 
+    /**
+     * Retrieves a users role by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return the role of the user with the specified username
+     */
     public Users.UserRole getUsersRoleByUsername(String username) {
         Users user = getUser(username);
         return user != null ? (Users.UserRole) user.getMetadataValue("role") : null;
     }
 
+    /**
+     * Retrieves a users status by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return the status of the user with the specified username
+     */
     public String getUsersEmailByUsername(String username) {
         Users user = getUser(username);
         return user != null ? (String) user.getDataValue("email") : null;
     }
 
+    /**
+     * Retrieves a users status by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return the status of the user with the specified username
+     */
     public String getUsersAdditionalInfoByUsername(String username) {
         Users user = getUser(username);
         return user != null ? (String) user.getDataValue("additional_info") : null;
@@ -246,6 +355,18 @@ public class UsersAPI {
 
     /* ===================== User Creation Method ===================== */
 
+    /**
+     * Creates a new user.
+     *
+     * @param firstName the first name of the user
+     * @param lastName the last name of the user
+     * @param username the username of the user
+     * @param password the password of the user
+     * @param email the email address of the user
+     * @param role the role of the user
+     * @param additionalInfo the additional information of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> postUsers(String firstName, String lastName, String username, String password, String email, Users.UserRole role, String additionalInfo) {
         try {
             List<StatusCode> validations = new ArrayList<>();
@@ -284,12 +405,30 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Creates a new user.
+     *
+     * @param firstName the first name of the user
+     * @param lastName the last name of the user
+     * @param username the username of the user
+     * @param password the password of the user
+     * @param email the email address of the user
+     * @param role the role of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> postUsers(String firstName, String lastName, String username, String password, String email, Users.UserRole role) {
         return postUsers(firstName, lastName, username, password, email, role, "");
     }
 
     /* ===================== User Update Methods ===================== */
 
+    /**
+     * Updates a user's username.
+     *
+     * @param username the username of the user to update
+     * @param newUsername the new username of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> putUsersUsername(String username, String newUsername) {
         try {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("Username", newUsername, username);
@@ -307,6 +446,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Updates a user's email address.
+     *
+     * @param username the username of the user to update
+     * @param newEmail the new email address of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> putUsersEmailAddress(String username, String newEmail) {
         try {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("EmailAddress", newEmail, username);
@@ -324,6 +470,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Updates a user's first name.
+     *
+     * @param username the username of the user to update
+     * @param newFirstName the new first name of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> putUsersFirstName(String username, String newFirstName) {
         try {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("FirstName", newFirstName, username);
@@ -341,6 +494,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Updates a user's last name.
+     *
+     * @param username the username of the user to update
+     * @param newLastName the new last name of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> putUsersLastName(String username, String newLastName) {
         try {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("LastName", newLastName, username);
@@ -358,6 +518,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Updates a user's password.
+     *
+     * @param username the username of the user to update
+     * @param newPassword the new password of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> putUsersPassword(String username, String newPassword) {
         try {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("Password", newPassword, username);
@@ -376,6 +543,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Updates a user's role.
+     *
+     * @param username the username of the user to update
+     * @param newRole the new role of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> putUsersRole(String username, Users.UserRole newRole) {
         try {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("Role", newRole, username);
@@ -393,6 +567,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Updates a user's status.
+     *
+     * @param username the username of the user to update
+     * @param newStatus the new status of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> putUsersStatus(String username, boolean newStatus) {
         try {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("Status", newStatus, username);
@@ -411,6 +592,13 @@ public class UsersAPI {
         }
     }
 
+    /**
+     * Updates a user's additional information.
+     *
+     * @param username the username of the user to update
+     * @param additionalInfo the new additional information of the user
+     * @return the status code of the operation
+     */
     public List<StatusCode> putUsersAdditionalInfo(String username, String additionalInfo) {
         try {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("AdditionalInfo", additionalInfo, username);
@@ -430,6 +618,12 @@ public class UsersAPI {
 
     /* ===================== User Deletion Method ===================== */
 
+    /**
+     * Deletes a user.
+     *
+     * @param username the username of the user to delete
+     * @return the status code of the operation
+     */
     public List<StatusCode> deleteUser(String username) {
         try {
             Users user = getUser(username);
@@ -445,6 +639,12 @@ public class UsersAPI {
 
     /* ===================== User Search Method ===================== */
 
+    /**
+     * Searches for users based on a query.
+     *
+     * @param query the query to search for
+     * @return the list of users that match the query
+     */
     public List<Users> searchUsers(String query) {
         try {
             CompletableFuture<List<Users>> searchFuture = CompletableFuture.supplyAsync(() -> {
@@ -483,6 +683,9 @@ public class UsersAPI {
 
     /* ===================== Shutdown Executor Service ===================== */
 
+    /**
+     * Shuts down the executor service.
+     */
     public void shutdown() {
         executorService.shutdown();
     }
