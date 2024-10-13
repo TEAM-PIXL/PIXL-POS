@@ -65,7 +65,7 @@ public class Stock extends DataManager {
         data.put("numeral", numeral);
         data.put("desired_quantity", 0);
         data.put("price_per_unit", 0.00);
-        data.put("low_stock_threshold", Double.NaN);
+        data.put("low_stock_threshold", 0.00);
 
         adjustStockStatus(numeral);
     }
@@ -88,25 +88,17 @@ public class Stock extends DataManager {
     private void adjustStockStatus(Object numeral) {
         if (numeral instanceof Integer) {
             if ((Integer) numeral == 0) {
-                getMetadata().metadata().put("stockStatus", StockStatus.NOSTOCK);
-            } else if ((Integer) numeral < getLowStockThreshold()) {
-                getMetadata().metadata().put("stockStatus", StockStatus.LOWSTOCK);
+                this.updateMetadata("stockStatus", StockStatus.NOSTOCK);
+            } else if ((Integer) numeral < this.getLowStockThreshold()) {
+                this.updateMetadata("stockStatus", StockStatus.LOWSTOCK);
             } else {
-                getMetadata().metadata().put("stockStatus", StockStatus.INSTOCK);
-            }
-        } else if (numeral instanceof Double) {
-            if ((Double) numeral == 0) {
-                getMetadata().metadata().put("stockStatus", StockStatus.NOSTOCK);
-            } else if ((Double) numeral < getLowStockThreshold()) {
-                getMetadata().metadata().put("stockStatus", StockStatus.LOWSTOCK);
-            } else {
-                getMetadata().metadata().put("stockStatus", StockStatus.INSTOCK);
+                this.updateMetadata("stockStatus", StockStatus.INSTOCK);
             }
         }
     }
 
-    private double getLowStockThreshold() {
-        return (double) data.get("low_stock_threshold");
+    protected double getLowStockThreshold() {
+        return (double) this.getDataValue("low_stock_threshold");
     }
 }
 

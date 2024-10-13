@@ -1,5 +1,6 @@
 package teampixl.com.pixlpos.database.api.util;
 
+import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.*;
 import teampixl.com.pixlpos.models.logs.Logs;
 import teampixl.com.pixlpos.models.logs.UserLogs;
@@ -17,46 +18,11 @@ import java.util.concurrent.Executors;
 
 public class APITest {
     public static void main(String[] args) throws Exception {
-        UserStack userStack = UserStack.getInstance();
+        Stock stock = new Stock(new Ingredients("Cheese", "This is cheese"), Stock.StockStatus.INSTOCK, Stock.UnitType.KG, 2, false);
+        System.out.println("Stock: " + stock.getMetadata().metadata());
+        System.out.println("Stock: " + stock.getData());
 
-        userStack.setCurrentUser("admin");
-
-        OrderAPI orderAPI = OrderAPI.getInstance();
-
-        /* ---> INIT WORKS <---- */
-
-        Order order = orderAPI.initializeOrder();
-
-        //print contents of order
-
-        System.out.println("Order Contents: " + order.getMetadata().metadata());
-
-        int ORDER_NUM = order.getOrderNumber();
-
-        System.out.println("Order Number: " + ORDER_NUM);
-
-        /* ---> PUT ORDER BY ITEM WORKS <---- */
-
-        List<StatusCode> RESULT = orderAPI.putOrderItem(orderAPI.keySearch(ORDER_NUM), MenuAPI.getInstance().keySearch("Pizza"), 4);
-        if (Exceptions.isSuccessful(RESULT)) {
-            System.out.println("Order placed successfully.");
-        } else {
-            System.out.println(Exceptions.returnStatus("Order items could not be added with the following errors:", RESULT));
-        }
-
-        List<StatusCode> RESULT2 = orderAPI.putOrderPaymentMethod(orderAPI.keySearch(ORDER_NUM), Order.PaymentMethod.CASH);
-        if (Exceptions.isSuccessful(RESULT2)) {
-            System.out.println("Order placed successfully.");
-        } else {
-            System.out.println(Exceptions.returnStatus("Order items could not be added with the following errors:", RESULT2));
-        }
-
-        List<StatusCode> RESULT3 = orderAPI.postOrder(orderAPI.keyTransform(orderAPI.keySearch(ORDER_NUM)));
-        if (Exceptions.isSuccessful(RESULT3)) {
-            System.out.println("Order placed successfully.");
-        } else {
-            System.out.println(Exceptions.returnStatus("Order could not be placed with the following errors:", RESULT3));
-        }
+        DataStore.getInstance().createStock(stock);
 
 //        UserStack.getInstance().setCurrentUser("admin");
 //        Logs logs = new Logs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
