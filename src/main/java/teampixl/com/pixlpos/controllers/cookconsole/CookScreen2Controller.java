@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class CookScreen2Controller {
 
@@ -52,16 +54,17 @@ public class CookScreen2Controller {
 
     private DynamicLabelManager dynamicLabelManager;
 
-    AnimationTimer datetime = new AnimationTimer() {
-        @Override
-        public void handle(long now) {
-            date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-        }
-    };
+    private ScheduledExecutorService scheduler;
 
     @FXML
     public void initialize() {
+        AnimationTimer datetime = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            }
+        };
         datetime.start();
 
         orderList.setItems(orderObservableList);
@@ -69,31 +72,59 @@ public class CookScreen2Controller {
 
         loadOrdersFromDatabase();
 
-        orders.setText(orderObservableList.size() + " Orders");
-
-        for (Order order : orderAPI.getOrders()) {
-            if (order.getMetadataValue("order_status") == Order.OrderStatus.COMPLETED) {
-                long updatedAt = (long) order.getMetadataValue("updated_at");
-                LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
-                dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm")));
-            }
-        }
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> Platform.runLater(this::loadOrdersFromDatabase), 10, 10, TimeUnit.SECONDS);
     }
 
     private void loadOrdersFromDatabase() {
-        orderAPI.reloadOrders();
-        List<Order> activeOrders = orderAPI.getOrders().stream().filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.SENT).toList();
+        Task<Void> loadOrdersTask = new Task<>() {
+            @Override
+            protected Void call() {
+                orderAPI.reloadOrders();
+                List<Order> allOrders = orderAPI.getOrders();
 
-        orderObservableList.clear();
-        orderMap.clear();
-        orderOriginalPositions.clear();
+                List<Order> activeOrders = new ArrayList<>();
+                List<Order> completedOrdersList = new ArrayList<>();
 
-        for (int i = 0; i < activeOrders.size(); i++) {
-            Order order = activeOrders.get(i);
-            addOrderToList(order, i);
-        }
+                for (Order order : allOrders) {
+                    Object statusObj = order.getMetadataValue("order_status");
+                    if (statusObj instanceof Order.OrderStatus) {
+                        Order.OrderStatus status = (Order.OrderStatus) statusObj;
+                        if (status == Order.OrderStatus.SENT) {
+                            activeOrders.add(order);
+                        } else if (status == Order.OrderStatus.COMPLETED) {
+                            completedOrdersList.add(order);
+                        }
+                    }
+                }
 
-        orders.setText(orderObservableList.size() + " Orders");
+                Platform.runLater(() -> {
+                    orderObservableList.clear();
+                    orderMap.clear();
+                    orderOriginalPositions.clear();
+
+                    for (int i = 0; i < activeOrders.size(); i++) {
+                        Order order = activeOrders.get(i);
+                        addOrderToList(order, i);
+                    }
+
+                    orders.setText(orderObservableList.size() + " Orders");
+
+                    dynamicLabelManager.clearCompletedLabels();
+                    for (Order order : completedOrdersList) {
+                        Object updatedAtObj = order.getMetadataValue("updated_at");
+                        if (updatedAtObj instanceof Long) {
+                            long updatedAt = (Long) updatedAtObj;
+                            LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
+                            dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        }
+                    }
+                });
+
+                return null;
+            }
+        };
+        new Thread(loadOrdersTask).start();
     }
 
     private void addOrderToList(Order order, int position) {
@@ -103,6 +134,7 @@ public class CookScreen2Controller {
         orderMap.put(orderId, orderVBox);
         orderOriginalPositions.put(orderId, position);
     }
+
 
     private VBox createOrderVBox(Order order) {
         String orderId = (String) order.getMetadataValue("order_id");
@@ -310,6 +342,9 @@ public class CookScreen2Controller {
     @FXML
     protected void onLogoutButtonClick() {
         GuiCommon.logout(logoutbutton);
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdown();
+        }
     }
 
     /**
@@ -335,6 +370,10 @@ public class CookScreen2Controller {
             labelListView.getItems().add(newLabel);
             System.out.println("Added order label with text: " + itemName);
         }
+
+        public void clearCompletedLabels() {
+            labelListView.getItems().clear();
+        }
     }
 
     private void showErrorDialog(String message) {
@@ -348,4 +387,3 @@ public class CookScreen2Controller {
         });
     }
 }
-

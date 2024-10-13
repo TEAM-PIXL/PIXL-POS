@@ -1,9 +1,7 @@
 package teampixl.com.pixlpos.controllers.waiterconsole;
 
-import javafx.animation.AnimationTimer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
@@ -26,6 +24,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
+
+import java.util.concurrent.ExecutorService;
 
 public class WaiterScreen2Controller {
 
@@ -87,8 +88,6 @@ public class WaiterScreen2Controller {
     @FXML
     private FlowPane dessertpane;
 
-
-
     private DynamicTabManager tabManager;
     private DynamicLabelManager labelManager;
     private DynamicButtonManager searchbuttonManager;
@@ -115,6 +114,8 @@ public class WaiterScreen2Controller {
     private Order currentOrder;
     private String orderID;
     private Double orderTotal = 0.00;
+
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     public void comboinitialize() {
         String[] customerAmounts = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -208,7 +209,6 @@ public class WaiterScreen2Controller {
 
         initialiseSlider();
         comboinitialize();
-
         initialiseOrder();
 
         searchbar.setOnAction(event -> handleSearchBarEnter());
@@ -224,15 +224,34 @@ public class WaiterScreen2Controller {
 
         initsearch();
 
-        menuItems = dataStore.readMenuItems();
-        queryMenuItems = menuItems;
-
         itemtab.widthProperty().addListener((obs, oldVal, newVal) -> tabManager.adjustTabWidths());
         itemtab.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
 
             if (newTab != null) {
-                TabType tabType = TabType.fromId(newTab.getId());
-                switch (Objects.requireNonNull(tabType)) {
+                populateButtonsForTab(newTab);
+            }
+        });
+
+        orderitemslistview.setCellFactory(param -> new OrderItemCell());
+
+        orderitemslistview.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> selectedItem = newValue);
+    }
+
+    private void populateButtonsForCurrentTab() {
+        Tab currentTab = itemtab.getSelectionModel().getSelectedItem();
+        if (currentTab != null) {
+            populateButtonsForTab(currentTab);
+        }
+    }
+
+    private void populateButtonsForTab(Tab tab) {
+        TabType tabType = TabType.fromId(tab.getId());
+        if (tabType == null) return;
+
+        Task<Void> loadButtonsTask = new Task<>() {
+            @Override
+            protected Void call() {
+                switch (tabType) {
                     case SEARCH:
                         searchbuttonManager.clearAllButtons();
                         for (MenuItem menuItem : menuItems) {
@@ -287,35 +306,48 @@ public class WaiterScreen2Controller {
                         }
                         break;
                 }
+                return null;
             }
+        };
+
+        loadButtonsTask.setOnSucceeded(event -> {
         });
 
-        orderitemslistview.setCellFactory(param -> new OrderItemCell());
-
-        orderitemslistview.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> selectedItem = newValue);
+        executorService.submit(loadButtonsTask);
     }
 
     private void handleSearchBarEnter() {
         itemtab.getSelectionModel().select(searchtab);
         String searchText = searchbar.getText();
-        searchbuttonManager.clearAllButtons();
-        queryMenuItems = menuAPI.searchMenuItem(searchText);
-        if (queryMenuItems.isEmpty()) {
-            showErrorDialog("No items were found with the name: " + searchText);
-            for (MenuItem menuItem : menuItems) {
-                String itemName = (String) menuItem.getMetadataValue("itemName");
-                String price = menuItem.getMetadataValue("price").toString();
-                searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
-                id++;
+
+        Task<Void> searchTask = new Task<>() {
+            @Override
+            protected Void call() {
+                queryMenuItems = menuAPI.searchMenuItem(searchText);
+                Platform.runLater(() -> {
+                    searchbuttonManager.clearAllButtons();
+                    if (queryMenuItems.isEmpty()) {
+                        showErrorDialog("No items were found with the name: " + searchText);
+                        for (MenuItem menuItem : menuItems) {
+                            String itemName = (String) menuItem.getMetadataValue("itemName");
+                            String price = menuItem.getMetadataValue("price").toString();
+                            searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
+                            id++;
+                        }
+                    } else {
+                        for (MenuItem menuItem : queryMenuItems) {
+                            String itemName = (String) menuItem.getMetadataValue("itemName");
+                            String price = menuItem.getMetadataValue("price").toString();
+                            searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
+                            id++;
+                        }
+                    }
+                });
+                return null;
             }
-        } else {
-            for (MenuItem menuItem : queryMenuItems) {
-                String itemName = (String) menuItem.getMetadataValue("itemName");
-                String price = menuItem.getMetadataValue("price").toString();
-                searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
-                id++;
-            }
-        }
+        };
+
+        executorService.submit(searchTask);
     }
 
     private void initialiseOrder() {
@@ -362,26 +394,37 @@ public class WaiterScreen2Controller {
     }
 
     private void filterMenuItemsByPrice(double maxPrice) {
-        searchbuttonManager.clearAllButtons();
-        List<MenuItem> menuItems = queryMenuItems;
-        for (MenuItem menuItem : menuItems) {
-            if (menuItem.getMetadataValue("price") instanceof Double) {
-                if ((Double) menuItem.getMetadataValue("price") <= maxPrice) {
-                    String itemName = (String) menuItem.getMetadataValue("itemName");
-                    String price = menuItem.getMetadataValue("price").toString();
-                    searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
-                    id++;
-                }
+        Task<Void> filterTask = new Task<>() {
+            @Override
+            protected Void call() {
+                Platform.runLater(() -> {
+                    searchbuttonManager.clearAllButtons();
+                    for (MenuItem menuItem : queryMenuItems) {
+                        if (menuItem.getMetadataValue("price") instanceof Double) {
+                            if ((Double) menuItem.getMetadataValue("price") <= maxPrice) {
+                                String itemName = (String) menuItem.getMetadataValue("itemName");
+                                String price = menuItem.getMetadataValue("price").toString();
+                                searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
+                                id++;
+                            }
+                        }
+                    }
+                });
+                return null;
             }
-        }
+        };
+
+        executorService.submit(filterTask);
     }
 
     private void showErrorDialog(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 
     @FXML
@@ -391,33 +434,43 @@ public class WaiterScreen2Controller {
             return;
         }
 
-        List<StatusCode> statusCodes = new ArrayList<>();
+        Task<Void> sendOrderTask = new Task<>() {
+            @Override
+            protected Void call() {
+                List<StatusCode> statusCodes = new ArrayList<>();
 
-        statusCodes.addAll(orderAPI.putOrderItems(orderID, orderItems));
-        statusCodes.addAll(orderAPI.putOrderCustomers(orderID, Integer.parseInt(customernumber.getValue())));
-        statusCodes.addAll(orderAPI.putOrderTableNumber(orderID, Integer.parseInt(tablenumber.getValue())));
-        statusCodes.addAll(orderAPI.putOrderType(orderID, Order.OrderType.valueOf(ordertype.getValue())));
-        statusCodes.addAll(orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.valueOf(paymentstatus.getValue())));
+                statusCodes.addAll(orderAPI.putOrderItems(orderID, orderItems));
+                statusCodes.addAll(orderAPI.putOrderCustomers(orderID, Integer.parseInt(customernumber.getValue())));
+                statusCodes.addAll(orderAPI.putOrderTableNumber(orderID, Integer.parseInt(tablenumber.getValue())));
+                statusCodes.addAll(orderAPI.putOrderType(orderID, Order.OrderType.valueOf(ordertype.getValue())));
+                statusCodes.addAll(orderAPI.putOrderPaymentMethod(orderID, Order.PaymentMethod.valueOf(paymentstatus.getValue())));
 
-        String specialRequests = OrderUtil.serializeItemNotes(itemNotes);
-        System.out.println("Special Requests: " + specialRequests);
-        statusCodes.addAll(orderAPI.putOrderSpecialRequests(orderID, specialRequests));
+                String specialRequests = OrderUtil.serializeItemNotes(itemNotes);
+                System.out.println("Special Requests: " + specialRequests);
+                statusCodes.addAll(orderAPI.putOrderSpecialRequests(orderID, specialRequests));
 
-        statusCodes.addAll(orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT));
+                statusCodes.addAll(orderAPI.putOrderStatus(orderID, Order.OrderStatus.SENT));
 
-        if (!Exceptions.isSuccessful(statusCodes)) {
-            showErrorDialog(Exceptions.returnStatus("Failed to apply order details:", statusCodes));
-            return;
-        }
+                if (!Exceptions.isSuccessful(statusCodes)) {
+                    Platform.runLater(() -> showErrorDialog(Exceptions.returnStatus("Failed to apply order details:", statusCodes)));
+                    return null;
+                }
 
-        List<StatusCode> postStatus = orderAPI.postOrder(currentOrder);
-        if (Exceptions.isSuccessful(postStatus)) {
-            System.out.println("Order placed successfully.");
-            initialiseOrder();
-            onRestartButtonClick();
-        } else {
-            showErrorDialog(Exceptions.returnStatus("Order could not be placed:", postStatus));
-        }
+                List<StatusCode> postStatus = orderAPI.postOrder(currentOrder);
+                if (Exceptions.isSuccessful(postStatus)) {
+                    System.out.println("Order placed successfully.");
+                    Platform.runLater(() -> {
+                        initialiseOrder();
+                        onRestartButtonClick();
+                    });
+                } else {
+                    Platform.runLater(() -> showErrorDialog(Exceptions.returnStatus("Order could not be placed:", postStatus)));
+                }
+                return null;
+            }
+        };
+
+        executorService.submit(sendOrderTask);
     }
 
     @FXML
@@ -430,19 +483,6 @@ public class WaiterScreen2Controller {
         selectedItem.setAddNoteRequested(true);
 
         Platform.runLater(() -> orderitemslistview.refresh());
-    }
-
-    private ListCell<OrderItem> getCell(int index) {
-        for (Object obj : orderitemslistview.lookupAll(".list-cell")) {
-            if (obj instanceof ListCell) {
-                @SuppressWarnings("unchecked")
-                ListCell<OrderItem> cell = (ListCell<OrderItem>) obj;
-                if (cell.getIndex() == index) {
-                    return cell;
-                }
-            }
-        }
-        return null;
     }
 
     @FXML
@@ -473,23 +513,24 @@ public class WaiterScreen2Controller {
     }
 
     private void updateOrderSummary() {
-        labelManager.clearAllItems();
-        orderTotal = 0.00;
+        Platform.runLater(() -> {
+            labelManager.clearAllItems();
+            orderTotal = 0.00;
 
-        for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
-            MenuItem menuItem = entry.getKey();
-            int quantity = entry.getValue();
-            Double price = (Double) menuItem.getMetadataValue("price");
-            double total = price * quantity;
-            orderTotal += total;
+            for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
+                MenuItem menuItem = entry.getKey();
+                int quantity = entry.getValue();
+                Double price = (Double) menuItem.getMetadataValue("price");
+                double total = price * quantity;
+                orderTotal += total;
 
-            List<String> notes = itemNotes.getOrDefault(menuItem, new ArrayList<>());
-            OrderItem orderItem = new OrderItem(menuItem, quantity, notes);
-            labelManager.addItem(orderItem);
-        }
-        totalprice.setText("$" + String.format("%.2f", orderTotal));
+                List<String> notes = itemNotes.getOrDefault(menuItem, new ArrayList<>());
+                OrderItem orderItem = new OrderItem(menuItem, quantity, notes);
+                labelManager.addItem(orderItem);
+            }
+            totalprice.setText("$" + String.format("%.2f", orderTotal));
+        });
     }
-
 
     @FXML
     protected void onRestartButtonClick() {
@@ -512,6 +553,7 @@ public class WaiterScreen2Controller {
 
     @FXML
     protected void onFilterButtonClick() {
+        populateButtonsForCurrentTab();
     }
 
     @FXML
@@ -520,14 +562,25 @@ public class WaiterScreen2Controller {
     }
 
     protected void initsearch() {
-        int id = 1;
-        ObservableList<MenuItem> menuItems = dataStore.readMenuItems();
-        for (MenuItem menuItem : menuItems) {
-            String itemName = (String) menuItem.getMetadataValue("itemName");
-            String price = menuItem.getMetadataValue("price").toString();
-            searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
-            id++;
-        }
+        Task<Void> initSearchTask = new Task<>() {
+            @Override
+            protected Void call() {
+                menuItems = dataStore.readMenuItems();
+                queryMenuItems = new ArrayList<>(menuItems);
+                Platform.runLater(() -> {
+                    searchbuttonManager.clearAllButtons();
+                    for (MenuItem menuItem : menuItems) {
+                        String itemName = (String) menuItem.getMetadataValue("itemName");
+                        String price = menuItem.getMetadataValue("price").toString();
+                        searchbuttonManager.addButton(String.valueOf(id), itemName, "$" + price, menuItem);
+                        id++;
+                    }
+                });
+                return null;
+            }
+        };
+
+        executorService.submit(initSearchTask);
     }
 
     private class DynamicButtonManager {
@@ -541,24 +594,26 @@ public class WaiterScreen2Controller {
         }
 
         private void addButton(String id, String itemName, String price, MenuItem menuItem) {
-            buttonCount++;
-            Button newButton = new Button(itemName);
-            newButton.setId(id);
-            newButton.setPrefSize(225, 120);
-            newButton.setContentDisplay(ContentDisplay.BOTTOM);
-            newButton.setMnemonicParsing(false);
-            newButton.getStyleClass().add("item-button");
+            Platform.runLater(() -> {
+                buttonCount++;
+                Button newButton = new Button(itemName);
+                newButton.setId(id);
+                newButton.setPrefSize(225, 120);
+                newButton.setContentDisplay(ContentDisplay.BOTTOM);
+                newButton.setMnemonicParsing(false);
+                newButton.getStyleClass().add("item-button");
 
-            Label priceLabel = new Label(price);
-            priceLabel.getStyleClass().add("buttonprice-label");
+                Label priceLabel = new Label(price);
+                priceLabel.getStyleClass().add("buttonprice-label");
 
-            newButton.setGraphic(priceLabel);
+                newButton.setGraphic(priceLabel);
 
-            buttonPane.getChildren().add(newButton);
-            buttons.put(itemName, newButton);
+                buttonPane.getChildren().add(newButton);
+                buttons.put(itemName, newButton);
 
-            newButton.setUserData(menuItem);
-            newButton.setOnAction(e -> addtoorder(menuItem));
+                newButton.setUserData(menuItem);
+                newButton.setOnAction(e -> addtoorder(menuItem));
+            });
         }
 
         private void addtoorder(MenuItem menuItem) {
@@ -583,8 +638,10 @@ public class WaiterScreen2Controller {
         }
 
         private void clearAllButtons() {
-            buttonPane.getChildren().clear();
-            buttons.clear();
+            Platform.runLater(() -> {
+                buttonPane.getChildren().clear();
+                buttons.clear();
+            });
         }
     }
 
@@ -606,13 +663,13 @@ public class WaiterScreen2Controller {
     private record DynamicLabelManager(ListView<OrderItem> listView) {
 
         private void addItem(OrderItem orderItem) {
-                listView.getItems().add(orderItem);
-            }
-
-            private void clearAllItems() {
-                listView.getItems().clear();
-            }
+            listView.getItems().add(orderItem);
         }
+
+        private void clearAllItems() {
+            listView.getItems().clear();
+        }
+    }
 
     public static class OrderItem {
         private final MenuItem menuItem;
@@ -720,9 +777,6 @@ public class WaiterScreen2Controller {
             TextField textField = new TextField(currentNote);
             textField.selectAll();
 
-            textField.setOnAction(null);
-            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
-
             textField.setOnAction(event -> finishEditing(item, noteIndex, textField));
 
             textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
@@ -743,7 +797,8 @@ public class WaiterScreen2Controller {
             textField.getProperties().put("finished", true);
 
             textField.setOnAction(null);
-            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
+            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {
+            });
 
             String newNote = textField.getText();
             if (newNote != null && !newNote.trim().isEmpty()) {
@@ -787,7 +842,8 @@ public class WaiterScreen2Controller {
             textField.getProperties().put("finished", true);
 
             textField.setOnAction(null);
-            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
+            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {
+            });
 
             String newNote = textField.getText();
             if (newNote == null || newNote.trim().isEmpty()) {
@@ -819,13 +875,9 @@ public class WaiterScreen2Controller {
             }
         }
 
-
         private void addNoteInline(OrderItem item, VBox vbox, Label addNoteLabel) {
             TextField textField = new TextField();
             textField.setPromptText("Enter note");
-
-            textField.setOnAction(null);
-            textField.focusedProperty().removeListener((obs, wasFocused, isNowFocused) -> {});
 
             textField.setOnAction(event -> finishAdding(item, vbox, addNoteLabel, textField));
 
@@ -841,9 +893,10 @@ public class WaiterScreen2Controller {
         }
     }
 
-
     @FXML
     public void stop() {
         scheduler.shutdown();
+        executorService.shutdown();
     }
 }
+
