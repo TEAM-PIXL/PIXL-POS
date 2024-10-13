@@ -230,9 +230,7 @@ public class DatabaseManager {
                 System.err.println("Error mapping Order: " + e.getMessage());
                 return null;
             }
-        }).thenCompose(orders -> {
-            return loadAllOrderItems(orders).thenApply(v -> orders);
-        });
+        }).thenCompose(orders -> loadAllOrderItems(orders).thenApply(v -> orders));
     }
 
     private static CompletableFuture<Void> loadAllOrderItems(List<Order> orders) {
@@ -245,11 +243,7 @@ public class DatabaseManager {
             for (Order order : orders) {
                 String orderId = (String) order.getMetadataValue("order_id");
                 Map<String, Integer> orderItems = orderItemsMap.get(orderId);
-                if (orderItems != null) {
-                    order.setDataValue("menuItems", orderItems);
-                } else {
-                    order.setDataValue("menuItems", Collections.emptyMap());
-                }
+                order.setDataValue("menuItems", Objects.requireNonNullElse(orderItems, Collections.emptyMap()));
             }
         });
     }
@@ -343,6 +337,7 @@ public class DatabaseManager {
             try (Connection conn = DatabaseHelper.connect();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+                @SuppressWarnings("unchecked")
                 Map<String, Integer> menuItems = (Map<String, Integer>) order.getData().get("menuItems");
 
                 for (Map.Entry<String, Integer> entry : menuItems.entrySet()) {
@@ -737,6 +732,7 @@ public class DatabaseManager {
 
     /* ===================== Clear Database ===================== */
 
+    @SuppressWarnings("all")
     public static CompletableFuture<Void> clearDatabase() {
         return CompletableFuture.runAsync(() -> {
             try (Connection conn = DatabaseHelper.connect();
