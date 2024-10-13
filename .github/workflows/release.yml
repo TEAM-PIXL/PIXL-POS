@@ -2,6 +2,8 @@ name: Build and Package JavaFX Application
 
 on:
   push:
+    branches:
+      - 'production'
 
 jobs:
   build-linux:
