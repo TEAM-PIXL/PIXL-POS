@@ -50,12 +50,17 @@ public class Exceptions {
         return MESSAGE + " " + ERROR_CODES;
     }
 
-    /**
-     * Generate an error message based on the status code
-     * @param STATUS The status code to generate an error message for
-     * @return string with error message
-     */
-    public static String generateErrorMessage( StatusCode STATUS ) {
+    private static String generateErrorMessage( StatusCode STATUS ) {
         return "The following error occurred: " + STATUS;
+    }
+
+    /**
+     * Handle the status code and return the error message
+     * @param STATUS The status code to handle
+     * @return the error message
+     */
+    public static String handleStatusCode( StatusCode STATUS ) {
+        System.out.println( generateErrorMessage( STATUS ) );
+        return generateErrorMessage( STATUS );
     }
 }
