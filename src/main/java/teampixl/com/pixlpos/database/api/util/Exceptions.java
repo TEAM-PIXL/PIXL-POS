@@ -7,10 +7,20 @@ import java.util.List;
  * A class to handle exceptions and status codes for the API
  */
 public class Exceptions {
+
+    /**
+     * Throw a new exception with a message
+     * @param MESSAGE The message to throw with the exception
+     */
     public static void throwException(String MESSAGE) {
         throw new RuntimeException(MESSAGE);
     }
 
+    /**
+     * Throw a new exception with a message and a cause
+     * @param MESSAGE The message to throw with the exception
+     * @param CAUSE The cause of the exception
+     */
     public static void throwException(String MESSAGE, Throwable CAUSE) {
         throw new RuntimeException(MESSAGE, CAUSE);
     }
@@ -40,6 +50,11 @@ public class Exceptions {
         return MESSAGE + " " + ERROR_CODES;
     }
 
+    /**
+     * Generate an error message based on the status code
+     * @param STATUS The status code to generate an error message for
+     * @return string with error message
+     */
     public static String generateErrorMessage( StatusCode STATUS ) {
         return "The following error occurred: " + STATUS;
     }
