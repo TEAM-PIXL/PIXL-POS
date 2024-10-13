@@ -33,14 +33,6 @@ import teampixl.com.pixlpos.models.tools.MetadataWrapper;
  */
 public class MenuItem extends DataManager {
 
-    /*============================================================================================================================================================
-    Code Description:
-    - Enumerations for ItemType and DietaryRequirement
-    - MetadataWrapper object for metadata
-    - Map to store data
-    - Map to store ingredients
-    ============================================================================================================================================================*/
-
     /**
      * Enumerations for ItemType
      */
@@ -64,27 +56,6 @@ public class MenuItem extends DataManager {
     }
 
     private final Map<String, IngredientAmount> ingredients;
-
-    /*============================================================================================================================================================
-    Code Description:
-    - Constructor for MenuItem object.
-
-    Metadata:
-        - id: UUID
-        - itemName: itemName
-        - price: price
-        - itemType: itemType
-        - activeItem: activeItem
-        - dietaryRequirement: dietaryRequirement
-        - created_at: timestamp for creation
-        - updated_at: timestamp for last update
-
-    Data:
-        - description: description
-        - notes: null
-        - amountOrdered: 0
-        - ingredients: map to store ingredients using ingredient_id as the key and IngredientAmount as the value
-    ============================================================================================================================================================*/
 
     /**
      * Constructor for MenuItem object.
@@ -135,8 +106,7 @@ public class MenuItem extends DataManager {
     }
 
     /*=========================================================================================================================================================================================================
-    Code Description:
-    This section of the code contains methods to add, update, remove, clear and check for ingredients in a MenuItem object.
+    ---------------------------------------------------------------------------------> HELPER METHODS <-------------------------------------------------------------------------------------------------------
     =========================================================================================================================================================================================================*/
 
     /**
@@ -228,10 +198,9 @@ public class MenuItem extends DataManager {
         return (double) metadata.metadata().get("price");
     }
 
-    /*============================================================================================================================================================
-    Code Description:
-    - IngredientAmount class to hold an ingredient and its corresponding numeral.
-    ============================================================================================================================================================*/
+    /*=============================================================================================================================================================================
+    ---------------------------------------------------------------------------------> RECORD FOR INGREDIENT MAP <-------------------------------------------------------------
+    ===============================================================================================================================================================================*/
 
     public record IngredientAmount(Ingredients ingredient, Object numeral) {
 
