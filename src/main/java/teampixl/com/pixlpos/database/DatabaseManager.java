@@ -511,6 +511,9 @@ public class DatabaseManager {
                 boolean onOrder = rs.getInt("on_order") == 1;
                 String createdAt = rs.getString("created_at");
                 String lastUpdated = rs.getString("last_updated");
+                double pricePerUnit = rs.getDouble("price_per_unit");
+                double lowStockThreshold = rs.getDouble("low_stock_threshold");
+                double desiredQuantity = rs.getDouble("desired_quantity");
 
                 Ingredients ingredient = DataStore.getInstance().getIngredientById(ingredientId);
 
@@ -523,6 +526,9 @@ public class DatabaseManager {
                 stock.updateMetadata("stock_id", stockId);
                 stock.updateMetadata("created_at", createdAt);
                 stock.updateMetadata("lastUpdated", lastUpdated);
+                stock.setDataValue("pricePerUnit", pricePerUnit);
+                stock.setDataValue("lowStockThreshold", lowStockThreshold);
+                stock.setDataValue("desiredQuantity", desiredQuantity);
 
                 return stock;
             } catch (SQLException e) {
@@ -533,7 +539,7 @@ public class DatabaseManager {
     }
 
     public static CompletableFuture<Void> saveStockToDatabase(Stock stock) {
-        String sql = "INSERT INTO stock(stock_id, ingredient_id, stock_status, on_order, created_at, last_updated, unit_type, numeral) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO stock(stock_id, ingredient_id, stock_status, on_order, created_at, last_updated, unit_type, numeral, low_stock_threshold, desired_quantity, price_per_unit) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         return executeUpdate(sql, pstmt -> {
             pstmt.setString(1, (String) stock.getMetadata().metadata().get("stock_id"));
             pstmt.setString(2, (String) stock.getMetadata().metadata().get("ingredient_id"));
@@ -550,11 +556,24 @@ public class DatabaseManager {
             } else {
                 pstmt.setNull(8, Types.NULL);
             }
+            Object lowStockThreshold = stock.getData().get("low_stock_threshold");
+            if (lowStockThreshold instanceof Double) {
+                pstmt.setDouble(9, (Double) lowStockThreshold);
+            } else {
+                pstmt.setNull(9, Types.NULL);
+            }
+            Object desiredQuantity = stock.getData().get("desired_quantity");
+            if (desiredQuantity instanceof Double) {
+                pstmt.setDouble(10, (Double) desiredQuantity);
+            } else {
+                pstmt.setNull(10, Types.NULL);
+            }
+            pstmt.setDouble(11, (Double) stock.getData().get("price_per_unit"));
         });
     }
 
     public static CompletableFuture<Void> updateStockInDatabase(Stock stock) {
-        String sql = "UPDATE stock SET stock_status = ?, on_order = ?, last_updated = ?, unit_type = ?, numeral = ? WHERE stock_id = ?";
+        String sql = "UPDATE stock SET stock_status = ?, on_order = ?, last_updated = ?, unit_type = ?, numeral = ?, low_stock_threshold = ?, desired_quantity = ?, price_per_unit = ? WHERE stock_id = ?";
         return executeUpdate(sql, pstmt -> {
             pstmt.setString(1, stock.getMetadata().metadata().get("stockStatus").toString());
             pstmt.setInt(2, (Boolean) stock.getMetadata().metadata().get("onOrder") ? 1 : 0);
@@ -568,7 +587,20 @@ public class DatabaseManager {
             } else {
                 pstmt.setNull(5, Types.NULL);
             }
-            pstmt.setString(6, (String) stock.getMetadata().metadata().get("stock_id"));
+            Object lowStockThreshold = stock.getData().get("low_stock_threshold");
+            if (lowStockThreshold instanceof Double) {
+                pstmt.setDouble(6, (Double) lowStockThreshold);
+            } else {
+                pstmt.setNull(6, Types.NULL);
+            }
+            Object desiredQuantity = stock.getData().get("desired_quantity");
+            if (desiredQuantity instanceof Double) {
+                pstmt.setDouble(7, (Double) desiredQuantity);
+            } else {
+                pstmt.setNull(7, Types.NULL);
+            }
+            pstmt.setDouble(8, (Double) stock.getData().get("price_per_unit"));
+            pstmt.setString(9, (String) stock.getMetadata().metadata().get("stock_id"));
         });
     }
 

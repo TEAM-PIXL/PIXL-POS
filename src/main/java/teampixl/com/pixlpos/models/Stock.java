@@ -63,6 +63,9 @@ public class Stock extends DataManager {
         this.data = new HashMap<>();
         data.put("unit", unitType);
         data.put("numeral", numeral);
+        data.put("desired_quantity", 0);
+        data.put("price_per_unit", 0.00);
+        data.put("low_stock_threshold", Double.NaN);
 
         adjustStockStatus(numeral);
     }
@@ -83,26 +86,27 @@ public class Stock extends DataManager {
     ========================================================================================================================================================================================================================================================*/
 
     private void adjustStockStatus(Object numeral) {
-        double numeralValue = numeral instanceof Integer ? (Integer) numeral : (Double) numeral;
-
-        if (numeralValue == 0) {
-            updateMetadata("stockStatus", StockStatus.NOSTOCK);
-        } else if (!Double.isNaN(getLowStockThreshold()) && numeralValue <= getLowStockThreshold()) {
-            updateMetadata("stockStatus", StockStatus.LOWSTOCK);
-        } else {
-            updateMetadata("stockStatus", StockStatus.INSTOCK);
+        if (numeral instanceof Integer) {
+            if ((Integer) numeral == 0) {
+                getMetadata().metadata().put("stockStatus", StockStatus.NOSTOCK);
+            } else if ((Integer) numeral < getLowStockThreshold()) {
+                getMetadata().metadata().put("stockStatus", StockStatus.LOWSTOCK);
+            } else {
+                getMetadata().metadata().put("stockStatus", StockStatus.INSTOCK);
+            }
+        } else if (numeral instanceof Double) {
+            if ((Double) numeral == 0) {
+                getMetadata().metadata().put("stockStatus", StockStatus.NOSTOCK);
+            } else if ((Double) numeral < getLowStockThreshold()) {
+                getMetadata().metadata().put("stockStatus", StockStatus.LOWSTOCK);
+            } else {
+                getMetadata().metadata().put("stockStatus", StockStatus.INSTOCK);
+            }
         }
     }
 
     private double getLowStockThreshold() {
-        if (data.get("unit") == UnitType.KG) {
-            return 5;
-        } else if (data.get("unit") == UnitType.L) {
-            return 5;
-        } else if (data.get("unit") == UnitType.QTY) {
-            return 10;
-        }
-        return Double.NaN;
+        return (double) data.get("low_stock_threshold");
     }
 }
 

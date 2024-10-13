@@ -205,6 +205,9 @@ public class DatabaseHelper {
         last_updated TEXT NOT NULL,
         unit_type TEXT NOT NULL,
         numeral REAL NOT NULL,
+        desired_quantity REAL NOT NULL,
+        price_per_unit REAL NOT NULL,
+        low_stock_threshold REAL NOT NULL,
         FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
     );
     """;
