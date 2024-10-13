@@ -73,7 +73,6 @@ public class DatabaseManager {
                 item.setDataValue("notes", notes);
                 item.setDataValue("amountOrdered", amountOrdered);
 
-                // Load ingredients for each menu item asynchronously
                 getMenuItemIngredientsFromDatabase(item).thenAccept(ingredients -> {
                     for (Map.Entry<String, Object> entry : ingredients.entrySet()) {
                         Ingredients ingredient = DataStore.getInstance().getIngredientById(entry.getKey());
@@ -226,25 +225,22 @@ public class DatabaseManager {
                 order.setDataValue("special_requests", specialRequests);
                 order.setDataValue("payment_method", paymentMethod);
 
-                // Store the order for later processing
                 return order;
             } catch (SQLException e) {
                 System.err.println("Error mapping Order: " + e.getMessage());
                 return null;
             }
         }).thenCompose(orders -> {
-            // After all orders are loaded, load order items in batches
             return loadAllOrderItems(orders).thenApply(v -> orders);
         });
     }
 
     private static CompletableFuture<Void> loadAllOrderItems(List<Order> orders) {
-        // Collect all order IDs
+
         List<String> orderIds = orders.stream()
                 .map(order -> (String) order.getMetadataValue("order_id"))
                 .collect(Collectors.toList());
 
-        // Fetch all order items in one query
         return getAllOrderItemsFromDatabase(orderIds).thenAccept(orderItemsMap -> {
             for (Order order : orders) {
                 String orderId = (String) order.getMetadataValue("order_id");

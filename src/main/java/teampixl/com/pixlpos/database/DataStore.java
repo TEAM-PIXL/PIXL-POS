@@ -50,10 +50,8 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     private void loadDataFromDatabase() {
         ExecutorService executorService = Executors.newFixedThreadPool(8);
         try {
-            // List to hold futures
             List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-            // Load data asynchronously and add futures to the list
             futures.add(loadMenuItemsFromDatabase());
             futures.add(loadIngredientsFromDatabase());
             futures.add(loadStockFromDatabase());
@@ -61,9 +59,9 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             futures.add(loadOrdersFromDatabase());
             futures.add(loadUserSettingsFromDatabase());
             futures.add(loadNotesFromDatabase());
+            // Fix Later
 //            futures.add(loadUserLogsFromDatabase());
 
-            // Wait for all futures to complete
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         } finally {
             executorService.shutdown();
@@ -116,7 +114,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     public Map<String, Object> readMenuItemIngredients(MenuItem menuItem) {
         CompletableFuture<Map<String, Object>> future = DatabaseManager.getMenuItemIngredientsFromDatabase(menuItem);
         try {
-            return future.get(); // Blocking call to get the result
+            return future.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return Collections.emptyMap();
@@ -217,7 +215,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
     public Map<String, Integer> readOrderItems(Order order) {
         CompletableFuture<Map<String, Integer>> future = DatabaseManager.getOrderItemsFromDatabase((String) order.getMetadata().metadata().get("order_id"));
         try {
-            return future.get(); // Blocking call to get the result
+            return future.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return Collections.emptyMap();

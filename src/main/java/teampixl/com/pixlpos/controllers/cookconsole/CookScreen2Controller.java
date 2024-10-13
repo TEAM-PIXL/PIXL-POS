@@ -72,7 +72,6 @@ public class CookScreen2Controller {
 
         loadOrdersFromDatabase();
 
-        // Start periodic refresh every 10 seconds
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(() -> Platform.runLater(this::loadOrdersFromDatabase), 10, 10, TimeUnit.SECONDS);
     }
@@ -100,7 +99,6 @@ public class CookScreen2Controller {
                 }
 
                 Platform.runLater(() -> {
-                    // Update active orders
                     orderObservableList.clear();
                     orderMap.clear();
                     orderOriginalPositions.clear();
@@ -112,7 +110,6 @@ public class CookScreen2Controller {
 
                     orders.setText(orderObservableList.size() + " Orders");
 
-                    // Update completed orders
                     dynamicLabelManager.clearCompletedLabels();
                     for (Order order : completedOrdersList) {
                         Object updatedAtObj = order.getMetadataValue("updated_at");

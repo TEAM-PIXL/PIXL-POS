@@ -54,7 +54,7 @@ public class UsersAPI {
                     dataStore.readUsers().stream()
                             .anyMatch(user -> user.getMetadataValue("username").equals(username)), executorService);
 
-            boolean userExists = userExistsFuture.get(); // Blocking call
+            boolean userExists = userExistsFuture.get();
             return userExists ? StatusCode.USERNAME_TAKEN : StatusCode.SUCCESS;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -72,7 +72,7 @@ public class UsersAPI {
                     dataStore.readUsers().stream()
                             .anyMatch(user -> user.getDataValue("email").equals(email)), executorService);
 
-            boolean userExists = userExistsFuture.get(); // Blocking call
+            boolean userExists = userExistsFuture.get();
             return userExists ? StatusCode.EMAIL_TAKEN : StatusCode.SUCCESS;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -100,7 +100,7 @@ public class UsersAPI {
                             .anyMatch(user -> user.getMetadataValue("first_name").equals(firstName) &&
                                               user.getMetadataValue("last_name").equals(lastName)), executorService);
 
-            boolean userExists = userExistsFuture.get(); // Blocking call
+            boolean userExists = userExistsFuture.get();
             return userExists ? StatusCode.USER_ALREADY_EXISTS : StatusCode.SUCCESS;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -176,7 +176,7 @@ public class UsersAPI {
                             .map(user -> (String) user.getMetadataValue("id"))
                             .orElse(null), executorService);
 
-            return keyFuture.get(); // Blocking call
+            return keyFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
@@ -192,7 +192,7 @@ public class UsersAPI {
                             .map(user -> (String) user.getMetadataValue("username"))
                             .orElse(null), executorService);
 
-            return usernameFuture.get(); // Blocking call
+            return usernameFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
@@ -207,7 +207,7 @@ public class UsersAPI {
                             .findFirst()
                             .orElse(null), executorService);
 
-            return userFuture.get(); // Blocking call
+            return userFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
@@ -474,7 +474,7 @@ public class UsersAPI {
                         .collect(Collectors.toList());
             }, executorService);
 
-            return searchFuture.get(); // Blocking call
+            return searchFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return Collections.emptyList();

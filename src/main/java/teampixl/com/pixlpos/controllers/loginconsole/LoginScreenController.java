@@ -52,6 +52,8 @@ public class LoginScreenController extends GuiCommon {
     private final BooleanProperty isPasswordVisible = new SimpleBooleanProperty(false);
     private boolean isDarkMode = false;
 
+    private final UserStack userStack = UserStack.getInstance();
+
     @FXML
     private void initialize() {
         passwordField.visibleProperty().bind(isPasswordVisible.not());
@@ -122,12 +124,11 @@ public class LoginScreenController extends GuiCommon {
             protected Void call() throws Exception {
                 boolean auth = AuthenticationManager.login(username, password);
                 if (auth) {
-                    UserStack userStack = UserStack.getInstance();
                     Future<Users> userFuture = userStack.setCurrentUser(username);
 
                     Users user;
                     try {
-                        user = userFuture.get(); // This will wait until the user is set
+                        user = userFuture.get();
                     } catch (InterruptedException | ExecutionException e) {
                         showErrorDialog("An error occurred while retrieving user information.");
                         Platform.runLater(() -> loginButton.setDisable(false));
