@@ -5,34 +5,23 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.animation.AnimationTimer;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.database.api.*;
+import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
-import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.authentication.AuthenticationManager;
-import teampixl.com.pixlpos.database.api.util.Exceptions;
-import teampixl.com.pixlpos.database.api.util.StatusCode;
 
 import teampixl.com.pixlpos.models.Stock;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 
 import javafx.scene.layout.HBox;
@@ -48,6 +37,7 @@ public class AdminScreenHomeController {
     private final StockAPI stockAPI = StockAPI.getInstance();
     private final IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
     private final DataStore dataStore = DataStore.getInstance();
+    private final OrderAPI orderAPI = OrderAPI.getInstance();
     /*
     Shared Components
      */
@@ -208,7 +198,7 @@ public class AdminScreenHomeController {
     private void calculateStockWidget() {
         List<Stock> stockItems = dataStore.readStock();
         stockItems.sort(Comparator.comparing(stock -> (Double) stock.getData().get("numeral")));
-        List<Stock> leastInStockItems = stockItems.stream().limit(3).collect(Collectors.toList());
+        List<Stock> leastInStockItems = stockItems.stream().limit(3).toList();
 
         stockalertlistview.getItems().clear();
         for (Stock stock : leastInStockItems) {
@@ -277,7 +267,7 @@ public class AdminScreenHomeController {
                     items.remove(i);  // Remove the HBox at the found index
                     // Handle delete user button click
 
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
                 break;            // Exit the loop once the HBox is removed
@@ -407,31 +397,52 @@ public class AdminScreenHomeController {
     public class PaymentPieChartController {
 
         @FXML
-        public void initialize() {
-            fillPieChartWithRandomData();
+        private void initialize() {
+            double totalAmount = fillPieChartWithData();
             piechart.setLegendVisible(false);
-            piechartlabel.setText("Total Sales: $430.45");
+            piechartlabel.setText("Total Sales: $%.2f".formatted(totalAmount));
             piechartlabel.getStyleClass().add("notes-labeltext");
         }
 
-        public void fillPieChartWithRandomData() {
-            Random random = new Random();
-            int cash = random.nextInt(100);
-            int card = random.nextInt(100);
-            int mobile = random.nextInt(100);
-            int total = cash + card + mobile;
+        private double fillPieChartWithData() {
+            orderAPI.reloadOrders();
+            List<Order> orders = orderAPI.getOrders();
+            System.out.println(orders);
+            double totalAmount = 0.0;
+            double cashAmount = 0.0;
+            double cardAmount = 0.0;
+            double mobileAmount = 0.0;
+
+            for (Order order : orders) {
+                double orderTotal = (double)order.getDataValue("total");
+                System.out.println(orderTotal);
+                totalAmount += orderTotal;
+
+                switch (order.getDataValue("payment_method").toString()) {
+                    case "CASH":
+                        cashAmount += orderTotal;
+                        break;
+                    case "CARD":
+                        cardAmount += orderTotal;
+                        break;
+                    case "MOBILE":
+                        mobileAmount += orderTotal;
+                        break;
+                }
+            }
 
             ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                    new PieChart.Data("Cash", cash),
-                    new PieChart.Data("Card", card),
-                    new PieChart.Data("Mobile", mobile)
+                    new PieChart.Data("Cash", cashAmount),
+                    new PieChart.Data("Card", cardAmount),
+                    new PieChart.Data("Mobile", mobileAmount)
             );
 
             piechart.setData(pieChartData);
-            addDataLabels(pieChartData, total);
+            addDataLabels(pieChartData, (int)totalAmount);
+            return totalAmount;
         }
 
-        public void setPieChartData(Map<String, Integer> data) {
+        private void setPieChartData(Map<String, Integer> data) {
             int cash = data.getOrDefault("Cash", 0);
             int card = data.getOrDefault("Card", 0);
             int mobile = data.getOrDefault("Mobile", 0);
