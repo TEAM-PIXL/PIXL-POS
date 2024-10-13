@@ -49,7 +49,7 @@ public class AdminScreenAnalyticsController
      */
 
     @FXML
-    private Text greeting;
+    private Label greeting;
     @FXML
     private TextField searchbar;
     @FXML
@@ -105,6 +105,7 @@ public class AdminScreenAnalyticsController
             time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
         }
     };
+
 
 
 
@@ -212,6 +213,10 @@ public class AdminScreenAnalyticsController
 
     }
 
+    @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
     @FXML
     protected void onUsersButtonClick() {
         // Handle exit button click

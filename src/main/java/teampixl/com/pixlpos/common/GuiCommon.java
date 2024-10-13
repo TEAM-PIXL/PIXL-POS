@@ -13,8 +13,9 @@ import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.models.UserSettings;
 import teampixl.com.pixlpos.models.logs.UserLogTask;
+import java.awt.Dimension;
 
-import java.awt.*;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -44,6 +45,7 @@ public class GuiCommon {
                             Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
                             WIDTH = screenSize.getWidth();
                             HEIGHT = screenSize.getHeight() - 25;
+
                             break;
                         case "SD":
                         default:
@@ -74,10 +76,10 @@ public class GuiCommon {
     public static final String ADMIN_SCREEN_ANALYTICS_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Analytics/AdminAnalytics.fxml";
 
     public static final String COOK_SCREEN_TITLE = "Cook Screen";
-    public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage2.fxml";
+    public static final String COOK_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/cookconsole/CookStage.fxml";
 
     public static final String WAITER_SCREEN_TITLE = "Waiter Screen";
-    public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage2.fxml";
+    public static final String WAITER_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/waiterconsole/WaiterStage.fxml";
 
     /**
      * Loads a new stage with the given FXML file and title.

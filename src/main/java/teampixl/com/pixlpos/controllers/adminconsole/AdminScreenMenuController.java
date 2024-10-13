@@ -2,6 +2,7 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -23,6 +24,8 @@ import teampixl.com.pixlpos.database.api.UsersAPI;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
+
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -50,8 +53,9 @@ public class AdminScreenMenuController
     Shared Components
      */
 
+
     @FXML
-    private Text greeting;
+    private Label greeting;
     @FXML
     private TextField searchbar;
     @FXML
@@ -237,6 +241,10 @@ public class AdminScreenMenuController
     }
 
     @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
+    @FXML
     protected void onUsersButtonClick() {
         // Handle exit button click
         Stage stage = (Stage) usersbutton.getScene().getWindow();
@@ -312,6 +320,7 @@ public class AdminScreenMenuController
         }
     }
 
+
     /**
      * Adds a menu item to the specified ListView. The menu item is represented as an HBox containing four AnchorPanes
      * that display the name, price, type, and dietary information of the item.
@@ -323,97 +332,45 @@ public class AdminScreenMenuController
      * @param dietary dietary information for the menu item (e.g., vegan, gluten-free), displayed in the fourth column of the HBox.
      */
     public void addMenuItemToListView(ListView<HBox> listView, String id, String name, String price, String type, String dietary) {
-        HBox hbox = new HBox();
-        hbox.setPrefHeight(50.0);
-        hbox.setPrefWidth(200.0);
-        hbox.setId(id);
+        try {
+            // Load HBox from FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/teampixl/com/pixlpos/fxml/adminconsole/dynamics/menudynamic.fxml"));
+            HBox hbox = loader.load();
 
-        // Name
-        AnchorPane namePane = new AnchorPane();
-        Label nameLabel = new Label(name);
-        nameLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        nameLabel.setPrefSize(111.2, 50.4);
-        AnchorPane.setTopAnchor(nameLabel, 0.0);
-        AnchorPane.setRightAnchor(nameLabel, 0.0);
-        AnchorPane.setBottomAnchor(nameLabel, 0.0);
-        AnchorPane.setLeftAnchor(nameLabel, 0.0);
-        namePane.getChildren().add(nameLabel);
-        HBox.setHgrow(namePane, Priority.ALWAYS);
+            // Set the ID of the HBox
+            hbox.setId(id);
 
-        // Price
-        AnchorPane pricePane = new AnchorPane();
-        Label priceLabel = new Label(price);
-        priceLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        priceLabel.setPrefSize(86.4, 50.4);
-        AnchorPane.setTopAnchor(priceLabel, 0.0);
-        AnchorPane.setRightAnchor(priceLabel, 0.0);
-        AnchorPane.setBottomAnchor(priceLabel, 0.0);
-        AnchorPane.setLeftAnchor(priceLabel, 0.0);
-        pricePane.getChildren().add(priceLabel);
-        HBox.setHgrow(pricePane, Priority.ALWAYS);
+            // Get the controller associated with the FXML (if you have one)
+            // Optionally, set values via the controller, or directly access the fields
+            // Example: If you have IDs set in FXML for the labels, you can access them like this:
 
-        // Type
-        AnchorPane typePane = new AnchorPane();
-        Label typeLabel = new Label(type);
-        typeLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        typeLabel.setPrefSize(72.8, 50.4);
-        AnchorPane.setTopAnchor(typeLabel, 0.0);
-        AnchorPane.setRightAnchor(typeLabel, 0.0);
-        AnchorPane.setBottomAnchor(typeLabel, 0.0);
-        AnchorPane.setLeftAnchor(typeLabel, 0.0);
-        typePane.getChildren().add(typeLabel);
-        HBox.setHgrow(typePane, Priority.ALWAYS);
+            Label namefield = (Label) hbox.lookup("#nameLabel");
+            Label pricefield = (Label) hbox.lookup("#priceLabel");
+            Label typefield = (Label) hbox.lookup("#typeLabel");
+            Label dietaryLabel = (Label) hbox.lookup("#dietaryLabel");
 
-        // Dietary
-        AnchorPane dietaryPane = new AnchorPane();
-        Label dietaryLabel = new Label(dietary);
-        dietaryLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        dietaryLabel.setPrefSize(80.0, 50.4);
-        AnchorPane.setTopAnchor(dietaryLabel, 0.0);
-        AnchorPane.setRightAnchor(dietaryLabel, 0.0);
-        AnchorPane.setBottomAnchor(dietaryLabel, 0.0);
-        AnchorPane.setLeftAnchor(dietaryLabel, 0.0);
-        dietaryPane.getChildren().add(dietaryLabel);
-        HBox.setHgrow(dietaryPane, Priority.ALWAYS);
+            // Set values dynamically
+            namefield.setText(name);
+            pricefield.setText(price);
+            typefield.setText(type);
+            dietaryLabel.setText(dietary);
 
-        // Edit Button
-        AnchorPane editButtonPane = new AnchorPane();
-        editButtonPane.setMaxWidth(100.0);
-        editButtonPane.setMinWidth(100.0);
-        Button editButton = new Button("Edit");
-        editButton.setId("editbutton");
-        editButton.setLayoutX(35.0);
-        editButton.setLayoutY(12.0);
-        editButton.setMinHeight(26.4);
-        editButton.setMaxHeight(26.4);
-        editButton.setPrefHeight(26.4);
-        editButton.setMinWidth(50.0);
-        editButton.getStyleClass().add("edit-button");
-        editButton.setOnAction(event -> onEditButtonClick(event,id));
-        editButtonPane.getChildren().add(editButton);
-        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+            // Set action handlers for buttons (if they exist in your FXML)
+            Button editbutton = (Button) hbox.lookup("#editbutton");
+            editbutton.setOnAction(event -> onEditButtonClick(event, id));
+            Button removebutton = (Button) hbox.lookup("#removebutton");
+            removebutton.setOnAction(event -> onRemoveButtonClick(event, id));
+            Tooltip tooltip = new Tooltip("Edit Item");
+            Tooltip tooltip2 = new Tooltip("Remove Item");
+            editbutton.setTooltip(tooltip);
+            removebutton.setTooltip(tooltip2);
 
-        // Remove Button
-        AnchorPane removeButtonPane = new AnchorPane();
-        removeButtonPane.setMaxWidth(100.0);
-        removeButtonPane.setMinWidth(100.0);
-        Button removeButton = new Button("Remove");
-        removeButton.setId("removebutton");
-        removeButton.setLayoutX(11.0);
-        removeButton.setLayoutY(12.0);
-        removeButton.setMinHeight(26.4);
-        removeButton.setPrefHeight(26.4);
-        removeButton.setMinWidth(50.0);
-        removeButton.getStyleClass().add("remove-button");
-        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
-        removeButtonPane.getChildren().add(removeButton);
-        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
+            // Add the HBox to the ListView
+            listView.getItems().add(hbox);
 
-        // Add all components to the HBox
-        hbox.getChildren().addAll(namePane, pricePane, typePane, dietaryPane, editButtonPane, removeButtonPane);
-
-        // Add the HBox to the ListView
-        listView.getItems().add(hbox);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void populateMenuParam(MenuItem menuItem) {

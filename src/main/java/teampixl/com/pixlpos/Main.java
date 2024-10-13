@@ -1,6 +1,8 @@
 package teampixl.com.pixlpos;
 
+import teampixl.com.pixlpos.models.Ingredients;
 import teampixl.com.pixlpos.models.MenuItem;
+import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
@@ -104,6 +106,14 @@ public class Main {
         MenuItem item18 = new MenuItem("Iced Tea", 4.5, MenuItem.ItemType.DRINK, true, "Chilled Iced Tea", MenuItem.DietaryRequirement.NONE);
         MenuItem item19 = new MenuItem("Iced Coffee", 4.5, MenuItem.ItemType.DRINK, true, "Iced Coffee with Cream", MenuItem.DietaryRequirement.NONE);
 
+        Ingredients ingredient1 = new Ingredients("Flour", "Flour for pizza dough");
+        Stock item1Stock = new Stock(ingredient1, Stock.StockStatus.INSTOCK, Stock.UnitType.KG , 150, false);
+        Ingredients ingredient2 = new Ingredients("Tomato Sauce", "Tomato sauce for pizza");
+        Stock item2Stock = new Stock(ingredient2, Stock.StockStatus.LOWSTOCK, Stock.UnitType.L , 2, false);
+        Ingredients ingredient3 = new Ingredients("Beef","Beef for burgers");
+        Stock item3Stock = new Stock(ingredient3, Stock.StockStatus.INSTOCK, Stock.UnitType.KG , 130, false);
+        Ingredients ingredients4 = new Ingredients("Cheese","Cheese for burgers");
+        Stock item4Stock = new Stock(ingredients4, Stock.StockStatus.NOSTOCK, Stock.UnitType.KG , 0, true);
         /* Finish Hardcoded items to menu items */
 
         dataStore.createMenuItem(item1);
@@ -125,7 +135,14 @@ public class Main {
         dataStore.createMenuItem(item17);
         dataStore.createMenuItem(item18);
         dataStore.createMenuItem(item19);
-
+        dataStore.createIngredient(ingredient1);
+        dataStore.createIngredient(ingredient2);
+        dataStore.createIngredient(ingredient3);
+        dataStore.createIngredient(ingredients4);
+        dataStore.createStock(item1Stock);
+        dataStore.createStock(item2Stock);
+        dataStore.createStock(item3Stock);
+        dataStore.createStock(item4Stock);
         System.out.println("Menu items added to the database:");
 
     }
