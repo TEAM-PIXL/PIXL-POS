@@ -15,9 +15,9 @@ public class OrderUtil {
             MenuItem menuItem = entry.getKey();
             List<String> notes = entry.getValue();
             if (notes != null && !notes.isEmpty()) {
-                String itemId = (String) menuItem.getMetadataValue("id"); // Changed key to "itemId"
+                String itemId = (String) menuItem.getMetadataValue("id");
                 if (itemId == null) {
-                    continue; // Skip items with null itemId
+                    continue;
                 }
                 sb.append(itemId).append(":");
                 for (String note : notes) {
