@@ -12,8 +12,8 @@ public interface IOrderStore {
     void createOrder(Order order);
     void deleteOrder(Order order);
     void updateOrder(Order order);
-    Map<String, Object> readOrderItems(Order order);
-    Map<String, Object> getOrderItem(Order order, String itemName);
+    Map<String, Integer> readOrderItems(Order order);
+    Map<String, Integer> getOrderItem(Order order, String itemName);
     void createOrderItem(Order order, MenuItem item, int quantity);
     void deleteOrderItem(Order order, MenuItem item, int quantity);
     void updateOrderItem(Order order, MenuItem item, int newQuantity);

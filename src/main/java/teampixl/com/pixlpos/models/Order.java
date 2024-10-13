@@ -161,7 +161,7 @@ public class Order extends DataManager {
         instanceItem.setDataValue("amountOrdered", newOrderTotal);
         DataStore.getInstance().updateMenuItem(instanceItem);
 
-        DataStore.getInstance().updateOrderItem(this, itemId, newQuantity);
+        DataStore.getInstance().updateOrderItem(this, item, quantity);
     }
 
     /**

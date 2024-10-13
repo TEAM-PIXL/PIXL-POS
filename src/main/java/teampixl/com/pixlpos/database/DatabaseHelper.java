@@ -1,22 +1,20 @@
 package teampixl.com.pixlpos.database;
 
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class provides methods to establish a connection to the SQLite database and initialize the database.
  */
 public class DatabaseHelper {
 
-    /*============================================================================================================================================================
-    Code Description:
-    - DB_URL: This is the URL to the SQLite database file in globally.
-    - getDatabaseFilePath(): This method returns the path to the SQLite database file.
-    - connect(): This method establishes a connection to the SQLite database.
-    ============================================================================================================================================================*/
+    private static final Logger LOGGER = Logger.getLogger(DatabaseHelper.class.getName());
 
     private static final String DB_URL;
 
@@ -31,36 +29,46 @@ public class DatabaseHelper {
         return dbFile.getAbsolutePath();
     }
 
+    private static final HikariDataSource dataSource = new HikariDataSource();
+
+    private static void logSql(String sql) {
+        LOGGER.log(Level.INFO, "Executing SQL: {0}", sql);
+    }
+
+    static {
+        dataSource.setJdbcUrl(DB_URL);
+        dataSource.addDataSourceProperty("cachePrepStmts", "true");
+        dataSource.addDataSourceProperty("prepStmtCacheSize", "250");
+        dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+    }
+
     /**
      * Establishes a connection to the SQLite database.
      *
      * @return Connection object
+     * @throws SQLException if a database access error occurs
      */
-    public static Connection connect() {
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(DB_URL);
-            System.out.println("Connection to SQLite has been established.");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return conn;
+    public static Connection connect() throws SQLException {
+        return dataSource.getConnection();
     }
-
-    /*============================================================================================================================================================
-    Code Description:
-    - initializeDatabase(): This method initializes the SQLite database and creates the tables if they do not exist.
-
-    Tables:
-    - users: This table stores the user information.
-    - menu_items: This table stores the menu items.
-    - orders: This table stores the order information.
-    - ingredients: This table stores the ingredient information.
-    - menu_item_ingredients: This table stores the relationship between menu items and ingredients.
-    ============================================================================================================================================================*/
 
     /**
      * Initializes the SQLite database and creates the tables if they do not exist.
+     * <p>
+     * Tables:
+     * - users
+     * - user_logs
+     * - global_logs
+     * - user_settings
+     * - global_notes
+     * - menu_items
+     * - orders
+     * - order_items
+     * - ingredients
+     * - stock
+     * - menu_item_ingredients
+     * <p>
+     * The method logs the SQL statements executed to create the tables.
      */
     public static void initializeDatabase() {
         String sqlCreateUsersTable = """
@@ -213,23 +221,42 @@ public class DatabaseHelper {
     """;
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
+            logSql(sqlCreateUsersTable);
             stmt.execute(sqlCreateUsersTable);
+
+            logSql(sqlCreateLoginTable);
             stmt.execute(sqlCreateLoginTable);
+
+            logSql(sqlCreateLogsTable);
             stmt.execute(sqlCreateLogsTable);
+
+            logSql(sqlCreateSettingsTable);
             stmt.execute(sqlCreateSettingsTable);
+
+            logSql(sqlCreateGlobalNotesTable);
             stmt.execute(sqlCreateGlobalNotesTable);
+
+            logSql(sqlCreateMenuItemsTable);
             stmt.execute(sqlCreateMenuItemsTable);
+
+            logSql(sqlCreateOrdersTable);
             stmt.execute(sqlCreateOrdersTable);
+
+            logSql(sqlCreateOrderItemsTable);
             stmt.execute(sqlCreateOrderItemsTable);
+
+            logSql(sqlCreateIngredientsTable);
             stmt.execute(sqlCreateIngredientsTable);
+
+            logSql(sqlCreateStockTable);
             stmt.execute(sqlCreateStockTable);
+
+            logSql(sqlCreateMenuItemIngredientsTable);
             stmt.execute(sqlCreateMenuItemIngredientsTable);
+
             System.out.println("Database initialized and tables created.");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            LOGGER.log(Level.SEVERE, "Database initialization error: {0}", e.getMessage());
         }
     }
 }
-
-
-
