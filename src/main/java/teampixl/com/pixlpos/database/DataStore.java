@@ -1,6 +1,5 @@
 package teampixl.com.pixlpos.database;
 
-import javafx.application.Platform;
 import teampixl.com.pixlpos.controllers.adminconsole.Notes;
 import teampixl.com.pixlpos.models.*;
 import teampixl.com.pixlpos.database.interfaces.*;
@@ -62,9 +61,7 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             futures.add(loadNotesFromDatabase());
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-            Platform.runLater(() -> {
-                CompletableFuture.allOf(loadUserLogsFromDatabase()).join();
-            });
+            futures.add(loadUserLogsFromDatabase());
 
         } finally {
             executorService.shutdown();

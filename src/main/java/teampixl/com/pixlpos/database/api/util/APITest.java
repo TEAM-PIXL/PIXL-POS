@@ -17,6 +17,47 @@ import java.util.concurrent.Executors;
 
 public class APITest {
     public static void main(String[] args) throws Exception {
+        UserStack userStack = UserStack.getInstance();
+
+        userStack.setCurrentUser("admin");
+
+        OrderAPI orderAPI = OrderAPI.getInstance();
+
+        /* ---> INIT WORKS <---- */
+
+        Order order = orderAPI.initializeOrder();
+
+        //print contents of order
+
+        System.out.println("Order Contents: " + order.getMetadata().metadata());
+
+        int ORDER_NUM = order.getOrderNumber();
+
+        System.out.println("Order Number: " + ORDER_NUM);
+
+        /* ---> PUT ORDER BY ITEM WORKS <---- */
+
+        List<StatusCode> RESULT = orderAPI.putOrderItem(orderAPI.keySearch(ORDER_NUM), MenuAPI.getInstance().keySearch("Pizza"), 4);
+        if (Exceptions.isSuccessful(RESULT)) {
+            System.out.println("Order placed successfully.");
+        } else {
+            System.out.println(Exceptions.returnStatus("Order items could not be added with the following errors:", RESULT));
+        }
+
+        List<StatusCode> RESULT2 = orderAPI.putOrderPaymentMethod(orderAPI.keySearch(ORDER_NUM), Order.PaymentMethod.CASH);
+        if (Exceptions.isSuccessful(RESULT2)) {
+            System.out.println("Order placed successfully.");
+        } else {
+            System.out.println(Exceptions.returnStatus("Order items could not be added with the following errors:", RESULT2));
+        }
+
+        List<StatusCode> RESULT3 = orderAPI.postOrder(orderAPI.keyTransform(orderAPI.keySearch(ORDER_NUM)));
+        if (Exceptions.isSuccessful(RESULT3)) {
+            System.out.println("Order placed successfully.");
+        } else {
+            System.out.println(Exceptions.returnStatus("Order could not be placed with the following errors:", RESULT3));
+        }
+
 //        UserStack.getInstance().setCurrentUser("admin");
 //        Logs logs = new Logs(Action.CREATE, Status.SUCCESS, Type.DATABASE, Category.INFO, Priority.LOW);
 //        System.out.println("User Logs: " + logs.getMetadata().metadata());
@@ -81,24 +122,24 @@ public class APITest {
 //        System.out.println("The user log has the contents: " + USER_LOGS);
 
 
-        UsersAPI usersAPI = UsersAPI.getInstance();
-
-        /* ---> POST USERS <---- */
-        System.out.println("POST USERS");
-        System.out.println("--------------------------------------------------");
-        List<StatusCode> STATUS = usersAPI.postUsers("john", "doe", "johnnyboy", "Goo7yLu%%y", "email@email.com", Users.UserRole.WAITER);
-        if (!Exceptions.isSuccessful(STATUS)) {
-            System.out.println(Exceptions.returnStatus("User could not be created with the following errors:", STATUS));
-        } else {
-            System.out.println("User created successfully.");
-        }
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
+//        UsersAPI usersAPI = UsersAPI.getInstance();
+//
+//        /* ---> POST USERS <---- */
+//        System.out.println("POST USERS");
+//        System.out.println("--------------------------------------------------");
+//        List<StatusCode> STATUS = usersAPI.postUsers("john", "doe", "johnnyboy", "Goo7yLu%%y", "email@email.com", Users.UserRole.WAITER);
+//        if (!Exceptions.isSuccessful(STATUS)) {
+//            System.out.println(Exceptions.returnStatus("User could not be created with the following errors:", STATUS));
+//        } else {
+//            System.out.println("User created successfully.");
+//        }
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
 
 //    public static void main(String[] args) {
 //        DataStore dataStore = DataStore.getInstance();
