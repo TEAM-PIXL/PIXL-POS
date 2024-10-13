@@ -260,6 +260,3 @@ public class DatabaseHelper {
         }
     }
 }
-
-
-

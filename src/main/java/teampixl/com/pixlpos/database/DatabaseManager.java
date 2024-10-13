@@ -2,7 +2,7 @@ package teampixl.com.pixlpos.database;
 
 import teampixl.com.pixlpos.controllers.adminconsole.Notes;
 import teampixl.com.pixlpos.models.*;
-import teampixl.com.pixlpos.models.logs.UserLogs;
+import teampixl.com.pixlpos.models.logs.*;
 
 import java.sql.*;
 import java.util.*;

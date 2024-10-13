@@ -35,6 +35,8 @@ module PIXL.POS {
     opens teampixl.com.pixlpos.database.api;
     opens teampixl.com.pixlpos.database.api.util;
     opens teampixl.com.pixlpos.models;
+    opens teampixl.com.pixlpos.models.logs;
+    opens teampixl.com.pixlpos.models.tools;
 
     exports teampixl.com.pixlpos;
     exports teampixl.com.pixlpos.application;
@@ -48,5 +50,5 @@ module PIXL.POS {
     exports teampixl.com.pixlpos.database.api.util;
     exports teampixl.com.pixlpos.models;
     exports teampixl.com.pixlpos.models.tools;
-    opens teampixl.com.pixlpos.models.tools;
+    exports teampixl.com.pixlpos.models.logs;
 }

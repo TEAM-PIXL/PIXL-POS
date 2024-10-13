@@ -59,10 +59,9 @@ public class DataStore implements IUserStore, IMenuItemStore, IOrderStore, IIngr
             futures.add(loadOrdersFromDatabase());
             futures.add(loadUserSettingsFromDatabase());
             futures.add(loadNotesFromDatabase());
-            // Fix Later
-//            futures.add(loadUserLogsFromDatabase());
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            CompletableFuture<Void> userLogsFuture = loadUserLogsFromDatabase();
         } finally {
             executorService.shutdown();
         }
