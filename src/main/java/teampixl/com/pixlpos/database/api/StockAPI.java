@@ -115,6 +115,45 @@ public class StockAPI {
         return StatusCode.SUCCESS;
     }
 
+    /**
+     * Validates the price per unit of the stock.
+     *
+     * @param PRICE_PER_UNIT the price per unit to validate
+     * @return the status code indicating the result of the validation
+     */
+    public StatusCode validateStockByPricePerUnit(double PRICE_PER_UNIT) {
+        if (PRICE_PER_UNIT < 0) {
+            return StatusCode.INVALID_STOCK_PRICE_PER_UNIT;
+        }
+        return StatusCode.SUCCESS;
+    }
+
+    /**
+     * Validates the low stock threshold of the stock.
+     *
+     * @param LOW_STOCK_THRESHOLD the low stock threshold to validate
+     * @return the status code indicating the result of the validation
+     */
+    public StatusCode validateStockByLowStockThreshold(double LOW_STOCK_THRESHOLD) {
+        if (LOW_STOCK_THRESHOLD < 0) {
+            return StatusCode.INVALID_STOCK_LOW_STOCK_THRESHOLD;
+        }
+        return StatusCode.SUCCESS;
+    }
+
+    /**
+     * Validates the desired quantity of the stock.
+     *
+     * @param DESIRED_QUANTITY the desired quantity to validate
+     * @return the status code indicating the result of the validation
+     */
+    public StatusCode validateStockByDesiredQuantity(double DESIRED_QUANTITY) {
+        if (DESIRED_QUANTITY < 0) {
+            return StatusCode.INVALID_STOCK_DESIRED_QUANTITY;
+        }
+        return StatusCode.SUCCESS;
+    }
+
     /* ---> IMPORTANT INTERNAL FUNCTION FOR SAFELY MANAGING AND VALIDATING A STOCK UPDATE <---- */
     private Pair<List<StatusCode>, Stock> validateAndGetStock(String FIELD, Object VALUE, String INGREDIENT_ID) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
