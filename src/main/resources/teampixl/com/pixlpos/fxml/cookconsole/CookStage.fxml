@@ -21,9 +21,9 @@
                 <children>
                     <HBox alignment="CENTER">
                         <children>
-                            <AnchorPane prefHeight="60.0" HBox.hgrow="ALWAYS">
+                            <AnchorPane prefHeight="60.0" prefWidth="467.0" HBox.hgrow="ALWAYS">
                                 <children>
-                                    <Label layoutX="47.0" layoutY="15.0" styleClass="order-label" text="Completed Orders" />
+                                    <Label layoutX="50.0" layoutY="17.0" styleClass="order-label" text="Completed Orders" AnchorPane.bottomAnchor="17.6" AnchorPane.leftAnchor="49.60000000000002" AnchorPane.rightAnchor="50.80000000000001" AnchorPane.topAnchor="17.0" />
                                 </children>
                             </AnchorPane>
                         </children>
@@ -39,7 +39,7 @@
                 </children>
             </VBox>
          <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            <Insets bottom="20.0" left="20.0" right="10.0" top="20.0" />
          </padding>
         </AnchorPane>
     </left>
@@ -53,7 +53,7 @@
     <center>
         <AnchorPane styleClass="root-anchor" BorderPane.alignment="TOP_LEFT">
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="20.0" left="10.0" right="20.0" top="20.0" />
             </padding>
          <children>
             <VBox prefHeight="660.0" prefWidth="980.0" spacing="3.0" styleClass="order-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
