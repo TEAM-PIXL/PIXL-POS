@@ -249,7 +249,8 @@
     -fx-border-radius: 10px;
 }
 
-.list-pane .scroll-bar:horizontal {
+.list-pane-cook .scroll-bar:horizontal,
+.list-pane-cook .scroll-bar:vertical {
     -fx-opacity: 0;
 }
 
