@@ -515,6 +515,11 @@ public class WaiterScreen2Controller {
     }
 
     @FXML
+    protected void onSettingsButtonClick() {
+        // Handle settings button click
+    }
+
+    @FXML
     protected void onLogoutButtonClick() {
         GuiCommon.logout(logoutbutton);
     }

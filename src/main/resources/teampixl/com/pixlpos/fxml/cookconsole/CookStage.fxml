@@ -112,31 +112,41 @@
                           </HBox.margin>
                       </HBox>
                       <Region HBox.hgrow="ALWAYS" />
-                      <HBox prefWidth="200.0">
+                      <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0">
                           <children>
-                              <Label fx:id="date" text="27-09-2024" textAlignment="CENTER">
-                                  <padding>
-                                      <Insets left="30.0" top="25.0" />
-                                  </padding>
-                              </Label>
-                              <Label fx:id="time" text="10:42 AM">
-                                  <padding>
-                                      <Insets left="20.0" top="25.0" />
-                                  </padding>
-                              </Label>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/weathericons/sunny_icon.png" />
+                           </image>
+                        </ImageView>
+                              <Label fx:id="date" text="27-09-2024" textAlignment="CENTER" />
+                              <Label fx:id="time" text="10:42 AM" />
                           </children>
                       </HBox>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                              <Button fx:id="logoutbutton" layoutX="56.0" layoutY="17.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" styleClass="logout-button-waiter-cook" text="Logout">
-                                  <graphic>
-                                      <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
-                                          <image>
-                                              <Image url="@../../images/cookicons/blue_logout_icon.png" />
-                                          </image>
-                                      </ImageView>
-                                  </graphic>
-                              </Button>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                                    <Button fx:id="settingsbutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onSettingsButtonClick" prefHeight="40.0" styleClass="side-bar-button" text="Settings">
+                                          <graphic>
+                                               <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                       <Image url="@../../images/cookicons/settings_icon.png" />
+                                                   </image>
+                                               </ImageView>
+                                          </graphic>
+                                       </Button>
+                                    <Button fx:id="logoutbutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onLogoutButtonClick" styleClass="logout-button-waiter-cook" text="Logout">
+                                        <graphic>
+                                            <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../../images/cookicons/logout_icon.png" />
+                                                </image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                           </children>
+                        </HBox>
                      </children>
                   </AnchorPane>
                   </children>

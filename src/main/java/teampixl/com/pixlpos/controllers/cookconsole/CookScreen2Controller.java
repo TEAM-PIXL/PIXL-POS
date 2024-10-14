@@ -56,7 +56,7 @@ public class CookScreen2Controller {
         @Override
         public void handle(long now) {
             date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
     };
 
@@ -305,6 +305,11 @@ public class CookScreen2Controller {
         } else {
             System.out.println("Order not found: " + orderId);
         }
+    }
+
+    @FXML
+    protected void onSettingsButtonClick() {
+        // Handle settings button click
     }
 
     @FXML

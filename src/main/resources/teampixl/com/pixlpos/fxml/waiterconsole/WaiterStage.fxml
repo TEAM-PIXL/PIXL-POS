@@ -269,71 +269,81 @@
             </BorderPane.margin>
         </AnchorPane>
     </center>
-    <top>
-        <AnchorPane prefHeight="60.0" BorderPane.alignment="CENTER">
-            <children>
-                <HBox prefHeight="60.0" prefWidth="1280.0" styleClass="top-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <children>
-                        <AnchorPane prefHeight="60.0" prefWidth="230.0">
-                            <children>
-                                <Label layoutX="86.0" layoutY="15.0" styleClass="heading" text="Menu" />
-                            </children>
-                        </AnchorPane>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <HBox prefWidth="538.0" styleClass="search-bar" HBox.hgrow="ALWAYS">
-                            <children>
-                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../../images/waitericons/search_icon.png" />
-                                    </image>
-                                    <HBox.margin>
-                                        <Insets left="15.0" top="7.0" />
-                                    </HBox.margin>
-                                </ImageView>
-                                <TextField fx:id="searchbar" prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </TextField>
-                            </children>
-                            <opaqueInsets>
-                                <Insets top="10.0" />
-                            </opaqueInsets>
-                            <HBox.margin>
-                                <Insets bottom="13.0" top="13.0" />
-                            </HBox.margin>
+   <top>
+      <AnchorPane prefHeight="60.0" BorderPane.alignment="CENTER">
+         <children>
+              <HBox prefHeight="60.0" prefWidth="1280.0" styleClass="top-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                      <AnchorPane prefHeight="60.0" prefWidth="230.0">
+                     <children>
+                            <Label layoutX="86.0" layoutY="15.0" styleClass="heading" text="Menu" />
+                     </children>
+                      </AnchorPane>
+                      <Region HBox.hgrow="ALWAYS" />
+                      <HBox prefWidth="538.0" styleClass="search-bar" HBox.hgrow="ALWAYS">
+                          <children>
+                              <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../../images/waitericons/search_icon.png" />
+                                  </image>
+                                  <HBox.margin>
+                                      <Insets left="15.0" top="7.0" />
+                                  </HBox.margin>
+                              </ImageView>
+                              <TextField fx:id="searchbar" prefHeight="40.0" prefWidth="498.0" promptText="Search:" styleClass="search-box">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </TextField>
+                          </children>
+                          <opaqueInsets>
+                              <Insets top="10.0" />
+                          </opaqueInsets>
+                          <HBox.margin>
+                              <Insets bottom="13.0" top="13.0" />
+                          </HBox.margin>
+                      </HBox>
+                      <Region HBox.hgrow="ALWAYS" />
+                      <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0">
+                          <children>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/weathericons/sunny_icon.png" />
+                           </image>
+                        </ImageView>
+                              <Label fx:id="date" text="27-09-2024" textAlignment="CENTER" />
+                              <Label fx:id="time" text="10:42 AM" />
+                          </children>
+                      </HBox>
+                  <AnchorPane prefHeight="60.0" prefWidth="200.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                           <children>
+                                    <Button fx:id="settingsbutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onSettingsButtonClick" prefHeight="40.0" styleClass="side-bar-button" text="Settings">
+                                          <graphic>
+                                               <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                       <Image url="@../../images/cookicons/settings_icon.png" />
+                                                   </image>
+                                               </ImageView>
+                                          </graphic>
+                                       </Button>
+                                    <Button fx:id="logoutbutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onLogoutButtonClick" styleClass="logout-button-waiter-cook" text="Logout">
+                                        <graphic>
+                                            <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../../images/cookicons/logout_icon.png" />
+                                                </image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                           </children>
                         </HBox>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <HBox prefWidth="200.0">
-                            <children>
-                                <Label fx:id="date" text="27-09-2024" textAlignment="CENTER">
-                                    <padding>
-                                        <Insets left="30.0" top="25.0" />
-                                    </padding>
-                                </Label>
-                                <Label fx:id="time" text="10:42 AM">
-                                    <padding>
-                                        <Insets left="20.0" top="25.0" />
-                                    </padding>
-                                </Label>
-                            </children>
-                        </HBox>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                            <children>
-                                <Button fx:id="logoutbutton" layoutX="56.0" layoutY="17.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" styleClass="logout-button-waiter-cook" text="Logout">
-                                    <graphic>
-                                        <ImageView fitHeight="22.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../../images/waitericons/blue_logout_icon.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                            </children>
-                        </AnchorPane>
-                    </children>
-                </HBox>
-            </children>
-        </AnchorPane>
-    </top>
+                     </children>
+                  </AnchorPane>
+                  </children>
+              </HBox>
+         </children>
+      </AnchorPane>
+   </top>
 </fx:root>

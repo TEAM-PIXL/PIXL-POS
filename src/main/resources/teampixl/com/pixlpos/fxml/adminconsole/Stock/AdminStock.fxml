@@ -56,7 +56,7 @@
                     <children>
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../images/adminicons/weathericons/sunny_icon.png" />
+                        <Image url="@../../../images/weathericons/sunny_icon.png" />
                      </image>
                   </ImageView>
                         <Label fx:id="date" text="27-09-2024" textAlignment="CENTER" />
