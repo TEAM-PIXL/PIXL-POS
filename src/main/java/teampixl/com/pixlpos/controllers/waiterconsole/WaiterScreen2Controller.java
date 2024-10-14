@@ -712,6 +712,7 @@ public class WaiterScreen2Controller {
 
         public OrderItemCell() {
             vbox = new VBox();
+            vbox.getStyleClass().add("order-item-cell");
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 
             addNoteLabel = new Label("    + Add Note");
