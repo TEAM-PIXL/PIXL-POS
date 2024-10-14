@@ -16,6 +16,7 @@ import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.database.api.StockAPI;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
+import teampixl.com.pixlpos.models.Ingredients;
 import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
@@ -170,11 +171,15 @@ public class AdminScreenStockController
 
     @FXML
     protected void onCancelButtonClick(){
+        itemnamefield.clear();
+        thresholdquantityfield.clear();
+        actualquantityfield.clear();
+        orderstatusfield.clear();
+        itemdescriptionfield.clear();
     }
 
     @FXML
     protected void onEditButtonClick(){
-
     }
     @FXML
     protected void onRemoveButtonClick(javafx.event.ActionEvent event, String id){
@@ -331,6 +336,16 @@ public class AdminScreenStockController
         }
     }
 
+    private void populateInputFields(String id) {
+        Stock stock = stockAPI.getStockByIngredientID(id);
+        Ingredients ingredient = ingredientsAPI.getIngredient(ingredientsAPI.reverseKeySearch(id));
+        itemnamefield.setText(ingredientsAPI.reverseKeySearch(stock.getMetadataValue("ingredient_id").toString()));
+        thresholdquantityfield.setText(stock.getDataValue("low_stock_threshold").toString());
+        actualquantityfield.setText(stock.getDataValue("numeral").toString());
+        orderstatusfield.setText(stock.getMetadataValue("onOrder").toString());
+        itemdescriptionfield.setText(ingredient.getDataValue("notes").toString());
+    }
+
     private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -341,7 +356,7 @@ public class AdminScreenStockController
 
     // Placeholder methods for button actions
     private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
-        // Implement edit menu item logic here
+        populateInputFields(id);
     }
 
 
