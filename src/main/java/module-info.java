@@ -24,6 +24,7 @@ module PIXL.POS {
     requires java.compiler;
     requires geoip2;
     requires com.zaxxer.hikari;
+    requires org.json;
 
     opens teampixl.com.pixlpos.database;
     opens teampixl.com.pixlpos.authentication;

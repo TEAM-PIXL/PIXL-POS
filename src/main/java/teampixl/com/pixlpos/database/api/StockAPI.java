@@ -18,10 +18,10 @@ import java.lang.reflect.Method;
  */
 public class StockAPI {
     private static StockAPI INSTANCE;
-    private static final DataStore DATA_STORE = DataStore.getInstance();
-    private static final IngredientsAPI INGREDIENTS_API = IngredientsAPI.getInstance();
+    private static DataStore DATA_STORE;
+    private static IngredientsAPI INGREDIENTS_API;
 
-    private StockAPI() { }
+    private StockAPI() { initializeDependencies(); }
 
     /**
      * Gets the singleton instance of the StockAPI.
@@ -34,6 +34,25 @@ public class StockAPI {
         }
         return INSTANCE;
     }
+
+    private void initializeDependencies() {
+        while ((DATA_STORE = DataStore.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        while ((INGREDIENTS_API = IngredientsAPI.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     /**
      * Validates the ingredient ID associated with the stock.
@@ -59,23 +78,19 @@ public class StockAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateStockByQuantity(Object QUANTITY) {
-        switch (QUANTITY) {
-            case null -> {
+        if (QUANTITY == null) {
+            return StatusCode.INVALID_STOCK_QUANTITY;
+        }
+        if (QUANTITY instanceof Integer) {
+            if ((Integer) QUANTITY < 0) {
                 return StatusCode.INVALID_STOCK_QUANTITY;
             }
-            case Integer i -> {
-                if (i < 0) {
-                    return StatusCode.INVALID_STOCK_QUANTITY;
-                }
+        } else if (QUANTITY instanceof Double) {
+            if ((Double) QUANTITY < 0) {
+                return StatusCode.INVALID_STOCK_QUANTITY;
             }
-            case Double v -> {
-                if (v < 0) {
-                    return StatusCode.INVALID_STOCK_QUANTITY;
-                }
-            }
-            default -> {
-                return StatusCode.INVALID_STOCK_QUANTITY_TYPE;
-            }
+        } else {
+            return StatusCode.INVALID_STOCK_QUANTITY_TYPE;
         }
         return StatusCode.SUCCESS;
     }
@@ -116,40 +131,73 @@ public class StockAPI {
     }
 
     /**
-     * Validates the price per unit of the stock.
-     *
-     * @param PRICE_PER_UNIT the price per unit to validate
-     * @return the status code indicating the result of the validation
-     */
-    public StatusCode validateStockByPricePerUnit(double PRICE_PER_UNIT) {
-        if (PRICE_PER_UNIT < 0) {
-            return StatusCode.INVALID_STOCK_PRICE_PER_UNIT;
-        }
-        return StatusCode.SUCCESS;
-    }
-
-    /**
-     * Validates the low stock threshold of the stock.
+     * Validates the low stock threshold.
      *
      * @param LOW_STOCK_THRESHOLD the low stock threshold to validate
      * @return the status code indicating the result of the validation
      */
-    public StatusCode validateStockByLowStockThreshold(double LOW_STOCK_THRESHOLD) {
-        if (LOW_STOCK_THRESHOLD < 0) {
-            return StatusCode.INVALID_STOCK_LOW_STOCK_THRESHOLD;
+    public StatusCode validateStockByLowStockThreshold(Object LOW_STOCK_THRESHOLD) {
+        if (LOW_STOCK_THRESHOLD == null) {
+            return StatusCode.INVALID_LOW_STOCK_THRESHOLD;
+        }
+        if (LOW_STOCK_THRESHOLD instanceof Integer) {
+            if ((Integer) LOW_STOCK_THRESHOLD < 0) {
+                return StatusCode.INVALID_LOW_STOCK_THRESHOLD;
+            }
+        } else if (LOW_STOCK_THRESHOLD instanceof Double) {
+            if ((Double) LOW_STOCK_THRESHOLD < 0) {
+                return StatusCode.INVALID_LOW_STOCK_THRESHOLD;
+            }
+        } else {
+            return StatusCode.INVALID_LOW_STOCK_THRESHOLD_TYPE;
         }
         return StatusCode.SUCCESS;
     }
 
     /**
-     * Validates the desired quantity of the stock.
+     * Validates the desired quantity.
      *
      * @param DESIRED_QUANTITY the desired quantity to validate
      * @return the status code indicating the result of the validation
      */
-    public StatusCode validateStockByDesiredQuantity(double DESIRED_QUANTITY) {
-        if (DESIRED_QUANTITY < 0) {
-            return StatusCode.INVALID_STOCK_DESIRED_QUANTITY;
+    public StatusCode validateStockByDesiredQuantity(Object DESIRED_QUANTITY) {
+        if (DESIRED_QUANTITY == null) {
+            return StatusCode.INVALID_DESIRED_QUANTITY;
+        }
+        if (DESIRED_QUANTITY instanceof Integer) {
+            if ((Integer) DESIRED_QUANTITY < 0) {
+                return StatusCode.INVALID_DESIRED_QUANTITY;
+            }
+        } else if (DESIRED_QUANTITY instanceof Double) {
+            if ((Double) DESIRED_QUANTITY < 0) {
+                return StatusCode.INVALID_DESIRED_QUANTITY;
+            }
+        } else {
+            return StatusCode.INVALID_DESIRED_QUANTITY_TYPE;
+        }
+        return StatusCode.SUCCESS;
+    }
+
+    /**
+     * Validates the price per unit.
+     *
+     * @param PRICE_PER_UNIT the price per unit to validate
+     * @return the status code indicating the result of the validation
+     */
+    public StatusCode validateStockByPricePerUnit(Object PRICE_PER_UNIT) {
+        if (PRICE_PER_UNIT == null) {
+            return StatusCode.INVALID_PRICE_PER_UNIT;
+        }
+        if (PRICE_PER_UNIT instanceof Integer) {
+            if ((Integer) PRICE_PER_UNIT < 0) {
+                return StatusCode.INVALID_PRICE_PER_UNIT;
+            }
+        } else if (PRICE_PER_UNIT instanceof Double) {
+            if ((Double) PRICE_PER_UNIT < 0) {
+                return StatusCode.INVALID_PRICE_PER_UNIT;
+            }
+        } else {
+            return StatusCode.INVALID_PRICE_PER_UNIT_TYPE;
         }
         return StatusCode.SUCCESS;
     }
@@ -158,11 +206,8 @@ public class StockAPI {
     private Pair<List<StatusCode>, Stock> validateAndGetStock(String FIELD, Object VALUE, String INGREDIENT_ID) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
-            Class<?> VALUE_TYPE = VALUE.getClass();
-            if (VALUE_TYPE == Boolean.class) {
-                VALUE_TYPE = boolean.class;
-            }
-            Method VALIDATION_METHOD = this.getClass().getMethod("validateStockBy" + FIELD, VALUE_TYPE);
+            // Use Object.class as parameter type to match validation methods
+            Method VALIDATION_METHOD = this.getClass().getMethod("validateStockBy" + FIELD, Object.class);
             StatusCode VALIDATION_RESULT = (StatusCode) VALIDATION_METHOD.invoke(this, VALUE);
             VALIDATIONS.add(VALIDATION_RESULT);
             if (!Exceptions.isSuccessful(VALIDATIONS)) {
@@ -421,41 +466,13 @@ public class StockAPI {
     }
 
     /**
-     * Updates the price per unit of an existing stock.
-     *
-     * @param INGREDIENT_ID the ingredient ID
-     * @param NEW_PRICE_PER_UNIT the new price per unit
-     * @return a list of status codes indicating the result of the operation
-     */
-    public List<StatusCode> putStockPricePerUnit(String INGREDIENT_ID, double NEW_PRICE_PER_UNIT) {
-        List<StatusCode> VALIDATIONS = new ArrayList<>();
-        try {
-            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("PricePerUnit", NEW_PRICE_PER_UNIT, INGREDIENT_ID);
-            VALIDATIONS.addAll(RESULT.getKey());
-            if (!Exceptions.isSuccessful(VALIDATIONS)) {
-                return VALIDATIONS;
-            }
-
-            Stock STOCK = RESULT.getValue();
-
-            STOCK.setDataValue("price_per_unit", NEW_PRICE_PER_UNIT);
-            DATA_STORE.updateStock(STOCK);
-            VALIDATIONS.add(StatusCode.SUCCESS);
-            return VALIDATIONS;
-        } catch (Exception E) {
-            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
-            return VALIDATIONS;
-        }
-    }
-
-    /**
-     * Updates the low stock threshold of an existing stock.
+     * Updates the low_stock_threshold of an existing stock.
      *
      * @param INGREDIENT_ID the ingredient ID
      * @param NEW_LOW_STOCK_THRESHOLD the new low stock threshold
      * @return a list of status codes indicating the result of the operation
      */
-    public List<StatusCode> putStockLowStockThreshold(String INGREDIENT_ID, double NEW_LOW_STOCK_THRESHOLD) {
+    public List<StatusCode> putStockLowStockThreshold(String INGREDIENT_ID, Object NEW_LOW_STOCK_THRESHOLD) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
             Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("LowStockThreshold", NEW_LOW_STOCK_THRESHOLD, INGREDIENT_ID);
@@ -477,13 +494,13 @@ public class StockAPI {
     }
 
     /**
-     * Updates the desired quantity of an existing stock.
+     * Updates the desired_quantity of an existing stock.
      *
      * @param INGREDIENT_ID the ingredient ID
      * @param NEW_DESIRED_QUANTITY the new desired quantity
      * @return a list of status codes indicating the result of the operation
      */
-    public List<StatusCode> putStockDesiredQuantity(String INGREDIENT_ID, double NEW_DESIRED_QUANTITY) {
+    public List<StatusCode> putStockDesiredQuantity(String INGREDIENT_ID, Object NEW_DESIRED_QUANTITY) {
         List<StatusCode> VALIDATIONS = new ArrayList<>();
         try {
             Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("DesiredQuantity", NEW_DESIRED_QUANTITY, INGREDIENT_ID);
@@ -495,6 +512,34 @@ public class StockAPI {
             Stock STOCK = RESULT.getValue();
 
             STOCK.setDataValue("desired_quantity", NEW_DESIRED_QUANTITY);
+            DATA_STORE.updateStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
+            return VALIDATIONS;
+        }
+    }
+
+    /**
+     * Updates the price_per_unit of an existing stock.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @param NEW_PRICE_PER_UNIT the new price per unit
+     * @return a list of status codes indicating the result of the operation
+     */
+    public List<StatusCode> putStockPricePerUnit(String INGREDIENT_ID, Object NEW_PRICE_PER_UNIT) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
+        try {
+            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("PricePerUnit", NEW_PRICE_PER_UNIT, INGREDIENT_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+
+            Stock STOCK = RESULT.getValue();
+
+            STOCK.setDataValue("price_per_unit", NEW_PRICE_PER_UNIT);
             DATA_STORE.updateStock(STOCK);
             VALIDATIONS.add(StatusCode.SUCCESS);
             return VALIDATIONS;
@@ -538,7 +583,6 @@ public class StockAPI {
         if (QUERY == null || QUERY.trim().isEmpty()) {
             return new ArrayList<>();
         }
-        IngredientsAPI INGREDIENTS_API = IngredientsAPI.getInstance();
         List<Ingredients> MATCHING_INGREDIENTS = INGREDIENTS_API.searchIngredients(QUERY);
 
         List<String> MATCHING_INGREDIENT_IDS = MATCHING_INGREDIENTS.stream()
@@ -550,3 +594,4 @@ public class StockAPI {
                 .collect(Collectors.toList());
     }
 }
+
