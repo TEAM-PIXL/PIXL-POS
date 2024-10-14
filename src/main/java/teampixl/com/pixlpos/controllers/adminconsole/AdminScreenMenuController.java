@@ -110,7 +110,7 @@ public class AdminScreenMenuController
         @Override
         public void handle(long now) {
             date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
     };
 
@@ -410,7 +410,7 @@ public class AdminScreenMenuController
         for (MenuItem menuItem : listOfMenuItems) {
             String menuItemName = menuItem.getMetadataValue("itemName").toString();
             if (menuItem.getMetadataValue("dietaryRequirement") == null){
-                 dietaryRequirement = "";
+                 dietaryRequirement = "NONE";
             } else {
                  dietaryRequirement = menuItem.getMetadataValue("dietaryRequirement").toString();
             }

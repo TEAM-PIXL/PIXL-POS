@@ -68,11 +68,10 @@
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;
 }
-
-#orderitemslistview .list-cell:selected {
-    -fx-background-color: white;
-    -fx-text-fill: black;
-}
+/*#orderitemslistview .list-cell:selected {*/
+/*    -fx-background-color: #8f9bb3;*/
+/*    -fx-text-fill: black;*/
+/*}*/
 
 #orderitemslistview .list-cell {
     -fx-text-fill: black;
@@ -155,7 +154,7 @@
 
 }
 .tab-pane > .tab-header-area > .headers-region > .tab{
-    -fx-background-radius: 10px 10px 10px 10px;
+    -fx-background-radius: 10px 10px 0px 0px;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
     -fx-alignment: center;
@@ -172,9 +171,9 @@
 .tab {
     -fx-background-color: white;
     /*-fx-pref-width: 170;*/
-    -fx-pref-height: 50;
+    -fx-pref-height: 40;
     -fx-text-alignment: center;
-    -fx-font-size: 20px;
+    -fx-font-size: 16px;
     -fx-border-radius: 10 10 10 10;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -191,7 +190,7 @@
 }
 
 .tab:hover {
-    -fx-background-color: #3B6FD1;
+    -fx-background-color: #EFF4FA;
 }
 
 .pane-style{
@@ -304,59 +303,59 @@
     -fx-font-family: "Arial", sans-serif;
 }
 
+.widget-name-style{
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
+    -fx-font-family: "Arial", sans-serif;
+}
 
 .notes-labeltext{
     -fx-text-fill: #black;
-    -fx-font-weight: 700;
+    /*-fx-font-weight: 700;*/
 }
 
 .stockalert-labeltext{
     -fx-text-fill: #black;
-    -fx-font-weight: 700;
+    /*-fx-font-weight: 700;*/
 }
 
 .stockalert-level-no{
     -fx-background-color: #FCDBDB;
     -fx-text-fill: #F04B4B;
-    -fx-font-size: 15;
     -fx-background-radius:5;
 }
 
 .stockalert-level-low{
     -fx-background-color: #FFF5D9;
     -fx-text-fill: #F0C54E;
-    -fx-font-size: 15;
     -fx-background-radius:5;
 }
 
 .stockalert-level-in{
     -fx-background-color: #E1FFE0;
     -fx-text-fill: #69C166;
-    -fx-font-size: 15;
     -fx-background-radius:5;
 }
 
 .stockalert-status-on{
     -fx-background-color: #E0EEFF;
     -fx-text-fill: #74AEF4;
-    -fx-font-size: 15;
     -fx-background-radius:5;
 }
 .stockalert-status-not{
     -fx-background-color: #ECEEF0;
     -fx-text-fill: #A2A4A6;
-    -fx-font-size: 15;
     -fx-background-radius:5;
 }
 
 .userlog-labeltext{
     -fx-text-fill: #black;
-    -fx-font-weight: 700;
+    /*-fx-font-weight: 700;*/
 }
 
 .topseller-labeltext{
     -fx-text-fill: #black;
-    -fx-font-weight: 700;
+    /*-fx-font-weight: 700;*/
 }
 
 .database-label {
@@ -373,7 +372,7 @@
 
 .order-label {
     -fx-text-fill: #000000;
-    -fx-font-size: 20px;
+    -fx-font-size: 18px;
     -fx-font-family: "Arial", sans-serif;
 }
 
@@ -385,14 +384,14 @@
 
 .customers-label, .table-label {
     -fx-text-fill: #000000;
-    -fx-font-size: 15px;
-    -fx-font-family: "Open Sans";
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial", sans-serif;
 }
 
 .amount-label {
-    -fx-text-fill: #0095FF;
-    -fx-font-size: 20px;
-    -fx-font-family: "Open Sans";
+    -fx-text-fill: #4A85F6;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
 }
 
 .buttonprice-label {
@@ -456,7 +455,7 @@
 .submit-button-waiter {
     -fx-background-color: #A5CC72;
     -fx-text-fill: white;
-    -fx-font-size: 13px;
+    -fx-font-size: 14px;
     -fx-cursor: hand;
     -fx-background-radius: 5;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
@@ -465,13 +464,14 @@
 .customize-button, .item-correct, .filter-button{
     -fx-background-color: #4A85F6;
     -fx-text-fill: white;
+    -fx-font-size: 14px;
     -fx-background-radius: 5;
 }
 
 .restart-button, .voiditem-button {
     -fx-background-color: #dc4242;
     -fx-text-fill: white;
-    -fx-font-size: 13px;
+    -fx-font-size: 15px;
     -fx-cursor: hand;
     -fx-background-radius: 5;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
@@ -481,7 +481,7 @@
     -fx-background-color: #EFF4FA;
     -fx-text-fill: black;
     -fx-font-weight: bold;
-    -fx-font-size: 20px;
+    -fx-font-size: 17px;
     -fx-font-family: "Open Sans";
 }
 
@@ -503,13 +503,13 @@
 
 
 .combo-box-base .text{
-    -fx-fill: #0095FF;
-    -fx-font-size: 15px;
-    -fx-font-family: "Open Sans";
+    -fx-fill: #4A85F6;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial", sans-serif;
 }
 
 .combo-box{
-    -fx-text-fill: #0095FF;
+    -fx-text-fill: #4A85F6;
     -fx-font-size: 15px;
     -fx-font-family: "Arial", sans-serif;
     -fx-background-color: transparent;

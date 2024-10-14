@@ -33,6 +33,8 @@ public class CookScreen2Controller {
     @FXML
     private Button logoutbutton;
     @FXML
+    private Button settingsbutton;
+    @FXML
     private TextField searchbar;
     @FXML
     private Label date;
@@ -56,6 +58,16 @@ public class CookScreen2Controller {
 
     private ScheduledExecutorService scheduler;
 
+    protected void addtooltips() {
+        Tooltip hometooltip = new Tooltip("Settings");
+        hometooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(settingsbutton, hometooltip);
+
+        Tooltip userstooltip = new Tooltip("Logout");
+        userstooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(logoutbutton, userstooltip);
+    }
+
     @FXML
     public void initialize() {
         AnimationTimer datetime = new AnimationTimer() {
@@ -66,6 +78,7 @@ public class CookScreen2Controller {
             }
         };
         datetime.start();
+        addtooltips();
 
         orderList.setItems(orderObservableList);
         dynamicLabelManager = new DynamicLabelManager(completedOrders);
@@ -176,7 +189,7 @@ public class CookScreen2Controller {
         customerLabel.getStyleClass().add("amount-label");
         Label customerInnerLabel = new Label("Customers:");
         customerInnerLabel.getStyleClass().add("customers-label");
-        ImageView customerIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/user_plus_icon.png"))));
+        ImageView customerIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/users_group_icon.png"))));
         customerIcon.setFitHeight(22);
         customerIcon.setFitWidth(22);
         customerIcon.setPreserveRatio(true);
@@ -225,12 +238,6 @@ public class CookScreen2Controller {
         totalPriceLabel.getStyleClass().add("amount-label");
         Label priceLabel = new Label("Price:");
         priceLabel.getStyleClass().add("customers-label");
-        ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png"))));
-        imageView.setFitHeight(22.0);
-        imageView.setFitWidth(22.0);
-        imageView.setPickOnBounds(true);
-        imageView.setPreserveRatio(true);
-        priceLabel.setGraphic(imageView);
         totalPriceLabel.setGraphic(priceLabel);
         priceHBox.getChildren().add(totalPriceLabel);
 
@@ -337,6 +344,11 @@ public class CookScreen2Controller {
         } else {
             System.out.println("Order not found: " + orderId);
         }
+    }
+
+    @FXML
+    protected void onSettingsButtonClick() {
+        // Handle settings button click
     }
 
     @FXML
