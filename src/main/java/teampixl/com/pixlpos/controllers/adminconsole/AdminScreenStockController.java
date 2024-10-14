@@ -77,7 +77,7 @@ public class AdminScreenStockController
     @FXML
     private TextField actualquantityfield;
     @FXML
-    private TextField itempricefield;
+    private TextField orderstatusfield;
     @FXML
     private TextArea itemdescriptionfield;
 
@@ -119,13 +119,6 @@ public class AdminScreenStockController
     }
 
 
-
-
-
-
-
-
-
     @FXML
     protected void onSettingsButtonClick() {
         // Handle exit button click
@@ -139,24 +132,27 @@ public class AdminScreenStockController
         try {
             Double thresholdQuantity = Double.parseDouble(thresholdquantityfield.getText());
             Double actualQuantity = Double.parseDouble(actualquantityfield.getText());
-            Double price = Double.parseDouble(itempricefield.getText());
+            Boolean orderStatus = orderstatusfield.getText().equals("true");
             String ingredientName = itemnamefield.getText();
             String ingredientDescription = itemdescriptionfield.getText();
 
-            if (price < 0 || thresholdQuantity < 0 || actualQuantity < 0) {
+            if (thresholdQuantity < 0 || actualQuantity < 0) {
                 showAlert(Alert.AlertType.ERROR, "Failed", "Price and Quantities cannot be negative");
                 return;
             }
 
-            if (ingredientName.isEmpty() || price == null || thresholdQuantity == null || actualQuantity == null) {
+            if (ingredientName.isEmpty() || orderStatus == null || thresholdQuantity == null || actualQuantity == null) {
                 showAlert(Alert.AlertType.ERROR, "EmptyField", "Item Name, Item Price, Desired Quantity and Actual Quantity are required");
             } else {
-                //TODO: Complete Posted Order Once API updated
                 List<StatusCode> statusCodes = ingredientsAPI.postIngredient(ingredientName, ingredientDescription);
                 String IngredientID = ingredientsAPI.keySearch(ingredientName);
                 initialize();
-                List<StatusCode> statusCodesStock = stockAPI.postStock(IngredientID, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, false);
+                List<StatusCode> statusCodesStock = stockAPI.postStock(IngredientID, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, orderStatus);
                 statusCodes.addAll(statusCodesStock);
+                initialize();
+                List<StatusCode> statusCodesThreshold = stockAPI.putStockLowStockThreshold(IngredientID, thresholdQuantity);
+                statusCodes.addAll(statusCodesThreshold);
+                initialize();
                 if (Exceptions.isSuccessful(statusCodes)) {
                     initialize();
                     showAlert(Alert.AlertType.CONFIRMATION, "New Stock Item", "New Stock Item has been created");
