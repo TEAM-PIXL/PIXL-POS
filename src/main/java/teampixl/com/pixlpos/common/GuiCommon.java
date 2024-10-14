@@ -31,8 +31,8 @@ import java.util.concurrent.Executors;
  */
 public class GuiCommon {
 
-    public static double WIDTH;
-    public static double HEIGHT;
+    public static double WIDTH = 1280;
+    public static double HEIGHT = 720;
 
     private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
@@ -52,7 +52,7 @@ public class GuiCommon {
                         case "HD":
                             Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
                             WIDTH = screenSize.getWidth();
-                            HEIGHT = screenSize.getHeight() - 25;
+                            HEIGHT = screenSize.getHeight() - 30;
 
                             break;
                         case "SD":
