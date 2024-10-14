@@ -19,9 +19,9 @@ import java.util.function.Function;
  */
 public class MenuAPI {
     private static MenuAPI INSTANCE;
-    private static final DataStore DATA_STORE = DataStore.getInstance();
+    private static DataStore DATA_STORE;
 
-    private MenuAPI() { }
+    private MenuAPI() { initializeDependencies(); }
 
     /**
      * Gets the singleton instance of the MenuAPI.
@@ -33,6 +33,16 @@ public class MenuAPI {
             INSTANCE = new MenuAPI();
         }
         return INSTANCE;
+    }
+
+    private void initializeDependencies() {
+        while ((DATA_STORE = DataStore.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

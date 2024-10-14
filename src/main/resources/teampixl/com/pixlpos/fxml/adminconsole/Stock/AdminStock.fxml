@@ -185,12 +185,12 @@
                                 <HBox prefHeight="0.0" prefWidth="0.0" styleClass="container-line" />
                                 <Label text="Item Name:" />
                                 <TextField fx:id="itemnamefield" prefHeight="30.0" promptText="Item Name*" />
-                                <Label layoutX="21.0" layoutY="78.0" text="Desired Quantity:" />
-                                <TextField fx:id="desiredquantityfield" layoutX="20.0" layoutY="98.0" prefHeight="30.0" promptText="Desired Quantity*" />
+                                <Label layoutX="21.0" layoutY="78.0" text="Threshold Quantity:" />
+                                <TextField fx:id="thresholdquantityfield" layoutX="20.0" layoutY="98.0" prefHeight="30.0" promptText="Threshold Quantity*" />
                                 <Label layoutX="21.0" layoutY="144.0" text="Actual Quantity:" />
                                 <TextField fx:id="actualquantityfield" layoutX="20.0" layoutY="139.0" prefHeight="30.0" promptText="Actual Quantity" />
                                 <Label text="Order Status:" />
-                                <TextField fx:id="itempricefield" layoutX="20.0" layoutY="180.0" prefHeight="30.0" promptText="Order Status*" />
+                                <TextField fx:id="orderstatusfield" layoutX="20.0" layoutY="180.0" prefHeight="30.0" promptText="Order Status*" />
                                 <Label text="Item Description:" />
                                 <TextArea fx:id="itemdescriptionfield" prefHeight="200.0" prefWidth="200.0" promptText="Description*" />
                             </children>

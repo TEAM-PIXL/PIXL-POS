@@ -22,12 +22,11 @@ import javafx.util.Pair;
  */
 public class OrderAPI {
     private static OrderAPI instance;
-    private static final DataStore DATASTORE = DataStore.getInstance();
-    private static final UsersAPI USERSAPI = UsersAPI.getInstance();
-    private static final MenuAPI MENUAPI = MenuAPI.getInstance();
+    private static DataStore DATASTORE;
+    private static UsersAPI USERSAPI;
+    private static MenuAPI MENUAPI;
 
-    private OrderAPI() {
-    }
+    private OrderAPI() { initializeDependencies(); }
 
     /**
      * Gets the singleton instance of the OrderAPI.
@@ -39,6 +38,32 @@ public class OrderAPI {
             instance = new OrderAPI();
         }
         return instance;
+    }
+
+    private void initializeDependencies() {
+        while ((DATASTORE = DataStore.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        while ((USERSAPI = UsersAPI.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        while ((MENUAPI = MenuAPI.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

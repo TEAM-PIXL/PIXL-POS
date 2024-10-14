@@ -527,9 +527,9 @@ public class DatabaseManager {
                 stock.updateMetadata("stock_id", stockId);
                 stock.updateMetadata("created_at", createdAt);
                 stock.updateMetadata("lastUpdated", lastUpdated);
-                stock.setDataValue("pricePerUnit", pricePerUnit);
-                stock.setDataValue("lowStockThreshold", lowStockThreshold);
-                stock.setDataValue("desiredQuantity", desiredQuantity);
+                stock.setDataValue("price_per_unit", pricePerUnit);
+                stock.setDataValue("low_stock_threshold", lowStockThreshold);
+                stock.setDataValue("desired_quantity", desiredQuantity);
 
                 return stock;
             } catch (SQLException e) {
