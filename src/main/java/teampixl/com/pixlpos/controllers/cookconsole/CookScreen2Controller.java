@@ -154,6 +154,7 @@ public class CookScreen2Controller {
         int orderNumber = order.getOrderNumber();
         int customerCount = (int) order.getMetadataValue("customers");
         int tableNumber = (int) order.getMetadataValue("table_number");
+        Order.OrderType orderType = (Order.OrderType) order.getMetadataValue("order_type");
         double totalPrice = calculateTotalPrice(order);
 
         VBox orderVBox = new VBox();
@@ -161,29 +162,38 @@ public class CookScreen2Controller {
         orderVBox.setPrefWidth(300.0);
         orderVBox.setMinWidth(300.0);
         orderVBox.getStyleClass().add("order-container");
-        VBox.setVgrow(orderVBox, Priority.ALWAYS);
+        orderVBox.setSpacing(5);
+        VBox.setVgrow(orderVBox, Priority.NEVER);
 
         HBox orderNumberHBox = new HBox();
-        orderNumberHBox.setAlignment(Pos.CENTER);
-
-        AnchorPane anchorPane = new AnchorPane();
-        HBox.setHgrow(anchorPane, Priority.ALWAYS);
+        orderNumberHBox.setAlignment(Pos.CENTER_LEFT);
+        orderNumberHBox.setPadding(new Insets(5, 10, 0, 14));
 
         Label orderLabel = new Label("Order #");
         orderLabel.getStyleClass().add("order-label");
-        AnchorPane.setLeftAnchor(orderLabel, 14.0);
-        AnchorPane.setTopAnchor(orderLabel, 3.0);
-        anchorPane.getChildren().add(orderLabel);
 
         Label orderNumberLabel = new Label(String.format("%05d", orderNumber));
         orderNumberLabel.getStyleClass().add("order-number");
 
-        orderNumberHBox.getChildren().addAll(anchorPane, orderNumberLabel);
-        orderNumberHBox.setPadding(new Insets(0, 10, 0, 0));
+        orderNumberHBox.getChildren().addAll(orderLabel, orderNumberLabel);
+        orderNumberHBox.setSpacing(5);
 
         AnchorPane infoPane = new AnchorPane();
         infoPane.setPrefHeight(60.0);
         infoPane.getStyleClass().add("order-highlevel-container");
+
+        Label orderTypeLabel = new Label(orderType.name());
+        orderTypeLabel.getStyleClass().add("amount-label");
+        Label orderTypeInnerLabel = new Label("Type:");
+        orderTypeInnerLabel.getStyleClass().add("table-label");
+        ImageView orderTypeIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/user_plus_icon.png"))));
+        orderTypeIcon.setFitHeight(22);
+        orderTypeIcon.setFitWidth(22);
+        orderTypeIcon.setPreserveRatio(true);
+        orderTypeInnerLabel.setGraphic(orderTypeIcon);
+        orderTypeLabel.setGraphic(orderTypeInnerLabel);
+        AnchorPane.setLeftAnchor(orderTypeLabel, 14.0);
+        AnchorPane.setTopAnchor(orderTypeLabel, 5.0);
 
         Label customerLabel = new Label(String.format("%02d", customerCount));
         customerLabel.getStyleClass().add("amount-label");
@@ -196,7 +206,7 @@ public class CookScreen2Controller {
         customerInnerLabel.setGraphic(customerIcon);
         customerLabel.setGraphic(customerInnerLabel);
         AnchorPane.setLeftAnchor(customerLabel, 14.0);
-        AnchorPane.setTopAnchor(customerLabel, 15.0);
+        AnchorPane.setTopAnchor(customerLabel, 35.0);
 
         Label tableLabel = new Label(String.format("%02d", tableNumber));
         tableLabel.getStyleClass().add("amount-label");
@@ -209,18 +219,22 @@ public class CookScreen2Controller {
         tableInnerLabel.setGraphic(tableIcon);
         tableLabel.setGraphic(tableInnerLabel);
         AnchorPane.setLeftAnchor(tableLabel, 166.0);
-        AnchorPane.setTopAnchor(tableLabel, 15.0);
+        AnchorPane.setTopAnchor(tableLabel, 35.0);
 
-        infoPane.getChildren().addAll(customerLabel, tableLabel);
+        infoPane.getChildren().addAll(orderTypeLabel, customerLabel, tableLabel);
 
         ListView<Label> orderItemsListView = new ListView<>();
         orderItemsListView.getStyleClass().add("list-pane");
-        VBox.setVgrow(orderItemsListView, Priority.ALWAYS);
+        orderItemsListView.setPrefHeight(375);
+        orderItemsListView.setMaxHeight(375);
+        orderItemsListView.setMinHeight(375);
+        VBox.setVgrow(orderItemsListView, Priority.NEVER);
+
         DynamicLabelManager internaldynamicLabelManager = new DynamicLabelManager(orderItemsListView);
 
         Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById(orderId);
         Map<MenuItem, List<String>> itemNotes = OrderUtil.deserializeItemNotes((String) order.getDataValue("special_requests"), menuAPI);
-
+        System.out.println("Order #" + orderNumber + " has " + orderItems.size() + " items");
         for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
             MenuItem menuItem = entry.getKey();
             int quantity = entry.getValue();
@@ -234,12 +248,20 @@ public class CookScreen2Controller {
 
         HBox priceHBox = new HBox();
         priceHBox.setAlignment(Pos.CENTER);
-        Label totalPriceLabel = new Label("$ " + String.format("%.2f", totalPrice));
+        priceHBox.setPadding(new Insets(0, 10, 0, 14));
+
+        Label totalPriceLabel = new Label(String.format("%.2f", totalPrice));
         totalPriceLabel.getStyleClass().add("amount-label");
-        Label priceLabel = new Label("Price:");
-        priceLabel.getStyleClass().add("customers-label");
-        totalPriceLabel.setGraphic(priceLabel);
+        totalPriceLabel.setStyle("-fx-font-size: 18px;");
+
+        ImageView priceIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png"))));
+        priceIcon.setFitHeight(18.0);
+        priceIcon.setFitWidth(18.0);
+        priceIcon.setPreserveRatio(true);
+        totalPriceLabel.setGraphic(priceIcon);
+
         priceHBox.getChildren().add(totalPriceLabel);
+
 
         HBox actionButtonsHBox = new HBox();
         actionButtonsHBox.setAlignment(Pos.CENTER);
@@ -278,10 +300,20 @@ public class CookScreen2Controller {
             actionButtonsHBox.getChildren().add(button);
         }
 
-        orderVBox.getChildren().addAll(orderNumberHBox, infoPane, orderItemsListView, priceHBox, actionButtonsHBox);
+        orderVBox.getChildren().addAll(
+                orderNumberHBox,
+                infoPane,
+                orderItemsListView,
+                priceHBox,
+                actionButtonsHBox
+        );
 
         return orderVBox;
     }
+
+
+
+
 
     private double calculateTotalPrice(Order order) {
         double totalPrice = 0.0;
@@ -348,7 +380,6 @@ public class CookScreen2Controller {
 
     @FXML
     protected void onSettingsButtonClick() {
-        // Handle settings button click
     }
 
     @FXML
