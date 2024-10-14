@@ -4,13 +4,15 @@
 }
 
 /* ============================ Container Styling ============================= */
-.top-container,
+.top-container {
+    -fx-background-color: white;
+}
 .side-container {
     -fx-background-color: white;
 }
 
 .search-box {
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(0, 0, 0, 0);
 }
 
 .search-bar {
@@ -23,25 +25,105 @@
     -fx-border-color: #F5F5F5;
     -fx-background-radius: 10;
 }
-
 .widget-line {
     -fx-border-color: #F5F5F5;
     -fx-border-width: 0.5;
     -fx-max-height: 0;
 }
 
-.list-pane,
-.list-pane-cook,
-.list-pane-waiter {
+.list-pane {
     -fx-background-color: white;
     -fx-border-color: transparent;
     -fx-background-radius: 10;
     -fx-border-radius: 10px;
 }
 
+.list-pane .list-cell:selected .text,
+.list-pane .list-cell:selected .label {
+    -fx-fill: black;
+    -fx-text-fill: black;
+}
+
+.list-pane .list-cell {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
+.list-pane .list-cell:selected {
+    -fx-background-color: #8f9bb3;
+    -fx-text-fill: black;
+}
+
 .analytics-graph {
     -fx-background-color: white;
     -fx-background-radius: 10;
+}
+
+.list-cell:even,
+.list-cell:odd {
+    -fx-background-color: transparent;
+}
+
+.list-pane .scroll-bar:vertical,
+.list-pane .scroll-bar:horizontal {
+    -fx-opacity: 0;
+}
+
+.list-pane-waiter {
+    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10px;
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}
+
+#orderitemslistview .list-cell {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
+#orderitemslistview .list-cell:selected {
+    -fx-background-color: #8f9bb3;
+    -fx-text-fill: black;
+}
+
+#orderitemslistview .list-cell:selected .text {
+    -fx-fill: black;
+}
+
+#orderitemslistview .list-cell:selected .label {
+    -fx-text-fill: black;
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: #0095FF;
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #0095FF;
+}
+
+.combo-box-base .text {
+    -fx-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Open Sans";
+}
+
+.add-note-label {
+    -fx-text-fill: blue;
+    -fx-cursor: hand;
+}
+
+.list-cell .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-text-fill: black;
+    -fx-padding: 0;
 }
 
 .topseller-container {
@@ -64,6 +146,15 @@
     -fx-border-radius: 10px;
 }
 
+.table-header {
+    -fx-background-color: #EFF4FA;
+}
+
+.button-bar {
+    -fx-background-color: white;
+    -fx-spacing: 20px;
+}
+
 .order-container,
 .button-container {
     -fx-background-color: white;
@@ -75,81 +166,6 @@
 .order-highlevel-container {
     -fx-background-color: #EFF4FA;
 }
-
-.button-bar {
-    -fx-background-color: white;
-    -fx-spacing: 20px;
-}
-
-.table-header {
-    -fx-background-color: #EFF4FA;
-}
-
-.pane-style {
-    -fx-background-radius: 10;
-    -fx-background-color: white;
-    -fx-border-color: white;
-    -fx-border-radius: 10;
-}
-
-/* ============================ List and ListCell Styling ============================= */
-/* General list-cell styles */
-.list-cell {
-    -fx-text-fill: black;
-    -fx-background-color: transparent;
-}
-
-.list-cell .text {
-    -fx-fill: black;
-}
-
-.list-cell:selected {
-    -fx-background-color: transparent;
-    -fx-text-fill: black;
-}
-
-.list-cell:selected .text {
-    -fx-fill: black;
-}
-
-/* Specific styling for orderitemslistview */
-#orderitemslistview .list-cell {
-    -fx-text-fill: black;
-    -fx-background-color: transparent;
-}
-
-#orderitemslistview .list-cell .text {
-    -fx-fill: black;
-}
-
-#orderitemslistview .list-cell:selected {
-    -fx-background-color: transparent;
-    -fx-text-fill: black;
-}
-
-#orderitemslistview .list-cell:selected .text {
-    -fx-fill: black;
-}
-
-
-/* ============================ ScrollPane Styling ============================= */
-.list-pane .scroll-bar:horizontal {
-    -fx-opacity: 0; /* Makes the scrollbar invisible */
-}
-
-.scroll-pane {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-color: white;
-    -fx-border-radius: 10;
-    -fx-hbar-policy: never;
-    -fx-vbar-policy: never;
-}
-
-.scroll-pane > .viewport {
-    -fx-background-color: transparent;
-}
-
 /* ============================ TabPane Styling ============================= */
 .tab-pane {
     -fx-background-color: transparent;
@@ -190,6 +206,9 @@
     -fx-faint-focus-color: transparent;
 }
 
+.searchtab {
+}
+
 .tab:selected {
     -fx-text-fill: #4A85F6;
 }
@@ -198,8 +217,72 @@
     -fx-background-color: #3B6FD1;
 }
 
-.searchtab {
-    /* -fx-pref-width: 45; */
+.pane-style {
+    -fx-background-radius: 10;
+    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-border-radius: 10;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: white;
+    -fx-border-radius: 10;
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}
+
+/* ============================ Cook Styling ============================= */
+.list-pane-cook {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10px;
+}
+
+.list-pane .scroll-bar:horizontal {
+    -fx-opacity: 0;
+}
+
+/* ============================ Dynamic Styles ============================= */
+.vbox-order {
+    padding: 10px;
+    spacing: 10px;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-background-color: #f9f9f9;
+}
+
+.label-order-number {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.label-user-id,
+.label-time-ordered,
+.label-items,
+.label-total,
+.label-item {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.vbox-items {
+    spacing: 5px;
+}
+
+.vbox-order-selected .label-order-number,
+.vbox-order-selected .label-user-id,
+.vbox-order-selected .label-time-ordered,
+.vbox-order-selected .label-items,
+.vbox-order-selected .label-item,
+.vbox-order-selected .label-total {
+    -fx-text-fill: black;
 }
 
 /* ============================ Text Styling ============================= */
@@ -414,77 +497,49 @@
 }
 
 /* ============================ ComboBox Styling ============================= */
-.combo-box {
-    -fx-text-fill: #0095FF; /* Text remains blue */
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-    -fx-background-color: white; /* Background color of the ComboBox */
+.combo-box .list-cell {
+    -fx-text-overrun: ellipsis;
+    -fx-max-width: 0;
 }
 
 .combo-box-base .text {
-    -fx-fill: #0095FF; /* Text remains blue */
+    -fx-fill: #0095FF;
     -fx-font-size: 15px;
     -fx-font-family: "Open Sans";
 }
 
-/* Adjust the Popup (Drop-down list) styling */
-.combo-box-popup .list-view {
-    -fx-background-color: white; /* Background color of the drop-down list */
-}
-
-.combo-box-popup .list-cell {
-    -fx-text-fill: #0095FF; /* Text remains blue */
-    -fx-background-color: white; /* Background of each cell in the drop-down list */
-}
-
-/* Adjust the selected item in the drop-down list */
-.combo-box-popup .list-cell:selected {
-    -fx-background-color: #F0F0F0; /* Background color when an item is selected */
-    -fx-text-fill: #0095FF; /* Text remains blue */
-}
-
-/* Adjust arrow button if needed */
-.combo-box .arrow-button {
+.combo-box {
+    -fx-text-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Arial", sans-serif;
     -fx-background-color: transparent;
 }
 
+.combo-box .arrow-button {
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.0em 0em 0.0em 0.0em;
+}
+
 .combo-box .arrow-button .arrow {
-    -fx-background-color: #0095FF;
-    -fx-padding: 0em;
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 0 0 0 0, 0;
+    -fx-padding: 0em 0em 0em 0em;
+    -fx-shape: null;
 }
 
-/* ============================ Dynamic Styles ============================= */
-.vbox-order {
-    padding: 10px;
-    spacing: 10px;
-    -fx-border-color: black;
-    -fx-border-width: 1px;
-    -fx-background-color: #f9f9f9;
+/* ============================ Icon Button Styling ============================= */
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-content-display: graphic-only;
 }
 
-.label-order-number {
-    font-size: 30px;
-    font-weight: bold;
+.chart-pie .chart-legend-item .label {
+    -fx-text-fill: -fx-text-base-color;
 }
 
-.label-user-id,
-.label-time-ordered,
-.label-items,
-.label-total,
-.label-item {
-    font-size: 14px;
-    font-weight: normal;
-}
-
-.vbox-items {
-    spacing: 5px;
-}
-
-.vbox-order-selected .label-order-number,
-.vbox-order-selected .label-user-id,
-.vbox-order-selected .label-time-ordered,
-.vbox-order-selected .label-items,
-.vbox-order-selected .label-item,
-.vbox-order-selected .label-total {
-    -fx-text-fill: black;
+.chart-pie .chart-legend-item:selected .label {
+    -fx-text-fill: -fx-selection-bar-text;
 }

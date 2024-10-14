@@ -267,7 +267,7 @@
                         <AnchorPane layoutX="520.0" layoutY="10.0" maxWidth="50.0" minWidth="50.0" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
-                  <ListView fx:id="menuitemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                   <ListView fx:id="menuitemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
                </children>
                <padding>
                   <Insets top="10.0" />
