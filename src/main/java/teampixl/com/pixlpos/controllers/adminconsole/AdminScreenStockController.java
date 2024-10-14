@@ -239,6 +239,7 @@ public class AdminScreenStockController
                 try {
                     items.remove(i);
                     stockAPI.deleteStock(id);
+                    ingredientsAPI.deleteIngredient(ingredientsAPI.reverseKeySearch(id));
                     initialize();
                     showAlert(Alert.AlertType.CONFIRMATION, "Stock Item", "Stock Item has been removed");
                 } catch (Exception e) {
