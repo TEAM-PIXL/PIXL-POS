@@ -1,19 +1,13 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.w3c.dom.events.Event;
 import teampixl.com.pixlpos.common.GuiCommon;
-import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
 import javafx.animation.AnimationTimer;
@@ -26,12 +20,8 @@ import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.UserStack;
-import teampixl.com.pixlpos.models.logs.definitions.Status;
-
-import teampixl.com.pixlpos.models.Users;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -83,7 +73,7 @@ public class AdminScreenStockController
     @FXML
     private TextField itemnamefield;
     @FXML
-    private TextField desiredquantityfield;
+    private TextField thresholdquantityfield;
     @FXML
     private TextField actualquantityfield;
     @FXML
@@ -147,18 +137,18 @@ public class AdminScreenStockController
     @FXML
     protected void onAddItemButtonClick(){
         try {
-            Double desiredQuantity = Double.parseDouble(desiredquantityfield.getText());
+            Double thresholdQuantity = Double.parseDouble(thresholdquantityfield.getText());
             Double actualQuantity = Double.parseDouble(actualquantityfield.getText());
             Double price = Double.parseDouble(itempricefield.getText());
             String ingredientName = itemnamefield.getText();
             String ingredientDescription = itemdescriptionfield.getText();
 
-            if (price < 0 || desiredQuantity < 0 || actualQuantity < 0) {
+            if (price < 0 || thresholdQuantity < 0 || actualQuantity < 0) {
                 showAlert(Alert.AlertType.ERROR, "Failed", "Price and Quantities cannot be negative");
                 return;
             }
 
-            if (ingredientName.isEmpty() || price == null || desiredQuantity == null || actualQuantity == null) {
+            if (ingredientName.isEmpty() || price == null || thresholdQuantity == null || actualQuantity == null) {
                 showAlert(Alert.AlertType.ERROR, "EmptyField", "Item Name, Item Price, Desired Quantity and Actual Quantity are required");
             } else {
                 //TODO: Complete Posted Order Once API updated
