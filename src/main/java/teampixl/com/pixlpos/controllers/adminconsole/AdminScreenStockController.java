@@ -110,7 +110,7 @@ public class AdminScreenStockController
         @Override
         public void handle(long now) {
             date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
     };
 
@@ -330,7 +330,8 @@ public class AdminScreenStockController
             String ingredientID = stock.getMetadataValue("ingredient_id").toString();
             String ingredientName = ingredientsAPI.reverseKeySearch(ingredientID);
             String orderStatus = stock.getMetadataValue("onOrder").toString();
-            String lastUpdated = stock.getMetadataValue("lastUpdated").toString();
+
+            String lastUpdated = stock.getMetadataValue("lastUpdated").toString().substring(0, 10);
             String stockLevel = stock.getMetadataValue("stockStatus").toString();
             addInventoryItemToListView(
                     itemlist,

@@ -102,7 +102,7 @@ public class AdminScreenAnalyticsController
         @Override
         public void handle(long now) {
             date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
     };
 

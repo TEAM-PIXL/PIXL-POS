@@ -25,6 +25,11 @@ import teampixl.com.pixlpos.database.api.UserStack;
 
 public class UserSettings extends DataManager {
 
+    /*============================================================================================================================================================
+    Code Description:
+    - Enumerations for Theme, Resolution, Currency, Timezone, Language, and AccessLevel.
+    ============================================================================================================================================================*/
+
     /**
      * Enumerations for Theme - New feature which could be added in the future. I.e. multi-theme support.
      * Currently only supports LIGHT and DARK.
@@ -89,6 +94,22 @@ public class UserSettings extends DataManager {
         STANDARD,
         PREMIUM
     }
+
+    /*============================================================================================================================================================
+    Code Description:
+    - Constructor for UserSettings object.
+
+    Metadata:
+        - user_id: USER_ID
+        - theme: Theme.LIGHT
+        - resolution: Resolution.SD
+        - currency: Currency.AUD
+        - timezone: Timezone.AEST
+
+    Data:
+        - language: Language.ENGLISH
+        - access_level: AccessLevel.BASIC
+     ============================================================================================================================================================*/
 
     /**
      * Constructor for UserSettings object. Stores metadata and data.
