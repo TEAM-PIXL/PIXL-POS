@@ -68,6 +68,8 @@ public class WaiterScreen2Controller {
     @FXML
     private Button restartbutton;
     @FXML
+    private Button settingsbutton;
+    @FXML
     private Button filterbutton;
     @FXML
     private Slider priceslider;
@@ -115,6 +117,16 @@ public class WaiterScreen2Controller {
     private Order currentOrder;
     private String orderID;
     private Double orderTotal = 0.00;
+
+    protected void addtooltips(void) {
+        Tooltip hometooltip = new Tooltip("Settings");
+        hometooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(settingsbutton, hometooltip);
+
+        Tooltip userstooltip = new Tooltip("Logout");
+        userstooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(logoutbutton, userstooltip);
+    }
 
     public void comboinitialize() {
         String[] customerAmounts = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -208,7 +220,7 @@ public class WaiterScreen2Controller {
 
         initialiseSlider();
         comboinitialize();
-
+        addtooltips();
         initialiseOrder();
 
         searchbar.setOnAction(event -> handleSearchBarEnter());

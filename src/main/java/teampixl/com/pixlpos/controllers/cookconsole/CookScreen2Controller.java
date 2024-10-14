@@ -31,6 +31,8 @@ public class CookScreen2Controller {
     @FXML
     private Button logoutbutton;
     @FXML
+    private Button settingsbutton;
+    @FXML
     private TextField searchbar;
     @FXML
     private Label date;
@@ -60,10 +62,20 @@ public class CookScreen2Controller {
         }
     };
 
+    protected void addtooltips() {
+        Tooltip hometooltip = new Tooltip("Settings");
+        hometooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(settingsbutton, hometooltip);
+
+        Tooltip userstooltip = new Tooltip("Logout");
+        userstooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(logoutbutton, userstooltip);
+    }
+
     @FXML
     public void initialize() {
         datetime.start();
-
+        addtooltips();
         orderList.setItems(orderObservableList);
         dynamicLabelManager = new DynamicLabelManager(completedOrders);
 

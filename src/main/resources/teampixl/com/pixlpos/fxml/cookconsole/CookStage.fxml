@@ -123,9 +123,9 @@
                               <Label fx:id="time" text="10:42 AM" />
                           </children>
                       </HBox>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <AnchorPane prefHeight="60.0" prefWidth="200.0">
                      <children>
-                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                        <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
                            <children>
                                     <Button fx:id="settingsbutton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onSettingsButtonClick" prefHeight="40.0" styleClass="side-bar-button" text="Settings">
                                           <graphic>
