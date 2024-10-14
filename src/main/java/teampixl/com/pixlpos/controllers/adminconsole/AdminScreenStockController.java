@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import javafx.scene.control.Button;
@@ -118,6 +119,13 @@ public class AdminScreenStockController
         ingredientsAPI = IngredientsAPI.getInstance();
         populateStockGrid();
 
+        searchbar.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                searchStock();
+            }
+        });
+
+        searchbar.setOnAction(event -> searchStock());
     }
 
 
@@ -154,8 +162,8 @@ public class AdminScreenStockController
                 List<StatusCode> statusCodesNumeral = stockAPI.putStockNumeral(IngredientID, actualQuantity);
                 statusCodes.addAll(statusCodesNumeral);
                 initialize();
-                List<StatusCode> statusCodesThreshold = stockAPI.putStockLowStockThreshold(IngredientID, thresholdQuantity);
-                statusCodes.addAll(statusCodesThreshold);
+//                List<StatusCode> statusCodesThreshold = stockAPI.putStockLowStockThreshold(IngredientID, thresholdQuantity);
+//                statusCodes.addAll(statusCodesThreshold);
                 initialize();
                 if (Exceptions.isSuccessful(statusCodes)) {
                     initialize();
@@ -193,8 +201,8 @@ public class AdminScreenStockController
                 List<StatusCode> statusCodesStock = stockAPI.postStock(IngredientID, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, orderStatus);
                 statusCodes.addAll(statusCodesStock);
                 initialize();
-                List<StatusCode> statusCodesThreshold = stockAPI.putStockLowStockThreshold(IngredientID, thresholdQuantity);
-                statusCodes.addAll(statusCodesThreshold);
+//                List<StatusCode> statusCodesThreshold = stockAPI.putStockLowStockThreshold(IngredientID, thresholdQuantity);
+//                statusCodes.addAll(statusCodesThreshold);
                 initialize();
                 if (Exceptions.isSuccessful(statusCodes)) {
                     initialize();
@@ -398,5 +406,21 @@ public class AdminScreenStockController
         populateInputFields(id);
     }
 
-
+    private void searchStock() {
+        String searchQuery = searchbar.getText();
+        if (searchQuery.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please specify a term you want to query");
+        } else {
+            List<Ingredients> ingredientsList = ingredientsAPI.searchIngredients(searchQuery);
+            if (ingredientsList.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "No results found for the search term: " + searchQuery);
+            } else {
+                if (ingredientsList.size() > 1) {
+                    showAlert(Alert.AlertType.ERROR, "Failed", "Multiple results found for the search term: " + searchQuery);
+                } else {
+                    populateInputFields(ingredientsList.get(0).getMetadataValue("ingredient_id").toString());
+                }
+            }
+        }
+    }
 }
