@@ -382,6 +382,90 @@ public class StockAPI {
     }
 
     /**
+     * Updates the price per unit of an existing stock.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @param NEW_PRICE_PER_UNIT the new price per unit
+     * @return a list of status codes indicating the result of the operation
+     */
+    public List<StatusCode> putStockPricePerUnit(String INGREDIENT_ID, double NEW_PRICE_PER_UNIT) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
+        try {
+            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("PricePerUnit", NEW_PRICE_PER_UNIT, INGREDIENT_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+
+            Stock STOCK = RESULT.getValue();
+
+            STOCK.setDataValue("price_per_unit", NEW_PRICE_PER_UNIT);
+            DATA_STORE.updateStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
+            return VALIDATIONS;
+        }
+    }
+
+    /**
+     * Updates the low stock threshold of an existing stock.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @param NEW_LOW_STOCK_THRESHOLD the new low stock threshold
+     * @return a list of status codes indicating the result of the operation
+     */
+    public List<StatusCode> putStockLowStockThreshold(String INGREDIENT_ID, double NEW_LOW_STOCK_THRESHOLD) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
+        try {
+            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("LowStockThreshold", NEW_LOW_STOCK_THRESHOLD, INGREDIENT_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+
+            Stock STOCK = RESULT.getValue();
+
+            STOCK.setDataValue("low_stock_threshold", NEW_LOW_STOCK_THRESHOLD);
+            DATA_STORE.updateStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
+            return VALIDATIONS;
+        }
+    }
+
+    /**
+     * Updates the desired quantity of an existing stock.
+     *
+     * @param INGREDIENT_ID the ingredient ID
+     * @param NEW_DESIRED_QUANTITY the new desired quantity
+     * @return a list of status codes indicating the result of the operation
+     */
+    public List<StatusCode> putStockDesiredQuantity(String INGREDIENT_ID, double NEW_DESIRED_QUANTITY) {
+        List<StatusCode> VALIDATIONS = new ArrayList<>();
+        try {
+            Pair<List<StatusCode>, Stock> RESULT = validateAndGetStock("DesiredQuantity", NEW_DESIRED_QUANTITY, INGREDIENT_ID);
+            VALIDATIONS.addAll(RESULT.getKey());
+            if (!Exceptions.isSuccessful(VALIDATIONS)) {
+                return VALIDATIONS;
+            }
+
+            Stock STOCK = RESULT.getValue();
+
+            STOCK.setDataValue("desired_quantity", NEW_DESIRED_QUANTITY);
+            DATA_STORE.updateStock(STOCK);
+            VALIDATIONS.add(StatusCode.SUCCESS);
+            return VALIDATIONS;
+        } catch (Exception E) {
+            VALIDATIONS.add(StatusCode.STOCK_UPDATE_FAILED);
+            return VALIDATIONS;
+        }
+    }
+
+    /**
      * Deletes a stock entry from the database.
      *
      * @param INGREDIENT_ID the ingredient ID

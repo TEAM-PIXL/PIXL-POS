@@ -303,8 +303,8 @@ Methods for user management from here.
             // Uncomment when implementing first and last name columns:
             // Label firstNameLabel = new Label(user.getMetadata().metadata().get("first_name").toString());
             // Label lastNameLabel = new Label(user.getMetadata().metadata().get("last_name").toString());
-            String readableDate = toReadableDate(user.getMetadata().metadata().get("created_at").toString());
-            Label usernameLabel = new Label(user.getMetadata().metadata().get("username").toString());
+            String readableDate = toReadableDate(user.getMetadataValue("created_at").toString());
+            Label usernameLabel = new Label(user.getMetadataValue("username").toString());
             Label userSinceLabel = new Label(readableDate);
             Label roleLabel = new Label(user.getMetadata().metadata().get("role").toString());
             String fullName = user.getMetadata().metadata().get("first_name").toString() + " " + user.getMetadata().metadata().get("last_name").toString();

@@ -1,6 +1,7 @@
 package teampixl.com.pixlpos.common;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -27,10 +30,15 @@ import java.util.Objects;
  * This class provides methods to load different stages and scenes using FXML files.
  */
 public class GuiCommon {
-    
+
     public static double WIDTH;
     public static double HEIGHT;
 
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
+
+    /**
+     * Load the settings for the current user.
+     */
     public static void settings() {
         String currentUserId = UserStack.getInstance().getCurrentUserId();
         List<UserSettings> userSettingsList = DataStore.getInstance().readUserSettings();
@@ -58,12 +66,11 @@ public class GuiCommon {
                     HEIGHT = 720;
                 });
     }
-    
+
     public static final String ICON_PATH = "/teampixl/com/pixlpos/app-icon.jpg";
-    
+
     public static final String LOGIN_SCREEN_TITLE = "Login Screen";
     public static final String LOGIN_SCREEN_FXML = "/teampixl/com/pixlpos/fxml/loginconsole/LoginStage.fxml";
-
     public static final String ADMIN_SCREEN_HOME_TITLE = "Admin Home Screen";
     public static final String ADMIN_SCREEN_HOME_FXML = "/teampixl/com/pixlpos/fxml/adminconsole/Home/AdminHome.fxml";
     public static final String ADMIN_SCREEN_USERS_TITLE = "Admin Users Screen";
@@ -89,30 +96,36 @@ public class GuiCommon {
      * @param title the title of the stage
      */
     public static void loadStage(Stage stage, String fxmlPath, String title) {
-        try {
-            URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
-            if (fxmlURL == null) {
-                throw new IOException("FXML file not found at path: " + fxmlPath);
+        Task<Parent> loadTask = new Task<>() {
+            @Override
+            protected Parent call() throws Exception {
+                URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
+                if (fxmlURL == null) {
+                    throw new IOException("FXML file not found at path: " + fxmlPath);
+                }
+                FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+                return fxmlLoader.load();
             }
+        };
 
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
-            Parent root = fxmlLoader.load();
-
+        loadTask.setOnSucceeded(event -> {
+            Parent root = loadTask.getValue();
             Scene scene = new Scene(root, WIDTH, HEIGHT);
-
             stage.getIcons().add(new Image(Objects.requireNonNull(GuiCommon.class.getResourceAsStream(ICON_PATH))));
-
             stage.setScene(scene);
             stage.setTitle(title);
             stage.show();
-
             Platform.runLater(stage::centerOnScreen);
-        } catch (IOException e) {
+        });
+
+        loadTask.setOnFailed(event -> {
+            Throwable e = loadTask.getException();
             System.err.println("Failed to load stage: " + e.getMessage());
             e.printStackTrace();
-        }
-    }
+        });
 
+        executorService.submit(loadTask);
+    }
 
     /**
      * Loads a new scene into the given stage using the specified FXML file and title.
@@ -135,25 +148,35 @@ public class GuiCommon {
      * @param height the height of the scene
      */
     public static void loadScene(String fxmlPath, String title, Stage stage, double width, double height) {
-        try {
-            URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
-            if (fxmlURL == null) {
-                throw new IOException("FXML file not found at path: " + fxmlPath);
+        Task<Parent> loadTask = new Task<>() {
+            @Override
+            protected Parent call() throws Exception {
+                URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
+                if (fxmlURL == null) {
+                    throw new IOException("FXML file not found at path: " + fxmlPath);
+                }
+                FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+                return fxmlLoader.load();
             }
+        };
 
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
-            Parent root = fxmlLoader.load();
-
+        loadTask.setOnSucceeded(event -> {
+            Parent root = loadTask.getValue();
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
-            stage.getIcons().add(new Image(Objects.requireNonNull(String.valueOf(GuiCommon.class.getResource(ICON_PATH)))));
+            stage.getIcons().add(new Image(Objects.requireNonNull(GuiCommon.class.getResourceAsStream(ICON_PATH))));
             stage.centerOnScreen();
             stage.show();
-        } catch (IOException e) {
+        });
+
+        loadTask.setOnFailed(event -> {
+            Throwable e = loadTask.getException();
             System.err.println("Failed to load scene: " + e.getMessage());
             e.printStackTrace();
-        }
+        });
+
+        executorService.submit(loadTask);
     }
 
     /**
@@ -187,25 +210,39 @@ public class GuiCommon {
     }
 
     /**
-     * Loads a new scene into the stage associated with the given node.
+     * Loads a new scene into the given stage using the specified FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
      * @param title the title of the stage
+     * @param stage the stage to set the scene on
+     * @param width the width of the scene
+     * @param height the height of the scene
      */
     public static void loadRoot(String fxmlPath, String title, Stage stage, int width, int height) {
-        try {
-            URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
-            Parent root = getParent(fxmlPath, fxmlURL);
+        Task<Parent> loadTask = new Task<>() {
+            @Override
+            protected Parent call() throws Exception {
+                URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
+                return getParent(fxmlPath, fxmlURL);
+            }
+        };
 
+        loadTask.setOnSucceeded(event -> {
+            Parent root = loadTask.getValue();
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
             stage.centerOnScreen();
             stage.show();
-        } catch (IOException e) {
+        });
+
+        loadTask.setOnFailed(event -> {
+            Throwable e = loadTask.getException();
             System.err.println("Failed to load scene: " + e.getMessage());
             e.printStackTrace();
-        }
+        });
+
+        executorService.submit(loadTask);
     }
 
     private static Parent getParent(String fxmlPath, URL fxmlURL) throws IOException {
@@ -241,7 +278,7 @@ public class GuiCommon {
     }
 
     /**
-     * Loads a new scene into the stage associated with the given node, with specified dimensions.
+     * Loads a new scene into the given stage using the specified FXML file and title.
      *
      * @param fxmlPath the path to the FXML file
      * @param title the title of the stage
@@ -250,28 +287,39 @@ public class GuiCommon {
      * @param height the height of the scene
      */
     public static void loadNewRoot(String fxmlPath, String title, Stage stage, double width, double height) {
-        try {
-            URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
-            if (fxmlURL == null) {
-                throw new IOException("FXML file not found at path: " + fxmlPath);
+        Task<Parent> loadTask = new Task<>() {
+            @Override
+            protected Parent call() throws Exception {
+                URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
+                if (fxmlURL == null) {
+                    throw new IOException("FXML file not found at path: " + fxmlPath);
+                }
+
+                FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+
+                Parent root = new BorderPane();
+                fxmlLoader.setRoot(root);
+
+                return fxmlLoader.load();
             }
+        };
 
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
-
-            Parent root = new BorderPane();
-            fxmlLoader.setRoot(root);
-
-            root = fxmlLoader.load();
-
+        loadTask.setOnSucceeded(event -> {
+            Parent root = loadTask.getValue();
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.setTitle(title);
             stage.centerOnScreen();
             stage.show();
-        } catch (IOException e) {
+        });
+
+        loadTask.setOnFailed(event -> {
+            Throwable e = loadTask.getException();
             System.err.println("Failed to load scene: " + e.getMessage());
             e.printStackTrace();
-        }
+        });
+
+        executorService.submit(loadTask);
     }
 
     /**
@@ -291,7 +339,6 @@ public class GuiCommon {
         loadNewRoot(fxmlPath, title, stage, WIDTH, HEIGHT);
     }
 
-
     /**
      * Closes the current stage associated with the given node.
      *
@@ -299,7 +346,6 @@ public class GuiCommon {
      */
     public static void closeStage(Node node) {
         if (node != null && node.getScene() != null) {
-
             Stage stage = (Stage) node.getScene().getWindow();
             stage.close();
         }
@@ -313,14 +359,21 @@ public class GuiCommon {
      * @param owner the owner window for the modal dialog
      */
     public static void openModalWindow(String fxmlPath, String title, Stage owner) {
-        try {
-            URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
-            if (fxmlURL == null) {
-                throw new IOException("FXML file not found at path: " + fxmlPath);
-            }
+        Task<Parent> loadTask = new Task<>() {
+            @Override
+            protected Parent call() throws Exception {
+                URL fxmlURL = GuiCommon.class.getResource(fxmlPath);
+                if (fxmlURL == null) {
+                    throw new IOException("FXML file not found at path: " + fxmlPath);
+                }
 
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
-            Parent root = fxmlLoader.load();
+                FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+                return fxmlLoader.load();
+            }
+        };
+
+        loadTask.setOnSucceeded(event -> {
+            Parent root = loadTask.getValue();
 
             Stage modalStage = new Stage();
             Scene scene = new Scene(root);
@@ -330,10 +383,15 @@ public class GuiCommon {
             modalStage.setTitle(title);
             modalStage.setScene(scene);
             modalStage.showAndWait();
-        } catch (IOException e) {
+        });
+
+        loadTask.setOnFailed(event -> {
+            Throwable e = loadTask.getException();
             System.err.println("Failed to open modal window: " + e.getMessage());
             e.printStackTrace();
-        }
+        });
+
+        executorService.submit(loadTask);
     }
 
     /**
@@ -342,17 +400,15 @@ public class GuiCommon {
      * @param node a node from the current scene
      */
     public static void logout(Node node) {
-        UserLogTask.logout().thenRunAsync(() -> Platform.runLater(() -> {
+        UserLogTask.logout().thenRun(() -> Platform.runLater(() -> {
             UserStack.getInstance();
             UserStack.clearCurrentUser();
             Stage stage = (Stage) node.getScene().getWindow();
             loadScene(LOGIN_SCREEN_FXML, LOGIN_SCREEN_TITLE, stage);
         })).exceptionally(ex -> {
-                    ex.getCause().printStackTrace();
-                    return null;
-
-                }
-        );
+            ex.getCause().printStackTrace();
+            return null;
+        });
     }
 
     /**
@@ -360,15 +416,13 @@ public class GuiCommon {
      * This ensures that the user's logout is recorded in the database. And the session is properly closed.
      */
     public static void exit() {
-        UserLogTask.logout().thenRunAsync(() -> Platform.runLater(() -> {
+        UserLogTask.logout().thenRun(() -> Platform.runLater(() -> {
             System.out.println("Application is closing...");
             Platform.exit();
             System.exit(0);
         })).exceptionally(ex -> {
-                    ex.getCause().printStackTrace();
-                    return null;
-
-                }
-        );
+            ex.getCause().printStackTrace();
+            return null;
+        });
     }
 }

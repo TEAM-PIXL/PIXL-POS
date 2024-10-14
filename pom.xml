@@ -107,6 +107,25 @@
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>10.2.0.jre11</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.32</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -375,7 +394,7 @@
 <!--                            <executable>jpackage</executable>-->
 <!--                            <arguments>-->
 <!--                                <argument>&#45;&#45;type</argument>-->
-<!--                                <argument>msi</argument>-->
+<!--                                <argument>exe</argument>-->
 <!--                                <argument>&#45;&#45;input</argument>-->
 <!--                                <argument>${project.build.directory}</argument>-->
 <!--                                <argument>&#45;&#45;dest</argument>-->

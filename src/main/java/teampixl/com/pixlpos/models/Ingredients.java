@@ -21,23 +21,6 @@ import teampixl.com.pixlpos.models.tools.MetadataWrapper;
  */
 public class Ingredients extends DataManager {
 
-    /*===============================================================================================================================================================================================================
-    Code Description:
-    - Constructor for Ingredients object.
-
-    Metadata:
-        - uuid: UUID
-        - itemName: itemName
-        - stockStatus: stockStatus
-        - onOrder: onOrder
-        - lastUpdated: timestamp for last update
-
-    Data:
-        - unit: unitType
-        - numeral: numeral
-        - notes: notes
-    ===============================================================================================================================================================================================================*/
-
     /**
      * Constructor for Ingredients object.
      * @param itemName Name of the ingredient.
