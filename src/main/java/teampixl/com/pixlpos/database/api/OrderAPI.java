@@ -345,9 +345,9 @@ public class OrderAPI {
             int ORDER_NUMBER = 1;
             if (!ORDERS.isEmpty()) {
                 ORDER_NUMBER = ORDERS.stream()
-                        .mapToInt(Order::getOrderNumber)
-                        .max()
-                        .orElse(0) + 1;
+                                       .mapToInt(Order::getOrderNumber)
+                                       .max()
+                                       .orElse(0) + 1;
             }
 
             try {

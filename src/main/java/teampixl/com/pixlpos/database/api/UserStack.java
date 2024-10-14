@@ -49,5 +49,3 @@ public class UserStack {
         executorService.shutdown();
     }
 }
-
-
