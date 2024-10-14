@@ -156,7 +156,7 @@ public class CookScreen2Controller {
         customerLabel.getStyleClass().add("amount-label");
         Label customerInnerLabel = new Label("Customers:");
         customerInnerLabel.getStyleClass().add("customers-label");
-        ImageView customerIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/user_plus_icon.png"))));
+        ImageView customerIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/users_group_icon.png"))));
         customerIcon.setFitHeight(22);
         customerIcon.setFitWidth(22);
         customerIcon.setPreserveRatio(true);
@@ -205,12 +205,6 @@ public class CookScreen2Controller {
         totalPriceLabel.getStyleClass().add("amount-label");
         Label priceLabel = new Label("Price:");
         priceLabel.getStyleClass().add("customers-label");
-        ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png"))));
-        imageView.setFitHeight(22.0);
-        imageView.setFitWidth(22.0);
-        imageView.setPickOnBounds(true);
-        imageView.setPreserveRatio(true);
-        priceLabel.setGraphic(imageView);
         totalPriceLabel.setGraphic(priceLabel);
         priceHBox.getChildren().add(totalPriceLabel);
 

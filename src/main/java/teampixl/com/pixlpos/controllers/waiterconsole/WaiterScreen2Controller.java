@@ -118,7 +118,7 @@ public class WaiterScreen2Controller {
     private String orderID;
     private Double orderTotal = 0.00;
 
-    protected void addtooltips(void) {
+    protected void addtooltips() {
         Tooltip hometooltip = new Tooltip("Settings");
         hometooltip.setShowDelay(javafx.util.Duration.millis(250));
         Tooltip.install(settingsbutton, hometooltip);
@@ -613,7 +613,7 @@ public class WaiterScreen2Controller {
 
             if (numberOfTabs > 0) {
                 double tabWidth = totalWidth / numberOfTabs;
-                tabWidth = tabWidth - 25.5;
+                tabWidth = tabWidth - 20.5;
                 tabPane.setTabMinWidth(tabWidth);
                 tabPane.setTabMaxWidth(tabWidth);
             }
