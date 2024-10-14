@@ -237,8 +237,7 @@ public class AdminScreenStockController
                     showAlert(Alert.AlertType.ERROR, "Stock Item", "Stock Item removal failed");
                 }
                 break;
-            }// Compare the ID of the HBox
-            break;
+            }
         }
     }
 
