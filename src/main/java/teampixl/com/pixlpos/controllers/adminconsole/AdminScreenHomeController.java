@@ -3,13 +3,16 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.database.api.*;
+import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.models.Order;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
@@ -89,27 +92,27 @@ public class AdminScreenHomeController {
 
     protected void addtooltips() {
         Tooltip hometooltip = new Tooltip("home");
-        hometooltip.setShowDelay(javafx.util.Duration.millis(250));
+        hometooltip.setShowDelay(Duration.millis(250));
         Tooltip.install(homebutton, hometooltip);
 
         Tooltip userstooltip = new Tooltip("users");
-        userstooltip.setShowDelay(javafx.util.Duration.millis(250));
+        userstooltip.setShowDelay(Duration.millis(250));
         Tooltip.install(usersbutton, userstooltip);
 
         Tooltip menutooltip = new Tooltip("menu");
-        menutooltip.setShowDelay(javafx.util.Duration.millis(250));
+        menutooltip.setShowDelay(Duration.millis(250));
         Tooltip.install(menubutton, menutooltip);
 
         Tooltip stocktooltip = new Tooltip("stock");
-        stocktooltip.setShowDelay(javafx.util.Duration.millis(250));
+        stocktooltip.setShowDelay(Duration.millis(250));
         Tooltip.install(stockbutton, stocktooltip);
 
         Tooltip analyticstooltip = new Tooltip("analytics");
-        analyticstooltip.setShowDelay(javafx.util.Duration.millis(250));
+        analyticstooltip.setShowDelay(Duration.millis(250));
         Tooltip.install(analyticsbutton, analyticstooltip);
 
         Tooltip logouttooltip = new Tooltip("logout");
-        logouttooltip.setShowDelay(javafx.util.Duration.millis(250));
+        logouttooltip.setShowDelay(Duration.millis(250));
         Tooltip.install(logoutbutton, logouttooltip);
     }
 
@@ -131,9 +134,7 @@ public class AdminScreenHomeController {
         adduserlogToListView(userloglistview, "2", "12/12/2020", "Jane Doe", "9:02am", "5hrs 6mins");
         adduserlogToListView(userloglistview, "3", "14/12/2020", "Michael Smith", "11:02am", "4hrs 6mins");
         topsellerslistview.getItems().clear();
-        addTopSellerToListView(topsellerslistview, "1", "#1", "Teriyaki Salmon Burger");
-        addTopSellerToListView(topsellerslistview, "2", "#2", "Chicken Caesar Salad");
-        addTopSellerToListView(topsellerslistview, "3", "#3", "Pulled Pork Sandwich");
+        findTop5Sellers();
         PaymentPieChartController paymentPieChartController = new PaymentPieChartController();
         paymentPieChartController.initialize();
     }
@@ -209,8 +210,30 @@ public class AdminScreenHomeController {
         }
     }
 
+    private void findTop5Sellers() {
+        List<MenuItem> menuItems = dataStore.readMenuItems();
+        menuItems.sort(Comparator.comparing(menuItem -> {
+            Integer amountOrdered = (Integer) menuItem.getDataValue("amount_ordered");
+            return amountOrdered != null ? amountOrdered : 0;
+        }));
+        List<MenuItem> top5Sellers = menuItems.stream().limit(5).toList();
 
-    /* =========================================================Start of dynamic Widget code========================================================= */
+        topsellerslistview.getItems().clear();
+        int rank = 1;
+        for (MenuItem menuItem : top5Sellers) {
+            System.out.println(menuItem.getMetadataValue("id").toString());
+            System.out.println(menuItem.getMetadataValue("itemName").toString());
+            String rankString = "#" + rank;
+            addTopSellerToListView(topsellerslistview, menuItem.getMetadataValue("id").toString(),
+                    rankString,
+                    (String) menuItem.getMetadataValue("itemName"));
+            rank++;
+        }
+    }
+
+
+    /* ===============
+    ==========================================Start of dynamic Widget code========================================================= */
 
     public void addNoteToListView(ListView<HBox> listView, String id, String user, String note) {
         try {
@@ -254,7 +277,7 @@ public class AdminScreenHomeController {
     }
 
 
-    private void onRemoveNoteButtonClick(javafx.event.ActionEvent event, String id) {
+    private void onRemoveNoteButtonClick(ActionEvent event, String id) {
         // Implement remove menu item logic here
         ObservableList<HBox> items = noteslistview.getItems(); // Get the items of the ListView
 
@@ -363,29 +386,17 @@ public class AdminScreenHomeController {
 
     public void addTopSellerToListView(ListView<HBox> listView, String id, String rank,String name)  {
         try {
-            // Load HBox from FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/teampixl/com/pixlpos/fxml/adminconsole/dynamics/homedynamics/topsellersdynamic.fxml"));
             HBox hbox = loader.load();
 
-            // Set the ID of the HBox
             hbox.setId(id);
-
-            // Get the controller associated with the FXML (if you have one)
-            // Optionally, set values via the controller, or directly access the fields
-            // Example: If you have IDs set in FXML for the labels, you can access them like this:
 
             Label rankfield = (Label) hbox.lookup("#ranklabel");
             Label namefield = (Label) hbox.lookup("#namelabel");
 
-
-
-            // Set values dynamically
             rankfield.setText(rank);
             namefield.setText(name);
 
-            // Set action handlers for buttons (if they exist in your FXML)
-
-            // Add the HBox to the ListView
             listView.getItems().add(hbox);
 
         } catch (IOException e) {
