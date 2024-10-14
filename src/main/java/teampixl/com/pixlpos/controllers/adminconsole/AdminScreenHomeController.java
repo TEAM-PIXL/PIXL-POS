@@ -180,7 +180,7 @@ public class AdminScreenHomeController {
 
     @FXML
     protected void onSettingsButtonClick() {
-        // Handle settings button click
+        // Implementation for settings button
     }
 
     @FXML

@@ -307,7 +307,7 @@ public class DatabaseManager {
     }
 
     public static CompletableFuture<Void> updateOrderInDatabase(Order order) {
-        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, order_type = ?, table_number = ?, total = ?, special_requests = ?, payment_method = ?, updated_at = ? WHERE order_id = ?";
+        String sql = "UPDATE orders SET order_status = ?, is_completed = ?, order_type = ?, table_number = ?, total = ?, special_requests = ?, payment_method = ?, customers = ?, updated_at = ? WHERE order_id = ?";
         return executeUpdate(sql, pstmt -> {
             pstmt.setString(1, order.getMetadata().metadata().get("order_status").toString());
             pstmt.setInt(2, (Boolean) order.getMetadata().metadata().get("is_completed") ? 1 : 0);
@@ -316,8 +316,9 @@ public class DatabaseManager {
             pstmt.setDouble(5, (Double) order.getData().get("total"));
             pstmt.setString(6, (String) order.getData().get("special_requests"));
             pstmt.setString(7, order.getData().get("payment_method").toString());
-            pstmt.setLong(8, (Long) order.getMetadata().metadata().get("updated_at"));
-            pstmt.setString(9, (String) order.getMetadata().metadata().get("order_id"));
+            pstmt.setInt(8, (Integer) order.getMetadata().metadata().get("customers"));
+            pstmt.setLong(9, (Long) order.getMetadata().metadata().get("updated_at"));
+            pstmt.setString(10, (String) order.getMetadata().metadata().get("order_id"));
         }).thenCompose(v -> updateOrderItemsInDatabase(order));
     }
 
