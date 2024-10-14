@@ -426,6 +426,10 @@ public class AdminScreenHomeController {
             double mobileAmount = 0.0;
 
             for (Order order : orders) {
+                if ("NOT_PAID".equals(order.getDataValue("payment_method").toString())) {
+                    continue;
+                }
+
                 double orderTotal = (double) order.getDataValue("total");
                 totalAmount += orderTotal;
 
