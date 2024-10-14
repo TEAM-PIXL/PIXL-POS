@@ -1,9 +1,9 @@
-/* ============================Background Colour============================= */
+/* ============================ Background Colour ============================= */
 .background {
     -fx-background-color: #f5f5f5;
 }
 
-/* ============================Container styling============================= */
+/* ============================ Container Styling ============================= */
 .top-container {
     -fx-background-color: white;
 }
@@ -25,7 +25,7 @@
     -fx-border-color: #F5F5F5;
     -fx-background-radius: 10;
 }
-.widget-line{
+.widget-line {
     -fx-border-color: #F5F5F5;
     -fx-border-width: 0.5;
     -fx-max-height: 0;
@@ -36,7 +36,22 @@
     -fx-border-color: transparent;
     -fx-background-radius: 10;
     -fx-border-radius: 10px;
+}
 
+.list-pane .list-cell:selected .text,
+.list-pane .list-cell:selected .label {
+    -fx-fill: black;
+    -fx-text-fill: black;
+}
+
+.list-pane .list-cell {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
+.list-pane .list-cell:selected {
+    -fx-background-color: #8f9bb3;
+    -fx-text-fill: white;
 }
 
 .analytics-graph {
@@ -44,47 +59,64 @@
     -fx-background-radius: 10;
 }
 
-/*.list-pane {*/
-/*    -fx-background-color: white;*/
-/*    -fx-border-color: #white;*/
-/*    -fx-background-radius: 10;*/
-/*    -fx-border-radius: 10px;*/
-/*}*/
-
-
 .list-cell:even,
 .list-cell:odd {
     -fx-background-color: transparent;
 }
+
+.list-pane .scroll-bar:vertical,
 .list-pane .scroll-bar:horizontal {
-    -fx-opacity: 0;      /* Makes the scrollbar invisible */
+    -fx-opacity: 0;
 }
 
 .list-pane-waiter {
     -fx-background-color: white;
-    -fx-border-color: #white;
+    -fx-border-color: white;
     -fx-background-radius: 10;
     -fx-border-radius: 10px;
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;
 }
-/*#orderitemslistview .list-cell:selected {*/
-/*    -fx-background-color: #8f9bb3;*/
-/*    -fx-text-fill: black;*/
-/*}*/
 
 #orderitemslistview .list-cell {
     -fx-text-fill: black;
     -fx-background-color: white;
 }
 
-/* Style for the "+ Add Note" label */
+#orderitemslistview .list-cell:selected {
+    -fx-background-color: #8f9bb3;
+    -fx-text-fill: black;
+}
+
+#orderitemslistview .list-cell:selected .text {
+    -fx-fill: black;
+}
+
+#orderitemslistview .list-cell:selected .label {
+    -fx-text-fill: black;
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: #0095FF;
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #0095FF;
+}
+
+.combo-box-base .text {
+    -fx-fill: #0095FF;
+    -fx-font-size: 15px;
+    -fx-font-family: "Open Sans";
+}
+
 .add-note-label {
     -fx-text-fill: blue;
     -fx-cursor: hand;
 }
 
-/* Style for the TextField inside the ListCell */
 .list-cell .text-field {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -94,17 +126,20 @@
     -fx-padding: 0;
 }
 
-
-.topseller-container{
+.topseller-container {
     -fx-background-color: #EFF4FA;
     -fx-background-radius: 20;
     -fx-border-color: white;
     -fx-border-radius: 20;
 }
 
-
-.manage-menu-container, .list-menu-container, .manage-user-container,
-.list-user-container, .manage-stock-container, .list-stock-container, .manage-analytics-container {
+.manage-menu-container,
+.list-menu-container,
+.manage-user-container,
+.list-user-container,
+.manage-stock-container,
+.list-stock-container,
+.manage-analytics-container {
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-color: white;
@@ -134,40 +169,36 @@
 .order-highlevel-container {
     -fx-background-color: #EFF4FA;
 }
-
-
-/* TabPane styling */
+/* ============================ TabPane Styling ============================= */
 .tab-pane {
     -fx-background-color: transparent;
     -fx-background-radius: 10;
     -fx-border-color: transparent;
     -fx-border-radius: 10;
-
-
 }
+
 .tab-pane .tab-header-area .tab-header-background {
     -fx-background-color: #F5F5F5;
-    /*-fx-opacity: 0;*/
-}
-.tab-pane .tab-header-area .tab-header-background {
     -fx-effect: null;
-
 }
-.tab-pane > .tab-header-area > .headers-region > .tab{
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
     -fx-background-radius: 10px 10px 0px 0px;
 }
+
 .tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
     -fx-alignment: center;
     -fx-text-fill: #4A85F6;
 }
-.tab-pane > .tab-header-area > .headers-region > .tab:selected
-{
-    -fx-focus-color:  transparent;  //red;
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-focus-color: transparent;
 }
 
 .tab-pane .tab-header-area .tab-label {
-    -fx-alignment: center;   /* Centers the text */
+    -fx-alignment: center;
 }
+
 .tab {
     -fx-background-color: white;
     /*-fx-pref-width: 170;*/
@@ -177,12 +208,9 @@
     -fx-border-radius: 10 10 10 10;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-    /*-fx-background-insets: 0 3 0 3;*/
-
 }
+
 .searchtab {
-    /*-fx-pref-width: 45;*/
-    /*-fx-background-insets: 0 3 0 3;*/
 }
 
 .tab:selected {
@@ -193,7 +221,7 @@
     -fx-background-color: #EFF4FA;
 }
 
-.pane-style{
+.pane-style {
     -fx-background-radius: 10;
     -fx-background-color: white;
     -fx-border-color: white;
@@ -212,24 +240,20 @@
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;
 }
-/* end of tab styling */
-/* Cook styling */
+
+/* ============================ Cook Styling ============================= */
 .list-pane-cook {
     -fx-background-color: white;
     -fx-border-color: transparent;
     -fx-background-radius: 10;
     -fx-border-radius: 10px;
-
 }
-
 
 .list-pane .scroll-bar:horizontal {
-    -fx-opacity: 0;      /* Makes the scrollbar invisible */
-
+    -fx-opacity: 0;
 }
 
-/* werid dynamic shit idk */
-
+/* ============================ Dynamic Styles ============================= */
 .vbox-order {
     padding: 10px;
     spacing: 10px;
@@ -243,7 +267,11 @@
     font-weight: bold;
 }
 
-.label-user-id, .label-time-ordered, .label-items, .label-total, .label-item {
+.label-user-id,
+.label-time-ordered,
+.label-items,
+.label-total,
+.label-item {
     font-size: 14px;
     font-weight: normal;
 }
@@ -260,23 +288,14 @@
 .vbox-order-selected .label-total {
     -fx-text-fill: black;
 }
-/* end of cook styling */
 
-/* ============================Text styling============================= */
-
+/* ============================ Text Styling ============================= */
 .logo-text {
     -fx-text-fill: #757575;
     -fx-font-size: 12;
 }
 
-.line {
-    -fx-background-color: #4A85F6;
-    -fx-stroke-width: 0.2;
-}
-.line {
-    -fx-border-color: #4A85F6;
-    -fx-border-width: 1;
-}
+.line,
 .container-line {
     -fx-border-color: #4A85F6;
     -fx-border-width: 1;
@@ -294,7 +313,6 @@
     -fx-font-weight: 700;
     -fx-font-family: "Arial", sans-serif;
 }
-
 
 .heading {
     -fx-text-fill: #4A85F6;
@@ -319,33 +337,38 @@
     /*-fx-font-weight: 700;*/
 }
 
-.stockalert-level-no{
+.stockalert-level-no {
     -fx-background-color: #FCDBDB;
     -fx-text-fill: #F04B4B;
-    -fx-background-radius:5;
+    -fx-font-size: 15;
+    -fx-background-radius: 5;
 }
 
-.stockalert-level-low{
+.stockalert-level-low {
     -fx-background-color: #FFF5D9;
     -fx-text-fill: #F0C54E;
-    -fx-background-radius:5;
+    -fx-font-size: 15;
+    -fx-background-radius: 5;
 }
 
-.stockalert-level-in{
+.stockalert-level-in {
     -fx-background-color: #E1FFE0;
     -fx-text-fill: #69C166;
-    -fx-background-radius:5;
+    -fx-font-size: 15;
+    -fx-background-radius: 5;
 }
 
-.stockalert-status-on{
+.stockalert-status-on {
     -fx-background-color: #E0EEFF;
     -fx-text-fill: #74AEF4;
-    -fx-background-radius:5;
+    -fx-font-size: 15;
+    -fx-background-radius: 5;
 }
-.stockalert-status-not{
+.stockalert-status-not {
     -fx-background-color: #ECEEF0;
     -fx-text-fill: #A2A4A6;
-    -fx-background-radius:5;
+    -fx-font-size: 15;
+    -fx-background-radius: 5;
 }
 
 .userlog-labeltext{
@@ -376,7 +399,10 @@
     -fx-font-family: "Arial", sans-serif;
 }
 
-.order-number {
+.order-number,
+.customers-label,
+.table-label,
+.docket-label {
     -fx-text-fill: #000000;
     -fx-font-size: 15px;
     -fx-font-family: "Arial", sans-serif;
@@ -400,36 +426,33 @@
     -fx-font-family: "Arial", sans-serif;
 }
 
-.docket-label {
-    -fx-text-fill: #000000;
-    -fx-font-size: 15px;
-    -fx-font-family: "Arial", sans-serif;
-}
-
-
-
-/* ============================Button Styling============================= */
-.side-bar-button, .logout-button {
+/* ============================ Button Styling ============================= */
+.side-bar-button,
+.logout-button {
     -fx-background-color: white;
     -fx-text-fill: #4a4a4a;
     -fx-font-size: 15px;
     -fx-cursor: hand;
 }
 
-.side-bar-button:hover, .logout-button:hover {
+.side-bar-button:hover,
+.logout-button:hover {
     -fx-background-color: #4A85F6;
     -fx-text-fill: white;
 }
 
-.home-button, .menu-button, .user-button, .stock-button, .analytics-button{
+.home-button,
+.menu-button,
+.user-button,
+.stock-button,
+.analytics-button {
     -fx-text-fill: #4A85F6;
     -fx-background-color: white;
     -fx-font-size: 15px;
     -fx-cursor: hand;
 }
 
-
-.notes-add{
+.notes-add {
     -fx-background-color: #DBE7FD;
     -fx-text-fill: #4A85F6;
     -fx-font-size: 10;
@@ -437,7 +460,7 @@
     -fx-cursor: hand;
 }
 
-.notes-remove{
+.notes-remove {
     -fx-background-color: #FCDBDB;
     -fx-text-fill: #F04B4B;
     -fx-font-size: 10;
@@ -445,8 +468,9 @@
     -fx-cursor: hand;
 }
 
-
-.submit-button, .add-button, .cancel-button{
+.submit-button,
+.add-button,
+.cancel-button {
     -fx-background-color: #4A85F6;
     -fx-text-fill: white;
     -fx-background-radius: 5;
@@ -461,14 +485,17 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
 }
 
-.customize-button, .item-correct, .filter-button{
+.customize-button,
+.item-correct,
+.filter-button {
     -fx-background-color: #4A85F6;
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-background-radius: 5;
 }
 
-.restart-button, .voiditem-button {
+.restart-button,
+.voiditem-button {
     -fx-background-color: #dc4242;
     -fx-text-fill: white;
     -fx-font-size: 15px;
@@ -477,7 +504,7 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
 }
 
-.item-button{
+.item-button {
     -fx-background-color: #EFF4FA;
     -fx-text-fill: black;
     -fx-font-weight: bold;
@@ -491,51 +518,56 @@
     -fx-font-size: 17px;
     -fx-cursor: hand;
 }
+
 .logout-button-waiter-cook:hover {
     -fx-background-color: #4A85F6;
     -fx-text-fill: white;
 }
 
+/* ============================ ComboBox Styling ============================= */
 .combo-box .list-cell {
-    -fx-text-overrun: ellipsis;  /* Truncate text with ellipsis if it's too long */
+    -fx-text-overrun: ellipsis;
     -fx-max-width: 0;
 }
 
-
-.combo-box-base .text{
+.combo-box-base .text {
     -fx-fill: #4A85F6;
     -fx-font-size: 14px;
     -fx-font-family: "Arial", sans-serif;
 }
 
-.combo-box{
+.combo-box {
     -fx-text-fill: #4A85F6;
     -fx-font-size: 15px;
     -fx-font-family: "Arial", sans-serif;
     -fx-background-color: transparent;
 }
-.combo-box .arrow-button
-{
+
+.combo-box .arrow-button {
     -fx-background-color: null;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-padding: 0.0em 0em 0.0em 0.0em; /* 0 3 0 0 */
+    -fx-padding: 0.0em 0em 0.0em 0.0em;
 }
 
-.combo-box .arrow-button .arrow
-{
+.combo-box .arrow-button .arrow {
     -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
     -fx-background-insets: 0 0 0 0, 0;
-    -fx-padding: 0em 0em 0em 0em; /* 3 3.75 3 3.75 */
-    /*
-        -fx-shape: "M 0 0 h 7 l -3.5 4 z";
-    */
+    -fx-padding: 0em 0em 0em 0em;
     -fx-shape: null;
 }
 
+/* ============================ Icon Button Styling ============================= */
 .icon-button {
     -fx-background-color: transparent;
     -fx-cursor: hand;
-    -fx-content-display:graphic-only;
+    -fx-content-display: graphic-only;
 }
 
+.chart-pie .chart-legend-item .label {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.chart-pie .chart-legend-item:selected .label {
+    -fx-text-fill: -fx-selection-bar-text;
+}

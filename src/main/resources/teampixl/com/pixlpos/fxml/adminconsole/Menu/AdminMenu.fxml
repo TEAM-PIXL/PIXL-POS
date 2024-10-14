@@ -283,7 +283,7 @@
                            </children></AnchorPane>
                      </children>
                   </HBox>
-                  <ListView fx:id="menuitemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
+                   <ListView fx:id="menuitemlist" styleClass="list-pane" VBox.vgrow="ALWAYS" />
                </children>
                <padding>
                   <Insets top="10.0" />

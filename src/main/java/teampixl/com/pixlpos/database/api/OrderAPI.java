@@ -2,7 +2,6 @@ package teampixl.com.pixlpos.database.api;
 
 import javafx.collections.ObservableList;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.DatabaseManager;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.database.api.util.Util;
@@ -270,6 +269,16 @@ public class OrderAPI {
      * @param start the start time of the timeframe
      * @param end the end time of the timeframe
      */
+    public void loadOrderTimeframe(long start, long end) {
+        DATASTORE.loadOrdersFromDatabase(start, end);
+    }
+
+    /**
+     * Updates memory with the latest orders from the database. This takes all orders. DANGEROUS! Be careful with this method.
+     */
+    public void loadAllOrders() {
+        DATASTORE.loadAllOrdersFromDatabase();
+    }
 
     /**
      * Retrieves menu items associated with an order ID.
@@ -282,6 +291,8 @@ public class OrderAPI {
         if (ORDER == null) {
             return Collections.emptyMap();
         }
+
+        DATASTORE.loadOrderItems(ORDER_ID, ORDER);
 
         @SuppressWarnings("unchecked")
         Map<String, Integer> MENU_ITEMS_MAP = (Map<String, Integer>) ORDER.getData().get("menuItems");
@@ -670,7 +681,7 @@ public class OrderAPI {
         Order ORDER = orderResult.getValue();
 
         try {
-            ORDER.setDataValue("payment_method", PAYMENT_METHOD);
+            ORDER.updateMetadata("payment_method", PAYMENT_METHOD);
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {

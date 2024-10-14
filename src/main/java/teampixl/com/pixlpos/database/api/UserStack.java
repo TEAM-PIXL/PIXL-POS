@@ -1,22 +1,25 @@
 package teampixl.com.pixlpos.database.api;
 
+import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.models.Users;
 
-import java.util.concurrent.*;
-
-public class UserStack {
+/**
+ * UserStack class to store the current user and any related keys.
+ */
+public class UserStack extends UsersAPI {
+    private static final DataStore dataStore = DataStore.getInstance();
+    private static final UsersAPI usersAPI = UsersAPI.getInstance();
     private static UserStack instance;
-    private final UsersAPI usersAPI;
-    private static Users currentUser;
-    private static String currentUserId;
-
-    private final ExecutorService executorService;
 
     private UserStack() {
-        usersAPI = UsersAPI.getInstance();
-        executorService = Executors.newSingleThreadExecutor();
+        super(dataStore);
     }
 
+    /**
+     * Gets the instance of the UserStack.
+     *
+     * @return the instance of the UserStack
+     */
     public static synchronized UserStack getInstance() {
         if (instance == null) {
             instance = new UserStack();
@@ -24,30 +27,49 @@ public class UserStack {
         return instance;
     }
 
-    public Future<Users> setCurrentUser(String username) {
-        return executorService.submit(() -> {
-            currentUser = usersAPI.getUser(username);
-            currentUserId = usersAPI.keySearch(username);
-            return currentUser;
-        });
+    /**
+     * Stack for the current user.
+     */
+    private static Users currentUser;
+
+    /**
+     * Stack for the current user id.
+     */
+    private static String currentUserId;
+
+    /**
+     * Sets the current user.
+     *
+     * @param USERNAME the username of the user
+     */
+    public void setCurrentUser(String USERNAME) {
+        currentUser = usersAPI.getUser(USERNAME);
+        currentUserId = usersAPI.keySearch(USERNAME);
     }
 
+    /**
+     * Gets the current user id.
+     *
+     * @return the current user id
+     */
     public String getCurrentUserId() {
         return currentUserId;
     }
 
+    /**
+     * Gets the current user.
+     *
+     * @return the current user
+     */
     public Users getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * Clears the current user.
+     */
     public static void clearCurrentUser() {
         currentUser = null;
         currentUserId = null;
     }
-
-    public void shutdown() {
-        executorService.shutdown();
-    }
 }
-
-
