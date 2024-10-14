@@ -51,7 +51,7 @@
 
 .list-pane .list-cell:selected {
     -fx-background-color: #8f9bb3;
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 }
 
 .analytics-graph {
