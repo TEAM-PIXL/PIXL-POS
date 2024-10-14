@@ -41,6 +41,7 @@ public class AdminScreenStockController
     private DataStore dataStore;
     private MenuAPI menuAPI;
     private IngredientsAPI ingredientsAPI;
+    private String loadedStockID;
     /*
     Shared Components
      */
@@ -126,7 +127,48 @@ public class AdminScreenStockController
     }
     @FXML
     protected void onSubmitButtonClick(){
+        try {
+            Double thresholdQuantity = Double.parseDouble(thresholdquantityfield.getText());
+            Double actualQuantity = Double.parseDouble(actualquantityfield.getText());
+            Boolean orderStatus = orderstatusfield.getText().equals("true");
+            String ingredientName = itemnamefield.getText();
+            String ingredientDescription = itemdescriptionfield.getText();
 
+            if (thresholdQuantity < 0 || actualQuantity < 0) {
+                showAlert(Alert.AlertType.ERROR, "Failed", "Price and Quantities cannot be negative");
+                return;
+            }
+
+            if (ingredientName.isEmpty() || orderStatus == null || thresholdQuantity == null || actualQuantity == null) {
+                showAlert(Alert.AlertType.ERROR, "EmptyField", "Item Name, Item Price, Desired Quantity and Actual Quantity are required");
+            } else {
+                List<StatusCode> statusCodes = ingredientsAPI.putIngredientName(ingredientsAPI.reverseKeySearch(loadedStockID), ingredientName);
+                initialize();
+                String IngredientID = ingredientsAPI.keySearch(ingredientName);
+                List<StatusCode> statusCodesNotes = ingredientsAPI.putIngredientNotes(ingredientName, ingredientDescription);
+                statusCodes.addAll(statusCodesNotes);
+                initialize();
+                List<StatusCode> statusCodesStock = stockAPI.putStockOnOrder(IngredientID, orderStatus);
+                statusCodes.addAll(statusCodesStock);
+                initialize();
+                List<StatusCode> statusCodesNumeral = stockAPI.putStockNumeral(IngredientID, actualQuantity);
+                statusCodes.addAll(statusCodesNumeral);
+                initialize();
+                List<StatusCode> statusCodesThreshold = stockAPI.putStockLowStockThreshold(IngredientID, thresholdQuantity);
+                statusCodes.addAll(statusCodesThreshold);
+                initialize();
+                if (Exceptions.isSuccessful(statusCodes)) {
+                    initialize();
+                    showAlert(Alert.AlertType.CONFIRMATION, "New Stock Item", "Stock Item has been updated");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "New Stock Item", "Stock Item update failed with the error codes: " + statusCodes);
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Failed", "Please enter valid numerals");
+            return;
+        }
     }
     @FXML
     protected void onAddItemButtonClick(){
@@ -178,9 +220,6 @@ public class AdminScreenStockController
         itemdescriptionfield.clear();
     }
 
-    @FXML
-    protected void onEditButtonClick(){
-    }
     @FXML
     protected void onRemoveButtonClick(javafx.event.ActionEvent event, String id){
         ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
@@ -356,6 +395,7 @@ public class AdminScreenStockController
 
     // Placeholder methods for button actions
     private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
+        loadedStockID = id;
         populateInputFields(id);
     }
 
