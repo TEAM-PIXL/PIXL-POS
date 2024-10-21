@@ -58,6 +58,10 @@ public class Stock extends DataManager {
         super(initializeMetadata(ingredient, stockStatus, onOrder));
         if ((numeral instanceof Integer && (Integer) numeral < 0) || (numeral instanceof Double && (Double) numeral < 0)) {
             numeral = 0;
+            throw new IllegalArgumentException("Numeral cannot be negative");
+        }
+        if ((numeral instanceof Integer && unitType == UnitType.KG) || (numeral instanceof Double && unitType == UnitType.QTY)) {
+            throw new IllegalArgumentException("Invalid numeral for unit type");
         }
 
         this.data = new HashMap<>();
