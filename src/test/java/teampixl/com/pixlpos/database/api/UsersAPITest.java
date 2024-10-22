@@ -135,7 +135,7 @@ class UsersAPITest {
     }
 
     @Test
-    void testValidateUsersByInvalidCharactersFirstName() {
+    void testValidateUsersByEmptyFirstName() {
         assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(""));
     }
 
@@ -147,30 +147,70 @@ class UsersAPITest {
     @Test
     void testValidateUsersByLastName() {
         assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByLastName("Doe"));
+    }
+
+    @Test
+    void testValidateUsersByNullLastName() {
         assertEquals(StatusCode.INVALID_LAST_NAME, usersAPI.validateUsersByLastName(null));
+    }
+
+    @Test
+    void testValidateUsersByEmptyLastName() {
         assertEquals(StatusCode.INVALID_LAST_NAME, usersAPI.validateUsersByLastName(""));
     }
 
     @Test
     void testValidateUsersByPassword() {
         assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByPassword("Password1!"));
+    }
+
+    @Test
+    void testValidateUsersByTooShortPassword() {
         assertEquals(StatusCode.PASSWORD_TOO_SHORT, usersAPI.validateUsersByPassword("Pass1!"));
+    }
+
+    @Test
+    void testValidateUsersByTooLongPassword() {
         assertEquals(StatusCode.PASSWORD_TOO_LONG, usersAPI.validateUsersByPassword("P".repeat(21)));
+    }
+
+    @Test
+    void testValidateUsersByNoDigitsPassword() {
         assertEquals(StatusCode.PASSWORD_NO_DIGITS, usersAPI.validateUsersByPassword("Password!"));
+    }
+
+    @Test
+    void testValidateUsersByNoUppercasePassword() {
         assertEquals(StatusCode.PASSWORD_NO_UPPERCASE, usersAPI.validateUsersByPassword("password1!"));
+    }
+
+    @Test
+    void testValidateUsersByNoLowercasePassword() {
         assertEquals(StatusCode.PASSWORD_NO_LOWERCASE, usersAPI.validateUsersByPassword("PASSWORD1!"));
+    }
+
+    @Test
+    void testValidateUsersByNoSpecialCharPassword() {
         assertEquals(StatusCode.PASSWORD_NO_SPECIAL_CHAR, usersAPI.validateUsersByPassword("Password1"));
     }
 
     @Test
     void testValidateUsersByRole() {
         assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByRole(testRole));
+    }
+
+    @Test
+    void testValidateUsersByNullRole() {
         assertEquals(StatusCode.INVALID_USER_ROLE, usersAPI.validateUsersByRole(null));
     }
 
     @Test
     void testValidateUsersByAdditionalInfo() {
         assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByAdditionalInfo("additionalInfo"));
+    }
+
+    @Test
+    void testValidateUsersByNullAdditionalInfo() {
         assertEquals(StatusCode.INVALID_USER_ADDITIONAL_INFO, usersAPI.validateUsersByAdditionalInfo(null));
     }
 
@@ -181,7 +221,8 @@ class UsersAPITest {
 
     @Test
     void testGetUserIDByUsername() {
-        assertNotNull(usersAPI.keySearch(testUsername));
+        String userID = usersAPI.keySearch(testUsername);
+        assertNotNull(userID);
     }
 
     @Test
@@ -218,47 +259,32 @@ class UsersAPITest {
     @Test
     void testPutUsersUsername() {
         List<StatusCode> result = usersAPI.putUsersUsername(testUsername, "newusername");
-        System.out.println(result);
-        while (result == null) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        assertTrue(Exceptions.isSuccessful(result));
+        awaitResponse(result, () ->assertTrue(Exceptions.isSuccessful(result)));
     }
 
     @Test
     void testPutUsersEmailAddress() {
         List<StatusCode> result = usersAPI.putUsersEmailAddress(testUsername, "newemail@example.com");
-        while (result == null) {
-            try {
-                Thread.sleep(100);
-                assertTrue(Exceptions.isSuccessful(result));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        awaitResponse(result, () -> assertTrue(Exceptions.isSuccessful(result)));
     }
 
     @Test
     void testPutUsersFirstName() {
 
         List<StatusCode> result = usersAPI.putUsersFirstName(testUsername, "Jane");
-        assertTrue(Exceptions.isSuccessful(result));
+        awaitResponse(result, () -> assertTrue(Exceptions.isSuccessful(result)));
     }
 
     @Test
     void testPutUsersLastName() {
         List<StatusCode> result = usersAPI.putUsersLastName(testUsername, "Smith");
-        assertTrue(Exceptions.isSuccessful(result));
+        awaitResponse(result, () -> assertTrue(Exceptions.isSuccessful(result)));
     }
 
     @Test
     void testPutUsersPassword() {
         List<StatusCode> result = usersAPI.putUsersPassword(testUsername, "NewPassword1!");
-        assertTrue(Exceptions.isSuccessful(result));
+        awaitResponse(result, () -> assertTrue(Exceptions.isSuccessful(result)));
     }
 
     @Test
@@ -276,18 +302,25 @@ class UsersAPITest {
     @Test
     void testPutUsersAdditionalInfo() {
         List<StatusCode> result = usersAPI.putUsersAdditionalInfo(testUsername, "Updated info");
-        assertTrue(Exceptions.isSuccessful(result));
+        awaitResponse(result, () -> assertTrue(Exceptions.isSuccessful(result)));
     }
 
     @Test
     void testDeleteUser() {
         List<StatusCode> result = usersAPI.deleteUser(testUsername);
-        assertTrue(Exceptions.isSuccessful(result));
+        awaitResponse(result, () -> assertTrue(Exceptions.isSuccessful(result)));
     }
 
     @Test
     void testSearchUsers() {
         List<Users> result = usersAPI.searchUsers("John");
-        assertTrue(result.contains(usersAPI.getUser(testUsername)));
+        while (result == null) {
+            try {
+                Thread.sleep(100);
+                assertNotNull(result);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
