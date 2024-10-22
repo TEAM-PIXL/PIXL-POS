@@ -117,15 +117,31 @@ class UsersAPITest {
     @Test
     void testValidateUsersByEmail() {
         assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByEmailAddress("email@example.com"));
+    }
+
+    @Test
+    void testValidateUsersByInvalidEmailAddress() {
         assertEquals(StatusCode.EMAIL_INVALID_FORMAT, usersAPI.validateUsersByEmailAddress("emailexample.com"));
+    }
+
+    @Test
+    void testValidateUsersByContainsSpacesEmailAddress() {
         assertEquals(StatusCode.EMAIL_CONTAINS_SPACES, usersAPI.validateUsersByEmailAddress("email @example"));
     }
 
     @Test
     void testValidateUsersByFirstName() {
         assertEquals(StatusCode.SUCCESS, usersAPI.validateUsersByFirstName("John"));
-        assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(null));
+    }
+
+    @Test
+    void testValidateUsersByInvalidCharactersFirstName() {
         assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(""));
+    }
+
+    @Test
+    void testValidateUsersByNullFirstName() {
+        assertEquals(StatusCode.INVALID_FIRST_NAME, usersAPI.validateUsersByFirstName(null));
     }
 
     @Test
