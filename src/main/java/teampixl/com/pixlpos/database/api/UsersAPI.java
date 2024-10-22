@@ -579,6 +579,7 @@ public class UsersAPI {
             Pair<List<StatusCode>, Users> result = validateAndGetUser("Status", newStatus, username);
             List<StatusCode> validations = result.getKey();
             if (!Exceptions.isSuccessful(validations)) return validations;
+            System.out.println("JHJGHFGHFGHDFGHFDGHGJKHKJGJKGJKGK");
 
             Users user = result.getValue();
 
