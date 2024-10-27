@@ -1,8 +1,6 @@
 package teampixl.com.pixlpos.database.api;
 
-import javafx.collections.ObservableList;
 import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.DatabaseManager;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.database.api.util.Util;
