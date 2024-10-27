@@ -118,7 +118,7 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderByTableNumber(Integer TABLE_NUMBER) {
-        if (TABLE_NUMBER == null || TABLE_NUMBER < 0) {
+        if (TABLE_NUMBER == null || TABLE_NUMBER <= 0) {
             return StatusCode.INVALID_TABLE_NUMBER;
         }
         return StatusCode.SUCCESS;
