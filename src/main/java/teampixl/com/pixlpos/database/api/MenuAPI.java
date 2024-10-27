@@ -134,7 +134,10 @@ public class MenuAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateMenuItemByNotes(String MENU_ITEM_NOTES) {
-        if (MENU_ITEM_NOTES != null && MENU_ITEM_NOTES.length() > 500) {
+        if (MENU_ITEM_NOTES == null || MENU_ITEM_NOTES.trim().isEmpty()) {
+            return StatusCode.INVALID_MENU_ITEM_NOTES;
+        }
+        if (MENU_ITEM_NOTES.length() > 500) {
             return StatusCode.MENU_ITEM_NOTES_TOO_LONG;
         }
         return StatusCode.SUCCESS;
