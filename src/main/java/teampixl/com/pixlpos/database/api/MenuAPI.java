@@ -19,9 +19,9 @@ import java.util.function.Function;
  */
 public class MenuAPI {
     private static MenuAPI INSTANCE;
-    private static final DataStore DATA_STORE = DataStore.getInstance();
+    private static DataStore DATA_STORE;
 
-    private MenuAPI() { }
+    private MenuAPI() { initializeDependencies(); }
 
     /**
      * Gets the singleton instance of the MenuAPI.
@@ -33,6 +33,16 @@ public class MenuAPI {
             INSTANCE = new MenuAPI();
         }
         return INSTANCE;
+    }
+
+    private void initializeDependencies() {
+        while ((DATA_STORE = DataStore.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -124,7 +134,10 @@ public class MenuAPI {
      * @return the status code indicating the result of the validation
      */
     public StatusCode validateMenuItemByNotes(String MENU_ITEM_NOTES) {
-        if (MENU_ITEM_NOTES != null && MENU_ITEM_NOTES.length() > 500) {
+        if (MENU_ITEM_NOTES == null || MENU_ITEM_NOTES.trim().isEmpty()) {
+            return StatusCode.INVALID_MENU_ITEM_NOTES;
+        }
+        if (MENU_ITEM_NOTES.length() > 500) {
             return StatusCode.MENU_ITEM_NOTES_TOO_LONG;
         }
         return StatusCode.SUCCESS;

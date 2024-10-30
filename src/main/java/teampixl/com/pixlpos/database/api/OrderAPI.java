@@ -1,6 +1,5 @@
 package teampixl.com.pixlpos.database.api;
 
-import javafx.collections.ObservableList;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
@@ -21,12 +20,11 @@ import javafx.util.Pair;
  */
 public class OrderAPI {
     private static OrderAPI instance;
-    private static final DataStore DATASTORE = DataStore.getInstance();
-    private static final UsersAPI USERSAPI = UsersAPI.getInstance();
-    private static final MenuAPI MENUAPI = MenuAPI.getInstance();
+    private static DataStore DATASTORE;
+    private static UsersAPI USERSAPI;
+    private static MenuAPI MENUAPI;
 
-    private OrderAPI() {
-    }
+    private OrderAPI() { initializeDependencies(); }
 
     /**
      * Gets the singleton instance of the OrderAPI.
@@ -38,6 +36,32 @@ public class OrderAPI {
             instance = new OrderAPI();
         }
         return instance;
+    }
+
+    private void initializeDependencies() {
+        while ((DATASTORE = DataStore.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        while ((USERSAPI = UsersAPI.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        while ((MENUAPI = MenuAPI.getInstance()) == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -107,7 +131,7 @@ public class OrderAPI {
      * @return the appropriate StatusCode
      */
     public StatusCode validateOrderByCustomers(Integer CUSTOMERS) {
-        if (CUSTOMERS == null || CUSTOMERS < 0) {
+        if (CUSTOMERS == null || CUSTOMERS <= 0) {
             return StatusCode.INVALID_CUSTOMERS;
         }
         return StatusCode.SUCCESS;
@@ -269,16 +293,6 @@ public class OrderAPI {
      * @param start the start time of the timeframe
      * @param end the end time of the timeframe
      */
-    public void loadOrderTimeframe(long start, long end) {
-        DATASTORE.loadOrdersFromDatabase(start, end);
-    }
-
-    /**
-     * Updates memory with the latest orders from the database. This takes all orders. DANGEROUS! Be careful with this method.
-     */
-    public void loadAllOrders() {
-        DATASTORE.loadAllOrdersFromDatabase();
-    }
 
     /**
      * Retrieves menu items associated with an order ID.
@@ -291,8 +305,6 @@ public class OrderAPI {
         if (ORDER == null) {
             return Collections.emptyMap();
         }
-
-        DATASTORE.loadOrderItems(ORDER_ID, ORDER);
 
         @SuppressWarnings("unchecked")
         Map<String, Integer> MENU_ITEMS_MAP = (Map<String, Integer>) ORDER.getData().get("menuItems");
@@ -356,9 +368,9 @@ public class OrderAPI {
             int ORDER_NUMBER = 1;
             if (!ORDERS.isEmpty()) {
                 ORDER_NUMBER = ORDERS.stream()
-                        .mapToInt(Order::getOrderNumber)
-                        .max()
-                        .orElse(0) + 1;
+                                       .mapToInt(Order::getOrderNumber)
+                                       .max()
+                                       .orElse(0) + 1;
             }
 
             try {
@@ -681,7 +693,7 @@ public class OrderAPI {
         Order ORDER = orderResult.getValue();
 
         try {
-            ORDER.updateMetadata("payment_method", PAYMENT_METHOD);
+            ORDER.setDataValue("payment_method", PAYMENT_METHOD);
             DATASTORE.updateOrder(ORDER);
             VALIDATIONS.add(StatusCode.SUCCESS);
         } catch (Exception e) {

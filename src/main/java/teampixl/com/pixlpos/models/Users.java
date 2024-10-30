@@ -31,13 +31,6 @@ import teampixl.com.pixlpos.models.tools.MetadataWrapper;
  */
 public class Users extends DataManager {
 
-    /*============================================================================================================================================================
-    Code Description:
-    - Enumerations for UserRole
-    - MetadataWrapper object for metadata
-    - Map object for data
-    ============================================================================================================================================================*/
-
     /**
      * Enumerations for UserRole
      */
@@ -46,26 +39,6 @@ public class Users extends DataManager {
         COOK,
         ADMIN
     }
-
-    /*============================================================================================================================================================
-    Code Description:
-    - Constructor for Users object.
-
-    Metadata:
-        - id: UUID
-        - first_name: first name
-        - last_name: last name
-        - username: username
-        - role: role
-        - created_at: timestamp for creation
-        - updated_at: timestamp for last update
-        - is_active: boolean
-
-    Data:
-        - password: password
-        - email: email
-        - additional_info: null
-    ============================================================================================================================================================*/
 
     /**
      * Constructor for Users object.

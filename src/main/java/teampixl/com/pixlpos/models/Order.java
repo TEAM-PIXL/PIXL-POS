@@ -13,12 +13,6 @@ import java.util.*;
  */
 public class Order extends DataManager {
 
-    /*============================================================================================================================================================
-    Code Description:
-    - Enumerations for OrderStatus
-    - Enumerations for OrderType
-    ============================================================================================================================================================*/
-
     /**
      * Enumerations for the status of an order.
      */
@@ -47,31 +41,9 @@ public class Order extends DataManager {
     public enum PaymentMethod {
         CASH,
         CARD,
-        NOT_PAID, MOBILE
+        NOT_PAID,
+        MOBILE
     }
-
-    /*============================================================================================================================================================
-    Code Description:
-    - Constructor for Order object.
-
-    Metadata:
-        - order_id: UUID
-        - order_number: orderNumber
-        - user_id: userId
-        - order_status: OrderStatus.PENDING
-        - is_completed: false
-        - order_type: OrderType.DINE_IN
-        - table_number: 0
-        - customers: 1
-        - created_at: timestamp for creation
-        - updated_at: timestamp for last update
-
-    Data:
-        - menuItems: Map<String, Integer> where key is MenuItem ID and value is the quantity
-        - total: 0.0
-        - special_requests: null
-        - payment_method: null
-    ============================================================================================================================================================*/
 
     /**
      * Constructor for an order.
@@ -112,20 +84,7 @@ public class Order extends DataManager {
     }
 
     /*============================================================================================================================================================
-    Code Description:
-    - Handles internal logic for CRUD operations on Order object.
-
-    Methods:
-        - addMenuItem(MenuItem item, int quantity): Adds a MenuItem to the order and deducts the corresponding ingredients from stock.
-        - removeMenuItem(MenuItem item, int quantity): Removes a MenuItem from the order and restores the corresponding ingredients to stock.
-        - updateTotal(MenuItem item, int quantity): Updates the total cost of the order.
-        - updateOrderStatus(OrderStatus newStatus): Updates the status of the order.
-        - completeOrder(): Marks the order as completed and updates the status.
-        - updateTimestamp(): Updates the timestamp in the metadata.
-        - deductIngredientsFromStock(MenuItem menuItem, int quantity): Deducts the ingredients from stock.
-        - restoreIngredientsToStock(MenuItem menuItem, int quantity): Restores the ingredients to stock.
-        - getOrderNumber(): Returns the order number.
-        - getTotal(): Returns the total cost of the order.
+    --------------------------------------------------------------> ORDER HELPER METHODS <------------------------------------------------------------------------
     ============================================================================================================================================================*/
 
     /**
@@ -161,7 +120,7 @@ public class Order extends DataManager {
         instanceItem.setDataValue("amountOrdered", newOrderTotal);
         DataStore.getInstance().updateMenuItem(instanceItem);
 
-        DataStore.getInstance().updateOrderItem(this, itemId, newQuantity);
+        DataStore.getInstance().updateOrderItem(this, item, quantity);
     }
 
     /**
@@ -350,22 +309,23 @@ public class Order extends DataManager {
         }
     }
 
+    /**
+     * Gets the order number.
+     *
+     * @return The order number.
+     */
     public int getOrderNumber() {
         return (int) metadata.metadata().get("order_number");
     }
 
+    /**
+     * Gets the user ID.
+     *
+     * @return The user ID.
+     */
     public double getTotal() {
         return (double) data.get("total");
     }
-
-    /*============================================================================================================================================================
-    Code Description:
-    - Overridden methods for Order object.
-
-    Methods:
-        - equals(Object obj): checks if two Order objects are equal
-        - hashCode(): returns the hash code of the Order object
-    ============================================================================================================================================================*/
 
     @Override
     public boolean equals(Object obj) {
@@ -379,7 +339,6 @@ public class Order extends DataManager {
         return Objects.hash(metadata.metadata().get("order_id"));
     }
 }
-
 
 
 

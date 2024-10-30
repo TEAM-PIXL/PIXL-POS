@@ -1,30 +1,29 @@
 package teampixl.com.pixlpos;
 
+import teampixl.com.pixlpos.database.api.IngredientsAPI;
+import teampixl.com.pixlpos.database.api.MenuAPI;
+import teampixl.com.pixlpos.database.api.StockAPI;
+import teampixl.com.pixlpos.database.api.util.Exceptions;
+import teampixl.com.pixlpos.database.api.util.StatusCode;
 import teampixl.com.pixlpos.models.MenuItem;
+import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.DatabaseHelper;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class Main {
 
-    /*===================================================================================================================================================================================================================================
-    Code Description:
-    This is the functionality testing class for the application. It tests the functionality of the application by creating test data and testing the functionality of the application.
-    The aim is to ensure that the application is functioning as expected and that the data is being stored and retrieved correctly. All the classes and methods are tested in this class.
-    ===================================================================================================================================================================================================================================*/
+    private static final int MAX_RETRIES = 3;
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public static void main(String[] args) {
-
-        /*===================================================================================================================================================================================================================================
-        Code Description:
-        This section handles the initialization of the database and the creation of tables. It also clears the data from the database.
-
-        Tested Methods:
-        - initializeDatabase()
-        - clearData()
-        - getInstance() {Constructor}
-        ===================================================================================================================================================================================================================================*/
 
         DatabaseHelper.initializeDatabase();
         System.out.println("Database initialized and tables created.");
@@ -32,102 +31,151 @@ public class Main {
         DataStore dataStore = DataStore.getInstance();
         dataStore.clearData();
 
-        /*===================================================================================================================================================================================================================================
-        Code Description:
-        This section tests the functionality of the Users class. It tests the creation of users, retrieval of users, updating of users, and removal of users. It also tests the hashing and verification of passwords.
-        All the methods of the Users class are tested in this section. As well as some of the methods of the AuthenticationManager class.
+        AuthenticationManager.register("Jon", "Doe", "admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
+        AuthenticationManager.register("waiter", "waiter","waiter", "waiter", "waiter@example.com", Users.UserRole.WAITER);
+        AuthenticationManager.register("cook", "cook","cook", "cook", "cook@example.com", Users.UserRole.COOK);
 
-        Tested Methods:
+        MenuAPI menuAPI = MenuAPI.getInstance();
+        IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
+        StockAPI stockAPI = StockAPI.getInstance();
 
-            Authentication Methods:
-                - register()
-                - verifyPassword()
-                - hashPassword()
+        scheduler.schedule(() -> batchProcessMenuItems(menuAPI), 0, TimeUnit.SECONDS);
+        scheduler.schedule(() -> batchProcessIngredients(ingredientsAPI), 5, TimeUnit.SECONDS);
+        scheduler.schedule(() -> batchProcessStock(stockAPI, ingredientsAPI), 10, TimeUnit.SECONDS);
 
-            User Methods:
-                - getData()
-                - getMetadata()
-                - getUsers()
-                - getUser()
-                - setDataValue()
-                - updateMetadata()
-                - updateUser()
-                - updateUserPassword()
-                - removeUser()
-        ===================================================================================================================================================================================================================================*/
+        scheduler.shutdown();
+    }
 
-        boolean registerAdmin = AuthenticationManager.register("Jon", "Doe", "admin", "admin", "admin@example.com", Users.UserRole.ADMIN);
-        boolean registerWaiter =  AuthenticationManager.register("waiter", "waiter","waiter", "waiter", "waiter@example.com", Users.UserRole.WAITER);
-        boolean registerCook =  AuthenticationManager.register("cook", "cook","cook", "cook", "cook@example.com", Users.UserRole.COOK);
+    private static void batchProcessMenuItems(MenuAPI menuAPI) {
+        List<StatusCode> menuItemCodes = new ArrayList<>();
+        String[][] menuItems = {
+                {"Pizza", "18.99", "Cheesy pizza with toppings", "MAIN", "NONE"},
+                {"Vegan Salad", "12.99", "Healthy vegan salad", "ENTREE", "VEGAN"},
+                {"Fish and Chips", "22.99", "Fresh fish fillet with chips", "MAIN", "NONE"},
+                {"Basil Pasta", "15.99", "Pasta with fresh basil", "MAIN", "VEGETARIAN"},
+                {"Classic Cheeseburger", "17.95", "A timeless favorite with juicy beef, melted cheese, and classic toppings.", "MAIN", "NONE"},
+                {"BBQ Bacon Cheeseburger", "17.95", "A smoky BBQ twist on the classic cheeseburger with crispy bacon and tangy BBQ sauce.", "MAIN", "NONE"},
+                {"Mushroom Swiss Burger", "17.95", "A savory burger with sautéed mushrooms, Swiss cheese, and a touch of garlic aioli.", "MAIN", "VEGETARIAN"},
+                {"Spicy Jalapeño Burger", "18.95", "A fiery burger with jalapeños, pepper jack cheese, and a spicy chipotle mayo.", "MAIN", "NONE"},
+                {"Hawaiian Pineapple Burger", "18.95", "A tropical burger with grilled pineapple, ham, and a sweet teriyaki glaze.", "MAIN", "NONE"},
+                {"Veggie Bean Burger", "20.95", "A hearty vegetarian burger with a blend of beans, grains, and spices.", "MAIN", "VEGAN"},
+                {"Beyond Burger", "20.95", "A plant-based burger that looks, cooks, and tastes like beef.", "MAIN", "VEGAN"},
+                {"Mediterranean Falafel Burger", "20.95", "A flavorful burger with crispy falafel, hummus, and a tangy tzatziki sauce.", "MAIN", "NONE"},
+                {"Teriyaki Salmon Burger", "19.95", "A fresh burger with grilled salmon, avocado, and a sweet teriyaki glaze.", "MAIN", "NONE"},
+                {"Breakfast Burger", "19.95", "A hearty burger with a fried egg, crispy bacon, and melted cheese on a toasted bun.", "MAIN", "NONE"},
+                {"Coke", "3.0", "Classic Coca-Cola", "DRINK", "NONE"},
+                {"Fanta", "3.0", "Refreshing Fanta Orange", "DRINK", "NONE"},
+                {"Sprite", "3.0", "Crisp Sprite Lemon-Lime", "DRINK", "NONE"},
+                {"Iced Tea", "4.5", "Chilled Iced Tea", "DRINK", "NONE"},
+                {"Iced Coffee", "4.5", "Iced Coffee with Cream", "DRINK", "NONE"}
+        };
 
-        /*===================================================================================================================================================================================================================================
-        Code Description:
-        This section tests the functionality of the MenuItem class. It tests the creation of menu items, retrieval of menu items, updating of menu items, and removal of menu items. It also tests the addition of ingredients to menu items.
-        All the methods of the MenuItem class are tested in this section. As well as the methods of the DataStore class that interact with the MenuItem class.
+        for (String[] item : menuItems) {
+            String name = item[0];
+            double price = Double.parseDouble(item[1]);
+            String description = item[2];
+            MenuItem.ItemType itemType = MenuItem.ItemType.valueOf(item[3]);
+            MenuItem.DietaryRequirement dietaryRequirement = MenuItem.DietaryRequirement.valueOf(item[4]);
 
-        Tested Methods:
-            - MenuItem()
-            - getMenuItems()
-            - getMenuItem()
-            - addMenuItem()
-            - setDataValue()
-            - updateMetadata()
-            - updateMenuItem()
-            - removeMenuItem()
-            - addMenuItemIngredient()
-            - updateMenuItemIngredient()
-            - removeMenuItemIngredient()
-            - getMenuItemIngredients()
-        ===================================================================================================================================================================================================================================*/
+            int retryCount = 0;
+            while (retryCount < MAX_RETRIES) {
+                List<StatusCode> result = menuAPI.postMenuItem(name, price, true, itemType, description, "", dietaryRequirement);
+                if (Exceptions.isSuccessful(result)) {
+                    menuItemCodes.addAll(result);
+                    break;
+                } else {
+                    retryCount++;
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
 
-        MenuItem item1 = new MenuItem("Pizza", 18.99, MenuItem.ItemType.MAIN, true, "Cheesy pizza with toppings", null);
-        MenuItem item2 = new MenuItem("Vegan Salad", 12.99, MenuItem.ItemType.ENTREE, true, "Healthy vegan salad", MenuItem.DietaryRequirement.VEGAN);
-        MenuItem item3 = new MenuItem("Fish & Chips", 22.99, MenuItem.ItemType.MAIN, true, "Fresh fish fillet with chips", null);
-        MenuItem item4 = new MenuItem("Basil Pasta", 15.99, MenuItem.ItemType.MAIN, true, "Pasta with fresh basil", MenuItem.DietaryRequirement.VEGETARIAN);
+        if (!Exceptions.isSuccessful(menuItemCodes)) {
+            System.out.println(Exceptions.returnStatus("Menu items could not be created with the following statuses:", menuItemCodes));
+        } else {
+            System.out.println("Menu items created successfully.");
+        }
+    }
 
-        /* Add Hardcoded items to menu items */
+    private static void batchProcessIngredients(IngredientsAPI ingredientsAPI) {
+        List<StatusCode> ingredientCodes = new ArrayList<>();
+        String[][] ingredients = {
+                {"Flour", "Flour for pizza dough"},
+                {"Tomato Sauce", "Tomato sauce for pizza"},
+                {"Beef", "Beef for burgers"},
+                {"Cheese", "Cheese for burgers"}
+        };
 
-        MenuItem item5 = new MenuItem("Classic Cheeseburger", 17.95, MenuItem.ItemType.MAIN, true, "A timeless favorite with juicy beef, melted cheese, and classic toppings.", MenuItem.DietaryRequirement.NONE);
-        MenuItem item6 = new MenuItem("BBQ Bacon Cheeseburger", 17.95, MenuItem.ItemType.MAIN, true, "A smoky BBQ twist on the classic cheeseburger with crispy bacon and tangy BBQ sauce.", MenuItem.DietaryRequirement.NONE);
-        MenuItem item7 = new MenuItem("Mushroom Swiss Burger", 17.95, MenuItem.ItemType.MAIN, true, "A savory burger with sautéed mushrooms, Swiss cheese, and a touch of garlic aioli.", MenuItem.DietaryRequirement.VEGETARIAN);
-        MenuItem item8 = new MenuItem("Spicy Jalapeño Burger", 18.95, MenuItem.ItemType.MAIN, true, "A fiery burger with jalapeños, pepper jack cheese, and a spicy chipotle mayo.", MenuItem.DietaryRequirement.NONE);
-        MenuItem item9 = new MenuItem("Hawaiian Pineapple Burger", 18.95, MenuItem.ItemType.MAIN, true, "A tropical burger with grilled pineapple, ham, and a sweet teriyaki glaze.", MenuItem.DietaryRequirement.NONE);
-        MenuItem item10 = new MenuItem("Veggie Bean Burger", 20.95, MenuItem.ItemType.MAIN, true, "A hearty vegetarian burger with a blend of beans, grains, and spices.", MenuItem.DietaryRequirement.VEGAN);
-        MenuItem item11 = new MenuItem("Beyond Burger", 20.95, MenuItem.ItemType.MAIN, true, "A plant-based burger that looks, cooks, and tastes like beef.", MenuItem.DietaryRequirement.VEGAN);
-        MenuItem item12 = new MenuItem("Mediterranean Falafel Burger", 20.95, MenuItem.ItemType.MAIN, true, "A flavorful burger with crispy falafel, hummus, and a tangy tzatziki sauce.", MenuItem.DietaryRequirement.NONE);
-        MenuItem item13 = new MenuItem("Teriyaki Salmon Burger", 19.95, MenuItem.ItemType.MAIN, true, "A fresh burger with grilled salmon, avocado, and a sweet teriyaki glaze.", MenuItem.DietaryRequirement.NONE);
-        MenuItem item14 = new MenuItem("Breakfast Burger", 19.95, MenuItem.ItemType.MAIN, true, "A hearty burger with a fried egg, crispy bacon, and melted cheese on a toasted bun.", MenuItem.DietaryRequirement.NONE);
+        for (String[] ingredient : ingredients) {
+            String name = ingredient[0];
+            String description = ingredient[1];
 
-        MenuItem item15 = new MenuItem("Coke", 3, MenuItem.ItemType.DRINK, true, "Classic Coca-Cola", MenuItem.DietaryRequirement.NONE);
-        MenuItem item16 = new MenuItem("Fanta", 3, MenuItem.ItemType.DRINK, true, "Refreshing Fanta Orange", MenuItem.DietaryRequirement.NONE);
-        MenuItem item17 = new MenuItem("Sprite", 3, MenuItem.ItemType.DRINK, true, "Crisp Sprite Lemon-Lime", MenuItem.DietaryRequirement.NONE);
-        MenuItem item18 = new MenuItem("Iced Tea", 4.5, MenuItem.ItemType.DRINK, true, "Chilled Iced Tea", MenuItem.DietaryRequirement.NONE);
-        MenuItem item19 = new MenuItem("Iced Coffee", 4.5, MenuItem.ItemType.DRINK, true, "Iced Coffee with Cream", MenuItem.DietaryRequirement.NONE);
+            int retryCount = 0;
+            while (retryCount < MAX_RETRIES) {
+                List<StatusCode> result = ingredientsAPI.postIngredient(name, description);
+                if (Exceptions.isSuccessful(result)) {
+                    ingredientCodes.addAll(result);
+                    break;
+                } else {
+                    retryCount++;
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
 
-        /* Finish Hardcoded items to menu items */
+        if (!Exceptions.isSuccessful(ingredientCodes)) {
+            System.out.println(Exceptions.returnStatus("Ingredients could not be created with the following statuses:", ingredientCodes));
+        } else {
+            System.out.println("Ingredients created successfully.");
+        }
+    }
 
-        dataStore.createMenuItem(item1);
-        dataStore.createMenuItem(item2);
-        dataStore.createMenuItem(item3);
-        dataStore.createMenuItem(item4);
-        dataStore.createMenuItem(item5);
-        dataStore.createMenuItem(item6);
-        dataStore.createMenuItem(item7);
-        dataStore.createMenuItem(item8);
-        dataStore.createMenuItem(item9);
-        dataStore.createMenuItem(item10);
-        dataStore.createMenuItem(item11);
-        dataStore.createMenuItem(item12);
-        dataStore.createMenuItem(item13);
-        dataStore.createMenuItem(item14);
-        dataStore.createMenuItem(item15);
-        dataStore.createMenuItem(item16);
-        dataStore.createMenuItem(item17);
-        dataStore.createMenuItem(item18);
-        dataStore.createMenuItem(item19);
+    private static void batchProcessStock(StockAPI stockAPI, IngredientsAPI ingredientsAPI) {
+        List<StatusCode> stockCodes = new ArrayList<>();
+        Object[][] stockItems = {
+                {"Flour", Stock.StockStatus.INSTOCK, Stock.UnitType.KG, 150.0, false},
+                {"Tomato Sauce", Stock.StockStatus.LOWSTOCK, Stock.UnitType.L, 2.0, false},
+                {"Beef", Stock.StockStatus.INSTOCK, Stock.UnitType.KG, 130.0, false},
+                {"Cheese", Stock.StockStatus.NOSTOCK, Stock.UnitType.KG, 0.0, true}
+        };
 
-        System.out.println("Menu items added to the database:");
+        for (Object[] stockItem : stockItems) {
+            String ingredientName = (String) stockItem[0];
+            Stock.StockStatus stockStatus = (Stock.StockStatus) stockItem[1];
+            Stock.UnitType unitType = (Stock.UnitType) stockItem[2];
+            double quantity = (double) stockItem[3];
+            boolean needsRestocking = (boolean) stockItem[4];
 
+            int retryCount = 0;
+            while (retryCount < MAX_RETRIES) {
+                List<StatusCode> result = stockAPI.postStock(ingredientsAPI.keySearch(ingredientName), stockStatus, unitType, quantity, needsRestocking);
+                if (Exceptions.isSuccessful(result)) {
+                    stockCodes.addAll(result);
+                    break;
+                } else {
+                    retryCount++;
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        if (!Exceptions.isSuccessful(stockCodes)) {
+            System.out.println(Exceptions.returnStatus("Stock could not be created with the following statuses:", stockCodes));
+        } else {
+            System.out.println("Stock created successfully.");
+        }
     }
 }
 
