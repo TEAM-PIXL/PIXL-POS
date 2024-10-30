@@ -1,0 +1,60 @@
+name: Rollback on Failure
+
+on:
+  workflow_call:
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git User
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Find Last Successful Commit
+        run: |
+          last_good_commit=$(git rev-list --tags='deployed_*' --max-count=1)
+          if [ -z "$last_good_commit" ]; then
+            echo "No previous successful deployment found."
+            exit 1
+          fi
+          echo "Last good commit: $last_good_commit"
+          echo "last_good_commit=$last_good_commit" >> $GITHUB_ENV
+
+      - name: Revert to Last Successful Commit (excluding workflow files)
+        run: |
+          git reset --hard ${{ env.last_good_commit }}
+          git reset --soft HEAD@{1}  # Keep the reset commit but make changes unstaged
+          git restore --staged .github/workflows/  # Exclude workflow files from the commit
+
+      - name: Check for Changes to Commit
+        id: check_changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            echo "skip_commit=true" >> $GITHUB_ENV
+          else
+            echo "Changes detected."
+            echo "skip_commit=false" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and Push if changes detected
+        if: env.skip_commit == 'false'
+        run: |
+          git commit -m "Reverted to last successful commit without changing workflows"
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+          git push --force
+
+      - name: Force Push Reset (No Changes Detected)
+        if: env.skip_commit == 'true'
+        run: |
+          echo "No changes were detected, but ensuring branch is reset to the last good commit."
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+          git push origin HEAD:${{ steps.get_branch.outputs.branch_name }} --force
