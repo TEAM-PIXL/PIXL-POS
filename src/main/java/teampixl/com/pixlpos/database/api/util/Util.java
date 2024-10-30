@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.function.Function;
 
-
+/**
+ * Utility class for common functions.
+ */
 public class Util {
 
     /**

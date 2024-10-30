@@ -3,28 +3,22 @@ package teampixl.com.pixlpos.controllers.adminconsole;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
 import teampixl.com.pixlpos.models.Users;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ListView;
 import javafx.animation.AnimationTimer;
-import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
-import javafx.geometry.Insets;
-
-import javafx.scene.layout.VBox;
-import teampixl.com.pixlpos.models.MenuItem;
 import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.authentication.AuthenticationManager;
 import teampixl.com.pixlpos.database.api.UsersAPI;
-import javafx.scene.control.*;
+
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -33,14 +27,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import teampixl.com.pixlpos.database.api.UserStack;
-import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.models.Users;
-import javafx.scene.layout.HBox;
 import teampixl.com.pixlpos.models.tools.DataManager;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import javafx.scene.input.KeyCode;
 
 public class AdminScreenUsersController
@@ -61,7 +49,7 @@ public class AdminScreenUsersController
      */
 
     @FXML
-    private Text greeting;
+    private Label greeting;
     @FXML
     private TextField searchbar;
     @FXML
@@ -118,7 +106,7 @@ public class AdminScreenUsersController
         @Override
         public void handle(long now) {
             date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
     };
 
@@ -168,8 +156,8 @@ public class AdminScreenUsersController
             addUserToListView(
                     userslist,
                     user.getMetadataValue("id").toString(),
-                    userAPI.getUsersFirstNameByUsername(username),
                     (userAPI.getUsersFirstNameByUsername(username) + " " + userAPI.getUsersLastNameByUsername(username)),
+                    userAPI.getUsersEmailByUsername(username),
                     username,
                     toReadableDate(user.getMetadataValue("created_at").toString()),
                     userAPI.getUsersRoleByUsername(username).toString());
@@ -260,7 +248,10 @@ public class AdminScreenUsersController
         loadedUser = null;
     }
 
-
+    @FXML
+    protected void onSettingsButtonClick() {
+        // Handle exit button click
+    }
     @FXML
     protected void onUsersButtonClick() {
         // Handle exit button click
@@ -336,8 +327,6 @@ public class AdminScreenUsersController
         }
     }
 
-
-
     /**
      * Adds a user item to the specified ListView. The user is represented as an HBox containing four AnchorPanes
      *
@@ -350,105 +339,50 @@ public class AdminScreenUsersController
      * @param role the role of the user
      */
     public void addUserToListView(ListView<HBox> listView, String id, String name, String email, String username, String userSince, String role) {
-        HBox hbox = new HBox();
-        hbox.setId(id);
-        hbox.setPrefHeight(50.0);
+        try {
+            // Load HBox from FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/teampixl/com/pixlpos/fxml/adminconsole/dynamics/userdynamic.fxml"));
+            HBox hbox = loader.load();
 
-        // Name and Email
-        AnchorPane nameEmailPane = new AnchorPane();
-        Label nameLabel = new Label(name);
-        nameLabel.setAlignment(Pos.CENTER);
-        nameLabel.setContentDisplay(ContentDisplay.BOTTOM);
-        nameLabel.setPrefSize(83.2, 50.4);
-        Label emailLabel = new Label(email);
-        emailLabel.setTextFill(Color.web("#918e8e"));
-        nameLabel.setGraphic(emailLabel);
-        AnchorPane.setTopAnchor(nameLabel, 0.0);
-        AnchorPane.setRightAnchor(nameLabel, 0.0);
-        AnchorPane.setBottomAnchor(nameLabel, 0.0);
-        AnchorPane.setLeftAnchor(nameLabel, 0.0);
-        nameEmailPane.getChildren().add(nameLabel);
-        HBox.setHgrow(nameEmailPane, Priority.ALWAYS);
+            // Set the ID of the HBox
+            hbox.setId(id);
 
-        // Username
-        AnchorPane usernamePane = new AnchorPane();
-        Label usernameLabel = new Label(username);
-        usernameLabel.setAlignment(Pos.CENTER);
-        usernameLabel.setContentDisplay(ContentDisplay.CENTER);
-        usernameLabel.setPrefSize(111.2, 50.4);
-        AnchorPane.setTopAnchor(usernameLabel, 0.0);
-        AnchorPane.setRightAnchor(usernameLabel, 0.0);
-        AnchorPane.setBottomAnchor(usernameLabel, 0.0);
-        AnchorPane.setLeftAnchor(usernameLabel, 0.0);
-        usernamePane.getChildren().add(usernameLabel);
-        HBox.setHgrow(usernamePane, Priority.ALWAYS);
+            // Get the controller associated with the FXML (if you have one)
+            // Optionally, set values via the controller, or directly access the fields
+            // Example: If you have IDs set in FXML for the labels, you can access them like this:
 
-        // User Since Date
-        AnchorPane datePane = new AnchorPane();
-        Label dateLabel = new Label(userSince);
-        dateLabel.setAlignment(Pos.CENTER);
-        dateLabel.setPrefSize(89.6, 50.4);
-        AnchorPane.setTopAnchor(dateLabel, 0.0);
-        AnchorPane.setRightAnchor(dateLabel, 0.0);
-        AnchorPane.setBottomAnchor(dateLabel, 0.0);
-        AnchorPane.setLeftAnchor(dateLabel, 0.0);
-        datePane.getChildren().add(dateLabel);
-        HBox.setHgrow(datePane, Priority.ALWAYS);
+            Label firstnamefield = (Label) hbox.lookup("#firstnameLabel");
+            Label emailfield = (Label) hbox.lookup("#emailLabel");
+            Label usernamefield = (Label) hbox.lookup("#usernameLabel");
+            Label usersince = (Label) hbox.lookup("#userSinceLabel");
+            Label rolefield = (Label) hbox.lookup("#roleLabel");
 
-        // Role
-        AnchorPane rolePane = new AnchorPane();
-        Label roleLabel = new Label(role);
-        roleLabel.setAlignment(Pos.CENTER);
-        roleLabel.setPrefSize(83.2, 50.4);
-        roleLabel.setStyle("-fx-background-color: #0095FF; -fx-background-radius: 10;");
-        roleLabel.setTextFill(Color.WHITE);
-        AnchorPane.setTopAnchor(roleLabel, 0.0);
-        AnchorPane.setRightAnchor(roleLabel, 0.0);
-        AnchorPane.setBottomAnchor(roleLabel, 0.0);
-        AnchorPane.setLeftAnchor(roleLabel, 0.0);
-        rolePane.getChildren().add(roleLabel);
-        rolePane.setPadding(new Insets(10, 0, 10, 0));
-        HBox.setHgrow(rolePane, Priority.ALWAYS);
+            // Set values dynamically
+            firstnamefield.setText(name);
+            emailfield.setText(email);
+            usernamefield.setText(username);
+            usersince.setText(userSince);
+            rolefield.setText(role);
+            // Set action handlers for buttons (if they exist in your FXML)
 
-        // Edit Button
-        AnchorPane editButtonPane = new AnchorPane();
-        editButtonPane.setMaxWidth(100.0);
-        editButtonPane.setMinWidth(100.0);
-        Button editButton = new Button("Edit");
-        editButton.setId("editbutton");
-        editButton.setLayoutX(35.0);
-        editButton.setLayoutY(12.0);
-        editButton.setMinHeight(26.4);
-        editButton.setMaxHeight(26.4);
-        editButton.setPrefHeight(26.4);
-        editButton.setMinWidth(50.0);
-        editButton.getStyleClass().add("edit-button");
-        editButton.setOnAction(event -> onEditButtonClick(event,id));
-        editButtonPane.getChildren().add(editButton);
-        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+            Button editbutton = (Button) hbox.lookup("#editbutton");
+            editbutton.setOnAction(event -> onEditButtonClick(event, id));
 
-        // Remove Button
-        AnchorPane removeButtonPane = new AnchorPane();
-        removeButtonPane.setMaxWidth(100.0);
-        removeButtonPane.setMinWidth(100.0);
-        Button removeButton = new Button("Remove");
-        removeButton.setId("removebutton");
-        removeButton.setLayoutX(11.0);
-        removeButton.setLayoutY(12.0);
-        removeButton.setMinHeight(26.4);
-        removeButton.setPrefHeight(26.4);
-        removeButton.setMinWidth(50.0);
-        removeButton.getStyleClass().add("remove-button");
-        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
-        removeButtonPane.getChildren().add(removeButton);
-        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
+            Button removebutton = (Button) hbox.lookup("#removebutton");
+            removebutton.setOnAction(event -> onRemoveButtonClick(event, id));
 
-        // Add all components to the HBox
-        hbox.getChildren().addAll(nameEmailPane, usernamePane, datePane, rolePane, editButtonPane, removeButtonPane);
+            Tooltip tooltip = new Tooltip("Edit User");
+            Tooltip tooltip2 = new Tooltip("Remove User");
+            editbutton.setTooltip(tooltip);
+            removebutton.setTooltip(tooltip2);
+            // Add the HBox to the ListView
+            listView.getItems().add(hbox);
 
-        // Add the HBox to the ListView
-        listView.getItems().add(hbox);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);

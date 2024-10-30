@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,11 +26,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class CookScreen2Controller {
 
     @FXML
     private Button logoutbutton;
+    @FXML
+    private Button settingsbutton;
     @FXML
     private TextField searchbar;
     @FXML
@@ -52,48 +56,88 @@ public class CookScreen2Controller {
 
     private DynamicLabelManager dynamicLabelManager;
 
-    AnimationTimer datetime = new AnimationTimer() {
-        @Override
-        public void handle(long now) {
-            date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-        }
-    };
+    private ScheduledExecutorService scheduler;
+
+    protected void addtooltips() {
+        Tooltip hometooltip = new Tooltip("Settings");
+        hometooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(settingsbutton, hometooltip);
+
+        Tooltip userstooltip = new Tooltip("Logout");
+        userstooltip.setShowDelay(javafx.util.Duration.millis(250));
+        Tooltip.install(logoutbutton, userstooltip);
+    }
 
     @FXML
     public void initialize() {
+        AnimationTimer datetime = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            }
+        };
         datetime.start();
+        addtooltips();
 
         orderList.setItems(orderObservableList);
         dynamicLabelManager = new DynamicLabelManager(completedOrders);
 
         loadOrdersFromDatabase();
 
-        orders.setText(orderObservableList.size() + " Orders");
-
-        for (Order order : orderAPI.getOrders()) {
-            if (order.getMetadataValue("order_status") == Order.OrderStatus.COMPLETED) {
-                long updatedAt = (long) order.getMetadataValue("updated_at");
-                LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
-                dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm")));
-            }
-        }
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> Platform.runLater(this::loadOrdersFromDatabase), 10, 10, TimeUnit.SECONDS);
     }
 
     private void loadOrdersFromDatabase() {
-        orderAPI.reloadOrders();
-        List<Order> activeOrders = orderAPI.getOrders().stream().filter(order -> order.getMetadataValue("order_status") == Order.OrderStatus.SENT).toList();
+        Task<Void> loadOrdersTask = new Task<>() {
+            @Override
+            protected Void call() {
+                orderAPI.reloadOrders();
+                List<Order> allOrders = orderAPI.getOrders();
 
-        orderObservableList.clear();
-        orderMap.clear();
-        orderOriginalPositions.clear();
+                List<Order> activeOrders = new ArrayList<>();
+                List<Order> completedOrdersList = new ArrayList<>();
 
-        for (int i = 0; i < activeOrders.size(); i++) {
-            Order order = activeOrders.get(i);
-            addOrderToList(order, i);
-        }
+                for (Order order : allOrders) {
+                    Object statusObj = order.getMetadataValue("order_status");
+                    if (statusObj instanceof Order.OrderStatus) {
+                        Order.OrderStatus status = (Order.OrderStatus) statusObj;
+                        if (status == Order.OrderStatus.SENT) {
+                            activeOrders.add(order);
+                        } else if (status == Order.OrderStatus.COMPLETED) {
+                            completedOrdersList.add(order);
+                        }
+                    }
+                }
 
-        orders.setText(orderObservableList.size() + " Orders");
+                Platform.runLater(() -> {
+                    orderObservableList.clear();
+                    orderMap.clear();
+                    orderOriginalPositions.clear();
+
+                    for (int i = 0; i < activeOrders.size(); i++) {
+                        Order order = activeOrders.get(i);
+                        addOrderToList(order, i);
+                    }
+
+                    orders.setText(orderObservableList.size() + " Orders");
+
+                    dynamicLabelManager.clearCompletedLabels();
+                    for (Order order : completedOrdersList) {
+                        Object updatedAtObj = order.getMetadataValue("updated_at");
+                        if (updatedAtObj instanceof Long) {
+                            long updatedAt = (Long) updatedAtObj;
+                            LocalDateTime updatedAtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(updatedAt), ZoneId.systemDefault());
+                            dynamicLabelManager.addCompletedLabel("Order #" + order.getOrderNumber() + " @ " + updatedAtDateTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        }
+                    }
+                });
+
+                return null;
+            }
+        };
+        new Thread(loadOrdersTask).start();
     }
 
     private void addOrderToList(Order order, int position) {
@@ -104,11 +148,13 @@ public class CookScreen2Controller {
         orderOriginalPositions.put(orderId, position);
     }
 
+
     private VBox createOrderVBox(Order order) {
         String orderId = (String) order.getMetadataValue("order_id");
         int orderNumber = order.getOrderNumber();
         int customerCount = (int) order.getMetadataValue("customers");
         int tableNumber = (int) order.getMetadataValue("table_number");
+        Order.OrderType orderType = (Order.OrderType) order.getMetadataValue("order_type");
         double totalPrice = calculateTotalPrice(order);
 
         VBox orderVBox = new VBox();
@@ -116,42 +162,51 @@ public class CookScreen2Controller {
         orderVBox.setPrefWidth(300.0);
         orderVBox.setMinWidth(300.0);
         orderVBox.getStyleClass().add("order-container");
-        VBox.setVgrow(orderVBox, Priority.ALWAYS);
+        orderVBox.setSpacing(5);
+        VBox.setVgrow(orderVBox, Priority.NEVER);
 
         HBox orderNumberHBox = new HBox();
-        orderNumberHBox.setAlignment(Pos.CENTER);
-
-        AnchorPane anchorPane = new AnchorPane();
-        HBox.setHgrow(anchorPane, Priority.ALWAYS);
+        orderNumberHBox.setAlignment(Pos.CENTER_LEFT);
+        orderNumberHBox.setPadding(new Insets(5, 10, 0, 14));
 
         Label orderLabel = new Label("Order #");
         orderLabel.getStyleClass().add("order-label");
-        AnchorPane.setLeftAnchor(orderLabel, 14.0);
-        AnchorPane.setTopAnchor(orderLabel, 3.0);
-        anchorPane.getChildren().add(orderLabel);
 
         Label orderNumberLabel = new Label(String.format("%05d", orderNumber));
         orderNumberLabel.getStyleClass().add("order-number");
 
-        orderNumberHBox.getChildren().addAll(anchorPane, orderNumberLabel);
-        orderNumberHBox.setPadding(new Insets(0, 10, 0, 0));
+        orderNumberHBox.getChildren().addAll(orderLabel, orderNumberLabel);
+        orderNumberHBox.setSpacing(5);
 
         AnchorPane infoPane = new AnchorPane();
         infoPane.setPrefHeight(60.0);
         infoPane.getStyleClass().add("order-highlevel-container");
 
+        Label orderTypeLabel = new Label(orderType.name());
+        orderTypeLabel.getStyleClass().add("amount-label");
+        Label orderTypeInnerLabel = new Label("Type:");
+        orderTypeInnerLabel.getStyleClass().add("table-label");
+        ImageView orderTypeIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/user_plus_icon.png"))));
+        orderTypeIcon.setFitHeight(22);
+        orderTypeIcon.setFitWidth(22);
+        orderTypeIcon.setPreserveRatio(true);
+        orderTypeInnerLabel.setGraphic(orderTypeIcon);
+        orderTypeLabel.setGraphic(orderTypeInnerLabel);
+        AnchorPane.setLeftAnchor(orderTypeLabel, 14.0);
+        AnchorPane.setTopAnchor(orderTypeLabel, 5.0);
+
         Label customerLabel = new Label(String.format("%02d", customerCount));
         customerLabel.getStyleClass().add("amount-label");
         Label customerInnerLabel = new Label("Customers:");
         customerInnerLabel.getStyleClass().add("customers-label");
-        ImageView customerIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/user_plus_icon.png"))));
+        ImageView customerIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/users_group_icon.png"))));
         customerIcon.setFitHeight(22);
         customerIcon.setFitWidth(22);
         customerIcon.setPreserveRatio(true);
         customerInnerLabel.setGraphic(customerIcon);
         customerLabel.setGraphic(customerInnerLabel);
         AnchorPane.setLeftAnchor(customerLabel, 14.0);
-        AnchorPane.setTopAnchor(customerLabel, 15.0);
+        AnchorPane.setTopAnchor(customerLabel, 35.0);
 
         Label tableLabel = new Label(String.format("%02d", tableNumber));
         tableLabel.getStyleClass().add("amount-label");
@@ -164,18 +219,22 @@ public class CookScreen2Controller {
         tableInnerLabel.setGraphic(tableIcon);
         tableLabel.setGraphic(tableInnerLabel);
         AnchorPane.setLeftAnchor(tableLabel, 166.0);
-        AnchorPane.setTopAnchor(tableLabel, 15.0);
+        AnchorPane.setTopAnchor(tableLabel, 35.0);
 
-        infoPane.getChildren().addAll(customerLabel, tableLabel);
+        infoPane.getChildren().addAll(orderTypeLabel, customerLabel, tableLabel);
 
         ListView<Label> orderItemsListView = new ListView<>();
         orderItemsListView.getStyleClass().add("list-pane");
-        VBox.setVgrow(orderItemsListView, Priority.ALWAYS);
+        orderItemsListView.setPrefHeight(375);
+        orderItemsListView.setMaxHeight(375);
+        orderItemsListView.setMinHeight(375);
+        VBox.setVgrow(orderItemsListView, Priority.NEVER);
+
         DynamicLabelManager internaldynamicLabelManager = new DynamicLabelManager(orderItemsListView);
 
         Map<MenuItem, Integer> orderItems = orderAPI.getOrderItemsById(orderId);
         Map<MenuItem, List<String>> itemNotes = OrderUtil.deserializeItemNotes((String) order.getDataValue("special_requests"), menuAPI);
-
+        System.out.println("Order #" + orderNumber + " has " + orderItems.size() + " items");
         for (Map.Entry<MenuItem, Integer> entry : orderItems.entrySet()) {
             MenuItem menuItem = entry.getKey();
             int quantity = entry.getValue();
@@ -189,18 +248,20 @@ public class CookScreen2Controller {
 
         HBox priceHBox = new HBox();
         priceHBox.setAlignment(Pos.CENTER);
-        Label totalPriceLabel = new Label("$ " + String.format("%.2f", totalPrice));
+        priceHBox.setPadding(new Insets(0, 10, 0, 14));
+
+        Label totalPriceLabel = new Label(String.format("%.2f", totalPrice));
         totalPriceLabel.getStyleClass().add("amount-label");
-        Label priceLabel = new Label("Price:");
-        priceLabel.getStyleClass().add("customers-label");
-        ImageView imageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png"))));
-        imageView.setFitHeight(22.0);
-        imageView.setFitWidth(22.0);
-        imageView.setPickOnBounds(true);
-        imageView.setPreserveRatio(true);
-        priceLabel.setGraphic(imageView);
-        totalPriceLabel.setGraphic(priceLabel);
+        totalPriceLabel.setStyle("-fx-font-size: 18px;");
+
+        ImageView priceIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/teampixl/com/pixlpos/images/cookicons/dollar_sign_icon.png"))));
+        priceIcon.setFitHeight(18.0);
+        priceIcon.setFitWidth(18.0);
+        priceIcon.setPreserveRatio(true);
+        totalPriceLabel.setGraphic(priceIcon);
+
         priceHBox.getChildren().add(totalPriceLabel);
+
 
         HBox actionButtonsHBox = new HBox();
         actionButtonsHBox.setAlignment(Pos.CENTER);
@@ -239,10 +300,20 @@ public class CookScreen2Controller {
             actionButtonsHBox.getChildren().add(button);
         }
 
-        orderVBox.getChildren().addAll(orderNumberHBox, infoPane, orderItemsListView, priceHBox, actionButtonsHBox);
+        orderVBox.getChildren().addAll(
+                orderNumberHBox,
+                infoPane,
+                orderItemsListView,
+                priceHBox,
+                actionButtonsHBox
+        );
 
         return orderVBox;
     }
+
+
+
+
 
     private double calculateTotalPrice(Order order) {
         double totalPrice = 0.0;
@@ -308,8 +379,15 @@ public class CookScreen2Controller {
     }
 
     @FXML
+    protected void onSettingsButtonClick() {
+    }
+
+    @FXML
     protected void onLogoutButtonClick() {
         GuiCommon.logout(logoutbutton);
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdown();
+        }
     }
 
     /**
@@ -335,6 +413,10 @@ public class CookScreen2Controller {
             labelListView.getItems().add(newLabel);
             System.out.println("Added order label with text: " + itemName);
         }
+
+        public void clearCompletedLabels() {
+            labelListView.getItems().clear();
+        }
     }
 
     private void showErrorDialog(String message) {
@@ -348,4 +430,3 @@ public class CookScreen2Controller {
         });
     }
 }
-

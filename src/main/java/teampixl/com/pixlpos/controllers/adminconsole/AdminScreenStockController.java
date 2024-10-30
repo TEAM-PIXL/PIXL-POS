@@ -1,53 +1,46 @@
 package teampixl.com.pixlpos.controllers.adminconsole;
 
+import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import teampixl.com.pixlpos.common.GuiCommon;
-import javafx.scene.layout.Priority;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.control.ListView;
-import javafx.animation.AnimationTimer;
+import teampixl.com.pixlpos.database.DataStore;
 import teampixl.com.pixlpos.database.api.IngredientsAPI;
 import teampixl.com.pixlpos.database.api.MenuAPI;
 import teampixl.com.pixlpos.database.api.StockAPI;
+import teampixl.com.pixlpos.database.api.UserStack;
 import teampixl.com.pixlpos.database.api.util.Exceptions;
 import teampixl.com.pixlpos.database.api.util.StatusCode;
+import teampixl.com.pixlpos.models.Ingredients;
 import teampixl.com.pixlpos.models.Stock;
 import teampixl.com.pixlpos.models.Users;
-import teampixl.com.pixlpos.database.DataStore;
-import teampixl.com.pixlpos.database.api.UserStack;
-import teampixl.com.pixlpos.models.logs.definitions.Status;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.*;
 
-public class AdminScreenStockController
-{
-    /*===================================================================================================================================================================================
-    Code Description:
-    This class is the controller for the home admin screen of the application.
-    ====================================================================================================================================================================================*/
+public class AdminScreenStockController {
+
     private final UserStack userStack = UserStack.getInstance();
-    Users currentuser = userStack.getCurrentUser();
-    String firstName = currentuser.getMetadata().metadata().get("first_name").toString();
-    private StockAPI stockAPI;
-    private DataStore dataStore;
-    private MenuAPI menuAPI;
-    private IngredientsAPI ingredientsAPI;
-    /*
-    Shared Components
-     */
+    private final Users currentUser = userStack.getCurrentUser();
+    private final String firstName = currentUser.getMetadata().metadata().get("first_name").toString();
+
+    private final StockAPI stockAPI = StockAPI.getInstance();
+    private final IngredientsAPI ingredientsAPI = IngredientsAPI.getInstance();
+
+    private String loadedStockID;
 
     @FXML
-    private Text greeting;
+    private Label greeting;
     @FXML
     private TextField searchbar;
     @FXML
@@ -68,18 +61,14 @@ public class AdminScreenStockController
     @FXML
     private Button logoutbutton;
 
-     /*
-    Stock Components
-     */
-
     @FXML
     private TextField itemnamefield;
     @FXML
-    private TextField desiredquantityfield;
+    private TextField thresholdquantityfield;
     @FXML
     private TextField actualquantityfield;
     @FXML
-    private TextField itempricefield;
+    private TextField orderstatusfield;
     @FXML
     private TextArea itemdescriptionfield;
 
@@ -90,287 +79,319 @@ public class AdminScreenStockController
     @FXML
     private Button cancelbutton;
     @FXML
-    private Button editbutton;
-    @FXML
-    private Button removebutton;
-    @FXML
     private ListView<HBox> itemlist;
 
-    int adding_counter = 0;
-
-    AnimationTimer datetime = new AnimationTimer() {
+    private final AnimationTimer datetime = new AnimationTimer() {
         @Override
         public void handle(long now) {
             date.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+            time.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
     };
 
     @FXML
     public void initialize() {
         datetime.start();
-        adding_counter = 0;
-        itemlist.getItems().clear();
         greeting.setText("Hello, " + firstName);
-        stockAPI = StockAPI.getInstance();
-        menuAPI = MenuAPI.getInstance();
-        dataStore = DataStore.getInstance();
-        ingredientsAPI = IngredientsAPI.getInstance();
         populateStockGrid();
+
+        searchbar.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                searchStock();
+            }
+        });
+
+        searchbar.setOnAction(event -> searchStock());
     }
 
     @FXML
-    protected void onSubmitButtonClick(){
-
+    protected void onSettingsButtonClick() {
+        // Handle settings button click
     }
+
     @FXML
-    protected void onAddItemButtonClick(){
+    protected void onSubmitButtonClick() {
         try {
-            Double desiredQuantity = Double.parseDouble(desiredquantityfield.getText());
-            Double actualQuantity = Double.parseDouble(actualquantityfield.getText());
-            Double price = Double.parseDouble(itempricefield.getText());
-            String ingredientName = itemnamefield.getText();
-            String ingredientDescription = itemdescriptionfield.getText();
+            String ingredientName = itemnamefield.getText().trim();
+            String ingredientDescription = itemdescriptionfield.getText().trim();
+            String thresholdQuantityStr = thresholdquantityfield.getText().trim();
+            String actualQuantityStr = actualquantityfield.getText().trim();
+            String orderStatusStr = orderstatusfield.getText().trim();
 
-            if (price < 0 || desiredQuantity < 0 || actualQuantity < 0) {
-                showAlert(Alert.AlertType.ERROR, "Failed", "Price and Quantities cannot be negative");
+            if (ingredientName.isEmpty() || thresholdQuantityStr.isEmpty() || actualQuantityStr.isEmpty() || orderStatusStr.isEmpty()) {
+                showAlert(AlertType.ERROR, "Empty Field", "All fields are required");
                 return;
             }
 
-            if (ingredientName.isEmpty() || price == null || desiredQuantity == null || actualQuantity == null) {
-                showAlert(Alert.AlertType.ERROR, "EmptyField", "Item Name, Item Price, Desired Quantity and Actual Quantity are required");
+            double thresholdQuantity = Double.parseDouble(thresholdQuantityStr);
+            double actualQuantity = Double.parseDouble(actualQuantityStr);
+            boolean orderStatus = Boolean.parseBoolean(orderStatusStr);
+
+            if (thresholdQuantity < 0 || actualQuantity < 0) {
+                showAlert(AlertType.ERROR, "Invalid Input", "Quantities cannot be negative");
+                return;
+            }
+
+            // Update Ingredient
+            List<StatusCode> statusCodes = new ArrayList<>();
+            statusCodes.addAll(ingredientsAPI.putIngredientName(ingredientsAPI.reverseKeySearch(loadedStockID), ingredientName));
+            statusCodes.addAll(ingredientsAPI.putIngredientNotes(ingredientName, ingredientDescription));
+
+            // Update Stock
+            String ingredientID = ingredientsAPI.keySearch(ingredientName);
+            statusCodes.addAll(stockAPI.putStockOnOrder(ingredientID, orderStatus));
+            statusCodes.addAll(stockAPI.putStockNumeral(ingredientID, actualQuantity));
+            statusCodes.addAll(stockAPI.putStockLowStockThreshold(ingredientID, thresholdQuantity));
+
+            if (Exceptions.isSuccessful(statusCodes)) {
+                showAlert(AlertType.CONFIRMATION, "Stock Item Updated", "Stock item has been updated successfully");
+                populateStockGrid();
+                clearInputFields();
             } else {
-                //TODO: Complete Posted Order Once API updated
-                List<StatusCode> statusCodes = ingredientsAPI.postIngredient(ingredientName, ingredientDescription);
-                String IngredientID = ingredientsAPI.keySearch(ingredientName);
-                initialize();
-                List<StatusCode> statusCodesStock = stockAPI.postStock(IngredientID, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, false);
-                statusCodes.addAll(statusCodesStock);
-                if (Exceptions.isSuccessful(statusCodes)) {
-                    initialize();
-                    showAlert(Alert.AlertType.CONFIRMATION, "New Stock Item", "New Stock Item has been created");
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "New Stock Item", "Stock Item creation failed with the error codes: " + statusCodes);
-                }
+                showAlert(AlertType.ERROR, "Update Failed", "Failed to update stock item: " + statusCodes);
             }
 
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Failed", "Please enter valid numerals");
-            return;
+            showAlert(AlertType.ERROR, "Invalid Input", "Please enter valid numbers for quantities");
         }
     }
 
     @FXML
-    protected void onCancelButtonClick(){
-    }
+    protected void onAddItemButtonClick() {
+        try {
+            String ingredientName = itemnamefield.getText().trim();
+            String ingredientDescription = itemdescriptionfield.getText().trim();
+            String thresholdQuantityStr = thresholdquantityfield.getText().trim();
+            String actualQuantityStr = actualquantityfield.getText().trim();
+            String orderStatusStr = orderstatusfield.getText().trim();
 
-    @FXML
-    protected void onEditButtonClick(){
+            if (ingredientName.isEmpty() || thresholdQuantityStr.isEmpty() || actualQuantityStr.isEmpty() || orderStatusStr.isEmpty()) {
+                showAlert(AlertType.ERROR, "Empty Field", "All fields are required");
+                return;
+            }
 
-    }
-    @FXML
-    protected void onRemoveButtonClick(String id){
-        ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
+            double thresholdQuantity = Double.parseDouble(thresholdQuantityStr);
+            double actualQuantity = Double.parseDouble(actualQuantityStr);
+            boolean orderStatus = Boolean.parseBoolean(orderStatusStr);
 
-        for (int i = 0; i < items.size(); i++) {
-            HBox hbox = items.get(i);
+            if (thresholdQuantity < 0 || actualQuantity < 0) {
+                showAlert(AlertType.ERROR, "Invalid Input", "Quantities cannot be negative");
+                return;
+            }
 
-            if (id.equals(hbox.getId())) {
-                try {
-                    items.remove(i);
-                    stockAPI.deleteStock(id);
-                    initialize();
-                    showAlert(Alert.AlertType.CONFIRMATION, "Stock Item", "Stock Item has been removed");
-                } catch (Exception e) {
-                    showAlert(Alert.AlertType.ERROR, "Stock Item", "Stock Item removal failed");
-                }
-                break;
-            }// Compare the ID of the HBox
-            break;
+            // Create Ingredient
+            List<StatusCode> statusCodes = new ArrayList<>();
+            statusCodes.addAll(ingredientsAPI.postIngredient(ingredientName, ingredientDescription));
+
+            // Create Stock
+            String ingredientID = ingredientsAPI.keySearch(ingredientName);
+            statusCodes.addAll(stockAPI.postStock(ingredientID, Stock.StockStatus.INSTOCK, Stock.UnitType.KG, actualQuantity, orderStatus));
+            statusCodes.addAll(stockAPI.putStockLowStockThreshold(ingredientID, thresholdQuantity));
+
+            if (Exceptions.isSuccessful(statusCodes)) {
+                showAlert(AlertType.CONFIRMATION, "Stock Item Created", "New stock item has been created successfully");
+                populateStockGrid();
+                clearInputFields();
+            } else {
+                showAlert(AlertType.ERROR, "Creation Failed", "Failed to create stock item: " + statusCodes);
+            }
+
+        } catch (NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Invalid Input", "Please enter valid numbers for quantities");
         }
     }
 
+    @FXML
+    protected void onCancelButtonClick() {
+        clearInputFields();
+    }
+
+    private void clearInputFields() {
+        itemnamefield.clear();
+        thresholdquantityfield.clear();
+        actualquantityfield.clear();
+        orderstatusfield.clear();
+        itemdescriptionfield.clear();
+    }
+
+    @FXML
+    protected void onRemoveButtonClick(String id) {
+        try {
+            List<StatusCode> statusCodes = new ArrayList<>();
+            statusCodes.addAll(stockAPI.deleteStock(id));
+            statusCodes.addAll(ingredientsAPI.deleteIngredient(ingredientsAPI.reverseKeySearch(id)));
+
+            if (Exceptions.isSuccessful(statusCodes)) {
+                showAlert(AlertType.CONFIRMATION, "Stock Item Removed", "Stock item has been removed successfully");
+                populateStockGrid();
+            } else {
+                showAlert(AlertType.ERROR, "Removal Failed", "Failed to remove stock item: " + statusCodes);
+            }
+
+        } catch (Exception e) {
+            showAlert(AlertType.ERROR, "Error", "An error occurred while removing the stock item");
+        }
+    }
 
     @FXML
     protected void onUsersButtonClick() {
-        // Handle exit button click
         Stage stage = (Stage) usersbutton.getScene().getWindow();
         GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_USERS_FXML, GuiCommon.ADMIN_SCREEN_USERS_TITLE, stage);
     }
+
     @FXML
     protected void onMenuButtonClick() {
-        // Handle exit button click
         Stage stage = (Stage) menubutton.getScene().getWindow();
         GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_MENU_FXML, GuiCommon.ADMIN_SCREEN_MENU_TITLE, stage);
     }
+
     @FXML
     protected void onHomeButtonClick() {
-        // Handle exit button click
         Stage stage = (Stage) homebutton.getScene().getWindow();
         GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_HOME_FXML, GuiCommon.ADMIN_SCREEN_HOME_TITLE, stage);
     }
+
     @FXML
     protected void onStockButtonClick() {
-        // Handle exit button click
         Stage stage = (Stage) stockbutton.getScene().getWindow();
         GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_STOCK_FXML, GuiCommon.ADMIN_SCREEN_STOCK_TITLE, stage);
     }
+
     @FXML
     protected void onAnalyticsButtonClick() {
-        // Handle exit button click
         Stage stage = (Stage) analyticsbutton.getScene().getWindow();
         GuiCommon.loadScene(GuiCommon.ADMIN_SCREEN_ANALYTICS_FXML, GuiCommon.ADMIN_SCREEN_ANALYTICS_TITLE, stage);
     }
+
     @FXML
     protected void onLogoutButtonClick() {
         GuiCommon.logout(logoutbutton);
     }
 
-    /**
-     * Adds an item to the specified ListView. The item is represented as an HBox containing four AnchorPanes
-     * that display the name, price, type, and dietary information of the item.
-     *
-     * @param listView the ListView to which the new menu item will be added. Each menu item will be displayed as an HBox.
-     * @param itemName the name of the item (e.g., the patty), displayed in the first column of the HBox.
-     * @param desiredQty the desired number of stock
-     * @param actualQty the actual number of items in stock
-     * @param price the price per item reported
-     */
-    public void addInventoryItemToListView(ListView<HBox> listView, String id, String itemName, String desiredQty, String actualQty, String price) {
-        HBox hbox = new HBox();
-        hbox.setPrefHeight(50.0);
-        hbox.setPrefWidth(200.0);
+    public void addInventoryItemToListView(ListView<HBox> listView, String id, String itemName, String actualQty, String orderStatus, String lastUpdated, String stockLevel) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/teampixl/com/pixlpos/fxml/adminconsole/dynamics/stockdynamic.fxml"));
+            HBox hbox = loader.load();
 
-        // Item Name
-        AnchorPane itemNamePane = new AnchorPane();
-        Label itemNameLabel = new Label(itemName);
-        itemNameLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        itemNameLabel.setPrefSize(88.0, 50.4);
-        AnchorPane.setTopAnchor(itemNameLabel, 0.0);
-        AnchorPane.setRightAnchor(itemNameLabel, 0.0);
-        AnchorPane.setBottomAnchor(itemNameLabel, 0.0);
-        AnchorPane.setLeftAnchor(itemNameLabel, 0.0);
-        itemNamePane.getChildren().add(itemNameLabel);
-        HBox.setHgrow(itemNamePane, Priority.ALWAYS);
+            hbox.setId(id);
 
-        // Desired Quantity
-        AnchorPane desiredQtyPane = new AnchorPane();
-        Label desiredQtyLabel = new Label(desiredQty);
-        desiredQtyLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        desiredQtyLabel.setPrefSize(127.2, 50.4);
-        AnchorPane.setTopAnchor(desiredQtyLabel, 0.0);
-        AnchorPane.setRightAnchor(desiredQtyLabel, 0.0);
-        AnchorPane.setBottomAnchor(desiredQtyLabel, 0.0);
-        AnchorPane.setLeftAnchor(desiredQtyLabel, 0.0);
-        desiredQtyPane.getChildren().add(desiredQtyLabel);
-        HBox.setHgrow(desiredQtyPane, Priority.ALWAYS);
+            Label nameField = (Label) hbox.lookup("#namefield");
+            Label qtyField = (Label) hbox.lookup("#qtyfield");
+            Label orderStatField = (Label) hbox.lookup("#orderstatfield");
+            Label lastUpField = (Label) hbox.lookup("#lastupfield");
+            Label stockLvlField = (Label) hbox.lookup("#stocklvlfield");
 
-        // Actual Quantity
-        AnchorPane actualQtyPane = new AnchorPane();
-        Label actualQtyLabel = new Label(actualQty);
-        actualQtyLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        actualQtyLabel.setPrefSize(112.8, 50.4);
-        AnchorPane.setTopAnchor(actualQtyLabel, 0.0);
-        AnchorPane.setRightAnchor(actualQtyLabel, 0.0);
-        AnchorPane.setBottomAnchor(actualQtyLabel, 0.0);
-        AnchorPane.setLeftAnchor(actualQtyLabel, 0.0);
-        actualQtyPane.getChildren().add(actualQtyLabel);
-        HBox.setHgrow(actualQtyPane, Priority.ALWAYS);
+            nameField.setText(itemName);
+            qtyField.setText(actualQty);
+            lastUpField.setText(lastUpdated);
 
-        // Price
-        AnchorPane pricePane = new AnchorPane();
-        Label priceLabel = new Label(price);
-        priceLabel.setAlignment(javafx.geometry.Pos.CENTER);
-        priceLabel.setPrefSize(108.8, 50.4);
-        AnchorPane.setTopAnchor(priceLabel, 0.0);
-        AnchorPane.setRightAnchor(priceLabel, 0.0);
-        AnchorPane.setBottomAnchor(priceLabel, 0.0);
-        AnchorPane.setLeftAnchor(priceLabel, 0.0);
-        pricePane.getChildren().add(priceLabel);
-        HBox.setHgrow(pricePane, Priority.ALWAYS);
+            // Set stock level text and style
+            switch (stockLevel) {
+                case "INSTOCK" -> {
+                    stockLvlField.setText("In Stock");
+                    stockLvlField.getStyleClass().add("stockalert-level-in");
+                }
+                case "LOWSTOCK" -> {
+                    stockLvlField.setText("Low Stock");
+                    stockLvlField.getStyleClass().add("stockalert-level-low");
+                }
+                case "NOSTOCK" -> {
+                    stockLvlField.setText("No Stock");
+                    stockLvlField.getStyleClass().add("stockalert-level-no");
+                }
+                default -> stockLvlField.setText("Unknown");
+            }
 
-        // Edit Button
-        AnchorPane editButtonPane = new AnchorPane();
-        editButtonPane.setMaxWidth(100.0);
-        editButtonPane.setMinWidth(100.0);
-        editButtonPane.setPrefWidth(100.0);
-        Button editButton = new Button("Edit");
-        editButton.setId("editbutton");
-        editButton.setLayoutX(25.0);
-        editButton.setLayoutY(9.0);
-        editButton.setMinWidth(50.0);
-        editButton.getStyleClass().add("edit-button");
-        editButton.setOnAction(event -> onEditButtonClick(event,id));
-        editButtonPane.getChildren().add(editButton);
-        HBox.setHgrow(editButtonPane, Priority.ALWAYS);
+            // Set order status text and style
+            if (orderStatus.equalsIgnoreCase("true")) {
+                orderStatField.setText("ON-ORDER");
+                orderStatField.getStyleClass().add("stockalert-status-on");
+            } else {
+                orderStatField.setText("NOT-ORDERED");
+                orderStatField.getStyleClass().add("stockalert-status-not");
+            }
 
-        // Remove Button
-        AnchorPane removeButtonPane = new AnchorPane();
-        removeButtonPane.setMaxWidth(100.0);
-        removeButtonPane.setMinWidth(100.0);
-        removeButtonPane.setPrefWidth(100.0);
-        Button removeButton = new Button("Remove");
-        removeButton.setId("removebutton");
-        removeButton.setLayoutX(11.0);
-        removeButton.setLayoutY(9.0);
-        removeButton.setMinWidth(50.0);
-        removeButton.getStyleClass().add("remove-button");
-        removeButton.setOnAction(event -> onRemoveButtonClick(event,id));
-        removeButtonPane.getChildren().add(removeButton);
-        HBox.setHgrow(removeButtonPane, Priority.ALWAYS);
+            // Set action handlers for buttons
+            Button editButton = (Button) hbox.lookup("#editbutton");
+            editButton.setOnAction(event -> onEditButtonClick(id));
+            Button removeButton = (Button) hbox.lookup("#removebutton");
+            removeButton.setOnAction(event -> onRemoveButtonClick(id));
 
-        // Add all components to the HBox
-        hbox.getChildren().addAll(itemNamePane, desiredQtyPane, actualQtyPane, pricePane, editButtonPane, removeButtonPane);
+            editButton.setTooltip(new Tooltip("Edit Item"));
+            removeButton.setTooltip(new Tooltip("Remove Item"));
 
-        // Add the HBox to the ListView
-        listView.getItems().add(hbox);
+            listView.getItems().add(hbox);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void populateStockGrid() {
-        ObservableList<Stock> listOfStockItems = dataStore.readStock();
-        for (Stock stock : listOfStockItems) {
-            Double desiredQuantity = 0.00;
-            Double actualQuantity = 0.00;
-            Double price = 0.00;
+        itemlist.getItems().clear();
+
+        List<Stock> stockItems = stockAPI.getStock();
+        for (Stock stock : stockItems) {
             String ingredientID = stock.getMetadataValue("ingredient_id").toString();
             String ingredientName = ingredientsAPI.reverseKeySearch(ingredientID);
+            String actualQuantity = stock.getDataValue("numeral").toString();
+            String orderStatus = stock.getMetadataValue("onOrder").toString();
+            String lastUpdated = stock.getMetadataValue("lastUpdated").toString().substring(0, 10);
+            String stockLevel = stock.getMetadataValue("stockStatus").toString();
+
             addInventoryItemToListView(
                     itemlist,
                     ingredientID,
                     ingredientName,
-                    desiredQuantity.toString(),
-                    actualQuantity.toString(),
-                    price.toString()
+                    actualQuantity,
+                    orderStatus,
+                    lastUpdated,
+                    stockLevel
             );
         }
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private void populateInputFields(String id) {
+        Stock stock = stockAPI.getStockByIngredientID(id);
+        Ingredients ingredient = ingredientsAPI.keyTransform(id);
+
+        itemnamefield.setText(ingredient.getMetadataValue("itemName").toString());
+        thresholdquantityfield.setText(stock.getDataValue("low_stock_threshold").toString());
+        actualquantityfield.setText(stock.getDataValue("numeral").toString());
+        orderstatusfield.setText(stock.getMetadataValue("onOrder").toString());
+        itemdescriptionfield.setText(ingredient.getDataValue("notes").toString());
     }
 
-    // Placeholder methods for button actions
-    private void onEditButtonClick(javafx.event.ActionEvent event,String id) {
-        // Implement edit menu item logic here
+    private void showAlert(AlertType alertType, String title, String content) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
 
-    private void onRemoveButtonClick(javafx.event.ActionEvent event,String id) {
-        // Implement remove menu item logic here
+    private void onEditButtonClick(String id) {
+        loadedStockID = id;
+        populateInputFields(id);
+    }
 
-        ObservableList<HBox> items = itemlist.getItems(); // Get the items of the ListView
+    private void searchStock() {
+        String searchQuery = searchbar.getText().trim();
+        if (searchQuery.isEmpty()) {
+            showAlert(AlertType.ERROR, "Search Error", "Please enter a term to search");
+            return;
+        }
 
-        // Loop through the list to find the HBox with the matching ID
-        for (int i = 0; i < items.size(); i++) {
-            HBox hbox = items.get(i);
-
-            if (id.equals(hbox.getId())) {  // Compare the ID of the HBox
-                items.remove(i);  // Remove the HBox at the found index
-                break;            // Exit the loop once the HBox is removed
-            }
+        List<Ingredients> ingredientsList = ingredientsAPI.searchIngredients(searchQuery);
+        if (ingredientsList.isEmpty()) {
+            showAlert(AlertType.INFORMATION, "No Results", "No stock items found matching: " + searchQuery);
+        } else if (ingredientsList.size() > 1) {
+            showAlert(AlertType.INFORMATION, "Multiple Results", "Multiple items found, please refine your search");
+        } else {
+            String ingredientID = ingredientsList.get(0).getMetadataValue("ingredient_id").toString();
+            populateInputFields(ingredientID);
         }
     }
 }
