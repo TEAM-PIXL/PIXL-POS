@@ -17,7 +17,7 @@ jobs:
     uses: parkermmr/compendium/.github/workflows/compendium-java.yml@main
     with: 
       java-version: "21"
-      disribution: "corretto"
+      distribution: "corretto"
       ref-name: ${{ github.ref_name }}
       sha: ${{ github.sha }}
     secrets:
