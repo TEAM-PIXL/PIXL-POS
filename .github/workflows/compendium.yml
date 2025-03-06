@@ -21,4 +21,4 @@ jobs:
       ref-name: ${{ github.ref_name }}
       sha: ${{ github.sha }}
     secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TOKEN: ${{ secrets.GITHUB_TOKEN }}
