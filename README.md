@@ -1,6 +1,6 @@
 ![CI Status](https://github.com/TEAM-PIXL/PIXL-POS/actions/workflows/compendium.yml/badge.svg)
 [![Coverage](https://codecov.io/gh/TEAM-PIXL/PIXL-POS/branch/production/graph/badge.svg)](https://codecov.io/gh/TEAM-PIXL/PIXL-POS)
-[![Javadocs](https://img.shields.io/badge/Javadocs-Online-blue)](https://team-pixl.github.io/PIXL-POS/)
+[![Javadocs](https://img.shields.io/badge/Javadocs-Online-blue)](https://team-pixl.github.io/PIXL-POS/) 
 
 # PIXL POS
 
