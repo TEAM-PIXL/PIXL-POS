@@ -1,17 +1,44 @@
-![CI Status](https://github.com/TEAM-PIXL/PIXL-POS/actions/workflows/compendium.yml/badge.svg)
-[![Coverage](https://codecov.io/gh/TEAM-PIXL/PIXL-POS/branch/production/graph/badge.svg)](https://codecov.io/gh/TEAM-PIXL/PIXL-POS)
-[![Javadocs](https://img.shields.io/badge/Javadocs-Online-blue)](https://team-pixl.github.io/PIXL-POS/) 
+[![CI Status][ci-shield]][ci-url]
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![Documentation][javadocs-shield]][docs-url]
 
-# PIXL POS
 
-**TEAM**: PIXL POS <br>
-**PROJECT**: Restaurant Management Application <br>
-**DATE**: 2024-07-23 <br>
-**VERSION**: <span style="color: #008585;">1.0</span> <br>
-**AUTHORS**: Zachariah Craw (Project Manager & Backend Developer), Emily Lee (Lead Frontend Developer & UI/UX Design), Parker Rennie (Lead Backend Developer & Data Engineer), Jason Gunnawan (Backend Developer), Joshua Hecke (Frontend Developer)
+<br />
+<div align="center">
+  <a href="https://github.com/team-pixl/pixl-pos">
+     <img src="src/main/resources/teampixl/com/pixlpos/app-icon.jpg" alt="Logo" width="80" height="80">
+  </a>
 
-# Table of Contents
-1. [Project Brief: Restaurant Management Application](#1-project-brief-restaurant-management-application)
+  <h3 align="center">PIXL POS</h3>
+
+  <p align="center">
+    A JavaFX localy based restaurant management application point of sale (POS).
+    <br />
+    <a href="https://pixl-pos.pages.io.teampixl.info"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/team-pixl/pixl-pos">View Demo</a>
+    &middot;
+    <a href="https://github.com/team-pixl/pixl-pos/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    &middot;
+    <a href="https://https://github.com/team-pixl/pixl-pos/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+  </p>
+</div>
+
+<details>
+  <summary>Table of Contents</summary>
+    
+1. [About The Project](#1-about-the-project)
+    - [Built With](#built-with)
+    - [Getting Started](#getting-started)
+        - [Prerequisites](#prerequisites)
+        - [Installation](#installation)
+        - [Compendium CI/CD](#compendium-cicd)
+    - [Acknowledgments](#acknowledgments)
+2. [Project Brief: Restaurant Management Application](#2-project-brief-restaurant-management-application)
     - [Project Relevance](#project-relevance)
         - [Technological Advancements](#technological-advancements)
         - [Cost Efficiency](#cost-efficiency)
@@ -21,21 +48,60 @@
     - [Core Features (Must-Haves)](#core-features-must-haves)
     - [Extended Features (Could-Haves)](#extended-features-could-haves)
     - [Project Outline](#project-outline)
-2. [Project Management](#2-project-management)
+2. [Project Management](#3-project-management)
     - [Project Timeline](#project-timeline)
     - [Team Roles](#team-roles)
     - [Communication Plan](#communication-plan)
     - [Risk Management](#risk-management)
-3. [Project Documentation](#3-project-documentation)
+3. [Project Documentation](#4-project-documentation)
     - [JIRA Board](#jira-board-jira-board)
     - [Confluence](#confluence-confluence)
     - [GitHub Repository](#github-repository-github-repository)
     - [JavaDocs](#javadocs-javadocs)
-4. [Project Demo](#4-project-demo)
+4. [Project Demo](#5-project-demo)
     - [Demo Video](#demo-video)
     - [Demo Instructions](#demo-instructions)
 
-## 1. Project Brief: Restaurant Management Application
+</details>
+
+---
+
+## 1. About The Project
+
+### Built With
+
+<p align="center">
+  
+- [![Git][git-shield]][git-url]
+- [![GitHub Actions][github-actions-shield]][github-actions-url]
+- [![Docker][docker-shield]][docker-url]
+- [![Java][java-shield]][java-url]
+- [![Maven][maven-shield]][maven-url]
+
+</p>
+
+### Getting Started
+
+#### Prerequisites
+
+#### Installation
+
+#### Compendium CI/CD
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Acknowledgments:
+
+Zachariah Craw (Project Manager & Backend Developer), Emily Lee (Lead Frontend Developer & UI/UX Design), Parker Rennie (Lead Backend Developer & Data Engineer), Jason Gunnawan (Backend Developer), Joshua Hecke (Frontend Developer)
+
+<a href="https://github.com/team-pixl/pixl-pos/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=team-pixl/pixl-pos" alt="contrib.rocks image" />
+</a>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+## 2. Project Brief: Restaurant Management Application
 
 This project aims to develop a Restaurant Management Application designed to enhance the operations
 of small to medium-sized restaurants in Brisbane. The goal is to provide an affordable alternative
@@ -149,7 +215,9 @@ staff to manage daily operations efficiently. Once the core features are impleme
 project will gradually expand to include the extended features, enhancing the application's overall
 value.
 
-## 2. Project Management
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## 3. Project Management
 
 ### Project Timeline
 
@@ -321,18 +389,50 @@ value.
   - **Technological Changes**: Stay updated on technological advancements and industry standards. Make sure dependencies are secure and up-to-date to mitigate risks. Regularly review and update software libraries and dependencies. Use LTS (Long Term Support) versions where possible.
   - **Task Changes**: Be prepared for changes in project requirements or priorities. Use agile methodologies to adapt to changing circumstances. Prioritize tasks based on business value and impact. Conduct regular retrospectives to review and adjust project plan.
 
-## 3. Project Documentation
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## 4. Project Documentation
 
 ### JIRA Board: [JIRA Board](https://teampixl.atlassian.net/jira/software/projects/RDM/boards/6)
 ### Confluence: [Confluence](https://teampixl.atlassian.net/wiki/spaces/SD/overview)
 ### GitHub Repository: [GitHub Repository](https://github.com/TEAM-PIXL/PIXL-POS)
 ### JavaDocs: [JavaDocs](https://team-pixl.github.io/PIXL-POS/PIXL.POS/module-summary.html)
 
-## 4. Project Demo
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## 5. Project Demo
 
 ### Demo Video
 
-[![Demo Video](https://youtube.com.au)]
+[![Demo Video](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 ### Demo Instructions
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+[ci-url]: https://github.com/team-pixl/pixl-pos/actions/workflows/compendium.yml
+[contributors-url]: https://github.com/team-pixl/pixl-pos/graphs/contributors
+[stars-url]: https://github.com/team-pixl/pixl-poss/stargazers
+[forks-url]: https://github.com/team-pixl/pixl-pos/network/members
+[issues-url]: https://github.com/team-pixl/pixl-pos/issues
+[git-url]: https://git-scm.com/
+[docker-url]: https://www.docker.com/
+[compendium-url]: https://github.com/team-pixl/pixl-pos
+[docs-url]: https://pixl-pos.pages.io.teampixl.info
+[github-actions-url]: https://github.com/features/actions
+[java-url]: https://www.java.com/en/
+[maven-url]: https://maven.apache.org/
+
+
+[contributors-shield]: https://img.shields.io/github/contributors/team-pixl/pixl-pos.svg?style=for-the-badge
+[ci-shield]: https://img.shields.io/github/actions/workflow/status/team-pixl/pixl-pos/compendium.yml?branch=production&style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/team-pixl/pixl-pos.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/team-pixl/pixl-pos.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/team-pixl/pixl-pos.svg?style=for-the-badge
+[javadocs-shield]: https://img.shields.io/badge/Javadocs-Online-blue?style=for-the-badge
+[java-shield]: https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white
+[maven-shield]: https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white
+[git-shield]: https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white
+[github-actions-shield]: https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=GitHub%20Actions&logoColor=white
+[docker-shield]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white
 
